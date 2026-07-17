@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Splash Loading — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-text-secondary: #94A3B8;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #fff; min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 1.5rem;
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: var(--color-primary);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-text { font-size: 14px; color: var(--color-text-secondary); }
+    .controls {
+      position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 0.75rem; align-items: center;
+    }
+    .controls a, .controls button {
+      padding: 6px 12px; font-size: 12px; font-family: var(--font-family);
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;
+      background: rgba(255,255,255,0.08); color: #fff; cursor: pointer;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .controls a:hover, .controls button:hover { background: rgba(255,255,255,0.15); }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="spinner" role="status" aria-label="Loading"></div>
+    <p class="status-text" role="status" aria-live="polite" id="statusText">Checking your session...</p>
+  </main>
+
+  <div class="controls">
+    <a href="index.html">← Back to index</a>
+    <button type="button" id="resolveBtn">✓ Resolve (simulate auth done)</button>
+  </div>
+
+  <script>
+    const statusText = document.getElementById('statusText');
+    const resolveBtn = document.getElementById('resolveBtn');
+
+    const messages = [
+      'Checking your session...',
+      'Session valid! Redirecting...',
+    ];
+
+    resolveBtn.addEventListener('click', () => {
+      statusText.textContent = messages[1];
+      document.querySelector('.spinner').style.borderTopColor = '#16A34A';
+      setTimeout(() => {
+        alert('Session hydrated → redirecting to main app (or login if unauthenticated)');
+        statusText.textContent = messages[0];
+        document.querySelector('.spinner').style.borderTopColor = '';
+      }, 800);
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+# Wireframe: Login Screen
+
+> v1.0.1 — PATCH: fixed landmark notation in shared conventions; surfaced Main App screen ownership assumption.
+
+## Purpose & Flow Context
+
+Unauthenticated user enters email + password to obtain a session. Serves the "Login Flow" step in the Auth flow. Entry: hydration redirect or manual navigation after logout/session expiry. Exit: main app on success.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `_______` | Text input / editable field |
+| `[>▼]` | Dropdown | `⚠` | Alert / error message |
+| `[○ ●]` | Radio unselected / selected | `#` | Heading |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `main` (no shared app shell — standalone login) |
+| Heading order | One `h1` per screen |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm.
+
+**App-shell**: No shared shell — full-bleed centered card. The login screen lives outside the authenticated app shell.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Page bg | Full-viewport background | Dark overlay or gradient |
+| Card | Login form container | Centered, max 480px |
+| Logo area | App logo / branding | Top of card |
+| Form body | Email + Password inputs + ErrorBanner + Submit button | Stacked vertically |
+
+**Content hierarchy** (by visual priority):
+1. App logo — brand recognition
+2. Email input — primary action field
+3. Password input — secondary field
+4. "Log in" button — primary CTA
+5. Error banner — conditional, high-visibility when present
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                                                                    |
+|                    +------------------------------------+          |
+|                    |  [#] Linear App Clone               |          |
+|                    |                                    |          |
+|                    |  Email                             |          |
+|                    |  [______________________________]  |          |
+|                    |                                    |          |
+|                    |  Password                          |          |
+|                    |  [______________________________]  |          |
+|                    |                                    |          |
+|                    |  [⚠ Invalid email or password]     |          |
+|                    |                                    |          |
+|                    |  [====== Log in ==============]    |          |
+|                    |                                    |          |
+|                    +------------------------------------+          |
+|                                                                    |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| App logo | (generic `<img>`) | Static branding, no interaction | Alt text for screen readers |
+| Email input | TextInput (email variant) | Text entry, validation on blur/ submit | Truncation: show full email via scroll |
+| Password input | TextInput (password variant) | Masked entry, optional show/hide toggle | Max length enforced by API |
+| Error banner | ErrorBanner | `role="alert"`, appears above submit button on API error | Dismissed when user edits any field |
+| Submit button | Button (primary variant) | Submit form, shows spinner in loading state | Disabled during loading, prevented double-click |
+
+## Data Display
+
+Not applicable — this screen has no data tables or lists. Single form with two text inputs.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| App logo heading | "Linear App Clone" | Brand identity, top of card |
+| Email label | "Email" | Persistent label above input, not placeholder |
+| Email placeholder | "you@example.com" | Hint format, not a label replacement |
+| Password label | "Password" | Persistent label above input |
+| Password placeholder | (none) | Security best practice — no hint text |
+| Submit button | "Log in" | Active voice, concise CTA |
+| Error banner | "Invalid email or password" | Generic error — doesn't reveal which field is wrong |
+| Network error | "Connection error. Please try again." | Plain language, actionable |
+
+## States
+
+### Populated (Default)
+
+The layout shown in the ASCII sketch above: two filled inputs, no error, enabled button.
+
+### Empty
+
+First-visit state. Both inputs empty, enabled button, no error banner. Same layout as populated but with empty inputs and placeholder text visible.
+
+### Loading
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                    +------------------------------------+          |
+|                    |  [#] Linear App Clone               |          |
+|                    |                                    |          |
+|                    |  Email              [disabled]     |          |
+|                    |  [__user@mail.com_____________]    |          |
+|                    |                                    |          |
+|                    |  Password           [disabled]     |          |
+|                    |  [__•_•_•_•_•_•_•_•___________]  |          |
+|                    |                                    |          |
+|                    |  [=== ⟳ Log in =================] |          |
+|                    |                                    |          |
+|                    +------------------------------------+          |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+- Email and password inputs are disabled (grayed out, no focus)
+- Submit button shows spinner replacing text, disabled
+- No error banner visible
+
+### Error
+
+Same layout as Empty/Populated with the ErrorBanner visible above the submit button. Inputs re-enabled for correction. Error text: "Invalid email or password" (generic) or "Connection error. Please try again." (network).
+
+### Success
+
+No visual state — form submission success triggers an immediate redirect to the main app. No success toast or confirmation needed.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Card centered, max-width 480px, comfortable padding |
+| Tablet (768-1024px) | Same as desktop, card margins reduced |
+| Mobile (<768px) | Card goes to full-width (margin 16px), stacked layout unchanged |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` wrapping the card, `form` with `aria-label="Login"` |
+| Heading order | `h1` for app logo heading only |
+| Reading / Focus order | Logo → Email input → Password input → Submit button → Error banner (when present) |
+| Accessible names | Logo image gets `alt="Linear App Clone"`; show/hide password toggle gets `aria-label` |
+| Keyboard operability | Tab between fields in order, Enter submits form, Escape clears error banner |
+| Target size | ≥24×24 CSS px on all interactive targets |
+| Focus not obscured | No sticky regions; inputs visible when focused |
+| Non-color intent | Error banner has warning icon + text, not color alone |
+
+## Assumptions
+
+- **Main App screen**: referenced as entry/exit in login and splash flows (e.g., login redirects to "main app", logout returns from it), but not wireframed here. Owned by the system-wireframes document — defines the authenticated app shell (header, sidebar nav, UserAvatar, content area). This auth change assumes that shell exists as the post-login destination.
+- **UserAvatar component** (logout dropdown): wired in the design-system, but its containing screen (Main App) is system-wireframes-owned. The component is ready for integration when that shell is built.
+- **AuthGuard**: not a standalone screen — a route wrapper component. Correctly excluded from per-screen wireframes. Its runtime behavior is documented in the design-system.

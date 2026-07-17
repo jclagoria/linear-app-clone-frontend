@@ -1,0 +1,103 @@
+# Wireframe: Splash Loading Screen
+
+## Purpose & Flow Context
+
+Brief loading state shown while the AuthStore hydrates session state from the refresh token cookie on app start. Serves the "App Start & Session Hydration" flow step. Entry: user opens the application. Exit: main app (authenticated) or login screen (unauthenticated).
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[====]` | Skeleton / loading placeholder | `⟳` | Spinner animation |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `main` only |
+| Heading order | No heading — brief interstitial |
+| Keyboard | No interactive elements on this screen |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Content centered in a single column.
+
+**App-shell**: No shared shell — full-bleed centered content before auth is resolved.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Page bg | Full-viewport background | Same as login screen bg for visual continuity |
+| Center | Spinner + status text | Vertically and horizontally centered |
+
+**Content hierarchy** (by visual priority):
+1. Spinner — primary indicator something is happening
+2. Status text — explains what's happening
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|                            [ ⟳ ]                                  |
+|                       Checking your session...                     |
+|                                                                    |
+|                                                                    |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Spinner | Spinner | CSS rotation animation | Hidden when hydration completes |
+| Status text | (generic `<span>`) | Static text below spinner | `role="status"`, `aria-live="polite"` |
+
+## Data Display
+
+Not applicable.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Status text | "Checking your session..." | Brief, informative, transient |
+
+## States
+
+### Loading (Default)
+
+The layout shown in the ASCII sketch above. Only state this screen exists in.
+
+### Error
+
+Not applicable — hydration failures (expired/absent refresh token) transition to login screen rather than showing error on this screen.
+
+### Populated / Empty / Success
+
+Not applicable — this is a transient interstitial with a single loading state.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Centered layout as shown |
+| Tablet (768-1024px) | Same |
+| Mobile (<768px) | Same — minimal layout unaffected |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` wrapping the content |
+| Heading order | No heading — `h1` will be on the destination screen |
+| Reading / Focus order | Focus is not programmatically moved; screen reader announces spinner via `role="status"` |
+| Accessible names | Spinner has `aria-label="Loading"` |
+| Keyboard operability | No interactive elements — Tab does nothing |
+| Target size | No interactive targets on this screen |
+| Focus not obscured | No sticky regions |
+| Non-color intent | Spinner animation + text, no color alone |
