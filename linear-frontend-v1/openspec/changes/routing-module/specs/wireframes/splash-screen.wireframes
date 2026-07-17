@@ -1,0 +1,127 @@
+# Wireframe: SplashPage
+
+## Purpose & Flow Context
+
+Full-screen loading state displayed while the AuthStore hydrates (checks refresh token cookie on app start). Serves the first step of the App Bootstrap & Auth Hydration flow. Entry: app opens. Exit: auto-transitions to LoginPage (no session) or DashboardPage (valid session).
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Content is centre-aligned, single-column. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: None — SplashPage is rendered outside the standard app shell (header/sidebar). It is a full-viewport overlay.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Overlay | Full-viewport centred container | Solid background, z-index above all other content |
+| Logo area | App logo/wordmark | Vertically centred in upper third of viewport |
+| Spinner | CSS-animated loading indicator | Below logo, 8px gap |
+| Status text | "Loading..." | Below spinner, 8px gap, `role="status"` |
+
+**Content hierarchy** (by visual priority):
+1. Logo — brand recognition on cold start
+2. Spinner — signals activity
+3. Status text — accessible loading announcement
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|                         [App Logo]                                 |
+|                                                                    |
+|                         ( Spinner )                                |
+|                                                                    |
+|                       Loading...                                   |
+|                                                                    |
+|                                                                    |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| App logo | — (custom SVG/img) | Static display | None |
+| Spinner | — (CSS animation) | Rotating animation, auto-dismisses on hydration complete | — |
+| Status text | — (HTML `<p>`) | Static text, announced via `aria-live` | — |
+
+## Data Display
+
+N/A — no data rendered on this screen.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Logo | Brand identity — reminds user which app is loading | Should match app icon/wordmark used elsewhere |
+| Spinner | Non-verbal signal that work is happening | CSS-only, no JS dependency |
+| "Loading..." | Announces state to all users | Kept brief; no specific detail needed (auth check is internal) |
+
+## States
+
+### Loading (Default)
+
+The view described in the ASCII sketch above is the only state. Logo centred, spinner animating, status text below.
+
+### Hidden
+
+SplashPage is removed from the DOM once `AuthStore.hydrate()` resolves. No fade-out transition specified (can be added in hi-fi if desired).
+
+*No visual — component unmounted.*
+
+### Error
+
+Errors during hydration do not display on the splash screen — hydration failure (no session) simply transitions to LoginPage without error messaging. Network errors on token refresh are handled silently; the app degrades to unauthenticated state.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Logo at natural size, centred |
+| Tablet (768-1024px) | Logo may scale down proportionally |
+| Mobile (<768px) | Logo scales to fit viewport width minus 32px padding |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `role="status"` on the status text container, `aria-live="polite"` |
+| Heading order | No headings — single `<p>` for status text (not a document landmark) |
+| Reading / Focus order | No interactive elements; focus should not be trapped in splash |
+| Accessible names | Logo gets `alt="App name"` if rendered as `<img>` |
+| Keyboard operability | No interactive elements; splash auto-dismisses |
+| Target size | N/A — no interactive targets |
+| Focus not obscured | Splash removed from DOM before next screen renders; no focus conflict |
+| Non-color intent | Text + shape (spinner) communicate state, not colour alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Routing Module — Mockup Index</title>
+  <style>
+    :root {
+      --primary: #2563EB;
+      --surface: #F8FAFC;
+      --surface-elevated: #FFFFFF;
+      --border: #E2E8F0;
+      --text-primary: #0F172A;
+      --text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--surface);
+      color: var(--text-primary);
+      padding: 2rem;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: 0.5rem; }
+    p { color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 14px; line-height: 1.5; }
+    .cards { display: flex; flex-direction: column; gap: 0.75rem; }
+    .card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .card:hover { border-color: var(--primary); box-shadow: 0 1px 4px rgba(37,99,235,0.12); }
+    .card-title { font-size: 14px; font-weight: 600; }
+    .card-desc { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+    .badge {
+      font-size: 12px;
+      background: #EFF6FF;
+      color: var(--primary);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>Routing Module — Mockups</h1>
+  <p>Interactive HTML mockups for the Routing Module screens. Click a card to open.</p>
+
+  <div class="cards">
+    <a href="splash-screen.html" class="card">
+      <div>
+        <div class="card-title">SplashPage</div>
+        <div class="card-desc">Full-screen loading overlay during auth hydration</div>
+      </div>
+      <span class="badge">loading</span>
+    </a>
+
+    <a href="sidebar-nav.html" class="card">
+      <div>
+        <div class="card-title">Sidebar Navigation</div>
+        <div class="card-desc">App shell sidebar — expanded, collapsed, mobile states</div>
+      </div>
+      <span class="badge">3 states</span>
+    </a>
+
+    <a href="not-found-page.html" class="card">
+      <div>
+        <div class="card-title">NotFoundPage</div>
+        <div class="card-desc">404 page for unmatched routes</div>
+      </div>
+      <span class="badge">default</span>
+    </a>
+  </div>
+</body>
+</html>

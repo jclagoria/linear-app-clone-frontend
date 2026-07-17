@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NotFoundPage — Mockup</title>
+  <style>
+    :root {
+      --primary: #2563EB;
+      --surface: #F8FAFC;
+      --text-primary: #0F172A;
+      --text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--surface);
+      color: var(--text-primary);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    main {
+      text-align: center;
+      max-width: 420px;
+      padding: 2rem;
+    }
+
+    .illustration {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 1.5rem;
+      background: #E2E8F0;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 700;
+      color: #94A3B8;
+      line-height: 1;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      tab-index: -1;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .route-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.25rem;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.15s;
+    }
+    .route-link:hover { background: #1D4ED8; }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 13px;
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+    .back-link:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <main role="alert">
+    <div class="illustration" aria-hidden="true">404</div>
+    <h1 tabindex="-1" id="page-heading">Page not found</h1>
+    <p>The page you're looking for doesn't exist.</p>
+    <a href="index.html" class="route-link">← Go to Dashboard</a>
+    <br/>
+    <a href="index.html" class="back-link">← Back to index</a>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const h1 = document.getElementById('page-heading');
+      h1.focus();
+      document.title = 'NotFoundPage — Mockup';
+    });
+  </script>
+</body>
+</html>

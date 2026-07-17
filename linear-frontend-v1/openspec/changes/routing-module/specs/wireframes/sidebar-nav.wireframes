@@ -1,0 +1,188 @@
+# Wireframe: Sidebar (App Shell — Navigation Panel)
+
+## Purpose & Flow Context
+
+Persistent left-side navigation panel showing primary app routes (Issues, Projects, Cycles, Settings) with current-route highlighting. Serves all authenticated flows — app shell shared across all protected pages. Entry: app renders after auth hydration. Exit: click a nav link → route changes, highlight updates.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+| `▎` | Active indicator bar | `»` | Collapse toggle |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Sidebar occupies fixed-width left column (240px expanded, 56px collapsed). App shell uses a 2-column layout: sidebar | main content.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Sidebar container | `<aside>` full-height panel | `aria-label="Main navigation"`, sticky, scrollable |
+| Collapse toggle | Icon button top-right | Collapses/expands sidebar, state persisted in UI Store |
+| Team selector | Dropdown at top of sidebar | Shows current team name, allows switching |
+| Nav section heading | "Navigation" or similar section label | Visible in expanded state |
+| Nav links | List of NavLink components | Issues, Projects, Cycles, Settings |
+| Active indicator | Left accent bar on active nav link | Visually distinguishes current route |
+| User menu | Avatar + name at bottom of sidebar | Click opens dropdown with profile/logout |
+
+**Content hierarchy** (by visual priority):
+1. Team selector — establishes context
+2. Nav links — primary navigation actions
+3. Active indicator — shows current location
+4. User menu — secondary, at bottom
+
+```
++---------------------------+
+|  [> My Team ▼]        [»] |   ← Team selector + collapse toggle
+|                           |
+|  Navigation               |   ← Section heading
+|                           |
+|  ▎[▪] Issues              |   ← Active (Issues) — accent bar + highlight
+|                           |
+|  [▪] Projects             |   ← Inactive
+|                           |
+|  [▪] Cycles               |   ← Inactive
+|                           |
+|  [▪] Settings             |   ← Inactive
+|                           |
+|                           |
+|  ───────────────────────  |
+|                           |
+|  👤 Juan Lagoria          |   ← User menu
++---------------------------+
+
+--- Collapsed state: ---
+
++--------+
+| [»]    |   ← Expand toggle
+|        |
+| [▪]    |   ← Icon only, tooltip on hover
+|        |
+| [▪]    |
+|        |
+| [▪]    |
+|        |
+| [▪]    |
+|        |
+| ────── |
+|        |
+| 👤     |   ← Icon only
++--------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Sidebar container | — | Fixed width, `overflow-y: auto` | Scroll if nav items exceed viewport height |
+| Collapse toggle | IconButton | Toggles sidebar width, saves preference to UI Store | On mobile, collapse is default; toggle becomes hamburger |
+| Team selector | Dropdown | Click → dropdown with team list → switch team reloads route | Single-team: hide or show as static label |
+| Nav link (inactive) | NavLink (default variant) | `aria-current="false"`, click → navigate to route | — |
+| Nav link (active) | NavLink (active variant) | `aria-current="page"`, left accent bar visible | Active for exact match AND child routes (e.g., `/issues/123` keeps Issues highlighted) |
+| Nav link (collapsed) | NavLink (collapsed variant) | Icon only visible, label hidden, tooltip on hover | — |
+| Nav section heading | — | Static `<h2>` text | Hidden in collapsed state |
+| User menu button | Avatar + button | Click → dropdown: "Profile", "Log out" | On logout → redirect to `/login` |
+
+## Data Display
+
+N/A — sidebar is navigation, not data display.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Navigation" | Section heading for primary nav links | Hidden when empty or single section; collapsed hides visually |
+| "Issues" | Navigate to issue list | Icon: `▪` (list/bullet icon) |
+| "Projects" | Navigate to project list | Icon: `▪` (folder/board icon) |
+| "Cycles" | Navigate to cycles list | Icon: `▪` (cycle/target icon) |
+| "Settings" | Navigate to settings page | Icon: `▪` (gear icon) |
+| Team name in dropdown | Identifies current team context | — |
+| User name at bottom | Identifies logged-in user | — |
+
+## States
+
+### Populated (Default) — Expanded
+
+Full sidebar as shown in the ASCII sketch above. All nav links visible with active route highlighted.
+
+### Populated — Collapsed
+
+Sidebar reduced to icon-only (56px). Nav links show icons only with tooltips. Active indicator still visible as left accent bar. User menu shows avatar only.
+
+### Loading
+
+Sidebar skeleton: grey bars at nav link positions, no interaction until store hydrates.
+
+```
++---------------------------+
+|  [==== team ====]         |
+|                           |
+|  ======== section ======  |
+|                           |
+|  ▎ [==== skeleton ====]   |
+|                           |
+|  [==== skeleton ====]     |
+|                           |
+|  [==== skeleton ====]     |
+|                           |
+|  [==== skeleton ====]     |
+|                           |
+|  ───────────────────────  |
+|                           |
+|  ⬤                        |
++---------------------------+
+```
+
+### Error
+
+N/A — sidebar is structural; errors in data-fetching are handled by the page content, not the nav.
+
+### Empty
+
+N/A — nav links are defined statically in route config, not fetched.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Expanded sidebar (240px) by default, collapsible |
+| Tablet (768-1024px) | Collapsed (56px) by default, expandable via toggle; overlay mode |
+| Mobile (<768px) | Hidden by default; hamburger button in header opens sidebar as overlay with backdrop |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `<aside aria-label="Main navigation">` |
+| Heading order | Section heading (`<h2>`) only when content sections exist; page has its own `<h1>` in `<main>` |
+| Reading / Focus order | Sidebar first in DOM (before `<main>`), focus order: toggle → team selector → nav links → user menu; collapsed state skips hidden items from Tab order |
+| Accessible names | Collapse/expand toggle: `aria-label="Collapse sidebar"` / `aria-label="Expand sidebar"` |
+| Keyboard operability | Tab through nav links, Enter to navigate, Arrow keys not needed (no sub-navigation) |
+| Target size | Each nav link row ≥44px height for touch target reservation; icons in collapsed state ≥24×24 CSS px |
+| Focus not obscured | Active indicator bar is left-side only, does not overlap focused element |
+| Non-color intent | Active state uses left accent bar + bold text + icon, not colour alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*
