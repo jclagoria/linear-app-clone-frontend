@@ -1,14 +1,10 @@
-import type { ReactNode } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { Spinner } from '@/shared/ui/Spinner'
 
-interface AuthGuardProps {
-  children: ReactNode
-}
-
-export function AuthGuard({ children }: AuthGuardProps) {
+export function AuthGuard() {
   const { isAuthenticated, isLoading } = useAuth()
+  const location = useLocation()
 
   if (isLoading) {
     return (
@@ -26,8 +22,11 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
+    const redirectParam = location.pathname !== '/login'
+      ? `?redirect=${encodeURIComponent(location.pathname + location.search)}`
+      : ''
+    return <Navigate to={`/login${redirectParam}`} replace />
   }
 
-  return <>{children}</>
+  return <Outlet />
 }
