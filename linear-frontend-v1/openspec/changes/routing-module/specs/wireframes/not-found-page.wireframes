@@ -1,0 +1,147 @@
+# Wireframe: NotFoundPage
+
+## Purpose & Flow Context
+
+Displayed when the user navigates to a URL that does not match any registered route. Serves the 404 Handling flow. Entry: any unmatched URL. Exit: user clicks "Go to Dashboard" link → navigates to `/`.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Single-column centred layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Rendered without sidebar/header — standalone page (public, no auth required).
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Main | Centred container in `<main>` | Fills viewport height with flex centring |
+| Status icon | Large 404 graphic or icon | Optional illustration above heading |
+| Heading | `<h1>` "Page not found" | Main heading, focus target on mount |
+| Message | `<p>` descriptive text | Explains the situation in plain language |
+| Action link | RouteLink "Go to Dashboard" | Programmatic navigation to `/` |
+
+**Content hierarchy** (by visual priority):
+1. Status icon — immediate visual signal
+2. Heading — clearly states the problem
+3. Message — optional context
+4. Action link — recovery path
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                                                                    |
+|                       [ 404 Illustration ]                         |
+|                                                                    |
+|                    # Page not found                                |
+|                                                                    |
+|            The page you're looking for doesn't exist.              |
+|                                                                    |
+|              [Go to Dashboard]                                     |
+|                                                                    |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| 404 illustration | — (custom SVG/icon) | Static display, decorative | `aria-hidden="true"` |
+| Heading | — (HTML `<h1>`) | Static text | Focus target on mount via `tabindex="-1"` |
+| Message | — (HTML `<p>`) | Static text | — |
+| "Go to Dashboard" link | RouteLink (RouteLink variant) | Click → navigate to `/` | Auth guard applies after navigation |
+
+## Data Display
+
+N/A — static content page.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| 404 illustration | Visual cue that page is missing | Decorative, not relied upon for meaning |
+| "Page not found" | Clear, direct problem statement | User language — no technical "404" code as primary message |
+| "The page you're looking for doesn't exist." | Plain-language explanation | Avoids jargon |
+| "Go to Dashboard" | Primary recovery action | Links to `/`; if unauthenticated, auth guard handles redirect |
+
+## States
+
+### Populated (Default)
+
+The single state of this screen — always the same content regardless of how user arrived.
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                       [ 404 Illustration ]                         |
+|                                                                    |
+|                    # Page not found                                |
+|                                                                    |
+|            The page you're looking for doesn't exist.              |
+|                                                                    |
+|              [Go to Dashboard]                                     |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Loading
+
+N/A — static page with no data fetching.
+
+### Empty
+
+N/A — no data to be empty.
+
+### Error
+
+N/A — the page itself is the error state.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full-size illustration, centred layout |
+| Tablet (768-1024px) | Illustration may scale down, layout remains centred |
+| Mobile (<768px) | Illustration hidden or reduced, heading and link remain, 16px padding on each side |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `<main>` with `role="alert"` announces the page type on mount |
+| Heading order | Single `<h1>` — "Page not found" |
+| Reading / Focus order | Focus moved to `<h1>` on page mount via `tabindex="-1"` |
+| Accessible names | Decorative illustration gets `aria-hidden="true"`, no label needed |
+| Keyboard operability | Tab to "Go to Dashboard" link, Enter to navigate |
+| Target size | RouteLink inline — ensure ≥24×24 CSS px clickable area |
+| Focus not obscured | No sticky regions on this page |
+| Non-color intent | Text + heading convey meaning, not colour |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SplashPage — Mockup</title>
+  <style>
+    :root {
+      --splash-bg: #0F172A;
+      --primary: #2563EB;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--splash-bg);
+      color: var(--text-primary);
+    }
+
+    .splash-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 9999;
+      background: var(--splash-bg);
+      transition: opacity 0.4s ease;
+    }
+    .splash-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .logo {
+      width: 64px;
+      height: 64px;
+      background: var(--primary);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    .controls {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 0.5rem;
+      z-index: 10000;
+      background: rgba(15,23,42,0.85);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .controls button {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.4rem 0.85rem;
+      border-radius: 5px;
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font-family);
+      transition: background 0.15s;
+    }
+    .controls button:hover { background: rgba(255,255,255,0.15); }
+    .controls button.active { background: var(--primary); border-color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="splash-overlay" id="splash">
+    <div class="logo">L</div>
+    <div class="spinner" id="spinner"></div>
+    <p class="status-text" id="status">Loading...</p>
+  </div>
+
+  <div class="controls">
+    <button class="active" data-state="loading">Loading</button>
+    <button data-state="hidden">Hidden</button>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const btns = document.querySelectorAll('[data-state]');
+
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const state = btn.dataset.state;
+        splash.classList.toggle('hidden', state === 'hidden');
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.title = 'SplashPage (loading) — Mockup';
+    });
+  </script>
+</body>
+</html>

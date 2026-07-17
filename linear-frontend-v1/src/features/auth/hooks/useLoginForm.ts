@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -20,6 +20,7 @@ export type LoginFormData = z.infer<typeof loginSchema>
 
 export function useLoginForm() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { login, isLoading, error, clearError } = useAuth()
 
   const {
@@ -42,10 +43,11 @@ export function useLoginForm() {
       await login(data.email, data.password)
 
       if (useAuthStore.getState().isAuthenticated) {
-        navigate('/', { replace: true })
+        const redirectTo = searchParams.get('redirect') || '/'
+        navigate(redirectTo, { replace: true })
       }
     },
-    [login, isLoading, navigate, clearError],
+    [login, isLoading, navigate, clearError, searchParams],
   )
 
   return {

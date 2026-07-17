@@ -67,17 +67,19 @@ Chosen option: "Feature-Sliced Design (FSD)", because it provides enforceable la
 The FSD layer structure adopted:
 
 ```
-src/
-  app/           — Application shell, router, providers, global styles
-  pages/         — Route pages composing features
-  features/      — Feature slices (auth, issues, projects, …)
-  entities/      — Business entities (session, user, project, …)
-  shared/        — Reusable UI components, utilities, API client
-```
+  src/
+    app/           — Application shell, router, providers, global styles
+    pages/         — Route pages composing features
+    features/      — Feature slices (auth, issues, projects, …)
+    widgets/       — Composable UI blocks combining entities/features
+    entities/      — Business entities (session, user, project, …)
+    shared/        — Reusable UI components, utilities, API client
+  ```
 
 Layer import rules:
-- `app/` → `pages/`, `features/`, `entities/`, `shared/`
-- `pages/` → `features/`, `entities/`, `shared/`
-- `features/` → `entities/`, `shared/` (NOT other features)
+- `app/` → `pages/`, `features/`, `widgets/`, `entities/`, `shared/`
+- `pages/` → `features/`, `widgets/`, `entities/`, `shared/`
+- `features/` → `entities/`, `shared/`, `widgets/` (NOT other features)
+- `widgets/` → `features/`, `entities/`, `shared/` (NOT pages, NOT app)
 - `entities/` → `shared/` (NOT features)
 - `shared/` → itself, node_modules only

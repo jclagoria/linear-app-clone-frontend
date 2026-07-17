@@ -4,6 +4,9 @@ context: |
   Project: Linear App Clone - Frontend
   Language: English
   Domain: Frontend for the Linear App Clone
+  Stack: documented in docs/stack-frontend.md
+  Architecture: documented in docs/architecture-frontend.md
+  Deployment flow: documented in docs/deployment.md
 
   # === TECH-AGNOSTIC CONTEXT ===
   API Contract (OpenAPI 3.1 — Design-First): docs/api/openapi.yaml
