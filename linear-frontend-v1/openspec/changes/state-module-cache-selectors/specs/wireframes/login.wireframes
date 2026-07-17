@@ -1,0 +1,128 @@
+# Wireframe: Login
+
+## Purpose & Flow Context
+
+Authentication screen for unauthenticated users. Entry: visiting a protected route without valid tokens, or explicit logout. Exit: successful login redirects to dashboard (Issue List) or original target.
+
+---
+
+## Layout Regions
+
+**Grid**: Single-column centered layout. 8px cadence.
+
+**App-shell**: No shell — full-screen standalone view. No sidebar or header.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Branding | Logo + app name + tagline | Top center |
+| Login form | Email input, password input, submit button, link to register | Center, max-width 400px |
+| Footer | "Powered by..." or links | Bottom, subtle |
+
+**Content hierarchy**:
+1. Branding — identity reassurance
+2. Form — primary action
+3. Error/success feedback — below form
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                                                                    |
+|                      [Linear App Clone Logo]                      |
+|                         Track your work                            |
+|                                                                    |
+|                   ___________________________                      |
+|                   | Email                   |                     |
+|                   ___________________________                      |
+|                                                                    |
+|                   ___________________________                      |
+|                   | Password                |                     |
+|                   ___________________________                      |
+|                                                                    |
+|                         [Log In]                                  |
+|                                                                    |
+|                   Don't have an account? Sign up                   |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Email input | Input | `type="email"`, required | Validation: email format |
+| Password input | Input | `type="password"`, required | Show/hide toggle |
+| Log In | Button (primary) | Submits credentials | Disabled during submit; shows loading |
+| Sign up link | Link | Navigates to registration | — |
+
+## Data Display
+
+N/A — form only.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Track your work" | Value proposition tagline | Below logo |
+| Email placeholder | "Email" | Not "Enter your email" — concise |
+| Password placeholder | "Password" | — |
+| "Log In" | Primary action CTA | Changes to "Logging in..." during submit |
+| "Don't have an account? Sign up" | Conversion link | Visual hierarchy: secondary text, primary link |
+
+## States
+
+### Populated (Default)
+
+Form with empty fields. See sketch above.
+
+### Loading
+
+Submit button shows spinner. Store: `isLoading=true`.
+
+```
+|                    [⟳ Logging in...]                           |
+```
+
+### Error
+
+Authentication failed — inline error below form.
+
+```
+|  [!] Invalid email or password. Please try again.              |
+```
+
+Network error:
+
+```
+|  [!] Could not connect. Check your internet connection.  [Retry] |
+```
+
+### Success
+
+Redirect to dashboard or original target URL. Store: `isAuthenticated=true`, tokens stored.
+
+```
+|  [⏳ Redirecting to dashboard...]                               |
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Centered card with shadow |
+| Tablet (768-1024px) | Same layout, slightly smaller |
+| Mobile (<768px) | Full-width form (no card); padding 16px sides |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` with `aria-label="Login"` |
+| Heading order | h1 "Track your work" (visually hidden h1: "Log in") |
+| Reading / Focus order | Logo → Email → Password → Log In → Sign up link |
+| Accessible names | Email input: `<label for="email">`, Password: `<label for="password">` |
+| Keyboard operability | Tab between fields, Enter to submit, Escape does nothing |
+| Target size | All inputs ≥24×24 CSS px; submit button ≥24×24 CSS px |
+| Focus not obscured | No sticky elements |
+| Non-color intent | Error states include icon + text |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

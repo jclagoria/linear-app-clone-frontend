@@ -1,0 +1,155 @@
+# Wireframe: Issue Detail
+
+## Purpose & Flow Context
+
+Read-only detail view of a single issue with comments and metadata. Entry: click issue row in Issue List. Exit: back button → Issue List; Edit button → Issue Form modal.
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. 4px cadence.
+
+**App-shell**: Standard shell.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Back nav | "← Issues" link | Top of content area |
+| Issue header | Title, status badge, priority, identifier | Read-only metadata |
+| Description | Markdown-rendered description | Editable via "Edit" |
+| Comments | Threaded comment list + comment input | At bottom |
+| Side metadata | Assignee, due date, labels, attachments | Right column (3 cols) on desktop |
+
+**Content hierarchy**:
+1. Issue header — identity + status
+2. Side metadata — key fields at a glance
+3. Description — main content
+4. Comments — discussion
+
+```
++------------------------------------------------------------------+
+|  ← Issues                                             [Edit] [🔗] |
++------------------------------------------------------------------+
+|  [In Progress]  ⚠ Jul 25    LAG-122                                |
+|  # Set up CI pipeline                                               |
+|  Priority: [!! High]                                                |
+|  Assignee: [👤 Juan Carlos Lagoria]                                |
+|  _____________________________________________________________     |
+|  Description                                                        |
+|  ...rendered markdown...                                            |
+|  _____________________________________________________________     |
+|  Comments                                                           |
+|  +-- 👤 Juan Carlos — 2h ago ----+                                 |
+|  |  Started working on this.      |                                 |
+|  +-------------------------------+                                 |
+|  |  💬 Add a comment...          |                                 |
+|  +-------------------------------+                                 |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Back link | Button (link variant) | Click → Issue List, clears selectedIssueId | — |
+| Edit | Button | Opens Issue Form modal with pre-populated data | Disabled during loading |
+| Status badge | Badge | Color-coded by status | — |
+| Priority icon | Icon (flag) | Colored by level | — |
+| Avatar | Avatar | User image or initials fallback | — |
+| Description | Rendered markdown | Read-only, prose style | Long content scrolls within panel |
+| Comment list | List | Threaded, newest-first | Empty → "No comments yet" |
+| Comment input | Input + Button | Multiline text, submit on Enter | Empty submit disabled |
+| Labels | Badge (tag) | Colored label pills | Overflow → "+N more" |
+
+## Data Display
+
+Metadata panel (right column on desktop, full-width on mobile):
+
+- Assignee (Avatar + name)
+- Due date (text, ⚠ if overdue)
+- Labels (badge list)
+- Attachments (file list with names)
+- Parent/child issues (linked list)
+- Created date
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "← Issues" | Back navigation | Consistent across all detail views |
+| Issue identifier | Reference ID | LAG-NNN format |
+| "Description" | Section heading for main content | — |
+| "Comments" | Section heading for discussion | — |
+| Comment placeholder | "Add a comment..." | Multiline input |
+| Empty comments | "No comments yet" | Distinguish from loading |
+
+## States
+
+### Populated (Default)
+
+Full detail view with description and comments as shown.
+
+### Loading
+
+Skeleton layout — title bar, metadata placeholders, content blocks.
+
+```
++------------------------------------------------------------------+
+|  ← Issues                                             [Edit] [🔗] |
++------------------------------------------------------------------+
+|  [=====]  [===]    [=======]                                      |
+|  # [=====================================================]        |
+|  [====] [=======]                                                 |
+|  Description                                                      |
+|  [========================================================]       |
+|  [========================================================]       |
+|  Comments                                                         |
+|  [===== skeleton comment row =====]                               |
+|  [===== skeleton comment row =====]                               |
++------------------------------------------------------------------+
+```
+
+### Error
+
+Issue failed to load.
+
+```
++------------------------------------------------------------------+
+|  [!] Could not load this issue. It may have been deleted.        |
+|                                     [← Back to Issues]           |
++------------------------------------------------------------------+
+```
+
+### Empty (Comments)
+
+No comments yet — shown with empty state below the description.
+
+```
+|  Comments                                                         |
+|  [💬 Icon]                                                       |
+|  No comments yet                                                  |
+|  [Add a comment...]                                              |
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Two-column layout: main (9 cols) + metadata (3 cols) |
+| Tablet (768-1024px) | Metadata moves below description |
+| Mobile (<768px) | Single column; back link → back button in header; edit → icon in header |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main`, `aside` (metadata region), `section` (comments) |
+| Heading order | h1 (issue title) → h2 "Description" → h2 "Comments" |
+| Reading / Focus order | Back → issue header → metadata → description → comments → input |
+| Accessible names | "Edit issue", "Back to issues", "Add comment" |
+| Keyboard operability | Tab through metadata, Enter on Edit, type in comment input |
+| Target size | Back link, Edit button, each comment action ≥24×24 CSS px |
+| Focus not obscured | — |
+| Non-color intent | Status badge includes text, labels include text |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*
