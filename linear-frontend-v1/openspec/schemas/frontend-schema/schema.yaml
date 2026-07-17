@@ -1,0 +1,139 @@
+name: frontend-schema
+version: 2
+description: |
+  Frontend-only schema. Generates proposal → specs-frontend → user-flows → design-system → wireframes → mockups → tech-stack → design-frontend → adr → tasks-frontend → review.
+
+artifacts:
+  - id: proposal
+    generates: proposal.md
+    description: |
+      Change proposal describing motivation, scope, and expected impact.
+    template: proposal.md
+    requires: []
+
+  - id: specs-frontend
+    generates: specs/frontend/**/*.md
+    description: |
+      Frontend functional specifications: BDD scenarios (Gherkin), components, user flows, routing, validation.
+    template: specs/frontend.md
+    instruction: |
+      Define components, user flows, routing, validation, and accessibility using BDD/Gherkin style.
+      Start with a Feature block and requirement scenarios using GIVEN/WHEN/THEN format focusing on UI interactions and user-facing behaviour.
+      Every requirement MUST have at least one scenario with observable outcomes.
+      Use AND/BUT for follow-on steps. Write THEN steps in terms of UI state changes.
+      Consult frontend-specific context docs when available.
+      Do not include backend implementation details.
+    requires:
+      - proposal
+
+  - id: user-flows
+    generates: user-flows.md
+    description: |
+      Navigation graphs, screen inventory, and state transitions derived from frontend specs.
+    template: user-flows.md
+    requires:
+      - specs-frontend
+
+  - id: design-system
+    generates: design-system.md
+    description: |
+      UI component catalog with anatomy, states, layout tokens, typography scale,
+      color semantics, and a11y contract per component.
+    template: design-system.md
+    requires:
+      - user-flows
+
+  - id: wireframes
+    generates: specs/wireframes/**/*.wireframes
+    description: |
+      Structural wireframes with layout regions, ASCII sketches, states (empty/loading/
+      populated/error/success), component annotations, microcopy intent, responsive
+      notes, and screen-composition accessibility.
+    template: wireframes/screen.md
+    instruction: |
+      Use the authoring-wireframes skill.
+    requires:
+      - design-system
+
+  - id: mockups
+    generates: mockups/**/*.html
+    description: |
+      Interactive HTML/CSS/vanilla JS mockups with mock data. One HTML file per screen,
+      using inline styles from design-system tokens and mock data arrays. Screens are
+      navigable via simple links — no build step required.
+    template: mockups/README.md
+    requires:
+      - wireframes
+
+  - id: tech-stack
+    generates: tech-stack.md
+    description: |
+      Frontend technology selection. Uses tech-selection skill to evaluate stack,
+      architecture, and deployment options from tech-agnostic artifacts.
+    template: tech-selection/tech-selection.md
+    instruction: |
+      Use the tech-selection skill.
+      Read all previous artifacts (proposal, specs-frontend, user-flows, design-system, wireframes, mockups) as context.
+      Read templates from openspec/schemas/frontend-schema/templates/technology/
+      (stack-templates.md, architecture-templates.md, deployment-templates.md).
+      If templates don't exist, use openspec/schemas/fullstack-schema/templates/technology/ as fallback.
+
+      Generate 2-3 files in docs/:
+        docs/stack-frontend.md — Frontend stack
+        docs/architecture-frontend.md — Frontend architecture
+        docs/deployment.md — Deployment (if applicable)
+      Follow the interactive review process before writing files.
+      Use the repomix-reference skill to validate decisions against the tech research digest.
+    requires:
+      - mockups
+
+  - id: design-frontend
+    generates: design-frontend.md
+    description: |
+      Frontend technical design: architecture decisions, component tree, routing,
+      state management, data fetching, asset map, validation, and accessibility.
+    template: design-frontend.md
+    instruction: |
+      Consult specs-frontend for component and routing needs.
+      Consult docs/architecture-frontend.md for architecture and docs/stack-frontend.md for stack.
+      Consult mockups for UI/UX decisions validated in wireframes.
+      Use the repomix-reference skill to validate frontend architecture patterns against the tech research digest.
+    requires:
+      - specs-frontend
+      - mockups
+      - tech-stack
+
+  - id: adr
+    generates: adr.md
+    description: |
+      Architecture Decision Records for significant architectural decisions.
+    template: adr.md
+    instruction: |
+      Use the architectural-decision-records skill.
+      Capture significant architectural decisions with context, decision,
+      consequences, and alternatives considered.
+      Consult design-frontend for decisions to record.
+    requires:
+      - design-frontend
+
+  - id: tasks-frontend
+    generates: tasks-frontend.md
+    description: |
+      Frontend implementation tasks: scaffold, components, state, routing,
+      integration, and testing.
+    template: tasks-frontend.md
+    requires:
+      - design-frontend
+
+  - id: review
+    generates: review.md
+    description: |
+      Post-implementation review verifying all tasks are complete and
+      requirements are met.
+    template: review.md
+    requires:
+      - tasks-frontend
+
+apply:
+  requires:
+    - review

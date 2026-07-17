@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "authoring-wireframes": {
+      "source": "bm629/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/authoring-wireframes/SKILL.md",
+      "computedHash": "b9680175feeb837bd47623459d7ccdc1676ed40ae5c3fbb382cd732d45c47064"
+    },
+    "reviewing-wireframes": {
+      "source": "bm629/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/reviewing-wireframes/SKILL.md",
+      "computedHash": "8591ed2c5caeb20ca7c044d412d1e6a640fc650bacfcc05b52712ea4138c6f19"
+    }
+  }
+}

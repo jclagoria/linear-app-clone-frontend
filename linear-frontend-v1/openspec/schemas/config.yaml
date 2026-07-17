@@ -1,0 +1,89 @@
+schema: frontend-schema
+
+context: |
+  Project: Linear App Clone - Frontend
+  Language: English
+  Domain: Frontend for the Linear App Clone
+
+  # === TECH-AGNOSTIC CONTEXT ===
+  API Contract (OpenAPI 3.1 — Design-First): docs/api/openapi.yaml
+
+  Tech Research Digest: .agents/skills/repomix-reference/references/tech-research-digest.md
+
+  Skills:
+    Wireframes: .agents/skills/authoring-wireframes/SKILL.md
+    Wireframes Review: .agents/skills/reviewing-wireframes/SKILL.md
+    Tech selection: .agents/skills/tech-selection/SKILL.md
+    ADR: .agents/skills/architectural-decision-records/SKILL.md
+    Repomix Reference: .agents/skills/repomix-reference/SKILL.md
+
+rules:
+  proposal:
+    - Keep proposal focused on functional scope, motivation, and impact.
+    - Do not include concrete asset paths, icon names, component names, route internals, translation keys, or validator names unless they are essential to scope.
+    - Put technical design detail in design.md (future artifact).
+    - Do not assume technology stack. If not defined in context, use "TBD — pending technology definition" instead of guessing.
+  specs-frontend:
+    - Define components, user flows, routing, validation, and accessibility using BDD/Gherkin style.
+    - Write a Feature block for each capability with Requirement and Scenario sections.
+    - Every scenario MUST use GIVEN/WHEN/THEN format with observable UI states.
+    - Use normative language such as SHALL or MUST in requirement descriptions.
+    - Do not include backend implementation details or data model specifics.
+  user-flows:
+    - Map every screen identified in specs as a node in the navigation graph.
+    - Document state transitions (empty, loading, populated, error, success) per screen.
+    - Include entry points and authentication gates.
+    - Do not invent screens not backed by specs.
+  design-system:
+    - Catalog every reusable UI component (button, input, card, modal, etc.).
+    - Define anatomy, visual states, layout tokens (spacing, grid), typography scale, and color semantics for each component.
+    - Document a11y contract per component (keyboard interaction, ARIA roles, focus management).
+    - Wireframes may ONLY reference components defined here.
+  wireframes:
+    - One wireframe per screen from user-flows.
+    - Use ASCII sketches for layout regions on a grid.
+    - Annotate components by their design-system name, microcopy intent, and states.
+    - Include screen-composition accessibility: landmarks, focus order, target sizes.
+    - Cover empty, loading, populated, error, and success states per screen.
+  mockups:
+    - One HTML file per screen from wireframes.
+    - Use inline styles matching design-system tokens (colors, spacing, typography).
+    - Include state toggles (empty, loading, error, success) for mock data.
+    - Screens must be navigable via simple links — no build step.
+    - Use mock data arrays — no backend dependency.
+  tech-stack:
+    - Read all available artifacts: proposal, specs-frontend, user-flows, design-system, wireframes, mockups.
+    - Read templates from openspec/schemas/frontend-schema/templates/technology/ (fallback: fullstack-schema).
+    - Evaluate at least 2 options per layer (frontend runtime, framework, state management, styling, testing, deployment).
+    - Define evaluation criteria: team expertise, ecosystem maturity, performance, scalability, operational complexity, cost.
+    - Fill the docs/ files using the templates: stack-frontend.md, architecture-frontend.md, deployment.md.
+    - Follow interactive review process before writing files to disk.
+    - Cross-check every tech decision against tech-research-digest.md.
+    - If a choice was rejected in the digest, flag and justify divergence.
+    - If a choice was recommended, confirm alignment.
+    - If not evaluated, note as gap.
+  adr:
+    - One ADR per significant architectural decision.
+    - Use status lifecycle: Proposed → Accepted → Deprecated → Superseded.
+    - Include context, decision, consequences, and alternatives considered.
+    - Do not repeat implementation details already covered in design docs.
+    - Cross-check each ADR against tech-research-digest.md.
+    - If the digest already documents a decision on the topic, reference it.
+    - If the decision contradicts the digest, REQUIRE explanation for divergence.
+  design-frontend:
+    - Stack and architecture are now defined in docs/ (from tech-selection). Reference them.
+    - Document component tree, routing approach, state management, and data fetching.
+    - Map every screen from mockups to a component with its state coverage.
+    - Include asset map (icons, images, fonts) and validation strategy per field.
+    - Document accessibility approach (keyboard, ARIA, screen reader).
+    - Validate frontend architecture patterns against tech-research-digest.md.
+    - If the digest recommends a different approach for components, routing, or state, flag for review.
+  tasks-frontend:
+    - One concrete deliverable per task with Conventional Commit prefix (feat, fix, test, refactor, chore, docs).
+    - Organize by layer: scaffold, components, state, routing, integration, testing.
+    - Include validation tasks for changed behavior.
+    - Leave placeholders for estimated effort or assignee when relevant.
+  review:
+    - Verify all tasks from tasks-frontend are complete.
+    - Check that requirements from specs-frontend are met.
+    - Note any gaps, blockers, or deviations from the design.
