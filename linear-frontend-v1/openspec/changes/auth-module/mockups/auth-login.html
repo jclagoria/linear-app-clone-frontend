@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-primary-active: #1E40AF;
+      --color-danger: #DC2626;
+      --color-danger-bg: #FEF2F2;
+      --color-success: #16A34A;
+      --color-warning: #F59E0B;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-border-focus: #2563EB;
+      --color-border-error: #DC2626;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-text-disabled: #94A3B8;
+      --color-overlay: rgba(15, 23, 42, 0.5);
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family); background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: var(--color-text-primary); min-height: 100vh; display: flex;
+      align-items: center; justify-content: center; padding: var(--space-4);
+    }
+    .card {
+      background: var(--color-surface-elevated); border-radius: 8px;
+      width: 100%; max-width: 480px; padding: var(--space-8);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    }
+    .logo { text-align: center; margin-bottom: var(--space-6); }
+    .logo img { width: 40px; height: 40px; border-radius: 8px; }
+    .logo h1 { font-size: 20px; font-weight: 700; color: var(--color-text-primary); margin-top: var(--space-2); }
+    .fieldset { margin-bottom: var(--space-4); }
+    .fieldset label { display: block; font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: 4px; }
+    .fieldset input {
+      display: block; width: 100%; padding: 10px 12px; font-size: 14px;
+      font-family: var(--font-family); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); background: var(--color-surface-elevated);
+      color: var(--color-text-primary); outline: none; transition: border-color 0.15s;
+    }
+    .fieldset input:focus { border-color: var(--color-border-focus); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .fieldset input:disabled { background: var(--color-surface); color: var(--color-text-disabled); cursor: not-allowed; }
+    .fieldset input.error { border-color: var(--color-border-error); }
+    .fieldset .pw-toggle {
+      position: relative;
+    }
+    .fieldset .pw-toggle input { padding-right: 44px; }
+    .pw-toggle button {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; padding: 4px;
+      font-size: 14px; color: var(--color-text-secondary); line-height: 1;
+    }
+    .pw-toggle button:disabled { cursor: not-allowed; opacity: 0.5; }
+    .error-banner {
+      display: none; align-items: center; gap: var(--space-2);
+      padding: 10px 12px; background: var(--color-danger-bg);
+      border: 1px solid var(--color-danger); border-radius: var(--radius-md);
+      margin-bottom: var(--space-4); font-size: 13px; color: var(--color-danger);
+      role: alert; aria-live: polite;
+    }
+    .error-banner.visible { display: flex; }
+    .submit-btn {
+      display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+      width: 100%; padding: 10px 16px; font-size: 14px; font-weight: 600;
+      font-family: var(--font-family); border: none; border-radius: var(--radius-md);
+      background: var(--color-primary); color: #fff; cursor: pointer;
+      transition: background 0.15s; min-height: 44px;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--color-primary-hover); }
+    .submit-btn:active:not(:disabled) { background: var(--color-primary-active); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .spinner {
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .controls { margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--color-border); }
+    .controls p { font-size: 12px; color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+    .state-btns { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .state-btns button {
+      padding: 6px 12px; font-size: 12px; font-family: var(--font-family);
+      border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+      background: var(--color-surface-elevated); color: var(--color-text-primary);
+      cursor: pointer; transition: all 0.1s;
+    }
+    .state-btns button:hover { border-color: var(--color-primary); }
+    .state-btns button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .back-link { display: inline-block; margin-top: var(--space-3); font-size: 12px; color: var(--color-text-secondary); text-decoration: none; }
+    .back-link:hover { color: var(--color-primary); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect width="40" height="40" rx="8" fill="#2563EB"/><path d="M12 20L17 25L28 14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <h1>Linear App Clone</h1>
+    </div>
+
+    <form id="loginForm" aria-label="Login" novalidate>
+      <div class="fieldset">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+
+      <div class="fieldset">
+        <label for="password">Password</label>
+        <div class="pw-toggle">
+          <input id="password" type="password" autocomplete="current-password" />
+          <button type="button" id="pwToggle" aria-label="Show password">👁</button>
+        </div>
+      </div>
+
+      <div class="error-banner" id="errorBanner" role="alert" aria-live="polite">
+        <span aria-hidden="true">⚠</span>
+        <span id="errorMessage">Invalid email or password</span>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span id="submitLabel">Log in</span>
+        <span id="submitSpinner" class="spinner" style="display:none" aria-label="Loading"></span>
+      </button>
+    </form>
+
+    <div class="controls">
+      <p>State toggles (mock simulation):</p>
+      <div class="state-btns">
+        <button type="button" data-state="default" class="active">Default</button>
+        <button type="button" data-state="loading">Loading</button>
+        <button type="button" data-state="error">Error</button>
+        <button type="button" data-state="success">Success</button>
+      </div>
+      <a href="index.html" class="back-link">← Back to index</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const pwToggle = document.getElementById('pwToggle');
+    const errorBanner = document.getElementById('errorBanner');
+    const errorMessage = document.getElementById('errorMessage');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitLabel = document.getElementById('submitLabel');
+    const submitSpinner = document.getElementById('submitSpinner');
+
+    pwToggle.addEventListener('click', () => {
+      const isPassword = password.type === 'password';
+      password.type = isPassword ? 'text' : 'password';
+      pwToggle.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+      pwToggle.textContent = isPassword ? '🙈' : '👁';
+    });
+
+    const stateBtns = document.querySelectorAll('[data-state]');
+    stateBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        stateBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        setState(btn.dataset.state);
+      });
+    });
+
+    function setState(state) {
+      const inputs = [email, password];
+      const isDisabled = state === 'loading';
+
+      inputs.forEach(inp => {
+        inp.disabled = isDisabled;
+      });
+
+      if (state === 'loading') {
+        email.value = 'user@example.com';
+        password.value = '••••••••';
+        submitLabel.style.display = 'none';
+        submitSpinner.style.display = 'inline-block';
+        submitBtn.disabled = true;
+        errorBanner.classList.remove('visible');
+      } else {
+        submitLabel.style.display = 'inline';
+        submitSpinner.style.display = 'none';
+        submitBtn.disabled = false;
+      }
+
+      if (state === 'error') {
+        email.value = 'user@example.com';
+        password.value = '••••••••';
+        errorMessage.textContent = 'Invalid email or password';
+        errorBanner.classList.add('visible');
+        inputs.forEach(inp => inp.classList.add('error'));
+      } else {
+        errorBanner.classList.remove('visible');
+        inputs.forEach(inp => inp.classList.remove('error'));
+      }
+
+      if (state === 'success') {
+        email.value = 'user@example.com';
+        password.value = '••••••••';
+        errorBanner.classList.remove('visible');
+        submitLabel.textContent = '✓ Redirecting...';
+        submitBtn.disabled = true;
+        setTimeout(() => {
+          alert('Login successful! Redirecting to main app...');
+          submitLabel.textContent = 'Log in';
+          submitBtn.disabled = false;
+        }, 1000);
+      }
+
+      if (state === 'default') {
+        email.value = '';
+        password.value = '';
+        submitLabel.textContent = 'Log in';
+      }
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      setState('loading');
+      setTimeout(() => {
+        if (email.value && password.value) {
+          setState('success');
+        } else {
+          setState('error');
+          errorMessage.textContent = 'Please fill in all fields';
+        }
+      }, 1500);
+    });
+
+    email.addEventListener('input', () => {
+      if (errorBanner.classList.contains('visible')) {
+        errorBanner.classList.remove('visible');
+        [email, password].forEach(inp => inp.classList.remove('error'));
+      }
+    });
+    password.addEventListener('input', () => {
+      if (errorBanner.classList.contains('visible')) {
+        errorBanner.classList.remove('visible');
+        [email, password].forEach(inp => inp.classList.remove('error'));
+      }
+    });
+  </script>
+</body>
+</html>
