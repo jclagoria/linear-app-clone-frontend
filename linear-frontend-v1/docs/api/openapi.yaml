@@ -17,6 +17,12 @@ info:
 
     Obtain tokens via `POST /api/v1/auth/login` or `POST /api/v1/auth/register`.
 
+    The refresh token is stored in an HttpOnly cookie (`refreshToken`) scoped to
+    `/api/v1/auth/refresh` with `SameSite=Strict`. The POST /api/v1/auth/refresh
+    endpoint reads the cookie first, falling back to a request body field for
+    backward compatibility. The cookie is set on login/refresh and cleared on
+    logout.
+
 
     ## WebSocket Gateway
 
@@ -51,7 +57,11 @@ paths:
     post:
       summary: Register a new user
       deprecated: false
-      description: Creates a new user account and returns JWT tokens.
+      description: >-
+        Creates a new user account and returns JWT tokens. The refresh token is
+        set as an HttpOnly cookie (`refreshToken`) scoped to `/api/v1/auth/refresh`
+        with `SameSite=Strict`. The refresh token is not returned in the response
+        body.
       operationId: authRegister
       tags:
         - Authentication
@@ -97,7 +107,14 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/AuthResponse'
-          headers: {}
+          headers:
+            Set-Cookie:
+              description: >-
+                `refreshToken=<token>; HttpOnly; Secure; SameSite=Strict;
+                Path=/api/v1/auth/refresh; Max-Age=604800`. The refresh token is
+                not returned in the response body.
+              schema:
+                type: string
         '400':
           description: Validation error
           content:
@@ -118,8 +135,10 @@ paths:
       summary: Authenticate user and get tokens
       deprecated: false
       description: >-
-        Authenticates a user and returns JWT tokens. Supports "Remember Me" for
-        extended refresh token lifetime.
+        Authenticates a user and returns JWT tokens. The refresh token is set as
+        an HttpOnly cookie (`refreshToken`) scoped to `/api/v1/auth/refresh` with
+        `SameSite=Strict`. Supports "Remember Me" for extended refresh token
+        lifetime (30-day cookie Max-Age).
       operationId: authLogin
       tags:
         - Authentication
@@ -169,13 +188,18 @@ paths:
                         $ref: '#/components/schemas/UserObject'
                       accessToken:
                         type: string
-                      refreshToken:
-                        type: string
                     required:
                       - user
                       - accessToken
-                      - refreshToken
-          headers: {}
+          headers:
+            Set-Cookie:
+              description: >-
+                `refreshToken=<token>; HttpOnly; Secure; SameSite=Strict;
+                Path=/api/v1/auth/refresh; Max-Age=604800` (or 2592000 with
+                `rememberMe`). The refresh token is not returned in the response
+                body.
+              schema:
+                type: string
         '400':
           $ref: '#/components/responses/ValidationError'
           description: Validation error
@@ -192,8 +216,11 @@ paths:
       summary: Refresh access token using a refresh token
       deprecated: false
       description: >-
-        Exchanges a valid refresh token for a new token pair. The old refresh
-        token is invalidated (single-use rotation).
+        Exchanges a valid refresh token for a new access token. The refresh
+        token is read from the `refreshToken` HttpOnly cookie (preferred) or
+        from the request body (fallback for backward compatibility). The old
+        refresh token is invalidated (single-use rotation) and a new one is set
+        as a cookie.
       operationId: authRefreshToken
       tags:
         - Authentication
@@ -203,15 +230,15 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - refreshToken
               properties:
                 refreshToken:
                   type: string
-                  description: The refresh token to rotate
+                  description: >-
+                    Optional body fallback. Only used if the `refreshToken`
+                    cookie is absent.
             example:
               refreshToken: '{{refreshToken}}'
-        required: true
+        required: false
       responses:
         '200':
           description: Token refreshed successfully
@@ -225,20 +252,23 @@ paths:
                     properties:
                       accessToken:
                         type: string
-                      refreshToken:
-                        type: string
                     required:
                       - accessToken
-                      - refreshToken
                 required:
                   - data
               example:
                 data:
                   accessToken: >-
                     eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYjkxZGFkMC05ZDA0LTQyMjMtOGZlZi0yMGY0Y2ZhMDI1NzkiLCJ0eXBlIjoiYWNjZXNzIiwic2lkIjoiMDM5NmEzZWMtNWE4Yy00NzEwLTg5MGUtNDMxYjdkZTI4ZDY4IiwiaWF0IjoxNzg0MjQwNDg4LCJleHAiOjE3ODQyNDEzODgsImp0aSI6IjA5YTJmZTU5LTYxMGItNGI5Mi04Yzk4LWQzYzZlZjEwOWNhMSJ9.Db1HtgOB9NmaGqaJjrPJ5f3PyQTPJxdiV0mEni_oi4E
-                  refreshToken: >-
-                    eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxYjkxZGFkMC05ZDA0LTQyMjMtOGZlZi0yMGY0Y2ZhMDI1NzkiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc4NDI0MDQ4NywiZXhwIjoxNzg0ODQ1Mjg3LCJqdGkiOiJlNTliZjc5Zi0xZThkLTRkOGItYWYxNi0yZmRhOTAzODdjOWMifQ.lTtDMWDH85Hxc0xBlCTMaj8BlmVZi3pmPnW0w6_alFU
-          headers: {}
+          headers:
+            Set-Cookie:
+              description: >-
+                `refreshToken=<new-token>; HttpOnly; Secure; SameSite=Strict;
+                Path=/api/v1/auth/refresh; Max-Age=604800`. The refresh token is
+                rotated and set as a cookie; it is not returned in the response
+                body.
+              schema:
+                type: string
         '401':
           description: Token expired or revoked
           content:
@@ -258,8 +288,8 @@ paths:
       deprecated: false
       description: >-
         Terminates the user's session and invalidates all refresh tokens.
-        Requires a valid access token. Idempotent — calling multiple times
-        returns success.
+        Clears the `refreshToken` HttpOnly cookie. Requires a valid access
+        token. Idempotent — calling multiple times returns success.
       operationId: authLogout
       tags:
         - Authentication
@@ -279,7 +309,14 @@ paths:
                         type: boolean
                         enum:
                           - true
-          headers: {}
+          headers:
+            Set-Cookie:
+              description: >-
+                `refreshToken=; HttpOnly; Secure; SameSite=Strict;
+                Path=/api/v1/auth/refresh; Max-Age=0`. The cookie is cleared on
+                logout.
+              schema:
+                type: string
         '401':
           $ref: '#/components/responses/Unauthorized'
           description: Authentication required
@@ -4136,13 +4173,10 @@ components:
       required:
         - user
         - accessToken
-        - refreshToken
       properties:
         user:
           $ref: '#/components/schemas/UserObject'
         accessToken:
-          type: string
-        refreshToken:
           type: string
     UserObject:
       type: object
