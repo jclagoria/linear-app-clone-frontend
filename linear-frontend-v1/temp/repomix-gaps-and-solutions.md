@@ -10,7 +10,7 @@
 ## Table of Contents
 
 1. [🔴 Blocker: Refresh Token in localStorage (Security)](#1--blocker-refresh-token-in-localstorage-security)
-2. [🟡 Suggestion: Document Custom Cache vs TanStack Query Decision](#2--suggestion-document-custom-cache-vs-tanstack-query-decision)
+2. [🟡 Decision: Migrate Custom CacheStore to TanStack Query](#2--decision-migrate-custom-cachestore-to-tanstack-query)
 3. [🟡 Suggestion: Centralize MSW Handlers](#3--suggestion-centralize-msw-handlers)
 4. [🟡 Suggestion: Add CI/CD Pipeline](#4--suggestion-add-cicd-pipeline)
 5. [🟡 Suggestion: Add Dockerfile for Containerization](#5--suggestion-add-dockerfile-for-containerization)
@@ -262,7 +262,7 @@ Bind the refresh token to the client's TLS fingerprint or a hash of the `User-Ag
 
 ---
 
-## 2. 🟡 Suggestion: Document Custom Cache vs TanStack Query Decision
+## 2. 🟡 Decision: Migrate Custom CacheStore to TanStack Query
 
 **Location:** `src/shared/stores/cacheStore.ts`  
 **Digest Reference:** TanStack Query listed as React state management option
@@ -275,29 +275,174 @@ The project implements a custom in-memory cache (`cacheStore.ts`) with:
 - Stale-while-revalidate pattern
 - Prefix-based cache invalidation
 
-This reinvents functionality that TanStack Query provides out of the box. ADR-0006 acknowledges this but doesn't fully document the build-vs-buy rationale.
+This reinvents functionality that TanStack Query provides out of the box. The Linear clone will require multiple data domains (issues, projects, cycles, teams, users, labels, comments, notifications) with complex cross-invalidation and request deduplication — the custom cache does not scale to this.
 
-### Solution
+### Specific Pain Points (Current Code)
 
-Add a new ADR or appendix to ADR-0006 documenting:
+| Issue | Location | Impact |
+|-------|----------|--------|
+| Stale-while-revalidate hand-rolled | `src/entities/issue/model/store.ts:114-128` | ~15 lines of redundant fetch logic per domain |
+| String-based invalidation | `src/entities/issue/model/store.ts:190,197,206` | Fragile, no type safety |
+| No request deduplication | `store.ts` (entirely missing) | Two components mounting simultaneously fire two network requests |
+| Pagination bypasses cache | `store.ts:137-176` | Cursor pagination has zero caching |
+| Server state + UI state mixed | `store.ts:27-45` | Single Zustand store holds both issues and filters/selection |
 
-#### Rationale for Custom Cache (Why Not TanStack Query)
+### Decision
 
-| Factor | Custom CacheStore | TanStack Query |
-|--------|------------------|-----------------|
-| Bundle cost | ~1 KB (Zustand store) | ~13 KB |
-| API surface | ~20 lines of store logic | Full query client ecosystem |
-| Cache invalidation | Manual (invalidateByPrefix) | Automatic (stale refetch, mutation invalidation) |
+**Migrate from the custom `cacheStore` to TanStack Query as the server-state layer.** The threshold is already met: the app needs ≥3 data domains, request deduplication, and declarative invalidation.
+
+| Factor | Custom CacheStore (before) | TanStack Query (after) |
+|--------|---------------------------|------------------------|
+| Bundle cost | ~1 KB | ~13 KB |
 | Request deduplication | Not implemented | Built-in |
-| Learning curve | Zustand + store | Query keys, mutations, cache config |
-| Flexibility | Full control | Opinionated patterns |
+| Cache invalidation | Manual string prefix | Declarative `queryKey` dependencies |
+| Pagination | Manual cursor tracking | `useInfiniteQuery` with cached pages |
+| Optimistic updates | Manual | Built-in mutation callbacks |
+| Devtools | None | React Query Devtools |
+| Retry logic | None | Configurable per query |
 
-**Decision:** Custom cache is appropriate for the current scale (1 data domain: issues). The custom cache is ~100 lines of well-tested code with zero external dependencies beyond Zustand. TanStack Query should be re-evaluated when:
-- ≥3 data domains need server-state management, or
-- Request deduplication becomes necessary, or
-- Cache invalidation logic becomes complex enough to need declarative dependencies
+### Migration Plan
 
-**Update the digest** to reference this decision in the next digest refresh.
+#### Phase 1: Install & Configure
+
+```bash
+pnpm add @tanstack/react-query
+```
+
+Create `src/app/QueryProvider.tsx`:
+
+```typescript
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30_000,
+      gcTime: 5 * 60_000,
+      retry: 2,
+      refetchOnWindowFocus: true,
+    },
+  },
+})
+
+export function QueryProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
+  )
+}
+```
+
+Wrap the app in `main.tsx`:
+
+```typescript
+root.render(
+  <QueryProvider>
+    <StoreProvider>
+      <RouterProvider router={router} />
+    </StoreProvider>
+  </QueryProvider>,
+)
+```
+
+#### Phase 2: Create API Hooks per Domain
+
+Create `src/entities/issue/api/queries.ts`:
+
+```typescript
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { Issue } from '../model/store'
+
+const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
+
+async function fetchIssues(params: URLSearchParams): Promise<{ data: Issue[]; meta: { cursor: string | null; hasMore: boolean } }> {
+  const res = await fetch(`${API_BASE}/issues?${params.toString()}`, {
+    headers: { 'Content-Type': 'application/json' },
+  })
+  if (!res.ok) throw new Error('Failed to load issues')
+  return res.json()
+}
+
+export const issueKeys = {
+  all: ['issues'] as const,
+  list: (filters: Record<string, string | null>) => ['issues', 'list', filters] as const,
+  detail: (id: string) => ['issues', id] as const,
+}
+
+export function useIssues(filters: Record<string, string | null>) {
+  return useInfiniteQuery({
+    queryKey: issueKeys.list(filters),
+    queryFn: ({ pageParam }) => {
+      const params = new URLSearchParams()
+      if (pageParam) params.set('cursor', pageParam)
+      Object.entries(filters).forEach(([k, v]) => { if (v) params.set(k, v) })
+      return fetchIssues(params)
+    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.meta.cursor ?? undefined,
+  })
+}
+
+export function useCreateIssue() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async (issue: Omit<Issue, 'id' | 'createdAt' | 'updatedAt'>) => {
+      const res = await fetch(`${API_BASE}/issues`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(issue),
+      })
+      if (!res.ok) throw new Error('Failed to create issue')
+      return res.json()
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['issues'] }),
+  })
+}
+```
+
+#### Phase 3: Purge CacheStore from Zustand
+
+- Remove `useCacheStore` import and usage from `src/entities/issue/model/store.ts`
+- Remove `export { useCacheStore }` from `src/shared/stores/index.ts`
+- Delete `src/shared/stores/cacheStore.ts`
+- Delete `src/__tests__/cacheStore.test.ts`
+- Remove cache clearing from `src/shared/stores/resetAllStores.ts`
+- Simplify `IssuesPage.tsx` — replace manual cache reads with `useIssues()` hook
+
+#### Phase 4: Simplify Issues Store
+
+The Zustand `useIssuesStore` loses server-state fields. It keeps only UI state:
+
+```typescript
+interface IssuesUIState {
+  selectedIssueId: string | null
+  filters: IssueFilters
+
+  selectIssue: (id: string) => void
+  deselectIssue: () => void
+  setFilters: (filters: Partial<IssueFilters>) => void
+  clearFilters: () => void
+}
+```
+
+Server state (`issues[]`, `cursor`, `hasMore`, `isLoading`, `error`, `loadIssues`, `loadNextPage`) moves entirely to TanStack Query hooks.
+
+#### Phase 5: Adapt Tests
+
+- `src/__tests__/issuesStore.test.ts` — rewrite to test UI state only, remove server-state assertions
+- `src/__tests__/integration.test.ts` — replace direct store manipulation with `QueryClient` prefilling
+- `src/__tests__/cacheStore.test.ts` — delete (or keep as memento if desired)
+- Add MSW handlers for new query patterns (covered in §3)
+
+### Downstream Doc Updates Required
+
+The following documents reference the current cache approach and must be updated:
+
+| Document | Changes Needed |
+|----------|----------------|
+| `docs/stack-frontend.md` | Add `@tanstack/react-query` to dependencies table; update state management line from "Zustand" to "Zustand + TanStack Query" |
+| `docs/architecture-frontend.md` | Update State Management section: change "React Query (server state, future)" to "TanStack Query (server state)"; add QueryClientProvider to boot sequence; update Current Decisions table with TanStack Query row |
 
 ---
 
@@ -764,7 +909,7 @@ CMD ["pnpm", "dev", "--host", "0.0.0.0"]
 | **P1** | 🟡 Add CI pipeline (GitHub Actions) | Low | None | Sprint next |
 | **P1** | 🟡 Centralize MSW handlers | Low | None | Sprint next |
 | **P2** | 🟡 Co-locate tests with source | Medium | None | Sprint +2 |
-| **P2** | 🟡 Document custom cache vs TanStack Query | Low | None | Sprint +2 |
+| **P1** | 🟡 Migrate custom cacheStore to TanStack Query | Medium | None | Sprint next |
 | **P3** | 🟡 Add Dockerfile | Low | None | Sprint +3 |
 | **P3** | 💭 Add Docker Compose | Low | Dockerfile | Sprint +3 |
 
