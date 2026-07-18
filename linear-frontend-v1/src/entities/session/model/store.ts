@@ -4,7 +4,6 @@ import { resetDomainStores } from '@/shared/stores/resetAllStores'
 import type { User, LoginResponse, RefreshResponse } from './types'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
-const REFRESH_TOKEN_KEY = 'linear_refresh_token'
 
 function getTokenExpiry(token: string): number {
   try {
@@ -12,26 +11,6 @@ function getTokenExpiry(token: string): number {
     return (payload.exp as number) * 1000
   } catch {
     return 0
-  }
-}
-
-function getStoredRefreshToken(): string | null {
-  try {
-    return localStorage.getItem(REFRESH_TOKEN_KEY)
-  } catch {
-    return null
-  }
-}
-
-function setStoredRefreshToken(token: string | null): void {
-  try {
-    if (token) {
-      localStorage.setItem(REFRESH_TOKEN_KEY, token)
-    } else {
-      localStorage.removeItem(REFRESH_TOKEN_KEY)
-    }
-  } catch {
-    // localStorage unavailable (private browsing, etc.)
   }
 }
 
@@ -69,6 +48,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           const response = await fetch(`${API_BASE}/auth/login`, {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password }),
           })
@@ -85,9 +65,7 @@ export const useAuthStore = create<AuthState>()(
           }
 
           const json = (await response.json()) as LoginResponse
-          const { user, accessToken, refreshToken } = json.data
-
-          setStoredRefreshToken(refreshToken)
+          const { user, accessToken } = json.data
 
           set({
             user,
@@ -118,6 +96,7 @@ export const useAuthStore = create<AuthState>()(
         try {
           await fetch(`${API_BASE}/auth/logout`, {
             method: 'POST',
+            credentials: 'include',
             headers: accessToken
               ? { Authorization: `Bearer ${accessToken}` }
               : {},
@@ -126,7 +105,6 @@ export const useAuthStore = create<AuthState>()(
           // Logout is best-effort server-side
         }
 
-        setStoredRefreshToken(null)
         set({
           user: null,
           accessToken: null,
@@ -138,31 +116,23 @@ export const useAuthStore = create<AuthState>()(
       },
 
       hydrate: async () => {
-        const refreshToken = getStoredRefreshToken()
-        if (!refreshToken) {
-          set({ isLoading: false, isAuthenticated: false })
-          return
-        }
-
         set({ isLoading: true })
 
         try {
           const response = await fetch(`${API_BASE}/auth/refresh`, {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken }),
+            body: JSON.stringify({}),
           })
 
           if (!response.ok) {
-            setStoredRefreshToken(null)
             set({ isLoading: false, isAuthenticated: false })
             return
           }
 
           const json = (await response.json()) as RefreshResponse
-          const { accessToken, refreshToken: newRefreshToken } = json.data
-
-          setStoredRefreshToken(newRefreshToken)
+          const { accessToken } = json.data
 
           set({
             accessToken,
@@ -170,7 +140,6 @@ export const useAuthStore = create<AuthState>()(
             isLoading: false,
           })
         } catch {
-          setStoredRefreshToken(null)
           set({ isLoading: false, isAuthenticated: false })
         }
       },
@@ -185,25 +154,15 @@ export const useAuthStore = create<AuthState>()(
           }
         }
 
-        const refreshToken = getStoredRefreshToken()
-        if (!refreshToken) {
-          set({
-            user: null,
-            accessToken: null,
-            isAuthenticated: false,
-          })
-          return null
-        }
-
         try {
           const response = await fetch(`${API_BASE}/auth/refresh`, {
             method: 'POST',
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ refreshToken }),
+            body: JSON.stringify({}),
           })
 
           if (!response.ok) {
-            setStoredRefreshToken(null)
             set({
               user: null,
               accessToken: null,
@@ -213,14 +172,11 @@ export const useAuthStore = create<AuthState>()(
           }
 
           const json = (await response.json()) as RefreshResponse
-          const { accessToken: newToken, refreshToken: newRefreshToken } =
-            json.data
+          const { accessToken: newToken } = json.data
 
-          setStoredRefreshToken(newRefreshToken)
           set({ accessToken: newToken })
           return newToken
         } catch {
-          setStoredRefreshToken(null)
           set({
             user: null,
             accessToken: null,

@@ -4,7 +4,6 @@ import { setupServer } from 'msw/node'
 import { useAuthStore } from '@/entities/session/model/store'
 
 const API_BASE = '/api/v1'
-const REFRESH_TOKEN_KEY = 'linear_refresh_token'
 
 const handlers = [
   http.post(`${API_BASE}/auth/login`, async ({ request }) => {
@@ -14,7 +13,6 @@ const handlers = [
       return HttpResponse.json({
         data: {
           accessToken: 'valid-access-token',
-          refreshToken: 'valid-refresh-token',
           user: {
             id: '1',
             email: 'valid@example.com',
@@ -38,15 +36,10 @@ const handlers = [
     return HttpResponse.json({ data: { success: true } })
   }),
 
-  http.post(`${API_BASE}/auth/refresh`, async ({ request }) => {
-    const body = (await request.json()) as { refreshToken: string }
-    if (body.refreshToken === 'expired-refresh-token') {
-      return HttpResponse.json({ message: 'Token expired' }, { status: 401 })
-    }
+  http.post(`${API_BASE}/auth/refresh`, async () => {
     return HttpResponse.json({
       data: {
         accessToken: 'refreshed-access-token',
-        refreshToken: 'new-refresh-token',
       },
     })
   }),
@@ -66,7 +59,6 @@ describe('Login Flow Integration', () => {
       isLoading: false,
       error: null,
     })
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
   })
 
   it('completes login flow with valid credentials', async () => {
@@ -78,7 +70,6 @@ describe('Login Flow Integration', () => {
     expect(state.error).toBeNull()
     expect(state.accessToken).toBe('valid-access-token')
     expect(state.user?.email).toBe('valid@example.com')
-    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe('valid-refresh-token')
   })
 
   it('fails login with wrong password', async () => {
@@ -88,7 +79,6 @@ describe('Login Flow Integration', () => {
     expect(state.isAuthenticated).toBe(false)
     expect(state.isLoading).toBe(false)
     expect(state.error).toBe('Invalid email or password')
-    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
   })
 
   it('handles network failure gracefully', async () => {
@@ -106,7 +96,6 @@ describe('Login Flow Integration', () => {
   })
 
   it('supports retry after login error', async () => {
-    // First attempt — force network error
     server.use(
       http.post(`${API_BASE}/auth/login`, () => {
         return HttpResponse.error()
@@ -116,7 +105,6 @@ describe('Login Flow Integration', () => {
     await useAuthStore.getState().login('valid@example.com', 'password123')
     expect(useAuthStore.getState().error).toBe('Connection error. Please try again.')
 
-    // Reset handlers for retry
     server.resetHandlers()
 
     await useAuthStore.getState().login('valid@example.com', 'password123')
@@ -129,7 +117,6 @@ describe('Login Flow Integration', () => {
 
 describe('Token Refresh Integration', () => {
   beforeEach(() => {
-    localStorage.setItem(REFRESH_TOKEN_KEY, 'stored-refresh-token')
     useAuthStore.setState({
       user: { id: '1', email: 'test@example.com', name: 'Test User' },
       accessToken: 'old-token',
@@ -141,39 +128,39 @@ describe('Token Refresh Integration', () => {
 
   afterEach(() => {
     server.resetHandlers()
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
   })
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }))
   afterAll(() => server.close())
 
-  it('successfully refreshes access token and rotates refresh token', async () => {
+  it('successfully refreshes access token', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
 
     const result = await useAuthStore.getState().refreshAccessToken()
 
     expect(result).toBe('refreshed-access-token')
     expect(useAuthStore.getState().accessToken).toBe('refreshed-access-token')
-    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe('new-refresh-token')
 
     fetchSpy.mockRestore()
   })
 
   it('clears auth state when refresh fails', async () => {
-    localStorage.setItem(REFRESH_TOKEN_KEY, 'expired-refresh-token')
+    server.use(
+      http.post(`${API_BASE}/auth/refresh`, () => {
+        return HttpResponse.json({ message: 'Token expired' }, { status: 401 })
+      }),
+    )
 
     const result = await useAuthStore.getState().refreshAccessToken()
 
     expect(result).toBeNull()
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
     expect(useAuthStore.getState().user).toBeNull()
-    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
   })
 })
 
 describe('Logout Integration', () => {
   beforeEach(() => {
-    localStorage.setItem(REFRESH_TOKEN_KEY, 'stored-refresh-token')
     useAuthStore.setState({
       user: { id: '1', email: 'test@example.com', name: 'Test' },
       accessToken: 'my-token',
@@ -183,7 +170,6 @@ describe('Logout Integration', () => {
 
   afterEach(() => {
     server.resetHandlers()
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
   })
 
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }))
@@ -194,6 +180,5 @@ describe('Logout Integration', () => {
 
     expect(useAuthStore.getState().isAuthenticated).toBe(false)
     expect(useAuthStore.getState().user).toBeNull()
-    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
   })
 })

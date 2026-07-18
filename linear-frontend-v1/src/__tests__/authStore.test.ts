@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useAuthStore } from '@/entities/session/model/store'
 
-const REFRESH_TOKEN_KEY = 'linear_refresh_token'
-
 describe('AuthStore', () => {
   beforeEach(() => {
     useAuthStore.setState({
@@ -12,7 +10,6 @@ describe('AuthStore', () => {
       isLoading: false,
       error: null,
     })
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
   })
 
   describe('clearError', () => {
@@ -40,7 +37,6 @@ describe('AuthStore', () => {
         json: async () => ({
           data: {
             accessToken: 'mock-access-token',
-            refreshToken: 'mock-refresh-token',
             user: { id: '1', email: 'test@example.com', name: 'Test User' },
           },
         }),
@@ -55,8 +51,6 @@ describe('AuthStore', () => {
       expect(state.user?.email).toBe('test@example.com')
       expect(state.accessToken).toBe('mock-access-token')
       expect(state.error).toBeNull()
-      // Refresh token stored in localStorage
-      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe('mock-refresh-token')
 
       vi.restoreAllMocks()
     })
@@ -97,8 +91,7 @@ describe('AuthStore', () => {
   })
 
   describe('logout', () => {
-    it('clears auth state and removes stored refresh token', async () => {
-      localStorage.setItem(REFRESH_TOKEN_KEY, 'stored-refresh-token')
+    it('clears auth state', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue({
         ok: true,
         json: async () => ({ data: { success: true } }),
@@ -116,7 +109,6 @@ describe('AuthStore', () => {
       expect(state.isAuthenticated).toBe(false)
       expect(state.user).toBeNull()
       expect(state.accessToken).toBeNull()
-      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
 
       vi.restoreAllMocks()
     })
@@ -137,7 +129,6 @@ describe('AuthStore', () => {
 
       await useAuthStore.getState().logout()
 
-      // Verify Authorization header was sent
       const callArgs = fetchSpy.mock.calls[0]
       if (callArgs?.[1]) {
         const headers = callArgs[1].headers as Record<string, string>
@@ -149,25 +140,12 @@ describe('AuthStore', () => {
   })
 
   describe('hydrate', () => {
-    it('does nothing if no refresh token is stored', async () => {
-      const fetchSpy = vi.spyOn(globalThis, 'fetch')
-
-      await useAuthStore.getState().hydrate()
-
-      expect(fetchSpy).not.toHaveBeenCalled()
-      expect(useAuthStore.getState().isAuthenticated).toBe(false)
-
-      fetchSpy.mockRestore()
-    })
-
-    it('sets isAuthenticated on successful hydration', async () => {
-      localStorage.setItem(REFRESH_TOKEN_KEY, 'stored-refresh-token')
+    it('sends request with credentials and sets authenticated on success', async () => {
       const mockResponse = {
         ok: true,
         json: async () => ({
           data: {
             accessToken: 'new-access-token',
-            refreshToken: 'new-refresh-token',
           },
         }),
       }
@@ -179,14 +157,11 @@ describe('AuthStore', () => {
       expect(state.isAuthenticated).toBe(true)
       expect(state.isLoading).toBe(false)
       expect(state.accessToken).toBe('new-access-token')
-      // Refresh token was rotated
-      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe('new-refresh-token')
 
       vi.restoreAllMocks()
     })
 
-    it('handles hydration with expired refresh token', async () => {
-      localStorage.setItem(REFRESH_TOKEN_KEY, 'expired-refresh-token')
+    it('handles hydration with expired cookie', async () => {
       const mockResponse = {
         ok: false,
         status: 401,
@@ -199,8 +174,6 @@ describe('AuthStore', () => {
       const state = useAuthStore.getState()
       expect(state.isAuthenticated).toBe(false)
       expect(state.isLoading).toBe(false)
-      // Stale refresh token removed
-      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
 
       vi.restoreAllMocks()
     })
@@ -216,7 +189,14 @@ describe('AuthStore', () => {
       expect(result).toBe(mockToken)
     })
 
-    it('returns null if no stored refresh token', async () => {
+    it('returns null when refresh fails', async () => {
+      const mockResponse = {
+        ok: false,
+        status: 401,
+        json: async () => ({}),
+      }
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(mockResponse as Response)
+
       useAuthStore.setState({
         accessToken: 'expired-token',
         isAuthenticated: true,
@@ -226,10 +206,11 @@ describe('AuthStore', () => {
 
       expect(result).toBeNull()
       expect(useAuthStore.getState().isAuthenticated).toBe(false)
+
+      vi.restoreAllMocks()
     })
 
-    it('refreshes token and rotates stored refresh token', async () => {
-      localStorage.setItem(REFRESH_TOKEN_KEY, 'stored-refresh-token')
+    it('refreshes token successfully', async () => {
       useAuthStore.setState({
         accessToken: 'about-to-expire',
         isAuthenticated: true,
@@ -240,7 +221,6 @@ describe('AuthStore', () => {
         json: async () => ({
           data: {
             accessToken: 'new-access-token',
-            refreshToken: 'new-refresh-token',
           },
         }),
       }
@@ -250,13 +230,11 @@ describe('AuthStore', () => {
 
       expect(result).toBe('new-access-token')
       expect(useAuthStore.getState().accessToken).toBe('new-access-token')
-      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe('new-refresh-token')
 
       vi.restoreAllMocks()
     })
 
     it('clears auth state when refresh fails', async () => {
-      localStorage.setItem(REFRESH_TOKEN_KEY, 'stored-refresh-token')
       useAuthStore.setState({
         accessToken: 'expired-token',
         isAuthenticated: true,
@@ -275,7 +253,6 @@ describe('AuthStore', () => {
       expect(result).toBeNull()
       expect(useAuthStore.getState().isAuthenticated).toBe(false)
       expect(useAuthStore.getState().user).toBeNull()
-      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
 
       vi.restoreAllMocks()
     })

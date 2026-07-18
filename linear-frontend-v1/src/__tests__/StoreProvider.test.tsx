@@ -3,8 +3,6 @@ import { render, screen } from '@testing-library/react'
 import { StoreProvider } from '@/app/StoreProvider'
 import { useAuthStore } from '@/entities/session/model/store'
 
-const REFRESH_TOKEN_KEY = 'linear_refresh_token'
-
 describe('StoreProvider', () => {
   beforeEach(() => {
     useAuthStore.setState({
@@ -14,7 +12,6 @@ describe('StoreProvider', () => {
       isLoading: false,
       error: null,
     })
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
   })
 
   it('renders children after hydration', async () => {
