@@ -1,0 +1,181 @@
+# Wireframe: App Shell
+
+## Purpose & Flow Context
+
+Shared application frame present on all authenticated screens. Provides primary navigation (sidebar), user menu (header), and notification indicator. Entry: after login. Exit: logout redirects to login. All screens inherit this shell.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All screens inherit these.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 4px rhythm.
+
+**App-shell**: Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Sidebar | Logo, nav items, project list, cycles, user info | Collapsible to icon-only (56px / 240px) |
+| Header | Breadcrumb, search, notification badge, user avatar dropdown | Sticky top |
+| Main content | Route-driven content area | Fills remaining space, scrollable |
+
+**Content hierarchy**:
+1. Sidebar navigation — primary wayfinding
+2. Header — secondary actions, notifications
+3. Main content — active view
+
+```
++------------------------------------------------------------------+
+|  +--------+  +-------------------------------------------------+  |
+|  | SIDEBAR |  | HEADER                                         |  |
+|  |         |  | [Breadcrumb]        [Search] [🔔3] [👤▼]      |  |
+|  | [Logo]  |  +-------------------------------------------------+  |
+|  | ---     |  |                                                    |
+|  | [Issues]|  |  MAIN CONTENT                                      |
+|  | [Board] |  |  (route-driven, scrollable)                        |
+|  | ---     |  |                                                    |
+|  | Projects|  |                                                    |
+|  | > MyApp |  |                                                    |
+|  | ---     |  |                                                    |
+|  | [👤JL]  |  |                                                    |
+|  +--------+  +-------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Sidebar toggle | Sidebar (collapsible) | Click collapses/expands sidebar | Persisted to localStorage |
+| Nav items | Sidebar nav-item | Click routes to view; active state highlighted | Long labels truncate with ellipsis |
+| Notification badge | NotificationBadge | Shows unread count from WebSocket store | 0 = hidden; 99+ overflow |
+| User avatar | DropdownMenu (trigger = avatar) | Click opens user menu (profile, settings, logout) | — |
+| Search toggle | Button (icon) | Click opens search overlay | — |
+
+## Data Display
+
+N/A — app shell is structural, not data-display.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Logo | Application identity | Brand name or logomark |
+| "Issues" nav | Primary entity navigation | Consistent across all views |
+| "Board" nav | Kanban board view | — |
+| Notification count | Unread activity indicator | Shows number, not dot |
+
+## States
+
+### Populated (Default)
+
+The layout shown above — sidebar expanded, header visible, content area populated by route.
+
+### Empty
+
+N/A — shell is always present.
+
+### Loading
+
+Skeleton sidebar + header render immediately. Content area shows route-level loading skeleton.
+
+```
++------------------------------------------------------------------+
+|  +========+  +=================================================+  |
+|  | SKEL   |  | HEADER (static)                                 |  |
+|  | [====] |  +=================================================+  |
+|  | [====] |  |  CONTENT SKELETON (route-dependent)               |
+|  | [====] |  |  [====] [====] [====]                             |
+|  |        |  |  [====] [====] [====]                             |
+|  +========+  +=================================================+  |
++------------------------------------------------------------------+
+```
+
+### Error
+
+N/A — shell is structural; errors appear in content area.
+
+### Success / Confirmation
+
+N/A — no state-changing action on shell itself.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Sidebar full (240px), header full |
+| Tablet (768-1024px) | Sidebar collapses to icon-only by default; toggleable |
+| Mobile (<768px) | Sidebar → off-canvas overlay; header compacts (search icon-only) |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header` (Header), `nav` (Sidebar), `main` (Main content) |
+| Heading order | Sidebar sections h2, content h1 (route-driven) |
+| Reading / Focus order | Sidebar → Header → Main content |
+| Accessible names | Sidebar toggle: `aria-label="Toggle sidebar"`; User menu: `aria-label="User menu"`; Notification badge: `aria-label="3 unread notifications"` |
+| Keyboard operability | Tab through sidebar items, Enter to navigate; Escape closes off-canvas sidebar on mobile |
+| Target size | All nav items ≥24×24 CSS px; sidebar toggle ≥24×24 CSS px |
+| Focus not obscured | Sticky header does not overlap focused sidebar items |
+| Non-color intent | Active nav item uses icon + bold text, not color alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.
+
+---
+
+## Assumptions & Open Questions
+
+### Base UI Primitives (shadcn/ui)
+
+These components are referenced in wireframes as design-system components but are not defined in the current DS catalog (`design-system.md`). They are standard shadcn/ui primitives — part of the project's declared stack (`docs/stack-frontend.md`: shadcn/ui + `@radix-ui/*`). Their anatomy, states, and a11y contract follow shadcn/ui conventions and will be documented in a future DS pass.
+
+| Component | Referenced In | shadcn/ui Source |
+|-----------|---------------|------------------|
+| Avatar | App Shell (user avatar), Issue Detail, Issue List | `@radix-ui/react-avatar` |
+| Badge | Issue List (status), Issue Detail (status, labels) | `@radix-ui/react-badge` or custom |
+| Button | All screens (icon, link, primary, secondary variants) | `@radix-ui/react-slot` |
+| Input | Issue List (search), Login (email/password), Issue Form (title) | `@radix-ui/react-slot` |
+| Textarea | Issue Form (description), Issue Detail (comment input) | Standard `<textarea>` |
+| List | Issue Detail (comments, metadata) | Standard `<ul>`/`<li>` |
+| Link | Issue Detail (back), Login (sign up) | `@radix-ui/react-slot` |
+| Icon | Issue List (priority, attachment, comment icons), EmptyState, ErrorBanner | `lucide-react` |
+
+**Status**: Deferred — these are included in the project's existing shadcn/ui + lucide-react dependencies. A future DS pass will add full entries for project-specific variants (e.g., `StatusBadge` with colour mapping to issue workflow states).
+
+### Locale
+
+**Assumption**: Single-locale (English). No i18n or RTL accommodations in the current wireframe pass. If multi-locale is required, every text slot flagged with microcopy intent will need i18n key wiring and text-expansion allowance.
+
+---
+
+## Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| 0.1.0 | 2026-07-17 | Initial wireframe set: App Shell, Login, Issue List, Issue Detail, Issue Form |
+| 0.1.1 | 2026-07-17 | Added assumptions section documenting deferred shadcn/ui primitives and single-locale scope (review finding fix) |*

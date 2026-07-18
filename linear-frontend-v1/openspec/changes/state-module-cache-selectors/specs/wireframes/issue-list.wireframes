@@ -1,0 +1,168 @@
+# Wireframe: Issue List
+
+## Purpose & Flow Context
+
+Primary screen for browsing and filtering issues. Entry: sidebar "Issues" nav or after login redirect. Exit: click issue row → Issue Detail; click "New Issue" → Issue Form modal.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 4px.
+
+**App-shell**: Standard shell (sidebar, header, main).
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Filter bar | Status, assignee, project, cycle dropdowns + clear filters | Below header, above list |
+| Issue table | Table with columns: status, title, assignee, priority, due date | Primary content area |
+| Empty state | Icon + message + CTA | When no issues match filters |
+
+**Content hierarchy**:
+1. Filter bar — first thing user sees, sets context
+2. Issue table rows — scan for relevant items
+3. Pagination / load more — at bottom
+
+```
++------------------------------------------------------------------+
+|  HEADER                                                   [🔔][👤] |
++------------------------------------------------------------------+
+|  [Status▼] [Assignee▼] [Project▼] [Cycle▼]   [Clear filters]    |
+|  [Search issues...]                              [+ New Issue]    |
++------------------------------------------------------------------+
+|  ○ Issue-123  [In Progress]  Set up CI pipeline        👤JL  📎2 |
+|  ○ Issue-122  [Todo]        Design system colors       👤JL  💬5 |
+|  ○ Issue-121  [Done]        Auth module integration    👤MK    - |
+|  ○ Issue-120  [Backlog]     API rate limiting          👤AN  📎1 |
+|  ○ Issue-119  [In Progress] Cache invalidation rules   👤JL  💬3 |
+|                                                                    |
+|                                    [Load more...]  Showing 5 of 23 |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Filter dropdown | DropdownMenu | Click opens filter options; selection updates store filter | Multi-select for labels; "Any" option clears |
+| Search input | Input | Type to filter by title (debounced 300ms) | Empty → show all |
+| New Issue | Button | Opens Issue Form modal | — |
+| Issue row | Row (custom) | Click selects issue (store: selectedIssueId) + navigates to detail | Disable row click during loading |
+| Status badge | Badge | Color-coded by status type | Maps to status group (backlog/todo/in-progress/done) |
+| Priority icon | Icon (flag) | Colored by priority level | Urgent = red, High = orange, etc. |
+| Load more | Button | Appends next page (pagination cursor) | Hidden when `hasMore=false` |
+
+## Data Display
+
+Table layout with columns:
+
+| Column | Type | Sortable | Filterable | Notes |
+|--------|------|----------|------------|-------|
+| Status | Badge | Yes | Yes | Grouped by status type |
+| Title | Text | No | Yes (search) | Primary link, wraps |
+| Assignee | Avatar | Yes | Yes | Group by user |
+| Priority | Icon | Yes | Yes | 4 levels + none |
+| Due date | Text | Yes | No | Overdue = ⚠ warning |
+| Attachments | Icon count | No | No | 📎N |
+| Comments | Icon count | No | No | 💬N |
+
+Row density: compact (36px row height). Sort by priority then updated date by default.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Issues" heading | Page title | h1, route-driven |
+| Filter placeholder | "Filter by status, assignee..." | Descriptive, not technical |
+| "Clear filters" | Reset all filter state | Only visible when filters active |
+| "+ New Issue" | Primary action CTA | Consistent across views |
+| Load more | "Load more..." | Paging affordance |
+| Empty filter result | "No issues match your filters" | Distinguish from first-run empty |
+| First-run empty | "No issues yet — create the first one" | Guide-to-action |
+
+## States
+
+### Populated (Default)
+
+Table with rows, as shown in the ASCII sketch. Store: `issues` populated, `isLoading=false`.
+
+### Empty
+
+No issues in project or all issues closed.
+
+```
++------------------------------------------------------------------+
+|  [Filter bar]                                       [+ New Issue] |
+|                                                                    |
+|            [📋 Icon]                                              |
+|            No issues yet                                          |
+|            Create your first issue to get started                 |
+|                      [+ New Issue]                                |
++------------------------------------------------------------------+
+```
+
+### Loading
+
+Skeleton rows mirroring table layout. Store: `isLoading=true`.
+
+```
++------------------------------------------------------------------+
+|  [Filter bar]                                       [+ New Issue] |
++------------------------------------------------------------------+
+|  [skeleton row =====]  [====]  [==================]  [====]      |
+|  [skeleton row =====]  [====]  [==================]  [====]      |
+|  [skeleton row =====]  [====]  [==================]  [====]      |
+|  [skeleton row =====]  [====]  [==================]  [====]      |
++------------------------------------------------------------------+
+```
+
+### Error
+
+API fetch failed.
+
+```
++------------------------------------------------------------------+
+|  [Filter bar]                                       [+ New Issue] |
++------------------------------------------------------------------+
+|  [!] Could not load issues. Check your connection.  [Retry]      |
++------------------------------------------------------------------+
+```
+
+### Success / Confirmation
+
+After creating an issue: list refetches, new issue appears at top, brief toast "Issue created".
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full table with all columns |
+| Tablet (768-1024px) | Priority and due date columns hidden; avatar instead of full name |
+| Mobile (<768px) | Filters collapse to "Filter" button + bottom sheet; issue rows show title + status only |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` with `aria-label="Issues"`, `search` for filter area |
+| Heading order | h1 "Issues" → h2 filter section → h3 (if group headers) |
+| Reading / Focus order | Filter → search → "New Issue" → table rows → load more |
+| Accessible names | "New Issue" button, "Load more" button, each filter dropdown |
+| Keyboard operability | Tab through filters; Arrow keys in dropdown; Enter on row to open detail |
+| Target size | Issue rows ≥24×24 CSS px clickable area; filter dropdowns ≥24×24 |
+| Focus not obscured | Sticky header + filter bar do not cover table rows on focus |
+| Non-color intent | Status uses badge shape + text, not color alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

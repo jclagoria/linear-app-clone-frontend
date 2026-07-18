@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Linear App Clone — Mockup Index</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); padding: var(--space-4); }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 0.5rem; }
+    p { color: var(--color-text-secondary); margin-bottom: 2rem; }
+    .screen-list { display: grid; gap: 1rem; }
+    .screen-card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.25rem; text-decoration: none; color: inherit; display: block; transition: box-shadow 0.15s; }
+    .screen-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .screen-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 0.25rem; }
+    .screen-card .desc { font-size: 14px; color: var(--color-text-secondary); }
+    .section-title { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Linear App Clone — Mockups</h1>
+    <p>Interactive HTML mockups for the State Module: Cache & Selectors change. Open each screen in your browser. No build step required.</p>
+
+    <div class="section-title">Authentication</div>
+    <div class="screen-list">
+      <a class="screen-card" href="login.html">
+        <h2>Login</h2>
+        <div class="desc">Email/password authentication form with loading, error, and success states</div>
+      </a>
+    </div>
+
+    <div class="section-title">Issues</div>
+    <div class="screen-list">
+      <a class="screen-card" href="issue-list.html">
+        <h2>Issue List</h2>
+        <div class="desc">Paginated issue table with filters, search, skeleton loading, empty, and error states</div>
+      </a>
+      <a class="screen-card" href="issue-detail.html">
+        <h2>Issue Detail</h2>
+        <div class="desc">Single issue view with description, metadata sidebar, comments, and loading/error states</div>
+      </a>
+      <a class="screen-card" href="issue-form.html">
+        <h2>Issue Form (Modal)</h2>
+        <div class="desc">Create/edit issue modal with title, description, metadata dropdowns, and validation</div>
+      </a>
+    </div>
+
+    <div class="section-title">App Shell</div>
+    <div class="screen-list">
+      <a class="screen-card" href="app-shell.html">
+        <h2>App Shell</h2>
+        <div class="desc">Shared application frame with collapsible sidebar, header, and content area</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,134 @@
+# Wireframe: Issue Form (Modal)
+
+## Purpose & Flow Context
+
+Modal overlay for creating or editing an issue. Entry: click "+ New Issue" (Issue List) or "Edit" (Issue Detail). Exit: submit (→ list/detail with updated data) or cancel (→ previous screen).
+
+---
+
+## Layout Regions
+
+**Grid**: Single-column modal overlay. 4px cadence.
+
+**App-shell**: Modal overlay on top of the app shell (no shell chrome inside modal).
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Modal header | Title + close button | Sticky top of modal |
+| Form body | Title input, description textarea, metadata fields | Scrollable |
+| Actions | Cancel + Submit buttons | Sticky bottom |
+
+**Content hierarchy**:
+1. Title input — primary field, auto-focused
+2. Description — main content body
+3. Metadata — dropdowns for status/assignee/priority/labels/project
+4. Actions — submit or abandon
+
+```
++------------------------------------------------------------------+
+|  +------------------------------------------------------------+  |
+|  |  [X]  {New Issue / Edit Issue}                            |  |
+|  |                                                            |  |
+|  |  _________________________________________________        |  |
+|  |  | Issue title...                                    |     |  |
+|  |  _________________________________________________        |  |
+|  |                                                            |  |
+|  |  _________________________________________________        |  |
+|  |  | Description (optional)...                       |     |  |
+|  |  |                                                |     |  |
+|  |  |                                                |     |  |
+|  |  _________________________________________________        |  |
+|  |                                                            |  |
+|  |  [Status▼] [Priority▼] [Assignee▼] [Labels▼]              |  |
+|  |  [Project▼] [Cycle▼]                                      |  |
+|  |                                                            |  |
+|  |               [Cancel]  [Create Issue]                     |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Close | Button (icon) | [X] top-right, also Escape key | Discards unsaved input (no confirmation) |
+| Title input | Input | Single-line, focused on mount, required | Max length validation |
+| Description | Textarea | Multiline, optional | Resize vertical only |
+| Status dropdown | DropdownMenu | Select from workflow statuses | Default to "Todo" |
+| Priority dropdown | DropdownMenu | None / Urgent / High / Medium / Low | Default to "Medium" |
+| Assignee dropdown | DropdownMenu | User list with search | "Unassigned" option |
+| Labels dropdown | DropdownMenu (multi-select) | Checkbox list of labels | Create new label option |
+| Project dropdown | DropdownMenu | Project list | None option |
+| Cycle dropdown | DropdownMenu | Cycle list for selected project | Disabled if no project selected |
+| Submit | Button (primary) | Validates and submits | Disabled if title empty; loading state on submit |
+| Cancel | Button (secondary) | Closes modal | Discards input |
+
+## Data Display
+
+Form fields — no data table.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Modal title | "New Issue" or "Edit Issue" | Context-dependent |
+| Title placeholder | "Issue title..." | Descriptive, not "Enter issue title" |
+| Description placeholder | "Add description... (optional)" | Clear that it's optional |
+| "Create Issue" | Primary submit action | Changes to "Save Changes" in edit mode |
+| "Cancel" | Abandon without saving | — |
+
+## States
+
+### Populated (Default)
+
+Form fields empty (create) or pre-filled (edit). See sketch above.
+
+### Loading
+
+Submit button shows spinner, form fields disabled. Store: `isLoading` on mutation.
+
+```
+|               [Cancel]  [⟳ Saving...]                         |
+```
+
+### Error
+
+Server validation or network error.
+
+| Field | Rule | Error Message |
+|-------|------|---------------|
+| Title | Required | "Title is required" |
+| Title | Max 255 chars | "Title must be 255 characters or fewer" |
+
+Server errors shown as a banner below the header.
+
+```
+|  [!] Failed to create issue. Network error.  [Dismiss]          |
+```
+
+### Success
+
+Modal closes, parent view refreshes. Toast: "Issue created" or "Issue updated".
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Modal centered, max-width 640px |
+| Tablet (768-1024px) | Modal width 90vw |
+| Mobile (<768px) | Full-screen sheet instead of modal; metadata dropdowns → stacked vertical |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `dialog` with `aria-modal="true"` |
+| Heading order | h2 (modal title) inside dialog |
+| Reading / Focus order | Focus trap: title → description → metadata → actions → close |
+| Accessible names | Close button: `aria-label="Close"`; form fields: visible `<label>` elements |
+| Keyboard operability | Tab between fields; Enter to submit; Escape to close; Arrow keys in dropdowns |
+| Target size | All fields ≥24×24 CSS px; close button ≥24×24 CSS px |
+| Focus not obscured | Modal overlay covers all behind; focus trapped inside |
+| Non-color intent | Error states use icon + text, not color alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*
