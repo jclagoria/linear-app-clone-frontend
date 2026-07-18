@@ -2,10 +2,15 @@ import { Outlet } from 'react-router-dom'
 import { UserAvatar } from '@/features/auth/ui/UserAvatar'
 import { Sidebar } from '@/widgets/Sidebar/ui/Sidebar'
 import { useUIStore } from '@/shared/stores/uiStore'
+import { useWebSocketStore } from '@/shared/stores/websocketStore'
+import { Bell } from 'lucide-react'
+import { selectUnreadCount } from '@/shared/stores/selectors'
 
 export function AppLayout() {
   const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
   const toggleSidebar = useUIStore((s) => s.toggleSidebar)
+  const notifications = useWebSocketStore((s) => s.notifications)
+  const unreadCount = selectUnreadCount(notifications)
 
   return (
     <div className="flex min-h-screen bg-surface">
@@ -30,7 +35,21 @@ export function AppLayout() {
             <span className="text-sm font-semibold text-text">Linear Clone</span>
           </div>
 
-          <UserAvatar />
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              className="relative rounded-md p-1.5 text-text-muted hover:bg-surface-hover hover:text-text"
+              aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
+            >
+              <Bell size={18} aria-hidden="true" />
+              {unreadCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-white" aria-hidden="true">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </button>
+            <UserAvatar />
+          </div>
         </header>
 
         <main className="flex-1">
