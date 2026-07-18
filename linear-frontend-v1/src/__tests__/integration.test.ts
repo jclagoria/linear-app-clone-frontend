@@ -7,11 +7,9 @@ import { useCacheStore } from '@/shared/stores/cacheStore'
 import { useWebSocketStore } from '@/shared/stores/websocketStore'
 import { useUIStore } from '@/shared/stores/uiStore'
 import { selectFilteredIssues } from '@/shared/stores/selectors'
-import { resetAllStores } from '@/shared/stores/resetAllStores'
 import type { Issue } from '@/entities/issue/model/store'
 
 const API_BASE = '/api/v1'
-const REFRESH_TOKEN_KEY = 'linear_refresh_token'
 
 const mockIssues: Issue[] = [
   { id: '1', title: 'Bug fix', description: 'Fix the bug', status: 'todo', priority: 1, assigneeId: 'u1', projectId: null, cycleId: null, labels: ['bug'], createdAt: '', updatedAt: '' },
@@ -44,7 +42,7 @@ const handlers = [
     const body = (await request.json()) as { email: string; password: string }
     if (body.email === 'valid@example.com' && body.password === 'password123') {
       return HttpResponse.json({
-        data: { accessToken: 'token', refreshToken: 'refresh', user: { id: '1', email: 'valid@example.com', name: 'User' } },
+        data: { accessToken: 'token', user: { id: '1', email: 'valid@example.com', name: 'User' } },
       })
     }
     return HttpResponse.json({ message: 'Invalid' }, { status: 401 })
@@ -53,7 +51,7 @@ const handlers = [
     return HttpResponse.json({ data: { success: true } })
   }),
   http.post(`${API_BASE}/auth/refresh`, () => {
-    return HttpResponse.json({ data: { accessToken: 'new-token', refreshToken: 'new-refresh' } })
+    return HttpResponse.json({ data: { accessToken: 'new-token' } })
   }),
 ]
 
@@ -65,7 +63,6 @@ describe('Auth → Guard Integration', () => {
   afterEach(() => {
     server.resetHandlers()
     useAuthStore.setState({ user: null, accessToken: null, isAuthenticated: false, isLoading: false, error: null })
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
   })
 
   it('login → store update → authenticated state', async () => {
@@ -75,7 +72,6 @@ describe('Auth → Guard Integration', () => {
   })
 
   it('logout → resetAllStores clears domain stores', async () => {
-    localStorage.setItem(REFRESH_TOKEN_KEY, 'refresh')
     useAuthStore.setState({ isAuthenticated: true, user: { id: '1', email: 'a@b.com', name: 'A' }, accessToken: 't' })
     useIssuesStore.setState({ issues: mockIssues })
     useWebSocketStore.setState({ connectionStatus: 'connected', notifications: [{ id: 'n1', type: 't', title: 'N', message: 'M', read: false, createdAt: '' }] })

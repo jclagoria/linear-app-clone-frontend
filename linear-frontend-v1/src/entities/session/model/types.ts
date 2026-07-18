@@ -9,14 +9,12 @@ export interface LoginResponse {
   data: {
     user: User
     accessToken: string
-    refreshToken: string
   }
 }
 
 export interface RefreshResponse {
   data: {
     accessToken: string
-    refreshToken: string
   }
 }
 
