@@ -1,0 +1,9 @@
+# Wireframe: No-OP — Auth Cookie Migration
+
+## Purpose & Flow Context
+
+No wireframes needed. This change is a backend-facing auth refactor with zero UI impact. All changes are confined to the session store (`src/entities/session/model/store.ts`), auth types (`src/entities/session/model/types.ts`), and MSW handlers.
+
+No screens are added, modified, or removed. The user-facing experience is identical.
+
+See `user-flows.md` for the auth state transitions, and `specs/frontend/auth-cookie-migration.md` for the behavioural specification.
