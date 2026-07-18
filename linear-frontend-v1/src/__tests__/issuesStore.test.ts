@@ -1,0 +1,172 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { useIssuesStore } from '@/entities/issue/model/store'
+import { useCacheStore } from '@/shared/stores/cacheStore'
+import type { Issue } from '@/entities/issue/model/store'
+
+const mockIssues: Issue[] = [
+  {
+    id: '1', title: 'Issue 1', description: 'Desc 1', status: 'todo',
+    priority: 2, assigneeId: 'a1', projectId: null, cycleId: null,
+    labels: [], createdAt: '2024-01-01', updatedAt: '2024-01-01',
+  },
+  {
+    id: '2', title: 'Issue 2', description: 'Desc 2', status: 'in_progress',
+    priority: 1, assigneeId: 'a2', projectId: 'p1', cycleId: null,
+    labels: ['bug'], createdAt: '2024-01-02', updatedAt: '2024-01-02',
+  },
+  {
+    id: '3', title: 'Issue 3', description: 'Desc 3', status: 'done',
+    priority: 3, assigneeId: null, projectId: null, cycleId: null,
+    labels: [], createdAt: '2024-01-03', updatedAt: '2024-01-03',
+  },
+]
+
+describe('issuesStore', () => {
+  beforeEach(() => {
+    useIssuesStore.setState({
+      issues: [],
+      selectedIssueId: null,
+      filters: { status: null, assigneeId: null, priority: null, projectId: null, search: null },
+      cursor: null,
+      hasMore: true,
+      isLoading: false,
+      error: null,
+    })
+    useCacheStore.getState().clear()
+  })
+
+  describe('initial state', () => {
+    it('starts with empty issues and no selection', () => {
+      const state = useIssuesStore.getState()
+      expect(state.issues).toEqual([])
+      expect(state.selectedIssueId).toBeNull()
+      expect(state.isLoading).toBe(false)
+    })
+  })
+
+  describe('loadIssues', () => {
+    it('sets loading state and populates issues', async () => {
+      const mockResponse = {
+        ok: true,
+        json: async () => ({
+          data: mockIssues,
+          meta: { cursor: 'cursor-2', hasMore: true },
+        }),
+      }
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(mockResponse as Response)
+
+      const promise = useIssuesStore.getState().loadIssues()
+      expect(useIssuesStore.getState().isLoading).toBe(true)
+
+      await promise
+
+      const state = useIssuesStore.getState()
+      expect(state.isLoading).toBe(false)
+      expect(state.issues).toHaveLength(3)
+      expect(state.cursor).toBe('cursor-2')
+      expect(state.hasMore).toBe(true)
+
+      vi.restoreAllMocks()
+    })
+
+    it('sets error on failure', async () => {
+      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network error'))
+
+      await useIssuesStore.getState().loadIssues()
+
+      const state = useIssuesStore.getState()
+      expect(state.isLoading).toBe(false)
+      expect(state.error).toBe('Network error')
+
+      vi.restoreAllMocks()
+    })
+  })
+
+  describe('loadNextPage', () => {
+    it('appends issues on next page', async () => {
+      useIssuesStore.setState({
+        issues: mockIssues,
+        cursor: 'cursor-1',
+        hasMore: true,
+      })
+
+      const moreIssues: Issue[] = [
+        {
+          id: '4', title: 'Issue 4', description: 'Desc 4', status: 'todo',
+          priority: 2, assigneeId: null, projectId: null, cycleId: null,
+          labels: [], createdAt: '2024-01-04', updatedAt: '2024-01-04',
+        },
+      ]
+
+      const mockResponse = {
+        ok: true,
+        json: async () => ({
+          data: moreIssues,
+          meta: { cursor: null, hasMore: false },
+        }),
+      }
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(mockResponse as Response)
+
+      await useIssuesStore.getState().loadNextPage()
+
+      const state = useIssuesStore.getState()
+      expect(state.issues).toHaveLength(4)
+      expect(state.hasMore).toBe(false)
+      expect(state.cursor).toBeNull()
+
+      vi.restoreAllMocks()
+    })
+
+    it('does nothing if hasMore is false', async () => {
+      useIssuesStore.setState({ hasMore: false })
+      const fetchSpy = vi.spyOn(globalThis, 'fetch')
+
+      await useIssuesStore.getState().loadNextPage()
+
+      expect(fetchSpy).not.toHaveBeenCalled()
+      fetchSpy.mockRestore()
+    })
+  })
+
+  describe('selectIssue / deselectIssue', () => {
+    it('selects and deselects an issue', () => {
+      useIssuesStore.getState().selectIssue('1')
+      expect(useIssuesStore.getState().selectedIssueId).toBe('1')
+
+      useIssuesStore.getState().deselectIssue()
+      expect(useIssuesStore.getState().selectedIssueId).toBeNull()
+    })
+  })
+
+  describe('filters', () => {
+    it('sets and clears filters', () => {
+      useIssuesStore.getState().setFilters({ status: 'todo', priority: 2 })
+      expect(useIssuesStore.getState().filters.status).toBe('todo')
+      expect(useIssuesStore.getState().filters.priority).toBe(2)
+
+      useIssuesStore.getState().clearFilters()
+      expect(useIssuesStore.getState().filters.status).toBeNull()
+      expect(useIssuesStore.getState().filters.priority).toBeNull()
+    })
+  })
+
+  describe('CRUD', () => {
+    it('adds an issue', () => {
+      useIssuesStore.getState().addIssue(mockIssues[0])
+      expect(useIssuesStore.getState().issues).toHaveLength(1)
+    })
+
+    it('updates an issue', () => {
+      useIssuesStore.setState({ issues: mockIssues })
+      useIssuesStore.getState().updateIssue('1', { title: 'Updated' })
+      expect(useIssuesStore.getState().issues[0].title).toBe('Updated')
+    })
+
+    it('removes an issue and clears selection', () => {
+      useIssuesStore.setState({ issues: mockIssues, selectedIssueId: '1' })
+      useIssuesStore.getState().removeIssue('1')
+      expect(useIssuesStore.getState().issues).toHaveLength(2)
+      expect(useIssuesStore.getState().selectedIssueId).toBeNull()
+    })
+  })
+})

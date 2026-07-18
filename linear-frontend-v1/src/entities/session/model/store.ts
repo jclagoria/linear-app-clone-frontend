@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
+import { resetDomainStores } from '@/shared/stores/resetAllStores'
 import type { User, LoginResponse, RefreshResponse } from './types'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
@@ -133,6 +134,7 @@ export const useAuthStore = create<AuthState>()(
           isLoading: false,
           error: null,
         })
+        resetDomainStores()
       },
 
       hydrate: async () => {
