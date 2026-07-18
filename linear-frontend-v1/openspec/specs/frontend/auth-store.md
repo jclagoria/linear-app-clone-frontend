@@ -4,7 +4,7 @@
 
 **Feature:** Authentication State Management
 
-The Auth Store SHALL manage authentication tokens, user data, and login/logout flows. It MUST handle token lifecycle including refresh and hydration from secure storage.
+The Auth Store SHALL manage authentication tokens, user data, and login/logout flows. It MUST handle token lifecycle including refresh and hydration via HttpOnly cookie.
 
 ### Requirement: AuthState
 
@@ -30,23 +30,24 @@ The Auth Store SHALL manage authentication tokens, user data, and login/logout f
 - **THEN** `isAuthenticated` SHALL be false
 - **AND** `user` SHALL be null
 - **AND** `accessToken` SHALL be null
-- **AND** `refreshToken` SHALL be null
 
-#### Scenario: Hydrate state from storage on app start
+#### Scenario: Hydrate state via cookie on app start
 
-- **GIVEN** a stored auth session
+- **GIVEN** a valid HttpOnly refresh token cookie
 - **WHEN** the application starts
-- **THEN** the store SHALL hydrate `isAuthenticated` and `user` from storage
-- **AND** tokens SHALL be restored
+- **THEN** a POST request is sent to `/auth/refresh` with `credentials: 'include'`
+- **AND** the browser automatically sends the HttpOnly cookie
+- **AND** a new access token is returned and stored in Zustand state
+- **AND** `isAuthenticated` and `user` SHALL be restored
 
 ## User Flow
 
-1. App starts → auth state hydrated from storage
-2. If tokens exist → attempt validation/refresh
+1. App starts → POST `/auth/refresh` with `credentials: 'include'` → browser sends cookie → accessToken restored to Zustand
+2. If no valid cookie → stay unauthenticated → redirect to login
 3. User visits protected route → redirect to login if not authenticated
-4. User submits login form → store sets loading → API call → store updates with user + tokens
-5. User clicks logout → store clears → all caches cleared → redirect to login
-6. Token refresh interval refreshes access token silently
+4. User submits login form → POST `/auth/login` with `credentials: 'include'` → store sets loading → API call → store updates with user + accessToken
+5. User clicks logout → POST `/auth/logout` → cookie cleared → store clears → redirect to login
+6. Token refresh via POST `/auth/refresh` with cookie pre-emptively
 
 ## Components
 
