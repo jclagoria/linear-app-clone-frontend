@@ -13,7 +13,7 @@ The authentication module SHALL provide email/password login, secure token stora
 - **GIVEN** the user is on the login page
 - **WHEN** the user enters valid email and password and submits the form
 - **THEN** the login button shows a loading state
-- **AND** the application receives access and refresh tokens
+- **AND** the application receives an access token (refresh token is set as HttpOnly cookie by the server)
 - **AND** the auth state updates to `isAuthenticated: true` with the user profile
 - **AND** the user is redirected to the main application page
 
@@ -50,7 +50,7 @@ The authentication module SHALL provide email/password login, secure token stora
 #### Scenario: Refresh token stored in secure cookie
 
 - **GIVEN** the user has logged in successfully
-- **WHEN** the application receives the refresh token
+- **WHEN** the server sets the refresh token via `Set-Cookie`
 - **THEN** the refresh token is stored in a secure, HTTP-only cookie
 - **AND** the cookie is not accessible to JavaScript
 
@@ -60,13 +60,14 @@ The authentication module SHALL provide email/password login, secure token stora
 
 - **GIVEN** the user has an active session
 - **WHEN** the access token is about to expire
-- **THEN** the application automatically requests a new access token using the refresh token
+- **THEN** the application automatically requests a new access token by POSTing to `/auth/refresh` with `credentials: 'include'`
+- **AND** the browser sends the HttpOnly refresh token cookie
 - **AND** the new access token replaces the old one in memory
 - **AND** the user's experience is uninterrupted
 
-#### Scenario: Refresh token expired
+#### Scenario: HttpOnly cookie expired or missing
 
-- **GIVEN** the user has an expired refresh token
+- **GIVEN** the HttpOnly refresh token cookie is expired or absent
 - **WHEN** the application attempts to refresh the access token
 - **THEN** the refresh request fails
 - **AND** the auth state is cleared
@@ -89,10 +90,10 @@ The authentication module SHALL provide email/password login, secure token stora
 
 - **GIVEN** the application starts
 - **WHEN** the app initializes
-- **THEN** the auth module checks for an existing session
-- **AND** if a valid refresh token exists, a new access token is fetched
+- **THEN** the auth module POSTs to `/auth/refresh` with `credentials: 'include'`
+- **AND** if the HttpOnly cookie is valid, a new access token is fetched
 - **AND** the auth state is set to `isAuthenticated: true` with the user profile
-- **AND** if no valid session exists, the auth state remains `isAuthenticated: false`
+- **AND** if no valid cookie exists, the auth state remains `isAuthenticated: false`
 
 #### Scenario: Hydration loading prevents premature navigation
 
@@ -103,16 +104,17 @@ The authentication module SHALL provide email/password login, secure token stora
 
 ## User Flow
 
-1. App starts → AuthStore hydrates from refresh token cookie
-2. If no session → redirect to login page
-3. User enters email + password → submits form
-4. Loading state shown → API call to `/auth/login`
-5. On success → tokens received → access token stored in memory, refresh token in secure cookie → state updated → redirect to app
-6. On error → error message displayed → user retries
-7. During session → interceptor checks access token expiry before each API call
-8. Token near expiry → silent refresh using refresh token → new access token stored
-9. Refresh fails → clear state → redirect to login
-10. User clicks logout → clear tokens → clear state → redirect to login
+1. App starts → POST `/auth/refresh` with `credentials: 'include'` → browser sends HttpOnly cookie
+2. If valid cookie → access token returned → state restored → redirect to app
+3. If no session → stay unauthenticated → redirect to login page
+4. User enters email + password → submits form
+5. Loading state shown → POST to `/auth/login` with `credentials: 'include'`
+6. On success → access token in memory, refresh token set as HttpOnly cookie by server → state updated → redirect to app
+7. On error → error message displayed → user retries
+8. During session → interceptor checks access token expiry before each API call
+9. Token near expiry → POST `/auth/refresh` with cookie → new access token stored
+10. Refresh fails (expired cookie) → clear state → redirect to login
+11. User clicks logout → POST `/auth/logout` → cookie cleared → clear state → redirect to login
 
 ## Components
 
