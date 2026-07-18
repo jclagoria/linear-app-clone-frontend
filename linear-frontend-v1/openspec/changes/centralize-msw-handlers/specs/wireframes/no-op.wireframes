@@ -1,0 +1,9 @@
+# Wireframe: No-OP — Centralize MSW Handlers
+
+## Purpose & Flow Context
+
+No wireframes needed. This change is a test infrastructure refactor with zero UI impact. All changes are confined to `src/mocks/` (new directory with `handlers.ts`, `server.ts`, `browser.ts`) and removal of inline handlers from test files.
+
+No screens are added, modified, or removed. The user-facing experience is identical.
+
+See `specs/frontend/msw-handlers.md` for the behavioural specification and `user-flows.md` for the developer workflows.
