@@ -28,14 +28,18 @@ interface AuthState {
   clearError: () => void
 }
 
+export const initialAuthState = {
+  user: null as User | null,
+  accessToken: null as string | null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null as string | null,
+}
+
 export const useAuthStore = create<AuthState>()(
   devtools(
     (set, get) => ({
-      user: null,
-      accessToken: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
+      ...initialAuthState,
 
       clearError: () => set({ error: null }),
 
@@ -139,6 +143,22 @@ export const useAuthStore = create<AuthState>()(
             isAuthenticated: true,
             isLoading: false,
           })
+
+          // Fetch user data after successful token refresh.
+          // This is best-effort — if it fails the user stays null
+          // and will be fetched on first page navigation.
+          try {
+            const userResponse = await fetch(`${API_BASE}/auth/me`, {
+              credentials: 'include',
+              headers: { Authorization: `Bearer ${accessToken}` },
+            })
+            if (userResponse.ok) {
+              const userJson = (await userResponse.json()) as { data: User }
+              set({ user: userJson.data })
+            }
+          } catch {
+            // Non-critical — user data can be fetched lazily
+          }
         } catch {
           set({ isLoading: false, isAuthenticated: false })
         }

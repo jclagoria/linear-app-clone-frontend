@@ -65,15 +65,15 @@ describe('cacheStore', () => {
     expect(useCacheStore.getState().get('c')).not.toBeNull()
   })
 
-  it('promotes accessed keys (LRU refresh)', () => {
+  it('evicts oldest entry on insert (reads do not promote)', () => {
     useCacheStore.setState({ maxSize: 2 })
     useCacheStore.getState().set('a', 1)
     useCacheStore.getState().set('b', 2)
-    useCacheStore.getState().get('a')
+    useCacheStore.getState().get('a') // read does NOT promote — 'a' stays oldest
     useCacheStore.getState().set('c', 3)
 
-    expect(useCacheStore.getState().get('a')).not.toBeNull()
-    expect(useCacheStore.getState().get('b')).toBeNull()
+    expect(useCacheStore.getState().get('a')).toBeNull()
+    expect(useCacheStore.getState().get('b')).not.toBeNull()
     expect(useCacheStore.getState().get('c')).not.toBeNull()
   })
 

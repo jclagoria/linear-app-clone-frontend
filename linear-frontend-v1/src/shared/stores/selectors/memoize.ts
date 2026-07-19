@@ -4,13 +4,16 @@ interface MemoizedSelector<TReturn> extends SelectorFn<TReturn> {
   cache: Map<string, TReturn>
 }
 
+function stableStringify(value: unknown): string {
+  if (value === null) return 'null'
+  if (typeof value !== 'object') return JSON.stringify(value)
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`
+  const keys = Object.keys(value as Record<string, unknown>).sort()
+  return `{${keys.map(k => `${JSON.stringify(k)}:${stableStringify((value as Record<string, unknown>)[k])}`).join(',')}}`
+}
+
 function createKey(args: unknown[]): string {
-  return args.map((arg) => {
-    if (typeof arg === 'object' && arg !== null) {
-      return JSON.stringify(arg, Object.keys(arg as Record<string, unknown>).sort())
-    }
-    return String(arg)
-  }).join('::')
+  return args.map(stableStringify).join('::')
 }
 
 export function createMemoizedSelector<TReturn>(
@@ -40,6 +43,5 @@ export function createMemoizedSelector<TReturn>(
     return result
   }) as MemoizedSelector<TReturn>
 
-  selector.cache = cache
   return selector
 }

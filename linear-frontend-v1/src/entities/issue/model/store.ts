@@ -54,16 +54,20 @@ const initialFilters: IssueFilters = {
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
 
+export const initialIssuesState = {
+  issues: [] as Issue[],
+  selectedIssueId: null as string | null,
+  filters: { ...initialFilters } as IssueFilters,
+  cursor: null as string | null,
+  hasMore: true,
+  isLoading: false,
+  error: null as string | null,
+}
+
 export const useIssuesStore = create<IssuesState>()(
   devtools(
     (set, get) => ({
-      issues: [],
-      selectedIssueId: null,
-      filters: { ...initialFilters },
-      cursor: null,
-      hasMore: true,
-      isLoading: false,
-      error: null,
+      ...initialIssuesState,
 
       loadIssues: async () => {
         set({ isLoading: true, error: null })
@@ -74,6 +78,8 @@ export const useIssuesStore = create<IssuesState>()(
           if (filters.status) params.set('status', filters.status)
           if (filters.assigneeId) params.set('assigneeId', filters.assigneeId)
           if (filters.priority !== null) params.set('priority', String(filters.priority))
+          if (filters.projectId) params.set('projectId', filters.projectId)
+          if (filters.search) params.set('search', filters.search)
 
           const cacheKey = `issues:list?${params.toString()}`
           const cached = useCacheStore.getState().get<{ data: Issue[]; meta: { cursor: string | null; hasMore: boolean } }>(cacheKey)
@@ -110,22 +116,6 @@ export const useIssuesStore = create<IssuesState>()(
             hasMore: meta.hasMore,
             isLoading: false,
           })
-
-          if (cached?.stale) {
-            const freshResponse = await fetch(`${API_BASE}/issues?${params.toString()}`, {
-              headers: { 'Content-Type': 'application/json' },
-            })
-            if (freshResponse.ok) {
-              const freshJson = await freshResponse.json()
-              const freshData = freshJson as { data: Issue[]; meta: { cursor: string | null; hasMore: boolean } }
-              useCacheStore.getState().set(cacheKey, freshData)
-              set({
-                issues: freshData.data,
-                cursor: freshData.meta.cursor,
-                hasMore: freshData.meta.hasMore,
-              })
-            }
-          }
         } catch (err) {
           set({
             error: err instanceof Error ? err.message : 'Failed to load issues',
@@ -146,6 +136,8 @@ export const useIssuesStore = create<IssuesState>()(
           if (filters.status) params.set('status', filters.status)
           if (filters.assigneeId) params.set('assigneeId', filters.assigneeId)
           if (filters.priority !== null) params.set('priority', String(filters.priority))
+          if (filters.projectId) params.set('projectId', filters.projectId)
+          if (filters.search) params.set('search', filters.search)
 
           const response = await fetch(`${API_BASE}/issues?${params.toString()}`, {
             headers: { 'Content-Type': 'application/json' },
