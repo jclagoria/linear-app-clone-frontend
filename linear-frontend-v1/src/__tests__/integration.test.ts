@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest'
 import { http, HttpResponse } from 'msw'
-import { setupServer } from 'msw/node'
+import { server } from '@/mocks/server'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useAuthStore } from '@/entities/session/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
@@ -16,46 +16,6 @@ const mockIssues: Issue[] = [
   { id: '2', title: 'Add feature', description: 'New feature', status: 'in_progress', priority: 2, assigneeId: 'u1', projectId: 'p1', cycleId: null, labels: [], createdAt: '', updatedAt: '' },
   { id: '3', title: 'Documentation', description: 'Write docs', status: 'done', priority: 3, assigneeId: null, projectId: null, cycleId: null, labels: ['docs'], createdAt: '', updatedAt: '' },
 ]
-
-const handlers = [
-  http.get(`${API_BASE}/issues`, ({ request }) => {
-    const url = new URL(request.url)
-    const cursor = url.searchParams.get('cursor')
-    const status = url.searchParams.get('status')
-
-    let filtered = [...mockIssues]
-    if (status) filtered = filtered.filter((i) => i.status === status)
-
-    if (cursor === 'page2') {
-      return HttpResponse.json({
-        data: [{ id: '4', title: 'Page 2 issue', description: 'More', status: 'todo', priority: 1, assigneeId: null, projectId: null, cycleId: null, labels: [], createdAt: '', updatedAt: '' }],
-        meta: { cursor: null, hasMore: false },
-      })
-    }
-
-    return HttpResponse.json({
-      data: filtered,
-      meta: { cursor: filtered.length > 2 ? 'page2' : null, hasMore: filtered.length > 2 },
-    })
-  }),
-  http.post(`${API_BASE}/auth/login`, async ({ request }) => {
-    const body = (await request.json()) as { email: string; password: string }
-    if (body.email === 'valid@example.com' && body.password === 'password123') {
-      return HttpResponse.json({
-        data: { accessToken: 'token', user: { id: '1', email: 'valid@example.com', name: 'User' } },
-      })
-    }
-    return HttpResponse.json({ message: 'Invalid' }, { status: 401 })
-  }),
-  http.post(`${API_BASE}/auth/logout`, () => {
-    return HttpResponse.json({ data: { success: true } })
-  }),
-  http.post(`${API_BASE}/auth/refresh`, () => {
-    return HttpResponse.json({ data: { accessToken: 'new-token' } })
-  }),
-]
-
-const server = setupServer(...handlers)
 
 describe('Auth → Guard Integration', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }))
