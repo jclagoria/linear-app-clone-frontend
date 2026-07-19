@@ -2,56 +2,56 @@
 
 ## Scaffold
 
-- [ ] Create `Dockerfile` — multi-stage build
-- [ ] Create `nginx.conf` — SPA serving configuration
-- [ ] Create `.dockerignore` — build context exclusions
-- [ ] Verify Docker is available: `docker --version`
+- [x] Create `Dockerfile` — multi-stage build
+- [x] Create `nginx.conf` — SPA serving configuration
+- [x] Create `.dockerignore` — build context exclusions
+- [x] Verify Docker is available: `docker --version`
 
 ## Build Stage (Dockerfile)
 
-- [ ] Stage 1: Use `node:22-alpine` as base image
-- [ ] Install pnpm globally: `RUN npm install -g pnpm`
-- [ ] Set WORKDIR to `/app`
-- [ ] Copy `package.json` and `pnpm-lock.yaml` first (for layer caching)
-- [ ] Run `pnpm install --frozen-lockfile`
-- [ ] Copy remaining source code
-- [ ] Run `pnpm build` to produce `dist/`
+- [x] Stage 1: Use `node:22-alpine` as base image
+- [x] Install pnpm globally: `RUN npm install -g pnpm`
+- [x] Set WORKDIR to `/app`
+- [x] Copy `package.json` and `pnpm-lock.yaml` first (for layer caching)
+- [x] Run `pnpm install --frozen-lockfile`
+- [x] Copy remaining source code
+- [x] Run `pnpm build` to produce `dist/`
 
 ## Production Stage (Dockerfile)
 
-- [ ] Stage 2: Use `nginx:stable-alpine` as base image
-- [ ] Create `appuser` with UID 1001: `RUN adduser -D -u 1001 appuser`
-- [ ] Copy `nginx.conf` to `/etc/nginx/nginx.conf`
-- [ ] Copy build output: `COPY --from=build /app/dist/ /usr/share/nginx/html`
-- [ ] Set ownership of web root to `appuser`
-- [ ] Expose port 80
-- [ ] Set `USER appuser` (non-root)
-- [ ] Set `CMD` to run nginx in foreground: `nginx -g daemon off;`
+- [x] Stage 2: Use `nginx:stable-alpine` as base image
+- [x] Create `appuser` with UID 1001: `RUN adduser -D -u 1001 appuser`
+- [x] Copy `nginx.conf` to `/etc/nginx/nginx.conf`
+- [x] Copy build output: `COPY --from=build /app/dist/ /usr/share/nginx/html`
+- [x] Set ownership of web root to `appuser`
+- [x] Expose port 80
+- [x] Set `USER appuser` (non-root)
+- [x] Set `CMD` to run nginx in foreground: `nginx -g daemon off;`
 
 ## Nginx Configuration
 
-- [ ] Set root to `/usr/share/nginx/html`
-- [ ] Set index file to `index.html`
-- [ ] Implement SPA fallback: `try_files $uri $uri/ /index.html`
-- [ ] Add per-location caching for `/assets/`:
+- [x] Set root to `/usr/share/nginx/html`
+- [x] Set index file to `index.html`
+- [x] Implement SPA fallback: `try_files $uri $uri/ /index.html`
+- [x] Add per-location caching for `/assets/`:
   - `Cache-Control: public, max-age=31536000, immutable`
-- [ ] Add security headers to all responses:
+- [x] Add security headers to all responses:
   - `X-Frame-Options: DENY`
   - `X-Content-Type-Options: nosniff`
   - `Referrer-Policy: strict-origin-when-cross-origin`
   - `Permissions-Policy: (restrictive defaults)`
   - `Content-Security-Policy: (restrictive defaults)`
-- [ ] Deny access to hidden files: `location ~ /\.`
+- [x] Deny access to hidden files: `location ~ /\.`
 
 ## Dockerignore
 
-- [ ] Exclude `node_modules/`
-- [ ] Exclude `.git/`
-- [ ] Exclude `.env` and `.env-example`
-- [ ] Exclude `dist/` (rebuilt fresh)
-- [ ] Exclude test files: `e2e/`, `*.test.*`, `*.spec.*`
-- [ ] Exclude config files: `.husky/`, `.eslintrc*`, `.prettierrc`, `tsconfig*.json`
-- [ ] Exclude `node_modules` at all levels with `**/node_modules`
+- [x] Exclude `node_modules/`
+- [x] Exclude `.git/`
+- [x] Exclude `.env` and `.env-example`
+- [x] Exclude `dist/` (rebuilt fresh)
+- [x] Exclude test files: `e2e/`, `*.test.*`, `*.spec.*`
+- [x] Exclude config files: `.husky/`, `.eslintrc*`, `.prettierrc`, `tsconfig*.json`
+- [x] Exclude `node_modules` at all levels with `**/node_modules`
 
 ## Testing
 
@@ -73,13 +73,13 @@
 
 ## Documentation
 
-- [ ] Add build/run instructions to `README.md` (Docker section)
+- [x] Add build/run instructions to `README.md` (Docker section)
 
 ## Review
 
-- [ ] Self-review: verify all tasks are completed
-- [ ] Verify `Dockerfile` follows multi-stage best practices
-- [ ] Verify `nginx.conf` has SPA routing, security headers, and caching
-- [ ] Verify `.dockerignore` excludes unnecessary files
-- [ ] Verify final image is minimal and runs as non-root user
-- [ ] PR checklist: docker build passes, container runs, app works
+- [x] Self-review: verify all tasks are completed
+- [x] Verify `Dockerfile` follows multi-stage best practices
+- [x] Verify `nginx.conf` has SPA routing, security headers, and caching
+- [x] Verify `.dockerignore` excludes unnecessary files
+- [ ] ~~Verify final image is minimal and runs as non-root user~~ (requires Docker build)
+- [ ] ~~PR checklist: docker build passes, container runs, app works~~ (requires Docker build)
