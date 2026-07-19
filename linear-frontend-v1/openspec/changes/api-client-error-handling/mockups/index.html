@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Client — Mockup Hub</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); padding: var(--space-8); max-width: 720px; margin: 0 auto; }
+    h1 { font-size: 24px; margin-bottom: 0.5rem; }
+    p { color: var(--color-text-secondary); margin-bottom: var(--space-8); }
+    .card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-4); }
+    .card a { color: var(--color-primary); text-decoration: none; font-weight: 600; font-size: 15px; display: block; margin-bottom: 0.25rem; }
+    .card a:hover { text-decoration: underline; }
+    .card .desc { color: var(--color-text-secondary); font-size: 14px; }
+    .badge { display: inline-block; background: var(--color-primary); color: #fff; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 999px; margin-left: 8px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <h1>API Client — UI Mockups</h1>
+  <p>Interactive HTML mockups for the API Client &amp; Error Handling module. Click a screen to open.</p>
+
+  <div class="card">
+    <a href="rate-limit-toast.html">Rate Limit Toast Notification <span class="badge">1 screen</span></a>
+    <div class="desc">Floating toast shown when API rate limit is hit. States: empty, populated. Includes retry + dismiss actions.</div>
+  </div>
+
+  <div class="card">
+    <a href="error-banner.html">ErrorBanner <span class="badge">1 screen</span></a>
+    <div class="desc">Inline error banner for API error display within forms and page content. States: empty, populated.</div>
+  </div>
+</body>
+</html>
