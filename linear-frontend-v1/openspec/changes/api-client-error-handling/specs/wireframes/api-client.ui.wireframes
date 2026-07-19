@@ -1,0 +1,246 @@
+# API Client — Wireframes
+
+## Screen Inventory
+
+The ApiClient is a library module with no routes of its own. All flow-named screens from the upstream user-flows are internal processing states within the library. The only UI-visible surfaces are the Toast (rate limit notification) and ErrorBanner (inline error display).
+
+| Flow | Screen | Wireframe | States | Notes |
+|------|--------|-----------|--------|-------|
+| Token Refresh | Request Outbound | — | loading, success | Internal processing — no UI |
+| Token Refresh | Token Refresh | — | loading, error, success | Internal processing — no UI |
+| Token Refresh | Request Retry | — | loading, success | Internal processing — no UI |
+| Token Refresh | Login Redirect | — | — | Existing auth login page (reused) |
+| Error Handling | Response Parsing | — | loading, error, success | Internal processing — no UI |
+| Error Handling | Error Mapping | — | success | Internal processing — no UI |
+| Error Handling | Callback Dispatch | — | success | Internal processing — no UI |
+| Rate Limit Tracking | Header Parsing | — | success | Internal processing — no UI |
+| Rate Limit Tracking | State Update | — | success | Internal processing — no UI |
+| Rate Limit Tracking | Toast Display | Rate Limit Toast Notification | success | UI surface — covered below |
+| Error Handling | (error display in forms) | ErrorBanner | populated, empty | UI surface — covered below |
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| `[...]` | Button / interactive element |
+| `[X]` | Close / dismiss |
+| `⚠` | Warning |
+| `_______` | Text / message area |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `aside` (toast container) |
+| Heading order | N/A — notification content, no heading |
+| Accessible names | `aria-label="Close notification"` on dismiss button |
+| Keyboard | Tab to action button, Enter/Space to activate, Escape to dismiss |
+| Target size | ≥24×24 CSS px on dismiss and action buttons |
+
+---
+
+## Wireframe: Rate Limit Toast Notification
+
+### Purpose & Flow Context
+
+Alerts the user when they hit the API rate limit for an endpoint. Part of the Rate Limit Tracking flow — entry is a 429 response from ApiClient, exit is the user acknowledging the toast or it auto-dismissing after 5s.
+
+---
+
+### Layout Regions
+
+**Grid**: N/A — overlay floating at top-right of viewport. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: No app-shell — toast renders in a fixed-position portal at viewport level.
+
+**Content hierarchy**:
+1. Icon (warning type) — immediate visual signal
+2. Message text — what happened
+3. Action button — what user can do about it
+4. Dismiss button — close the notification
+
+```
++------------------------------------------------------------------+
+| Viewport (underlay dimmed? no)                                    |
+|                                                                    |
+|                         +----------------------+                  |
+|                         | ⚠ Rate limit reached |                  |
+|                         | Please wait 30s      |                  |
+|                         | before trying again. |                  |
+|                         |                      |                  |
+|                         | [Retry]          [X] |                  |
+|                         +----------------------+                  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Toast container | Toast | Fixed top-right, slides in, auto-dismiss after 5s | Multiple toasts stack vertically |
+| Icon | lucide `AlertTriangle` | Warning icon, red tint | N/A |
+| Message | `div.toast-content` | Static text — "Rate limit reached. {Retry-After}s wait." | Long messages wrap within toast width |
+| Retry button | Button (ghost) | Re-triggers the failed request | Disabled during retry; hidden if retry not meaningful |
+| Dismiss | Button (icon-only) | Closes toast immediately | Always visible |
+
+### Data Display
+
+N/A — single notification, not a data list.
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Toast title | "Rate limit reached" | Warning-level notification |
+| Toast message | "Please wait {N}s before trying again." | Dynamic duration from `Retry-After` header |
+| Retry button | "Retry" | Action verb — re-sends the failed request |
+| Dismiss | [X] (icon) | Close — convention understood globally |
+
+### States
+
+#### Populated (Default)
+
+Toast appears at top-right with warning icon, message text, optional retry button, dismiss button. Auto-dismisses after 5s or on dismiss click.
+
+#### Empty
+
+No toast visible — no active rate limit notification. This is the default state for most of the session.
+
+#### Loading
+
+Not applicable — toast appears fully formed.
+
+#### Error
+
+Not applicable — the toast itself is the error notification.
+
+#### Success / Confirmation
+
+Not applicable — rate limit toast is a warning, not a success.
+
+---
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Toast appears at top-right, up to 400px wide |
+| Tablet (768-1024px) | Toast width reduces to 320px |
+| Mobile (<768px) | Toast spans full width minus 16px margin on each side, top-center |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `aside[role="status"][aria-live="polite"]` |
+| Heading order | N/A |
+| Reading / Focus order | Message → Retry (if present) → Dismiss |
+| Accessible names | Dismiss button: `aria-label="Close notification"` |
+| Keyboard operability | Tab to Retry/Dismiss, Enter/Space to activate, Escape to dismiss |
+| Target size | ≥24×24 CSS px on dismiss and retry buttons |
+| Focus not obscured | Toast overlays content but does not trap focus |
+| Non-color intent | Warning icon + text + red accent — never color alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*
+
+---
+
+## Wireframe: ErrorBanner
+
+### Purpose & Flow Context
+
+Displays inline API error messages within forms and page content. Part of the Error Handling flow — entry is an error from ApiClient dispatched through ErrorHandler callbacks, exit is the user addressing the error or it being cleared on new action.
+
+---
+
+### Layout Regions
+
+**Grid**: Inline within parent content — respects parent grid. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: No app-shell — renders inline within the parent component's flow.
+
+**Content hierarchy**:
+1. Warning icon — immediate error signal
+2. Message text — what went wrong
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|   +----------------------------------------------------------+   |
+|   | ⚠  Invalid input. Please check the highlighted fields.   |   |
+|   +----------------------------------------------------------+   |
+|                                                                    |
+|   [Field 1] ____________________________________                  |
+|   [Field 2] ____________________________________                  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Banner container | ErrorBanner | Inline block with red background/border | Hidden when `message` is empty/falsy |
+| Icon | lucide `AlertTriangle` | Warning icon, red tint | `aria-hidden="true"` |
+| Message text | `span` | Error description text | Wraps naturally; long messages scroll within banner max-height |
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Message | Plain-language error description | No raw error codes; human-readable "Invalid email address" not "VALIDATION_ERROR on field email" |
+
+### States
+
+#### Populated (Default)
+
+Red-themed banner with warning icon and message text. Renders inline within the parent layout.
+
+#### Empty
+
+`display: none` — component returns null when `message` prop is empty or falsy. This is the default state.
+
+#### Loading
+
+Not applicable.
+
+#### Error
+
+Not applicable — the banner itself is the error display.
+
+---
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| All breakpoints | Full-width within parent container — no changes needed; stacks naturally |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `div[role="alert"][aria-live="polite"]` |
+| Heading order | N/A — inline alert, no heading |
+| Reading / Focus order | Banner appears in DOM flow — read in natural document order |
+| Accessible names | N/A — no interactive controls |
+| Keyboard operability | N/A — read-only display |
+| Target size | N/A — no interactive elements |
+| Non-color intent | Warning icon + red-themed background + text — never color alone |
+
+*Defer to design-system: pixel contrast, focus-appearance.*
+
+---
+
+## Assumptions & Open Questions
+
+| # | Item | Status | Notes |
+|---|------|--------|-------|
+| 1 | `Button (ghost)` variant referenced in Toast wireframe but not defined in current design-system | Resolved | Added to DS component catalog: Button with `ghost` variant (low-emphasis action, no background/border). Toast anatomy action slot updated to reference `Button (ghost)`. |
+| 2 | `Button (icon-only)` variant referenced in Toast wireframe but not defined in current design-system | Resolved | Added to DS component catalog: Button with `icon-only` variant (square, lucide icon, requires `aria-label`). Includes DS-owned a11y contract (≥24×24 target, focus-appearance). |
+| 3 | No downstream hi-fi pass identified | Assumption | Screen-composition a11y (landmarks, focus-order, names, keyboard, targets) is owned by the wireframe; pixel contrast & focus-appearance are deferred to the design-system as documented. If a hi-fi pass is added later, these deferrals should be re-validated. |

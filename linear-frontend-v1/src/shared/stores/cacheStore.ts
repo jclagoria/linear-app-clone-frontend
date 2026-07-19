@@ -51,11 +51,6 @@ export const useCacheStore = create<CacheState>()(
         const now = Date.now()
         const expired = now - entry.timestamp > entry.ttl
 
-        const updatedOrder = state.accessOrder.filter((k) => k !== key)
-        updatedOrder.push(key)
-
-        set({ accessOrder: updatedOrder })
-
         if (expired) {
           return { data: entry.data, stale: true }
         }

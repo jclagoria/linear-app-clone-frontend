@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rate Limit Toast — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-danger: #DC2626;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-error-bg: #FEF2F2;
+      --color-error-border: #FECACA;
+      --color-error-text: #991B1B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-header {
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      padding: 12px 24px;
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .app-header a { color: var(--color-text-secondary); text-decoration: none; font-size: 13px; font-weight: 400; }
+    .app-header a:hover { color: var(--color-primary); }
+
+    .app-content {
+      flex: 1;
+      padding: 40px 24px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .demo-card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .demo-card h2 { font-size: 15px; margin-bottom: 16px; }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .controls button {
+      font-family: var(--font-family);
+      font-size: 13px;
+      padding: 6px 14px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+      color: var(--color-text-primary);
+      cursor: pointer;
+    }
+    .controls button:hover { background: #F1F5F9; }
+    .controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    .content-placeholder {
+      background: var(--color-surface);
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 32px;
+      text-align: center;
+      color: var(--color-text-secondary);
+      font-size: 14px;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast-container.active { pointer-events: auto; }
+
+    .toast {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      pointer-events: auto;
+    }
+    .toast.error { border-left: 4px solid var(--color-danger); }
+    .toast.hidden { display: none; }
+
+    .toast-icon {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .toast-icon svg { width: 20px; height: 20px; }
+    .toast-icon.error svg { color: var(--color-danger); }
+
+    .toast-content { flex: 1; min-width: 0; }
+    .toast-title { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+    .toast-message { font-size: 13px; color: var(--color-text-secondary); margin-top: 2px; }
+
+    .toast-actions { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .toast-actions button {
+      font-family: var(--font-family);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--color-primary);
+      cursor: pointer;
+      min-width: 24px;
+      min-height: 24px;
+    }
+    .toast-actions button:hover { background: #F1F5F9; }
+    .toast-actions button:disabled { opacity: 0.5; cursor: default; }
+    .toast-actions .dismiss {
+      font-size: 16px;
+      line-height: 1;
+      color: var(--color-text-secondary);
+      padding: 4px 6px;
+    }
+    .toast-actions .dismiss:hover { color: var(--color-text-primary); }
+
+    /* Notification toast */
+    .toast.notification {
+      border-left: 4px solid var(--color-primary);
+    }
+    .toast.notification .toast-icon svg { color: var(--color-primary); }
+
+    /* State-specific display */
+    [data-state="empty"] .toast { display: none; }
+    [data-state="empty"] .toast-container.active { pointer-events: none; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .toast { max-width: calc(100vw - 32px); }
+    }
+    @media (max-width: 480px) {
+      .toast { max-width: calc(100vw - 32px); }
+      .toast-container { right: 16px; left: 16px; top: 16px; }
+    }
+
+    .state-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #E2E8F0;
+      margin-bottom: 12px;
+    }
+    .state-label.active { background: #DBEAFE; color: #1D4ED8; }
+  </style>
+</head>
+<body>
+  <div class="app-header">
+    <a href="index.html">&larr; Back</a>
+    <span>Rate Limit Toast Notification</span>
+  </div>
+
+  <div class="app-content">
+    <div class="controls">
+      <button class="active" data-state="populated" onclick="setState('populated')">Populated</button>
+      <button data-state="empty" onclick="setState('empty')">Empty</button>
+      <button onclick="triggerToast()">Trigger Toast</button>
+    </div>
+
+    <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:24px;">
+      Toast appears at top-right. Auto-dismisses after 5s. Use state buttons or "Trigger Toast" to simulate.
+    </p>
+
+    <div class="demo-card">
+      <span class="state-label" id="stateLabel">populated</span>
+      <h2>Page Content (backdrop)</h2>
+      <div class="content-placeholder">
+        Page content beneath the toast overlay. Toast does not obscure or trap focus.
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer">
+    <div class="toast error hidden" id="toast" role="status" aria-live="polite">
+      <div class="toast-icon error" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="toast-content">
+        <div class="toast-title">Rate limit reached</div>
+        <div class="toast-message" id="toastMessage">Please wait 30s before trying again.</div>
+      </div>
+      <div class="toast-actions">
+        <button id="retryBtn" onclick="handleRetry()" aria-label="Retry">Retry</button>
+        <button class="dismiss" onclick="dismissToast()" aria-label="Close notification">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let dismissTimer = null;
+
+    function setState(state) {
+      document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.controls button[data-state="${state}"]`).classList.add('active');
+
+      document.getElementById('stateLabel').textContent = state;
+      document.getElementById('stateLabel').className = 'state-label' + (state !== 'empty' ? ' active' : '');
+
+      const toast = document.getElementById('toast');
+      const container = document.getElementById('toastContainer');
+
+      if (state === 'empty') {
+        toast.classList.add('hidden');
+        container.classList.remove('active');
+        if (dismissTimer) { clearTimeout(dismissTimer); dismissTimer = null; }
+      } else if (state === 'populated') {
+        showToast();
+      }
+    }
+
+    function showToast() {
+      const toast = document.getElementById('toast');
+      const container = document.getElementById('toastContainer');
+      toast.classList.remove('hidden');
+      container.classList.add('active');
+      document.getElementById('retryBtn').disabled = false;
+
+      if (dismissTimer) clearTimeout(dismissTimer);
+      dismissTimer = setTimeout(() => {
+        dismissToast();
+      }, 5000);
+    }
+
+    function dismissToast() {
+      const toast = document.getElementById('toast');
+      const container = document.getElementById('toastContainer');
+      toast.classList.add('hidden');
+      container.classList.remove('active');
+      if (dismissTimer) { clearTimeout(dismissTimer); dismissTimer = null; }
+
+      document.querySelector('.controls button[data-state="empty"]').classList.add('active');
+      document.querySelector('.controls button[data-state="populated"]')?.classList.remove('active');
+      document.getElementById('stateLabel').textContent = 'empty';
+      document.getElementById('stateLabel').className = 'state-label';
+    }
+
+    function handleRetry() {
+      document.getElementById('retryBtn').disabled = true;
+      document.getElementById('toastMessage').textContent = 'Retrying...';
+      setTimeout(() => {
+        document.getElementById('retryBtn').disabled = false;
+        document.getElementById('toastMessage').textContent = 'Please wait 30s before trying again.';
+        dismissToast();
+        setTimeout(() => {
+          const toast = document.getElementById('toast');
+          const container = document.getElementById('toastContainer');
+          toast.classList.remove('hidden');
+          container.classList.add('active');
+          document.getElementById('stateLabel').textContent = 'populated';
+          document.getElementById('stateLabel').className = 'state-label active';
+        }, 500);
+      }, 1500);
+    }
+
+    function triggerToast() {
+      document.getElementById('toastMessage').textContent = 'Please wait 30s before trying again.';
+      document.getElementById('retryBtn').disabled = false;
+      showToast();
+      document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+      document.getElementById('stateLabel').textContent = 'populated';
+      document.getElementById('stateLabel').className = 'state-label active';
+    }
+
+    // Expose setState globally
+    window.setState = setState;
+  </script>
+</body>
+</html>

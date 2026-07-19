@@ -27,13 +27,17 @@ interface WebSocketState {
   markAsRead: (notificationId: string) => void
 }
 
+export const initialWebSocketState = {
+  connectionStatus: 'disconnected' as ConnectionStatus,
+  reconnectAttempts: 0,
+  notifications: [] as Notification[],
+  lastEvent: null as string | null,
+}
+
 export const useWebSocketStore = create<WebSocketState>()(
   devtools(
     (set) => ({
-      connectionStatus: 'disconnected',
-      reconnectAttempts: 0,
-      notifications: [],
-      lastEvent: null,
+      ...initialWebSocketState,
 
       setConnecting: () =>
         set({ connectionStatus: 'connecting', reconnectAttempts: 0 }),
