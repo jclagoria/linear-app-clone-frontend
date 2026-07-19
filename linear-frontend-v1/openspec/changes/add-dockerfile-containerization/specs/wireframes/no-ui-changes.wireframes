@@ -1,0 +1,28 @@
+# Wireframe: No UI Changes
+
+## Purpose & Flow Context
+
+This change adds containerization (Dockerfile + nginx.conf) at the infrastructure level. It does **not** introduce, modify, or remove any user-facing screens. The built SPA is served by nginx instead of Vite preview or Vercel, but the visual output is identical.
+
+No wireframes are needed because there are zero UI changes.
+
+---
+
+## What Changes
+
+| Layer | Before | After | User Visible? |
+|-------|--------|-------|---------------|
+| Serving | `pnpm preview` or Vercel | nginx in Docker container | No — same HTML/CSS/JS |
+| Deployment | Vercel-only | Docker image + Vercel | No |
+| Routing | Vite dev server | nginx `try_files` fallback | No — same behavior |
+
+## Affected Screens
+
+None. All existing screens remain exactly as-is.
+
+## Notes for Implementer
+
+- The nginx configuration must be verified to serve the SPA correctly before considering this complete
+- Test by building the Docker image, running it, and navigating through all key app routes
+- Verify security headers are present (this is an improvement over the existing setup)
+- Verify long-term caching for `/assets/*` files works correctly
