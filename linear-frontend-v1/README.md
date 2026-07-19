@@ -56,4 +56,41 @@ A Linear.app frontend clone built with React, TypeScript and Vite.
 
 ---
 
+## Docker
+
+Build and run the application in a containerized nginx server.
+
+### Build
+
+```bash
+docker build -t linear-app-clone:latest .
+```
+
+### Run
+
+```bash
+docker run -d -p 8080:80 linear-app-clone:latest
+```
+
+The app is available at [http://localhost:8080](http://localhost:8080).
+
+### Stop
+
+```bash
+# List running containers
+docker ps
+
+# Stop the container
+docker stop <container-id>
+```
+
+### Notes
+
+- The container runs as a non-root user (`appuser`, UID 1001) for security.
+- Static assets in `/assets/` are served with long-term caching (1 year, immutable).
+- SPA client-side routing is handled by nginx (`try_files` fallback).
+- Security headers are applied to all responses (CSP, X-Frame-Options, etc.).
+
+---
+
 Built with React + TypeScript + Vite.
