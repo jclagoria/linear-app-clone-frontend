@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UI Generic Components — Mockup Hub</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-success: #22C55E;
+      --color-danger: #EF4444;
+      --color-warning: #F59E0B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 0.25rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+    header {
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-4) var(--space-8);
+      display: flex; align-items: center; gap: var(--space-4);
+    }
+    header h1 { font-size: 20px; font-weight: 600; }
+    header span { color: var(--color-text-secondary); font-size: 14px; }
+    main { max-width: 960px; margin: var(--space-8) auto; padding: 0 var(--space-4); }
+    .card-grid { display: grid; gap: var(--space-4); }
+    .card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: box-shadow 0.15s;
+    }
+    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card h2 { font-size: 16px; font-weight: 600; margin-bottom: var(--space-2); }
+    .card p { font-size: 14px; color: var(--color-text-secondary); }
+    .components-list {
+      list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-2);
+      margin-top: var(--space-4);
+    }
+    .components-list li {
+      font-size: 12px; padding: 2px 8px;
+      background: #EFF6FF; color: var(--color-primary);
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>UI Generic Components</h1>
+    <span>Interactive Mockups</span>
+  </header>
+  <main>
+    <div class="card-grid">
+      <a href="form-page.html" class="card">
+        <h2>Form Page</h2>
+        <p>Input, Select, Checkbox, Textarea, and Button components in a form layout with all states.</p>
+        <ul class="components-list">
+          <li>Input</li><li>Select</li><li>Checkbox</li><li>Textarea</li><li>Button</li>
+        </ul>
+      </a>
+      <a href="modal-demo.html" class="card">
+        <h2>Modal Dialog</h2>
+        <p>Overlay dialog with backdrop, focus trap, Esc close, and stacked (nested) modal support.</p>
+        <ul class="components-list">
+          <li>Modal</li>
+        </ul>
+      </a>
+      <a href="toast-demo.html" class="card">
+        <h2>Toast Notifications</h2>
+        <p>Transient notifications with success, error, and info variants; auto-dismiss and manual close.</p>
+        <ul class="components-list">
+          <li>Toast</li>
+        </ul>
+      </a>
+      <a href="data-display-demo.html" class="card">
+        <h2>Data Display</h2>
+        <p>Card, EmptyState, and LoadingIndicator with lifecycle states (loading, empty, populated, error).</p>
+        <ul class="components-list">
+          <li>Card</li><li>EmptyState</li><li>LoadingIndicator</li>
+        </ul>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

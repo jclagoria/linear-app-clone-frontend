@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Page — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-success: #22C55E;
+      --color-danger: #EF4444;
+      --color-danger-bg: #FEF2F2;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 0.25rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+    }
+    /* App shell */
+    .app-header {
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .app-header .logo { font-weight: 700; font-size: 16px; }
+    .app-header nav { display: flex; gap: 16px; font-size: 14px; color: var(--color-text-secondary); }
+    .app-header .user-menu { display: flex; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; }
+    .main-container {
+      max-width: 640px; margin: var(--space-8) auto; padding: 0 var(--space-4);
+    }
+    /* Form styles */
+    .form-title { font-size: 24px; font-weight: 700; margin-bottom: 24px; }
+    .field-group {
+      margin-bottom: 24px;
+    }
+    .field-group-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: var(--color-text-primary); }
+    .field { margin-bottom: var(--space-3); }
+    .field-label {
+      display: block; font-size: 12px; font-weight: 400; color: var(--color-text-secondary);
+      margin-bottom: 4px;
+    }
+    .field-input {
+      width: 100%; padding: 8px 12px; font-size: 14px; font-family: var(--font-family);
+      border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      background: var(--color-surface-elevated); color: var(--color-text-primary);
+      outline: none; transition: border-color 0.15s;
+    }
+    .field-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .field-input.error { border-color: var(--color-danger); }
+    .field-input.error:focus { box-shadow: 0 0 0 2px rgba(239,68,68,0.15); }
+    .field-input:disabled { opacity: 0.5; cursor: not-allowed; }
+    .field-row { display: flex; gap: 12px; }
+    .field-row .field { flex: 1; }
+    .error-message {
+      font-size: 12px; color: var(--color-danger); margin-top: 4px; display: flex; align-items: center; gap: 4px;
+    }
+    /* Select custom */
+    .select-wrapper { position: relative; }
+    .select-trigger {
+      width: 100%; padding: 8px 12px; font-size: 14px; font-family: var(--font-family);
+      border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      background: var(--color-surface-elevated); color: var(--color-text-primary);
+      text-align: left; cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      outline: none; transition: border-color 0.15s;
+    }
+    .select-trigger:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .select-trigger.error { border-color: var(--color-danger); }
+    .select-trigger .chevron { transition: transform 0.15s; font-size: 10px; }
+    .select-trigger.open .chevron { transform: rotate(180deg); }
+    .select-trigger.placeholder { color: var(--color-text-secondary); }
+    .select-trigger:disabled { opacity: 0.5; cursor: not-allowed; }
+    .select-dropdown {
+      display: none; position: absolute; top: 100%; left: 0; right: 0; z-index: 10;
+      background: var(--color-surface-elevated); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      list-style: none;
+    }
+    .select-dropdown.open { display: block; }
+    .select-dropdown li {
+      padding: 8px 12px; font-size: 14px; cursor: pointer;
+    }
+    .select-dropdown li:hover { background: #F1F5F9; }
+    .select-dropdown li.selected { background: #EFF6FF; color: var(--color-primary); font-weight: 500; }
+    /* Checkbox */
+    .checkbox-label {
+      display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; padding: 4px 0;
+    }
+    .checkbox-label.disabled { opacity: 0.5; cursor: not-allowed; }
+    .checkbox-box {
+      width: 18px; height: 18px; border: 2px solid var(--color-border); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      background: var(--color-surface-elevated); transition: all 0.12s;
+    }
+    .checkbox-label.checked .checkbox-box { background: var(--color-primary); border-color: var(--color-primary); }
+    .checkbox-label.indeterminate .checkbox-box { background: var(--color-primary); border-color: var(--color-primary); }
+    .checkbox-box svg { display: none; }
+    .checkbox-label.checked .checkbox-box .check { display: block; }
+    .checkbox-label.indeterminate .checkbox-box .dash { display: block; }
+    /* Textarea */
+    .textarea {
+      width: 100%; padding: 8px 12px; font-size: 14px; font-family: var(--font-family);
+      border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      background: var(--color-surface-elevated); color: var(--color-text-primary);
+      resize: vertical; min-height: 100px; outline: none;
+    }
+    .textarea:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .textarea.error { border-color: var(--color-danger); }
+    .textarea:disabled { opacity: 0.5; cursor: not-allowed; }
+    .char-counter { font-size: 12px; color: var(--color-text-secondary); text-align: right; margin-top: 4px; }
+    .char-counter.warning { color: var(--color-warning); }
+    .char-counter.over { color: var(--color-danger); }
+    /* Buttons */
+    .action-bar { display: flex; justify-content: flex-end; gap: 8px; margin-top: 32px; padding-top: 16px; border-top: 1px solid var(--color-border); }
+    .btn {
+      padding: 8px 16px; font-size: 14px; font-family: var(--font-family); font-weight: 500;
+      border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; transition: all 0.12s;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--color-primary); color: white; border-color: var(--color-primary);
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--color-primary-hover); }
+    .btn-secondary {
+      background: var(--color-surface-elevated); color: var(--color-text-primary); border-color: var(--color-border);
+    }
+    .btn-secondary:hover:not(:disabled) { background: #F1F5F9; }
+    .btn-danger {
+      background: var(--color-danger); color: white; border-color: var(--color-danger);
+    }
+    .btn-danger:hover:not(:disabled) { background: #DC2626; }
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Skeleton loading */
+    .skeleton { background: #E2E8F0; border-radius: 4px; animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    /* State toggle bar */
+    .state-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--color-surface-elevated); border-top: 1px solid var(--color-border);
+      padding: 8px 16px; display: flex; gap: 8px; align-items: center; justify-content: center;
+      font-size: 12px; z-index: 100;
+    }
+    .state-bar button {
+      padding: 4px 12px; font-size: 12px; font-family: var(--font-family);
+      border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface-elevated);
+      cursor: pointer;
+    }
+    .state-bar button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    /* Toast */
+    .toast-container {
+      position: fixed; top: 16px; right: 16px; z-index: 200;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      display: none; padding: 12px 16px; border-radius: var(--radius-md);
+      font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      align-items: center; gap: 8px; min-width: 300px;
+      animation: slideIn 0.2s ease-out;
+    }
+    .toast.show { display: flex; }
+    .toast.success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+    .toast.error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .toast.info { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+    .toast .dismiss { margin-left: auto; cursor: pointer; background: none; border: none; font-size: 16px; opacity: 0.6; }
+    .toast .dismiss:hover { opacity: 1; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    body[data-state="loading"] .field-input,
+    body[data-state="loading"] .select-trigger,
+    body[data-state="loading"] .textarea,
+    body[data-state="loading"] .action-bar { display: none; }
+    body[data-state="loading"] .skeleton-field { display: block; }
+    body[data-state="loading"] .form-content { display: none; }
+    body[data-state="loading"] .form-title { display: none; }
+    body[data-state="loading"] .field { display: none; }
+    body[data-state="loading"] .field-group-title { display: none; }
+    .skeleton-field { display: none; }
+    body:not([data-state="loading"]) .skeleton-field { display: none !important; }
+    body[data-state="populated"] .empty-state-msg { display: none; }
+    body[data-state="empty"] .form-content { display: none; }
+    body[data-state="empty"] .action-bar { display: none; }
+    body[data-state="empty"] .empty-state-msg { display: flex; }
+    /* Loading skeleton layout */
+    .skeleton-field { margin-bottom: 16px; }
+    .skeleton-label { width: 80px; height: 12px; margin-bottom: 6px; }
+    .skeleton-input { width: 100%; height: 38px; }
+    .skeleton-textarea { width: 100%; height: 100px; }
+    .skeleton-title { width: 200px; height: 24px; margin-bottom: 24px; }
+    /* Empty state */
+    .empty-state-msg {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      padding: 64px 24px; text-align: center;
+    }
+    .empty-state-msg .icon { font-size: 48px; margin-bottom: 16px; }
+    .empty-state-msg h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+    .empty-state-msg p { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 16px; }
+  </style>
+</head>
+<body data-state="populated">
+
+  <div class="app-header">
+    <div class="logo">◈ Linear</div>
+    <nav>
+      <span>Dashboard</span>
+      <span>Issues</span>
+      <span>Settings</span>
+    </nav>
+    <div class="user-menu">👤 User ▼</div>
+  </div>
+
+  <div class="main-container">
+
+    <!-- Loading skeleton -->
+    <div class="skeleton-field">
+      <div class="skeleton skeleton-title"></div>
+      <div class="skeleton skeleton-label"></div>
+      <div class="skeleton skeleton-input"></div>
+      <div class="skeleton skeleton-label" style="margin-top:16px"></div>
+      <div class="skeleton skeleton-input" style="width:48%"></div>
+    </div>
+
+    <div class="empty-state-msg">
+      <div class="icon">📋</div>
+      <h3>No form data</h3>
+      <p>Start filling out the form to see your input.</p>
+      <button class="btn btn-primary" onclick="setState('populated')">Start Filling</button>
+    </div>
+
+    <div class="form-content">
+      <h1 class="form-title">Create Issue</h1>
+
+      <div class="field-group">
+        <h2 class="field-group-title">Details</h2>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label" for="title">Title</label>
+            <input id="title" class="field-input" type="text" placeholder="e.g. Add user authentication" value="Fix login redirect bug" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="priority">Priority</label>
+            <div class="select-wrapper">
+              <button id="priority" class="select-trigger" onclick="toggleSelect(this)">
+                <span>High</span>
+                <span class="chevron">▼</span>
+              </button>
+              <ul class="select-dropdown">
+                <li onclick="selectOption(this, 'None')">None</li>
+                <li onclick="selectOption(this, 'Low')">Low</li>
+                <li onclick="selectOption(this, 'Medium')">Medium</li>
+                <li class="selected" onclick="selectOption(this, 'High')">High</li>
+                <li onclick="selectOption(this, 'Urgent')">Urgent</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="assignee">Assignee</label>
+          <div class="select-wrapper">
+            <button id="assignee" class="select-trigger placeholder" onclick="toggleSelect(this)">
+              <span>Select assignee...</span>
+              <span class="chevron">▼</span>
+            </button>
+            <ul class="select-dropdown">
+              <li onclick="selectOption(this, 'Alice Chen')">Alice Chen</li>
+              <li onclick="selectOption(this, 'Bob Martinez')">Bob Martinez</li>
+              <li onclick="selectOption(this, 'Carol Smith')">Carol Smith</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="checkbox-label" onclick="toggleCheckbox(this)">
+            <span class="checkbox-box">
+              <svg class="check" width="12" height="12" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" fill="none"/></svg>
+              <svg class="dash" width="12" height="12" viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="2"/></svg>
+            </span>
+            Mark as high priority
+          </label>
+        </div>
+
+        <div class="field">
+          <label class="checkbox-label" onclick="toggleCheckbox(this)">
+            <span class="checkbox-box">
+              <svg class="check" width="12" height="12" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="2" fill="none"/></svg>
+              <svg class="dash" width="12" height="12" viewBox="0 0 12 12"><path d="M2 6h8" stroke="white" stroke-width="2"/></svg>
+            </span>
+            Needs review
+          </label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <h2 class="field-group-title">Description</h2>
+        <div class="field">
+          <label class="field-label" for="description">Description</label>
+          <textarea id="description" class="textarea" maxlength="500" placeholder="Describe the issue in detail..." oninput="updateCounter(this)">Users are getting redirected to the home page instead of their intended destination after login. This affects all OAuth flows.</textarea>
+          <div class="char-counter" id="desc-counter">118 / 500 chars</div>
+        </div>
+      </div>
+
+      <div class="action-bar">
+        <button class="btn btn-secondary" onclick="window.location.href='index.html'">Cancel</button>
+        <button id="submit-btn" class="btn btn-primary" onclick="submitForm()">
+          <span id="submit-text">Create Issue</span>
+          <span id="submit-spinner" class="spinner" style="display:none"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <div class="state-bar">
+    <span>States:</span>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('empty')">Empty</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('error')">Error</button>
+    <button onclick="showFormToast('success')">Toast: Success</button>
+    <button onclick="showFormToast('error')">Toast: Error</button>
+  </div>
+
+  <script>
+    function setState(state) {
+      document.body.dataset.state = state;
+      document.querySelectorAll('.state-bar button').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase().includes(state) && !b.textContent.includes('Toast')));
+      if (state === 'populated') {
+        document.querySelector('.form-content').style.display = 'block';
+        document.querySelector('#submit-spinner').style.display = 'none';
+        document.querySelector('#submit-text').textContent = 'Create Issue';
+      }
+      if (state === 'empty') {
+        document.querySelector('.form-content').style.display = 'block';
+      }
+      if (state === 'error') {
+        document.querySelector('.form-content').style.display = 'block';
+        document.querySelector('.field-input').classList.add('error');
+        const errMsg = document.createElement('div');
+        errMsg.className = 'error-message';
+        errMsg.id = 'title-error';
+        errMsg.innerHTML = '⚠ This field is required';
+        const titleField = document.querySelector('#title').closest('.field');
+        if (!titleField.querySelector('.error-message')) titleField.appendChild(errMsg);
+      } else {
+        document.querySelector('.field-input')?.classList.remove('error');
+        document.querySelector('#title-error')?.remove();
+      }
+    }
+
+    function toggleSelect(trigger) {
+      if (trigger.disabled) return;
+      const dropdown = trigger.nextElementSibling;
+      dropdown.classList.toggle('open');
+      trigger.classList.toggle('open');
+    }
+
+    function selectOption(li, value) {
+      const dropdown = li.closest('.select-dropdown');
+      const trigger = dropdown.previousElementSibling;
+      dropdown.querySelectorAll('li').forEach(o => o.classList.remove('selected'));
+      li.classList.add('selected');
+      trigger.querySelector('span:first-child').textContent = value;
+      trigger.classList.remove('placeholder');
+      dropdown.classList.remove('open');
+      trigger.classList.remove('open');
+    }
+
+    function toggleCheckbox(label) {
+      if (label.classList.contains('disabled')) return;
+      label.classList.toggle('checked');
+      label.classList.remove('indeterminate');
+    }
+
+    function updateCounter(textarea) {
+      const counter = textarea.parentElement.querySelector('.char-counter');
+      if (!counter) return;
+      const len = textarea.value.length;
+      const max = textarea.getAttribute('maxlength');
+      counter.textContent = len + ' / ' + max + ' chars';
+      counter.className = 'char-counter';
+      if (len > max * 0.9) counter.classList.add('warning');
+      if (len >= max) counter.classList.add('over');
+    }
+
+    function submitForm() {
+      const btn = document.querySelector('#submit-btn');
+      const text = document.querySelector('#submit-text');
+      const spinner = document.querySelector('#submit-spinner');
+      btn.disabled = true;
+      text.textContent = 'Creating...';
+      spinner.style.display = 'inline-block';
+      setTimeout(() => {
+        btn.disabled = false;
+        text.textContent = 'Create Issue';
+        spinner.style.display = 'none';
+        showFormToast('success');
+      }, 1500);
+    }
+
+    function showFormToast(type) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast show ' + type;
+      const icons = { success: '✓', error: '✗', info: 'ℹ' };
+      const msgs = {
+        success: 'Issue created successfully',
+        error: 'Failed to create issue. Please try again.',
+        info: 'Form data has been saved as draft.'
+      };
+      toast.innerHTML = '<span>' + icons[type] + ' ' + msgs[type] + '</span><button class="dismiss" onclick="this.parentElement.remove()">×</button>';
+      container.appendChild(toast);
+      setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4000);
+    }
+
+    window.addEventListener('click', function(e) {
+      document.querySelectorAll('.select-dropdown.open').forEach(d => {
+        if (!d.closest('.select-wrapper').contains(e.target)) {
+          d.classList.remove('open');
+          d.previousElementSibling.classList.remove('open');
+        }
+      });
+    });
+
+    // Initialize character counter
+    document.querySelectorAll('.textarea').forEach(updateCounter);
+  </script>
+</body>
+</html>
