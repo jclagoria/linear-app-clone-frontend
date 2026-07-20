@@ -1,0 +1,153 @@
+# Wireframe: App Shell (Sidebar Collapsed)
+
+## Purpose & Flow Context
+
+Alternate sidebar state on desktop/tablet viewports (>768px) where the sidebar reduces to icon-only width. Entry: user clicks the collapse toggle in the sidebar footer while on any page. Exit: user clicks the expand toggle to restore full sidebar, or resizes to mobile (<768px). Persists across navigation and page refresh.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+Same as App Shell (Desktop). Only sidebar-specific differences noted.
+
+---
+
+## Layout Regions
+
+**Grid**: Same 12-column layout as desktop shell. Spacing cadence: 4px dense for collapsed sidebar.
+
+**App-shell**: Shared header + collapsed sidebar + expanded content area.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Same as desktop: search, notification bell, user avatar, theme toggle | Unchanged from expanded layout |
+| Sidebar (collapsed) | Team selector icon, nav link icons only, expand toggle | Width: 56px; labels hidden |
+| Content | Main page content — fills reclaimed sidebar width | Wider than expanded layout |
+
+**Content hierarchy** (by visual priority):
+1. Header — global triggers
+2. Content — primary task (now more horizontal space)
+3. Sidebar — navigation cues (icons only)
+
+```
++------------------------------------------------------------------+
+|  Header: [search] [theme-toggle] [bell 3] [avatar]              |
++------------------------------------------------------------------+
+|  +-- S --+  +-- Content (fills remaining, wider) --------------+  |
+|  |  [T]  |  |  [h1 Page Title]                                |  |
+|  |       |  |                                                    |  |
+|  |  [I]  |  |  (Page-specific content — now uses               |  |
+|  |  [P]  |  |   reclaimed horizontal space)                    |  |
+|  |  [C]  |  |                                                    |  |
+|  |       |  |                                                    |  |
+|  |  [>>] |  |                                                    |  |
+|  +-------+  +----------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+*Legend: S=Team selector icon, I=Issues icon, P=Projects icon, C=Cycles icon, >>=Expand button*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Collapsed sidebar container | Sidebar (collapsed variant) | Width 56px; shows icons only; aria-label="Main navigation" | — |
+| Team selector (collapsed) | TeamSelector (collapsed) | Icon only; tooltip shows team name on hover/focus | aria-label="Current team: {name}" |
+| Nav link (collapsed) | NavLink (collapsed) | Icon only; tooltip shows label on hover/focus | aria-label matches link label; aria-current="page" on active |
+| Expand toggle | SidebarToggle | aria-label="Expand sidebar"; icon chevron points right | — |
+| Content area | (main) | Fills available width; overflow-y: auto | Adjusted width on transition |
+
+## Data Display
+
+No data display — icons only. The collapsed sidebar is a navigation affordance, not a data container.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Nav link tooltip | Full link label (e.g. "Issues") | Visible on hover/focus — labelled via title or aria-describedby |
+| Expand toggle | "Expand sidebar" | Action-oriented label |
+| Team selector tooltip | "Team Name" | Team name context on hover |
+
+## States
+
+### Populated (Default)
+
+Layout as shown in ASCII sketch. Content area is wider than expanded state.
+
+### Empty
+
+N/A — collapsed sidebar always shows icons.
+
+### Loading
+
+Same skeleton as desktop shell, just with narrower sidebar region.
+
+```
++------------------------------------------------------------------+
+|  Header: [search] [theme-toggle] [bell] [avatar]                |
++------------------------------------------------------------------+
+|  +-S+  +-- Content (fills remaining, wider) -------------------+  |
+|  |[T]|  |  [===== skeleton bar =====]                          |  |
+|  |[I]|  |  [=== skeleton ===]                                  |  |
+|  |[P]|  |  [======== skeleton =========]                       |  |
+|  |[C]|  |  [=== skeleton ===]                                  |  |
+|  |[>>]|  |                                                      |  |
+|  +---+  +------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Error
+
+Layout shell does not have an error state. Page errors appear in content area.
+
+### Success / Confirmation
+
+Visual feedback: sidebar width animates on collapse/expand transition. Instant response to toggle click.
+
+### Transition (Collapse ↔ Expand)
+
+```
+[Before]                               [After]
++-- Sidebar (240px) --+                +-- S(56px) --+
+|  Team Name      ▼   |                |  [T]        |
+|  Issues    ●        |   → click →    |  [I]        |
+|  Projects           |                |  [P]        |
+|  Cycles             |                |  [C]        |
+|                     |                |             |
+|  [<< Collapse]      |                |  [>> Expand] |
++---------------------+                +-------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Collapsed sidebar as described; can be expanded |
+| Tablet (768-1024px) | Same behavior; collapsed sidebar persists across page navigation |
+| Mobile (<768px) | Collapsed state irrelevant — sidebar is hidden; hamburger replaces toggle |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Same as desktop: header role="banner", nav role="navigation", main role="main" |
+| Heading order | Same as desktop — layout has no heading; page content provides h1 |
+| Reading / Focus order | Header → Sidebar (collapsed) → Content — tabbing through sidebar visits each icon in order |
+| Accessible names | Every icon-only element gets aria-label describing its action/destination |
+| Keyboard operability | Tab moves through sidebar icons; tooltips appear on focus; Enter/Space activates link/toggle |
+| Target size | ≥24×24 CSS px reservation; sidebar icons have adequate hit area within 56px width |
+| Focus not obscured | No overlapping issue; sidebar and header do not obscure focused elements |
+| Non-color intent | Active link uses different icon fill/background; expand toggle uses icon direction change |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

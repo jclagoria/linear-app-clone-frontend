@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App Shell — Mobile Mockup</title>
+  <style>
+    :root {
+      --bg-primary: #FFFFFF;
+      --bg-secondary: #F5F5F5;
+      --bg-tertiary: #EAEAEA;
+      --text-primary: #1A1A1A;
+      --text-secondary: #6B7280;
+      --text-tertiary: #9CA3AF;
+      --border-color: #E5E7EB;
+      --accent-color: #5E6AD2;
+      --accent-hover: #4F5BD1;
+      --danger-color: #EF4444;
+      --success-color: #10B981;
+      --overlay-backdrop: rgba(0,0,0,0.5);
+      --overlay-width: 280px;
+      --header-height: 48px;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 8px;
+      --space-6: 12px;
+      --space-8: 16px;
+      --radius-md: 6px;
+    }
+    [data-theme="dark"] {
+      --bg-primary: #1A1A2E;
+      --bg-secondary: #16213E;
+      --bg-tertiary: #0F3460;
+      --text-primary: #EAEAEA;
+      --text-secondary: #9CA3AF;
+      --text-tertiary: #6B7280;
+      --border-color: #2D3748;
+      --accent-color: #7C8AFF;
+      --accent-hover: #6B7AFF;
+      --danger-color: #F87171;
+      --success-color: #34D399;
+      --overlay-backdrop: rgba(0,0,0,0.7);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--bg-primary); color: var(--text-primary); height: 100vh; overflow: hidden; }
+
+    .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+    .header { height: var(--header-height); min-height: var(--header-height); background: var(--bg-primary); border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-6); position: sticky; top: 0; z-index: 100; }
+    .header-left { display: flex; align-items: center; gap: var(--space-4); }
+    .hamburger { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: none; border: none; border-radius: var(--radius-md); color: var(--text-primary); cursor: pointer; font-size: 20px; }
+    .hamburger:hover { background: var(--bg-secondary); }
+    .header-logo span { font-size: 14px; font-weight: 600; }
+    .header-right { display: flex; align-items: center; gap: var(--space-4); }
+    .header-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: none; border: none; border-radius: var(--radius-md); color: var(--text-secondary); cursor: pointer; font-size: 16px; position: relative; }
+    .header-btn:hover { background: var(--bg-secondary); }
+    .badge { position: absolute; top: -2px; right: -2px; min-width: 16px; height: 16px; background: var(--danger-color); color: white; font-size: 10px; font-weight: 700; border-radius: 8px; padding: 0 4px; display: flex; align-items: center; justify-content: center; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-color); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+    .theme-toggle { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: none; border: none; border-radius: var(--radius-md); color: var(--text-secondary); cursor: pointer; font-size: 16px; }
+    .theme-toggle:hover { background: var(--bg-secondary); }
+
+    .content { flex: 1; overflow-y: auto; padding: var(--space-8); }
+    .content h1 { font-size: 22px; font-weight: 600; margin-bottom: var(--space-8); }
+    .content-card { background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: var(--space-8); margin-bottom: var(--space-8); }
+    .content-card h3 { font-size: 14px; font-weight: 600; margin-bottom: var(--space-4); }
+    .content-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* Overlay */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 300; }
+    .sidebar-overlay.open { display: flex; }
+    .backdrop { position: absolute; inset: 0; background: var(--overlay-backdrop); }
+    .sidebar-panel { position: relative; width: var(--overlay-width); max-width: 80vw; height: 100%; background: var(--bg-secondary); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; z-index: 1; animation: slideIn 0.25s ease-out; }
+    @keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+    .sidebar-panel-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-6) var(--space-8); border-bottom: 1px solid var(--border-color); }
+    .close-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: none; border: none; border-radius: var(--radius-md); color: var(--text-primary); cursor: pointer; font-size: 18px; }
+    .close-btn:hover { background: var(--bg-tertiary); }
+
+    .sidebar-panel-nav { flex: 1; padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+    .nav-link { display: flex; align-items: center; gap: var(--space-6); padding: var(--space-6) var(--space-8); border-radius: var(--radius-md); text-decoration: none; color: var(--text-secondary); font-size: 14px; font-weight: 500; }
+    .nav-link:hover { background: var(--bg-tertiary); color: var(--text-primary); }
+    .nav-link.active { background: var(--bg-tertiary); color: var(--accent-color); }
+    .nav-link .icon { width: 20px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
+    .state-bar { display: flex; gap: var(--space-4); padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--border-color); background: var(--bg-secondary); align-items: center; flex-wrap: wrap; }
+    .state-bar label { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+    .state-btn { padding: 4px 12px; font-size: 12px; background: var(--bg-primary); border: 1px solid var(--border-color); border-radius: var(--radius-md); cursor: pointer; color: var(--text-secondary); }
+    .state-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
+    .state-btn.active { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+
+    .nav-back { position: fixed; bottom: var(--space-8); right: var(--space-8); padding: var(--space-4) var(--space-8); background: var(--accent-color); color: white; text-decoration: none; border-radius: var(--radius-md); font-size: 13px; z-index: 50; }
+
+    .skeleton { height: 16px; border-radius: 4px; background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-secondary) 50%, var(--bg-tertiary) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; margin-bottom: var(--space-4); }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+    body[data-state="loading"] .populated { display: none; }
+    body[data-state="loading"] .loading-state { display: block; }
+    body[data-state="error"] .populated { display: none; }
+    body[data-state="error"] .error-state { display: block; }
+
+    @media (min-width: 769px) {
+      body::after { content: 'Resize to <768px for mobile view'; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); background: var(--accent-color); color: white; padding: 1rem 2rem; border-radius: 8px; font-size: 14px; z-index: 9999; }
+    }
+    @media (max-width: 768px) {
+      .nav-back { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="state-bar">
+    <label>State:</label>
+    <button class="state-btn active" onclick="setState('populated')">Populated</button>
+    <button class="state-btn" onclick="setState('loading')">Loading</button>
+    <button class="state-btn" onclick="setState('error')">Error</button>
+  </div>
+
+  <div class="loading-state" style="padding:2rem;">
+    <div class="skeleton" style="height:28px;width:60%;"></div>
+    <div class="skeleton" style="height:80px;"></div>
+    <div class="skeleton" style="height:80px;width:80%;"></div>
+  </div>
+
+  <div class="error-state" style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:1rem;padding:2rem;text-align:center;">
+    <div style="font-size:3rem;color:var(--danger-color);">!</div>
+    <h2 style="font-size:18px;">Something went wrong</h2>
+    <p style="color:var(--text-secondary);font-size:13px;">Tap the hamburger menu to navigate to a different page.</p>
+    <button class="state-btn" onclick="setState('populated')" style="padding:8px 24px;">Retry</button>
+  </div>
+
+  <div class="app-shell populated">
+    <header class="header" role="banner">
+      <div class="header-left">
+        <button class="hamburger" id="hamburgerBtn" onclick="openOverlay()" aria-label="Open menu">&#9776;</button>
+        <div class="header-logo"><span>Linear Clone</span></div>
+      </div>
+      <div class="header-right">
+        <button class="header-btn" aria-label="Search">&#128269;</button>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Switch to dark mode">&#9788;</button>
+        <button class="header-btn" aria-label="5 unread notifications">
+          &#128276;
+          <span class="badge" aria-hidden="true">5</span>
+        </button>
+        <div class="avatar" aria-haspopup="true">JD</div>
+      </div>
+    </header>
+
+    <main class="content" role="main">
+      <h1>Dashboard</h1>
+      <div class="content-card">
+        <h3>Recent Issues</h3>
+        <p>Your most recently updated issues. Tap the hamburger icon to navigate between sections.</p>
+      </div>
+      <div class="content-card">
+        <h3>My Projects</h3>
+        <p>Active projects you're contributing to. Full-width layout gives content maximum space on mobile.</p>
+      </div>
+      <div class="content-card">
+        <h3>Activity</h3>
+        <p>Team updates and notifications in your feed.</p>
+      </div>
+    </main>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <div class="backdrop" onclick="closeOverlay()" aria-label="Close menu"></div>
+    <div class="sidebar-panel">
+      <div class="sidebar-panel-header">
+        <span style="font-size:14px;font-weight:600;">Navigation</span>
+        <button class="close-btn" onclick="closeOverlay()" aria-label="Close menu">&#10005;</button>
+      </div>
+      <nav class="sidebar-panel-nav" aria-label="Main navigation">
+        <a href="#" class="nav-link active" onclick="closeOverlay()" aria-current="page">
+          <span class="icon">&#9632;</span> Dashboard
+        </a>
+        <a href="#" class="nav-link" onclick="closeOverlay()">
+          <span class="icon">&#9776;</span> Issues
+        </a>
+        <a href="#" class="nav-link" onclick="closeOverlay()">
+          <span class="icon">&#128193;</span> Projects
+        </a>
+        <a href="#" class="nav-link" onclick="closeOverlay()">
+          <span class="icon">&#8635;</span> Cycles
+        </a>
+      </nav>
+      <div style="padding:var(--space-8);border-top:1px solid var(--border-color);font-size:12px;color:var(--text-tertiary);">
+        Team Alpha
+      </div>
+    </div>
+  </div>
+
+  <a href="index.html" class="nav-back">&#8592; Back to Index</a>
+
+  <script>
+    const themes = ['light', 'dark', 'system']
+
+    function getTheme() { return localStorage.getItem('mock-theme') || 'light' }
+    function setTheme(theme) {
+      localStorage.setItem('mock-theme', theme)
+      const effective = theme === 'system'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : theme
+      document.documentElement.dataset.theme = effective
+      const btn = document.querySelector('.theme-toggle')
+      const next = themes[(themes.indexOf(theme) + 1) % themes.length]
+      btn.setAttribute('aria-label', 'Switch to ' + (next === 'system' ? 'system' : next) + ' mode')
+    }
+
+    function toggleTheme() {
+      const current = getTheme()
+      const next = themes[(themes.indexOf(current) + 1) % themes.length]
+      setTheme(next)
+    }
+
+    function openOverlay() {
+      document.getElementById('sidebarOverlay').classList.add('open')
+      document.getElementById('hamburgerBtn').innerHTML = '&#10005;'
+      document.getElementById('hamburgerBtn').setAttribute('aria-label', 'Close menu')
+      setTimeout(() => {
+        const firstLink = document.querySelector('.sidebar-panel-nav .nav-link')
+        if (firstLink) firstLink.focus()
+      }, 100)
+    }
+
+    function closeOverlay() {
+      document.getElementById('sidebarOverlay').classList.remove('open')
+      document.getElementById('hamburgerBtn').innerHTML = '&#9776;'
+      document.getElementById('hamburgerBtn').setAttribute('aria-label', 'Open menu')
+      document.getElementById('hamburgerBtn').focus()
+    }
+
+    function setState(state) {
+      document.body.dataset.state = state
+      document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'))
+      document.querySelectorAll('.state-btn').forEach(b => {
+        if (b.textContent.toLowerCase() === state) b.classList.add('active')
+      })
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && document.getElementById('sidebarOverlay').classList.contains('open')) {
+        closeOverlay()
+      }
+    })
+
+    setTheme(getTheme())
+  </script>
+</body>
+</html>
