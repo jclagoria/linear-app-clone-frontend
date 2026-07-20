@@ -4,6 +4,48 @@
   "graph": {},
   "nodes": [
     {
+      "label": "mcp.json",
+      "file_type": "code",
+      "source_file": "linear-frontend-v1/.cursor/mcp.json",
+      "source_location": "L1",
+      "metadata": {
+        "mcp_kind": "mcp_config_file"
+      },
+      "_origin": "ast",
+      "id": "linear_frontend_v1_cursor_mcp",
+      "community": 1,
+      "community_name": "codegraph",
+      "norm_label": "mcp.json"
+    },
+    {
+      "label": "codegraph",
+      "file_type": "code",
+      "source_file": "linear-frontend-v1/.cursor/mcp.json",
+      "source_location": "L1",
+      "metadata": {
+        "mcp_kind": "mcp_server"
+      },
+      "_origin": "ast",
+      "id": "linear_frontend_v1_cursor_mcp_mcp_server_codegraph",
+      "community": 1,
+      "community_name": "codegraph",
+      "norm_label": "codegraph"
+    },
+    {
+      "label": "codegraph",
+      "file_type": "code",
+      "source_file": "linear-frontend-v1/.cursor/mcp.json",
+      "source_location": "L1",
+      "metadata": {
+        "mcp_kind": "mcp_command"
+      },
+      "_origin": "ast",
+      "id": "mcp_command_codegraph",
+      "community": 1,
+      "community_name": "codegraph",
+      "norm_label": "codegraph"
+    },
+    {
       "label": "AGENTS.md",
       "file_type": "document",
       "source_file": "linear-frontend-v1/AGENTS.md",
@@ -35,9 +77,54 @@
       "community": 0,
       "community_name": "AGENTS.md",
       "norm_label": "mandatory project rules"
+    },
+    {
+      "label": "CodeGraph",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L25",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_codegraph",
+      "community": 0,
+      "community_name": "AGENTS.md",
+      "norm_label": "codegraph"
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "linear-frontend-v1/.cursor/mcp.json",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_cursor_mcp",
+      "target": "linear_frontend_v1_cursor_mcp_mcp_server_codegraph"
+    },
+    {
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "linear-frontend-v1/.cursor/mcp.json",
+      "source_location": "L1",
+      "weight": 1.0,
+      "context": "command",
+      "_origin": "ast",
+      "source": "linear_frontend_v1_cursor_mcp_mcp_server_codegraph",
+      "target": "mcp_command_codegraph"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L25",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_codegraph",
+      "confidence_score": 1.0
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
@@ -62,5 +149,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "2330ffad5878e9c8c3872c2c14dbd71f234068af"
+  "built_at_commit": "108986c6f105f6ca09d94cf8af1627b662230ace"
 }
