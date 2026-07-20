@@ -1,0 +1,235 @@
+# Wireframe: Form Page
+
+## Purpose & Flow Context
+
+The user fills out structured data through Input, Select, Checkbox, and Textarea primitives. Serves the Form Input Flow step. Entry: user navigates to a page with a form (issue creation, login, settings). Exit points: Submit (→ processing → success/error), Cancel (→ previous page, with dirty-confirmation modal).
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for form sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + main container.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo / Nav / UserMenu | Shared, not form-specific |
+| Main | `<main>` — form container | Centered, max-width 640px |
+| Footer | (none on form pages) | — |
+
+**Content hierarchy** (by visual priority):
+1. Form title (`h1`) — identifies the form's purpose
+2. Field groups — logical groups of related inputs
+3. Action bar — Submit + Cancel buttons at the bottom
+
+```
++------------------------------------------------------------------+
+|  Header: [Logo]  Nav Links  [>User▼]                             |
++------------------------------------------------------------------+
+|                                                                    |
+|  +---------------------  main container (max 640px)  ----------+  |
+|  |                                                               |  |
+|  |  # Form Title                                                  |  |
+|  |                                                               |  |
+|  |  +-- field-group -------------------------------------------+ |  |
+|  |  |  ## Field Group Label                                     | |  |
+|  |  |                                                           | |  |
+|  |  |  Label text                                                | |  |
+|  |  |  [_____________________________]                          | |  |
+|  |  |                                                           | |  |
+|  |  |  Label text                    Label text                  | |  |
+|  |  |  [_____________________________]  [>Select option    ▼]   | |  |
+|  |  |                                                           | |  |
+|  |  |  [+] Checkbox label                                       | |  |
+|  |  |  [+] Another checkbox                                     | |  |
+|  |  +-----------------------------------------------------------+ |  |
+|  |                                                               |  |
+|  |  +-- field-group -------------------------------------------+ |  |
+|  |  |  ## Description                                           | |  |
+|  |  |                                                           | |  |
+|  |  |  Label text                                                | |  |
+|  |  |  +-------------------------------------------------------+ | |  |
+|  |  |  |                                                        | |  |
+|  |  |  |  (multi-line text area)                                | |  |
+|  |  |  |                                                        | |  |
+|  |  |  +-------------------------------------------------------+ | |  |
+|  |  |  0 / 500 chars                                            | |  |
+|  |  +-----------------------------------------------------------+ |  |
+|  |                                                               |  |
+|  |  +-- action-bar --------------------------------------------+ |  |
+|  |  |               [Cancel]  [Primary Submit]                  | |  |
+|  |  +-----------------------------------------------------------+ |  |
+|  |                                                               |  |
+|  +---------------------------------------------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [>Dropdown] [+] Checkbox*
+
+---
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Form title | `<h1>` heading-1 | Static text | — |
+| Field group label | `<h2>` heading-2 | Section separator | — |
+| Text label | `<label>` caption | Associated via htmlFor/id with input | — |
+| Text input | Input (text) | onChange fires on each keystroke, onBlur on focus loss | Truncation: no wrap in single-line, overflow hidden |
+| Email input | Input (email) | type="email", browser validates pattern on submit | — |
+| Password input | Input (password) | type="password", obscured characters | — |
+| Select dropdown | Select | onClick opens dropdown, Arrow keys navigate, Enter selects, Esc closes | Overflows viewport → dropdown flips upward |
+| Checkbox | Checkbox | Toggle checked state on click; indeterminate via prop | Label wraps on long text |
+| Textarea | Textarea | Resizable (vertical), character counter below when maxLength set | Content scrolls past max-height |
+| Submit button | Button (primary) | type="submit", triggers form validation then onSubmit | Loading state replaces label with spinner on async submit |
+| Cancel button | Button (secondary) | type="button", navigates back or shows dirty-confirmation modal | — |
+| Error message | Input (error state) — caption + danger token | Appears below field, Input shows danger border + caption-styled message via `aria-describedby` | Long messages wrap within field width |
+| Field container | `<div>` with 8px bottom margin | Groups label, input, error | — |
+
+---
+
+## Data Display
+
+Form layout is a vertical stack of field groups. No table/list component used. Progressive disclosure: optional sections can be hidden behind an accordion or "Show more" toggle.
+
+---
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Form title | Identify what the form does (e.g., "Create Issue", "Login") | `h1`, unique per form type |
+| Field group heading | Group semantically related fields | `h2`, e.g. "Details", "Description" |
+| Input label | Identify what data goes in the field | Use human labels, never data-model keys |
+| Input placeholder | Example or hint of expected format | Not a substitute for label |
+| Select placeholder | "Select {option type}..." | Indicates no choice yet |
+| Checkbox label | Describe what toggling enables | Sentence case |
+| Error message | Plain-language explanation of what's wrong + how to fix | Positioned below the errored field |
+| Submit button | "Create", "Save", "Sign In" — action verb matching the form | Primary variant |
+| Cancel button | "Cancel" — discard/navigate away | Secondary variant |
+
+---
+
+## States
+
+### Populated (Default)
+
+Form rendered with field groups, all inputs in default/filled state, action bar visible. This is the layout shown in the ASCII sketch above.
+
+### Empty
+
+Form is shown to a user who hasn't interacted yet. All fields in default state with placeholders visible, no error messages, Submit button enabled.
+
+### Loading
+
+Form content is being fetched (e.g., edit form loading existing data) or initial render.
+
+```
++------------------------------------------------------------------+
+|  Header: [logo] [== nav skeleton ==]                             |
++------------------------------------------------------------------+
+|                                                                    |
+|  +---------------------  main container  ----------------------+  |
+|  |                                                               |  |
+|  |  [==== skeleton title bar ====]                               |  |
+|  |                                                               |  |
+|  |  [= skeleton label =]                                         |  |
+|  |  [==================== skeleton input bar ==================] |  |
+|  |                                                               |  |
+|  |  [= skeleton label =]       [= skeleton label =]              |  |
+|  |  [=========== skel ======]  [======== skel =====]             |  |
+|  |                                                               |  |
+|  |  [== skeleton label ==]                                       |  |
+|  |  [================================================]           |  |
+|  |  [================================================]           |  |
+|  |                                                               |  |
+|  |  [============== skeleton bar ===============]                |  |
+|  |                                                               |  |
+|  +---------------------------------------------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+Skeleton shapes mirror populated layout. Non-interactive (inputs disabled until data loads).
+
+### Error
+
+One or more fields failed validation, or API returned an error.
+
+```
++------------------------------------------------------------------+
+|  ... (populated layout) ...                                       |
+|                                                                    |
+|  |  Label text                                                    |  |
+|  |  [_____________________________]  ← danger border              |  |
+|  |  ⚠ This field is required                                      |  |
+|  |                                                               |  |
+|  +---------------------------------------------------------------+  |
+|                                                                    |
+|  [Cancel]  [Submit] ← button still enabled for re-submit           |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+Error type: inline (per-field with danger border + message below) + form-level toast if API error. On submission error, fields remain filled (values preserved), Submit button re-enabled.
+
+### Success / Confirmation
+
+Form submitted successfully.
+
+| What changed | Next step |
+|-------------|-----------|
+| Data persisted on server | User is navigated to the next screen (created entity detail, home page) |
+| Toast (success) appears briefly | Auto-dismisses; no action needed |
+
+---
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout as described, centered container max 640px |
+| Tablet (768-1024px) | Container fills 80% width, same stacked layout |
+| Mobile (<768px) | Container fills 100% with 16px padding. Side-by-side fields stack vertically. Touch targets ≥44px on inputs. Action bar buttons stack full-width (Submit top, Cancel bottom). |
+
+---
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header` (site nav), `main` (form), `contentinfo` (footer) |
+| Heading order | `h1` (form title) → `h2` (field group) — one `h1` per screen |
+| Reading / Focus order | Title → field groups in DOM order (top→bottom) → action bar |
+| Accessible names | Each input/select/textarea has `<label>` via `htmlFor`/`id`; error messages via `aria-describedby` |
+| Keyboard operability | Tab through fields in visual order; Enter submits; Tab from last field → Submit button; Shift+Tab from Submit → last field |
+| Target size | ≥24×24 CSS px on all interactive targets; inputs have 8px padding inside the border |
+| Focus not obscured | No sticky regions on form page; focused field always visible on scroll |
+| Non-color intent | Error indicated by danger border + text message + icon, never border-color alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

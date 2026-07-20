@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modal Demo — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-danger: #EF4444;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+    }
+    .app-header {
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .app-header .logo { font-weight: 700; font-size: 16px; }
+    .page-content { max-width: 800px; margin: 48px auto; padding: 0 var(--space-4); }
+    .page-content h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .page-content p { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 24px; }
+    .demo-cards { display: grid; gap: 12px; }
+    .demo-card {
+      padding: 24px; background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+    }
+    .demo-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .demo-card p { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px; }
+
+    .btn {
+      padding: 8px 16px; font-size: 14px; font-family: var(--font-family); font-weight: 500;
+      border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary { background: var(--color-surface-elevated); color: var(--color-text-primary); border-color: var(--color-border); }
+    .btn-secondary:hover { background: #F1F5F9; }
+    .btn-danger { background: var(--color-danger); color: white; border-color: var(--color-danger); }
+    .btn-row { display: flex; gap: 8px; }
+
+    /* Modal */
+    .backdrop {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(15, 23, 42, 0.5);
+      align-items: center; justify-content: center;
+    }
+    .backdrop.open { display: flex; }
+    .backdrop.top { z-index: 1100; }
+    .modal {
+      background: var(--color-surface-elevated); border-radius: var(--radius-lg);
+      width: 480px; max-width: 90vw; max-height: 80vh;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column;
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid var(--color-border);
+    }
+    .modal-header h2 { font-size: 16px; font-weight: 600; }
+    .modal-close {
+      background: none; border: none; font-size: 20px; cursor: pointer;
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      border-radius: 4px; color: var(--color-text-secondary);
+    }
+    .modal-close:hover { background: #F1F5F9; }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; font-size: 14px; line-height: 1.5; }
+    .modal-body p { margin-bottom: 12px; }
+    .modal-footer {
+      display: flex; justify-content: flex-end; gap: 8px;
+      padding: 12px 20px; border-top: 1px solid var(--color-border);
+    }
+    .field-label {
+      display: block; font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px;
+    }
+    .field-input {
+      width: 100%; padding: 8px 12px; font-size: 14px;
+      border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      font-family: var(--font-family); outline: none;
+    }
+    .field-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .field { margin-bottom: 12px; }
+
+    .state-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--color-surface-elevated); border-top: 1px solid var(--color-border);
+      padding: 8px 16px; display: flex; gap: 8px; align-items: center; justify-content: center;
+      font-size: 12px; z-index: 100;
+    }
+    .state-bar button {
+      padding: 4px 12px; font-size: 12px; font-family: var(--font-family);
+      border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface-elevated);
+      cursor: pointer;
+    }
+    .state-bar button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+  </style>
+</head>
+<body>
+
+  <div class="app-header">
+    <div class="logo">◈ Linear</div>
+    <nav style="display:flex;gap:16px;font-size:14px;color:var(--color-text-secondary);">
+      <span>Dashboard</span>
+      <span>Issues</span>
+    </nav>
+    <div style="cursor:pointer;">👤 User ▼</div>
+  </div>
+
+  <div class="page-content">
+    <h1>Modal Dialog Demo</h1>
+    <p>Trigger modals from the parent page. Modals trap focus, close on Esc, and support stacking.</p>
+
+    <div class="demo-cards">
+      <div class="demo-card">
+        <h3>Standard Modal</h3>
+        <p>Basic confirmation modal with title, body, and action buttons.</p>
+        <button class="btn btn-primary" onclick="openModal('standard-modal')">Open Modal</button>
+      </div>
+
+      <div class="demo-card">
+        <h3>Modal with Form</h3>
+        <p>Form inside a modal with input fields and submit/cancel actions.</p>
+        <button class="btn btn-primary" onclick="openModal('form-modal')">Open Form Modal</button>
+      </div>
+
+      <div class="demo-card">
+        <h3>Nested / Stacked Modals</h3>
+        <p>Open a sub-modal from within an existing modal. Closing the top modal reveals the one beneath.</p>
+        <button class="btn btn-primary" onclick="openModal('parent-modal')">Open Parent Modal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Standard Modal -->
+  <div class="backdrop" id="standard-modal" onclick="closeOnBackdrop(this, event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="standard-title">
+      <div class="modal-header">
+        <h2 id="standard-title">Delete Issue</h2>
+        <button class="modal-close" onclick="closeModal('standard-modal')" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the issue <strong>"Fix login redirect bug"</strong>?</p>
+        <p style="color:var(--color-text-secondary);font-size:13px;">This action cannot be undone. All associated comments and history will be permanently removed.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('standard-modal')">Cancel</button>
+        <button class="btn btn-danger" onclick="closeModal('standard-modal')">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Modal -->
+  <div class="backdrop" id="form-modal" onclick="closeOnBackdrop(this, event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="form-title">
+      <div class="modal-header">
+        <h2 id="form-title">Create Project</h2>
+        <button class="modal-close" onclick="closeModal('form-modal')" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label class="field-label" for="project-name">Project Name</label>
+          <input id="project-name" class="field-input" type="text" placeholder="e.g. Q3 Planning" />
+        </div>
+        <div class="field">
+          <label class="field-label" for="project-desc">Description</label>
+          <textarea id="project-desc" class="field-input" style="resize:vertical;min-height:80px;" placeholder="Project goals and scope..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('form-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="closeModal('form-modal')">Create</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Parent Modal (for stacking) -->
+  <div class="backdrop" id="parent-modal" onclick="closeOnBackdrop(this, event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="parent-title">
+      <div class="modal-header">
+        <h2 id="parent-title">Issue Details</h2>
+        <button class="modal-close" onclick="closeModal('parent-modal')" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Fix login redirect bug</strong></p>
+        <p style="font-size:13px;color:var(--color-text-secondary);">Users redirected to home instead of intended destination after OAuth login.</p>
+        <div style="margin-top:16px;">
+          <button class="btn btn-secondary" onclick="openModal('sub-modal')">Open Sub-Modal</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('parent-modal')">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sub-modal (stacked) -->
+  <div class="backdrop top" id="sub-modal" onclick="closeOnBackdrop(this, event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sub-title">
+      <div class="modal-header">
+        <h2 id="sub-title">Confirm Action</h2>
+        <button class="modal-close" onclick="closeModal('sub-modal')" aria-label="Close">×</button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to proceed with this action?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('sub-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="closeModal('sub-modal')">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="state-bar">
+    <span>Demo:</span>
+    <button onclick="openModal('standard-modal')">Open Standard</button>
+    <button onclick="openModal('form-modal')">Open Form</button>
+    <button onclick="openModal('parent-modal')">Open Stacking</button>
+    <button onclick="window.location.href='index.html'">← Back</button>
+  </div>
+
+  <script>
+    const openModals = [];
+
+    function openModal(id) {
+      const backdrop = document.getElementById(id);
+      backdrop.classList.add('open');
+      openModals.push(id);
+      document.body.style.overflow = 'hidden';
+      focusFirst(backdrop);
+    }
+
+    function closeModal(id) {
+      const backdrop = document.getElementById(id);
+      backdrop.classList.remove('open');
+      const idx = openModals.indexOf(id);
+      if (idx > -1) openModals.splice(idx, 1);
+      if (openModals.length === 0) document.body.style.overflow = '';
+    }
+
+    function closeOnBackdrop(backdrop, event) {
+      if (event.target === backdrop) {
+        closeModal(backdrop.id);
+      }
+    }
+
+    function focusFirst(container) {
+      const focusable = container.querySelectorAll('button, input, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable.length) focusable[0].focus();
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && openModals.length > 0) {
+        const top = openModals[openModals.length - 1];
+        closeModal(top);
+      }
+    });
+  </script>
+</body>
+</html>

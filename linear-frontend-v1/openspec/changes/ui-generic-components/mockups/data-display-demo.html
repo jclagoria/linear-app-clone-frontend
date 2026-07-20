@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Display Demo — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-danger: #EF4444;
+      --color-success: #22C55E;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+    }
+    .app-header {
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .app-header .logo { font-weight: 700; font-size: 16px; }
+    .page-content { max-width: 800px; margin: 48px auto; padding: 0 var(--space-4); }
+    .page-content h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+    .page-content .subtitle { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 24px; }
+
+    .btn {
+      padding: 8px 16px; font-size: 14px; font-family: var(--font-family); font-weight: 500;
+      border: 1px solid transparent; border-radius: var(--radius-md); cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--color-primary); color: white; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary {
+      background: var(--color-surface-elevated); color: var(--color-text-primary);
+      border-color: var(--color-border);
+    }
+    .btn-secondary:hover { background: #F1F5F9; }
+    .btn-danger { background: var(--color-danger); color: white; }
+
+    .demo-section {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .demo-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .demo-section .desc { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 16px; }
+
+    /* Card component */
+    .card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .card.clickable { cursor: pointer; transition: box-shadow 0.12s; }
+    .card.clickable:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card.clickable:active { box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .card-header {
+      padding: 16px 16px 0;
+      font-size: 16px; font-weight: 600;
+    }
+    .card-content { padding: 12px 16px 16px; font-size: 14px; color: var(--color-text-secondary); }
+    .card-grid { display: grid; gap: 12px; }
+    .card-grid.two-col { grid-template-columns: 1fr 1fr; }
+    .issue-card { padding: 14px 16px; display: flex; align-items: flex-start; gap: 10px; }
+    .issue-card .priority-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px;
+    }
+    .priority-dot.urgent { background: #EF4444; }
+    .priority-dot.high { background: #F59E0B; }
+    .priority-dot.medium { background: #3B82F6; }
+    .priority-dot.low { background: #94A3B8; }
+    .issue-card .issue-title { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+    .issue-card .issue-meta { font-size: 12px; color: var(--color-text-secondary); display: flex; gap: 8px; }
+
+    /* EmptyState */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 48px 24px; text-align: center;
+    }
+    .empty-state .icon { font-size: 40px; margin-bottom: 12px; opacity: 0.6; }
+    .empty-state h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+    .empty-state p { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 16px; max-width: 360px; }
+
+    /* LoadingIndicator */
+    .loader { display: flex; align-items: center; gap: 8px; justify-content: center; padding: 24px; }
+    .spinner {
+      display: inline-block;
+      border: 3px solid #E2E8F0; border-top-color: var(--color-primary);
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+    .spinner.sm { width: 16px; height: 16px; border-width: 2px; }
+    .spinner.md { width: 24px; height: 24px; }
+    .spinner.lg { width: 40px; height: 40px; border-width: 4px; }
+    .loader-label { font-size: 14px; color: var(--color-text-secondary); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .full-page-loader {
+      position: fixed; inset: 0; background: rgba(248,250,252,0.9);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100;
+    }
+    .full-page-loader .loader { flex-direction: column; gap: 12px; }
+
+    .state-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--color-surface-elevated); border-top: 1px solid var(--color-border);
+      padding: 8px 16px; display: flex; gap: 8px; align-items: center; justify-content: center;
+      font-size: 12px; z-index: 100;
+    }
+    .state-bar button {
+      padding: 4px 12px; font-size: 12px; font-family: var(--font-family);
+      border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-surface-elevated);
+      cursor: pointer;
+    }
+    .state-bar button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    .state-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .hidden { display: none !important; }
+
+    /* Skeleton */
+    .skeleton { background: #E2E8F0; border-radius: 4px; animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .toast-container {
+      position: fixed; top: 16px; right: 16px; z-index: 200;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .toast {
+      display: none; padding: 12px 16px; border-radius: var(--radius-md);
+      font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      align-items: center; gap: 8px; min-width: 300px;
+      animation: slideIn 0.2s ease-out;
+    }
+    .toast.show { display: flex; }
+    .toast.success { background: #F0FDF4; color: #166534; border: 1px solid #BBF7D0; }
+    .toast.error { background: #FEF2F2; color: #991B1B; border: 1px solid #FECACA; }
+    .toast.info { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+    .toast .dismiss { margin-left: auto; cursor: pointer; background: none; border: none; font-size: 16px; opacity: 0.6; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</head>
+<body>
+
+  <div class="app-header">
+    <div class="logo">◈ Linear</div>
+    <nav style="display:flex;gap:16px;font-size:14px;color:var(--color-text-secondary);">
+      <span>Dashboard</span>
+      <span>Issues</span>
+    </nav>
+    <div style="cursor:pointer;">👤 User ▼</div>
+  </div>
+
+  <div class="page-content">
+    <h1>Data Display Components</h1>
+    <p class="subtitle">Card, EmptyState, and LoadingIndicator with lifecycle states.</p>
+
+    <!-- LoadingIndicator Section -->
+    <div class="demo-section">
+      <h2>Loading Indicator</h2>
+      <div class="desc">Animated spinner with size variants and optional label.</div>
+      <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+        <div class="loader"><div class="spinner sm"></div><span class="loader-label">Small</span></div>
+        <div class="loader"><div class="spinner md"></div><span class="loader-label">Medium</span></div>
+        <div class="loader"><div class="spinner lg"></div><span class="loader-label">Large</span></div>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-primary" onclick="showFullPageLoader()">Show Full-Page Loader</button>
+      </div>
+    </div>
+
+    <!-- Card Section -->
+    <div class="demo-section" id="card-section">
+      <h2>Card</h2>
+      <div class="desc">Content containers — default and clickable variants with hover/pressed states.</div>
+
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--color-text-secondary);">Default Card</h3>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">Project Overview</div>
+        <div class="card-content">
+          <p>Q3 planning includes the new authentication system, dashboard redesign, and API rate limiting. Target completion: end of September.</p>
+          <div style="display:flex;gap:16px;margin-top:12px;font-size:12px;">
+            <span>📅 Due: Sep 30</span>
+            <span>👤 Lead: Alice</span>
+            <span>📊 60%</span>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--color-text-secondary);">Clickable Issue Cards</h3>
+      <div class="card-grid" id="issue-list">
+        <div class="card clickable issue-card" onclick="showToast('Issue selected')">
+          <span class="priority-dot high"></span>
+          <div>
+            <div class="issue-title">Fix login redirect bug</div>
+            <div class="issue-meta"><span>ISS-42</span><span>🔗 2</span><span>💬 5</span></div>
+          </div>
+        </div>
+        <div class="card clickable issue-card" onclick="showToast('Issue selected')">
+          <span class="priority-dot urgent"></span>
+          <div>
+            <div class="issue-title">API rate limiting for public endpoints</div>
+            <div class="issue-meta"><span>ISS-47</span><span>🔗 1</span><span>💬 3</span></div>
+          </div>
+        </div>
+        <div class="card clickable issue-card" onclick="showToast('Issue selected')">
+          <span class="priority-dot medium"></span>
+          <div>
+            <div class="issue-title">Update onboarding flow for new users</div>
+            <div class="issue-meta"><span>ISS-51</span><span>🔗 0</span><span>💬 8</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lifecycle Demo Section -->
+    <div class="demo-section" id="lifecycle-section">
+      <h2>Data Display Lifecycle</h2>
+      <div class="desc">Simulate the full lifecycle: loading → empty or populated → error.</div>
+
+      <div id="lifecycle-content">
+        <!-- Loading state -->
+        <div id="lifecycle-loading" class="hidden">
+          <div class="loader"><div class="spinner md"></div><span class="loader-label">Loading issues...</span></div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="lifecycle-empty" class="hidden">
+          <div class="empty-state" role="region" aria-label="No issues">
+            <div class="icon">📋</div>
+            <h3>No issues found</h3>
+            <p>There are no issues matching your current filters. Try adjusting your search or create a new issue.</p>
+            <button class="btn btn-primary">Create Issue</button>
+          </div>
+        </div>
+
+        <!-- Error state -->
+        <div id="lifecycle-error" class="hidden">
+          <div class="empty-state" role="region" aria-label="Error loading data">
+            <div class="icon">⚠️</div>
+            <h3>Failed to load issues</h3>
+            <p>We couldn't load the issues list. This might be a network problem.</p>
+            <button class="btn btn-secondary" onclick="lifecycleState('loading')">Retry</button>
+          </div>
+        </div>
+
+        <!-- Populated state -->
+        <div id="lifecycle-populated">
+          <div class="card-grid">
+            <div class="card clickable issue-card" onclick="showToast('Issue selected')">
+              <span class="priority-dot urgent"></span>
+              <div>
+                <div class="issue-title">Fix login redirect bug</div>
+                <div class="issue-meta"><span>ISS-42</span><span>🔗 2</span></div>
+              </div>
+            </div>
+            <div class="card clickable issue-card" onclick="showToast('Issue selected')">
+              <span class="priority-dot high"></span>
+              <div>
+                <div class="issue-title">API rate limiting</div>
+                <div class="issue-meta"><span>ISS-47</span><span>🔗 1</span></div>
+              </div>
+            </div>
+            <div class="card clickable issue-card" onclick="showToast('Issue selected')">
+              <span class="priority-dot medium"></span>
+              <div>
+                <div class="issue-title">Onboarding flow update</div>
+                <div class="issue-meta"><span>ISS-51</span><span>💬 3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;">
+        <button class="btn btn-primary" onclick="lifecycleState('populated')">Populated</button>
+        <button class="btn btn-secondary" onclick="lifecycleState('loading')">Loading</button>
+        <button class="btn btn-secondary" onclick="lifecycleState('empty')">Empty</button>
+        <button class="btn btn-danger" onclick="lifecycleState('error')">Error</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Full-page loader overlay -->
+  <div id="full-page-loader" class="full-page-loader hidden">
+    <div class="loader">
+      <div class="spinner lg"></div>
+      <span class="loader-label" style="font-size:16px;">Loading...</span>
+    </div>
+  </div>
+
+  <div class="state-bar">
+    <span>States:</span>
+    <button class="active" onclick="lifecycleState('populated')">Populated</button>
+    <button onclick="lifecycleState('loading')">Loading</button>
+    <button onclick="lifecycleState('empty')">Empty</button>
+    <button onclick="lifecycleState('error')">Error</button>
+    <button onclick="window.location.href='index.html'">← Back</button>
+  </div>
+
+  <script>
+    function lifecycleState(state) {
+      ['loading','empty','error','populated'].forEach(s => {
+        document.getElementById('lifecycle-' + s).classList.toggle('hidden', s !== state);
+      });
+      document.querySelectorAll('.state-bar button').forEach(b => {
+        b.classList.toggle('active', b.textContent.toLowerCase().includes(state));
+      });
+    }
+
+    function showFullPageLoader() {
+      const overlay = document.getElementById('full-page-loader');
+      overlay.classList.remove('hidden');
+      setTimeout(() => overlay.classList.add('hidden'), 2000);
+    }
+
+    function showToast(msg) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast show info';
+      toast.innerHTML = '<span>ℹ ' + msg + '</span><button class="dismiss" onclick="this.parentElement.remove()">×</button>';
+      container.appendChild(toast);
+      setTimeout(() => { if (toast.parentElement) toast.remove(); }, 3000);
+    }
+  </script>
+</body>
+</html>

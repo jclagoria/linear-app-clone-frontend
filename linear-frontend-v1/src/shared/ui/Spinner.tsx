@@ -1,6 +1,9 @@
+import { cn } from '@/shared/lib/utils'
+
 interface SpinnerProps {
   size?: 'sm' | 'md' | 'lg'
   className?: string
+  label?: string
 }
 
 const sizeMap = {
@@ -9,14 +12,19 @@ const sizeMap = {
   lg: 'h-10 w-10 border-3',
 }
 
-export function Spinner({ size = 'md', className = '' }: SpinnerProps) {
+export function Spinner({ size = 'md', className, label }: SpinnerProps) {
   return (
     <span
-      className={`inline-block animate-spin rounded-full border-current border-t-transparent ${sizeMap[size]} ${className}`}
+      className={cn(
+        'inline-block animate-spin rounded-full border-current border-t-transparent',
+        sizeMap[size],
+        className,
+      )}
       role="status"
-      aria-label="Loading"
+      aria-busy="true"
+      aria-label={label ?? 'Loading'}
     >
-      <span className="sr-only">Loading</span>
+      <span className="sr-only">{label ?? 'Loading'}</span>
     </span>
   )
 }
