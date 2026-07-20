@@ -1,2 +1,5 @@
 .kombai/
 linear-frontend-v1/docs/api/backend/
+graphify-out/cache/
+
+graphify-out/manifest.json
