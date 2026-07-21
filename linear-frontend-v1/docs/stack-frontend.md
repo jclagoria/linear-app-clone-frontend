@@ -37,6 +37,13 @@
 | Integration | Vitest + MSW | API client, auth flows |
 | E2E | Playwright | Login flow, token refresh, logout |
 
+## Theme System
+
+- **Mechanism**: CSS custom properties on `:root` / `[data-theme="dark"]`, toggled via `data-theme` attribute on `<html>`
+- **Modes**: Light (default), Dark, System (follows `prefers-color-scheme`)
+- **Persistence**: localStorage via Zustand persist middleware (UIStore)
+- **Token scope**: Semantic tokens (`--bg-primary`, `--text-primary`, `--accent-color`, etc.) consumed by Tailwind classes AND inline styles
+
 ## Key Dependencies (Planned)
 
 | Package | Purpose |

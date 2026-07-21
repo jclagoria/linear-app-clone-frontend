@@ -1,0 +1,157 @@
+# Wireframe: App Shell (Desktop/Tablet)
+
+## Purpose & Flow Context
+
+The application shell wraps all authenticated pages. Entry: user authenticates and is redirected to any auth-gated route. Exit: logout or navigation within content area (sidebar links, header triggers). This wireframe covers viewports >768px. Theme variants (App Shell Light/Dark/System) are not separate wireframes — theme changes only visual tokens (CSS custom properties owned by the design-system), not layout structure. This structural wireframe applies identically to all theme states; the ThemeToggle component and DS color tokens handle visual variation.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `nav`, `main`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + sidebar + content container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Sticky bar: hamburger (hidden >768px), search trigger, notification bell with badge, user avatar with menu trigger, theme toggle | `position: sticky; top: 0; z-index: 100` |
+| Sidebar | Team selector, nav links (Issues, Projects, Cycles), collapse toggle | `z-index: 200`; transitions between 240px (expanded) and 56px (collapsed) |
+| Content | Main page content rendered by router | `overflow-y: auto`; fills remaining space |
+
+**Content hierarchy** (by visual priority):
+1. Header — global triggers visible at all times
+2. Sidebar — primary navigation context
+3. Content — page-specific primary task
+
+```
++------------------------------------------------------------------+
+|  Header: [hamburger] [search] [theme-toggle] [bell 3] [avatar]  |
++------------------------------------------------------------------+
+|  +-- Sidebar (240px) ---+  +-- Content (fills remaining) -----+  |
+|  |  [Team Name      ▼]  |  |  [h1 Page Title]                |  |
+|  |                       |  |                                  |  |
+|  |  [icon] Issues    ●   |  |  (Page-specific content)         |  |
+|  |  [icon] Projects     |  |                                  |  |
+|  |  [icon] Cycles       |  |                                  |  |
+|  |                       |  |                                  |  |
+|  |  [<< Collapse]        |  |                                  |  |
+|  +-----------------------+  +----------------------------------+  |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Header container | Header | Sticky at top; persists across page navigations | Never scrolls away |
+| Hamburger button | HamburgerButton | Hidden on desktop/tablet (>768px); visible only in responsive spec | — |
+| Search trigger | (in Header) | Click opens command palette (out of scope — trigger only) | aria-label="Search" |
+| Notification bell | NotificationBadge | Shows unread count badge; click is trigger only (list out of scope) | Capped at "99+" |
+| User avatar | (in Header) | Button with aria-haspopup="true"; click opens user menu (out of scope) | Shows initials fallback |
+| Theme toggle | ThemeToggle | Cycles light/dark/system; aria-label reflects current mode | Persisted to localStorage |
+| Sidebar container | Sidebar | role="navigation" aria-label="Main navigation" | — |
+| Team selector | TeamSelector | Dropdown with team list; icon-only when collapsed | Tooltip shows name when collapsed |
+| Nav links | NavLink | Issues / Projects / Cycles; aria-current="page" on active | Tooltip with label when collapsed |
+| Collapse toggle | SidebarToggle | aria-label="Collapse sidebar" / "Expand sidebar" | State persisted to localStorage |
+| Content area | (main) | role="main"; overflow-y: auto; independent scroll | Full height remaining space |
+
+## Data Display
+
+The content area is a pass-through container for page-specific content — no direct data display. The sidebar displays nav link labels as text; team selector shows team name + icon.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Sidebar heading | "Issues", "Projects", "Cycles" | Navigation labels — user language, consistent across app |
+| Team selector | Current team name | Human-readable team name, not ID |
+| Theme toggle | "Switch to dark/light/system mode" | Reflects available action, not current state |
+| Search trigger | "Search" / "Open command palette" | Consistent with keyboard shortcut hint (future) |
+| Notifications | "N unread notifications" | Dynamic count in aria-label |
+
+## States
+
+### Populated (Default)
+
+Full layout as described in the ASCII sketch above. Sidebar expanded (240px) on desktop; collapsible on tablet.
+
+### Empty
+
+N/A — the layout shell always renders. Empty applies to page-specific content within the content area (covered in per-page wireframes).
+
+### Loading
+
+Skeleton mirroring the populated layout while the page content loads within the content area. Sidebar and header render immediately (they contain static navigation and global controls).
+
+```
++------------------------------------------------------------------+
+|  Header: [search] [theme-toggle] [bell] [avatar]                |
++------------------------------------------------------------------+
+|  +-- Sidebar (240px) ---+  +-- Content (fills remaining) -----+  |
+|  |  [Team Name      ▼]  |  |  [===== skeleton bar =====]      |  |
+|  |                       |  |  [=== skeleton ===]              |  |
+|  |  [icon] Issues        |  |  [======== skeleton =========]   |  |
+|  |  [icon] Projects      |  |  [=== skeleton ===]              |  |
+|  |  [icon] Cycles        |  |                                  |  |
+|  |                       |  |                                  |  |
+|  |  [<< Collapse]         |  |                                  |  |
+|  +-----------------------+  +----------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Error
+
+The layout shell itself does not have an error state (it renders structural chrome only). Page-level errors display inline within the content area. Sidebar/header remain functional for navigation.
+
+### Success / Confirmation
+
+N/A — layout shell is persistent. Theme switch success is instantaneous visual feedback.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout as described; sidebar starts expanded |
+| Tablet (768-1024px) | Same layout; sidebar defaults to expanded but can be collapsed via toggle. Collapsed sidebar shows icon-only (56px) |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | header role="banner", nav role="navigation" aria-label="Main navigation", main role="main" |
+| Heading order | h1 from page content; layout shell has no heading of its own |
+| Reading / Focus order | Header → Sidebar → Content (DOM order) |
+| Accessible names | Theme toggle, search trigger, notification bell, user avatar, collapse toggle all get aria-label |
+| Keyboard operability | Tab between sidebar links and header controls; Enter/Space to activate; Escape closes any open dropdown/overlay |
+| Target size | ≥24×24 CSS px reservation on all interactive targets (nav links, toggle buttons, header triggers) |
+| Focus not obscured | Sticky header does not overlap focused sidebar elements; z-index ordering ensures sidebar is above content |
+| Non-color intent | Active nav link uses accent background + icon fill; collapse toggle uses icon direction change |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

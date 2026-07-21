@@ -121,6 +121,24 @@ App mount
 - **Auto-refresh**: Interceptor checks token expiry before each request; silent refresh if near expiry
 - **Logout**: Clears in-memory token, calls backend to clear refresh cookie, redirects
 
+### Layout Module Architecture
+
+The Layout Module provides the application shell that wraps all authenticated pages.
+
+| Directory | Responsibility |
+|-----------|---------------|
+| `src/app/AppLayout.tsx` | Root layout: composes Sidebar + Header + `<Outlet />` |
+| `src/widgets/Sidebar/` | Collapsible nav panel, nav links, collapse toggle |
+| `src/widgets/Header/` | Sticky top bar: search trigger, notifications, avatar, theme toggle |
+
+**Layout states**: Desktop (expanded sidebar), Sidebar Collapsed (icon-only), Mobile-Overlay (sidebar behind hamburger with backdrop).
+
+**Theme**: CSS custom properties under `[data-theme]` attribute. Three modes: light, dark, system. Persisted via Zustand `persist` middleware to localStorage.
+
+**Responsive strategy**: Media queries at 768px (mobile ↔ tablet) and 1024px (tablet ↔ desktop). Sidebar transitions between side-by-side (desktop/tablet) and overlay (mobile).
+
+**Sidebar overlay (mobile)**: Fixed-position panel slides from left; backdrop closes on click/Escape; focus trapped inside when open.
+
 ## Current Decisions
 
 | Decision | Choice | Rationale |
@@ -132,3 +150,6 @@ App mount
 | Routing | React Router v7 | Standard, nested routes, loader/action pattern |
 | Auth | JWT dual token | Stateless, secure refresh rotation |
 | API | REST + fetch | No additional deps, easy interceptor pattern |
+| Layout | Flexbox shell + collapsible sidebar | Simpler than CSS Grid for variable-width sidebar; responsive via media queries |
+| Theme | CSS custom properties + data-theme | Three-mode (light/dark/system) with flash prevention via inline script |
+| Sidebar state | Zustand persist | Collapsed state survives refresh; same pattern as auth |

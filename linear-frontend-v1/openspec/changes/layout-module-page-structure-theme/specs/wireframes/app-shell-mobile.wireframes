@@ -1,0 +1,175 @@
+# Wireframe: App Shell (Mobile)
+
+## Purpose & Flow Context
+
+Mobile layout for authenticated pages at viewport <768px. The sidebar is hidden behind a hamburger menu and opens as an overlay with backdrop. Entry: user authenticates on mobile or resizes to <768px. Exit: user resizes to >768px, logs out, or navigates within the content area. This wireframe covers the mobile-hidden state and the mobile-overlay state. Theme variants (Light/Dark/System) are not separate wireframes — theme changes only visual tokens (CSS custom properties owned by the design-system), not layout structure. This mobile wireframe applies identically to all theme states; the ThemeToggle component and DS color tokens handle visual variation.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+Same as desktop shell. Mobile-specific behaviors noted.
+
+---
+
+## Layout Regions
+
+**Grid**: Single-column layout (12-col collapses to full-width single column). Spacing cadence: 8px.
+
+**App-shell**: Header with hamburger + full-width content. Sidebar appears as overlay.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Sticky bar: hamburger button (visible), search trigger, notification bell, user avatar, theme toggle | Full width |
+| Content | Main page content — full viewport width | overflow-y: auto |
+| Sidebar overlay | Slides in from left above content, with backdrop | z-index: 300; 280px width |
+
+**Content hierarchy** (by visual priority):
+1. Header — hamburger for navigation access, global triggers
+2. Content — primary task takes full width
+3. Sidebar overlay — on-demand navigation
+
+---
+
+### State: Mobile-Hidden (Default)
+
+```
++------------------------------------------------------------------+
+|  Header: [☰] [search] [theme-toggle] [bell 3] [avatar]          |
++------------------------------------------------------------------+
+|                                                                    |
+|  (Page content takes full viewport width)                         |
+|                                                                    |
+|  [h1 Page Title]                                                  |
+|                                                                    |
+|  Content area scrolls independently.                              |
+|  Sidebar is hidden off-screen.                                    |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### State: Mobile-Overlay (Sidebar Open)
+
+```
++------------------------------------------------------------------+
+|  Header: [✕] [search] [theme-toggle] [bell 3] [avatar]          |
++------------------------------------------------------------------+
+|  +-- Overlay (280px) --+                                         |
+|  |  [Team Name    ▼]   |  (Content dimmed behind backdrop)       |
+|  |                     |                                         |
+|  |  [icon] Issues  ●   |                                         |
+|  |  [icon] Projects    |                                         |
+|  |  [icon] Cycles      |                                         |
+|  +---------------------+                                         |
+|  |← Backdrop (full remaining area, semi-transparent, clickable)→||
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]; ☰ = hamburger; ✕ = close overlay*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Hamburger button | HamburgerButton | Visible at <768px; aria-label="Open menu" when closed, "Close menu" when open | Toggles sidebar overlay visibility |
+| Sidebar overlay | Sidebar (mobile-overlay) | Slides from left edge; 280px width; z-index above content | Focus trapped inside when open |
+| Backdrop | Backdrop | Semi-transparent overlay; click or Escape to close | aria-hidden="true" when closed |
+| Header elements | Header | Same triggers as desktop; full width | Hamburger replaces collapsed sidebar |
+| Nav links | NavLink | Same as desktop; full labels visible in overlay | aria-current="page" on active |
+| Team selector | TeamSelector | Same behavior; full dropdown within overlay | — |
+| Theme toggle | ThemeToggle | In header, consistent across desktop/tablet/mobile; not duplicated in overlay | Persisted to localStorage |
+
+## Data Display
+
+No data display on the overlay — it is a navigation panel. Content area is a pass-through container for page-specific content.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Hamburger | "Open menu" / "Close menu" | Dynamic label based on overlay state |
+| Backdrop | (decorative — no label) | role="presentation"; aria-hidden="true" |
+| Nav links | "Issues", "Projects", "Cycles" | Same labels as desktop |
+| Close button in overlay | "Close menu" | Applies when hamburger shows X icon |
+
+## States
+
+### Populated — Mobile-Hidden (Default)
+
+Layout as shown above. Sidebar hidden; hamburger visible in header. Content takes full width.
+
+### Populated — Mobile-Overlay
+
+Layout as shown above. Sidebar slides in from left at 280px. Backdrop covers remaining viewport. Header hamburger icon changes to X.
+
+### Empty
+
+N/A — layout shell always renders. Page content states are per-page.
+
+### Loading
+
+Skeleton in content area; header and hamburger render immediately.
+
+```
++------------------------------------------------------------------+
+|  Header: [☰] [search] [theme-toggle] [bell] [avatar]            |
++------------------------------------------------------------------+
+|                                                                    |
+|  [===== skeleton bar =====]                                       |
+|  [=== skeleton ===]                                               |
+|  [======== skeleton =========]                                    |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Error
+
+No layout-specific error state. Page errors display in content area.
+
+### Success / Confirmation
+
+N/A for layout shell. Overlay close/closing is immediate visual feedback.
+
+### Sidebar Overlay Open/Close Transition
+
+| Action | Mechanism |
+|--------|-----------|
+| Open (tap hamburger) | Sidebar slides in from left over 250-300ms ease-out; backdrop fades in simultaneously |
+| Close (tap backdrop) | Sidebar slides out to left; backdrop fades out |
+| Close (tap nav link) | Navigate + sidebar closes simultaneously |
+| Close (Escape key) | Sidebar closes; focus returns to hamburger |
+| Close (resize >768px) | Overlay closes; sidebar returns to side-by-side layout |
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Mobile (<768px) | Full-width content; sidebar overlay with hamburger; touch targets ≥44px recommended |
+| Tablet (768-1024px) | Side-by-side layout; sidebar returns; overlay/hamburger hidden |
+| Desktop (>1024px) | Full desktop layout |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | header role="banner", nav role="navigation" on overlay sidebar, main role="main" on content |
+| Heading order | h1 from page content; no layout heading |
+| Reading / Focus order | Header (hamburger first) → Content. When overlay opens: focus moves to first nav link in sidebar |
+| Accessible names | Hamburger: aria-label="Open menu" / "Close menu". All icon-only controls have aria-label |
+| Keyboard operability | Tab: header triggers → content (when closed). Overlay open: focus trapped; Tab cycles links; Escape to close |
+| Target size | ≥24×24 CSS px reservation (≥44px recommended on mobile for touch) |
+| Focus not obscured | Overlay is on top when open; backdrop prevents interaction with content |
+| Non-color intent | Active link uses background + icon fill; close icon indicates overlay dismiss |
+| Focus management | Overlay opens → focus to first nav link. Overlay closes → focus returns to hamburger |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

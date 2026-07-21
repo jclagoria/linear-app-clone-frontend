@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Layout Module — Mockup Index</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F5F5F5;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E5E7EB;
+      --color-text-primary: #1A1A1A;
+      --color-text-secondary: #6B7280;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --radius-md: 6px;
+    }
+    [data-theme="dark"] {
+      --color-surface: #1A1A2E;
+      --color-surface-elevated: #16213E;
+      --color-border: #2D3748;
+      --color-text-primary: #EAEAEA;
+      --color-text-secondary: #9CA3AF;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); padding: 2rem; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    p { color: var(--color-text-secondary); margin-bottom: 2rem; }
+    .card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1rem; transition: box-shadow 0.2s; }
+    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .card h2 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .card p { font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: 0.75rem; }
+    .card a { display: inline-block; padding: 0.5rem 1rem; background: var(--color-primary); color: #fff; text-decoration: none; border-radius: var(--radius-md); font-size: 0.875rem; }
+    .card a:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Layout Module — Interactive Mockups</h1>
+    <p>App shell screens demonstrating page structure, sidebar states, responsive behavior, and theme switching.</p>
+
+    <div class="card">
+      <h2>App Shell — Desktop</h2>
+      <p>Full layout with expanded sidebar (240px), sticky header, and content area. Default authenticated view on viewports &gt;1024px.</p>
+      <a href="app-shell-desktop.html">Open Desktop</a>
+    </div>
+
+    <div class="card">
+      <h2>App Shell — Sidebar Collapsed</h2>
+      <p>Sidebar reduced to icon-only mode (56px). Content area expands to fill reclaimed space. Labels hidden, tooltips on hover.</p>
+      <a href="app-shell-sidebar-collapsed.html">Open Collapsed</a>
+    </div>
+
+    <div class="card">
+      <h2>App Shell — Mobile</h2>
+      <p>Full-width content with hamburger menu. Sidebar opens as overlay with backdrop. Toggle between hidden and overlay states.</p>
+      <a href="app-shell-mobile.html">Open Mobile</a>
+    </div>
+  </div>
+</body>
+</html>
