@@ -2,6 +2,7 @@ import { Button } from '@/shared/ui/Button'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
 import { SkeletonLoader } from './SkeletonLoader'
 import { CommentList } from './CommentList'
+import { IssueStatusBadge } from './IssueStatusBadge'
 import { ArrowLeft, Edit3, Trash2, AlertCircle } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 import type { Issue, Comment } from '../model/types'
@@ -15,6 +16,8 @@ interface IssueDetailProps {
   onEdit: () => void
   onDelete: () => void
   onRetry: () => void
+  onStatusChange?: (statusId: string) => void
+  statusChanging?: boolean
 }
 
 const priorityLabels: Record<number, { label: string; className: string }> = {
@@ -23,13 +26,6 @@ const priorityLabels: Record<number, { label: string; className: string }> = {
   2: { label: 'High', className: 'text-orange-500' },
   3: { label: 'Medium', className: 'text-yellow-500' },
   4: { label: 'Low', className: 'text-text-muted' },
-}
-
-const statusColors: Record<string, string> = {
-  Todo: 'bg-neutral text-text-muted',
-  'In Progress': 'bg-blue-100 text-blue-700',
-  Done: 'bg-green-100 text-green-700',
-  Cancelled: 'bg-neutral text-text-muted',
 }
 
 export function IssueDetail({
@@ -41,6 +37,8 @@ export function IssueDetail({
   onEdit,
   onDelete,
   onRetry,
+  onStatusChange,
+  statusChanging,
 }: IssueDetailProps) {
   if (error) {
     return (
@@ -79,7 +77,6 @@ export function IssueDetail({
   }
 
   const priority = priorityLabels[issue.priority] ?? priorityLabels[0]
-  const statusColor = statusColors[issue.status] ?? statusColors.Todo
 
   return (
     <div className="space-y-6">
@@ -97,14 +94,11 @@ export function IssueDetail({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span
-          className={cn(
-            'inline-flex items-center rounded-full px-3 py-1 text-sm font-medium',
-            statusColor,
-          )}
-        >
-          {issue.status}
-        </span>
+        <IssueStatusBadge
+          status={issue.status}
+          loading={statusChanging}
+          onStatusChange={onStatusChange ?? (() => {})}
+        />
         <span className={cn('text-sm', priority.className)}>
           {priority.label}
         </span>

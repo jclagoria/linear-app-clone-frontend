@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useCacheStore } from '@/shared/stores/cacheStore'
+import { changeIssueStatus } from '@/entities/issue/api'
 import type { Issue, IssueFilters } from './types'
 
 interface IssuesState {
@@ -21,6 +22,7 @@ interface IssuesState {
   addIssue: (issue: Issue) => void
   updateIssue: (id: string, changes: Partial<Issue>) => void
   removeIssue: (id: string) => void
+  changeStatus: (id: string, statusId: string) => Promise<Issue>
 }
 
 const initialFilters: IssueFilters = {
@@ -158,6 +160,32 @@ export const useIssuesStore = create<IssuesState>()(
         })),
 
       clearFilters: () => set({ filters: { ...initialFilters } }),
+
+      changeStatus: async (id: string, statusId: string) => {
+        const previousIssues = get().issues
+        const previousIssue = previousIssues.find((i) => i.id === id)
+
+        useCacheStore.getState().invalidateByPrefix('issues:list')
+
+        try {
+          const result = await changeIssueStatus(id, statusId)
+          set((state) => ({
+            issues: state.issues.map((issue) =>
+              issue.id === id ? { ...issue, ...result.data } : issue,
+            ),
+          }))
+          return result.data
+        } catch (err) {
+          if (previousIssue) {
+            set((state) => ({
+              issues: state.issues.map((issue) =>
+                issue.id === id ? previousIssue : issue,
+              ),
+            }))
+          }
+          throw err
+        }
+      },
 
       addIssue: (issue: Issue) => {
         useCacheStore.getState().invalidateByPrefix('issues:list')
