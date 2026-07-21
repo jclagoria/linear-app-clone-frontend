@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail — Status Dropdown Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-light: #EFF6FF;
+      --color-danger: #DC2626;
+      --color-danger-light: #FEF2F2;
+      --color-success: #16A34A;
+      --color-success-light: #F0FDF4;
+      --color-warning: #D97706;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-text-muted: #94A3B8;
+      --color-backlog: #94A3B8;
+      --color-todo: #94A3B8;
+      --color-in-progress: #2563EB;
+      --color-done: #16A34A;
+      --color-canceled: #94A3B8;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); font-size: 14px; line-height: 1.5; }
+    a { color: var(--color-primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    button { cursor: pointer; font-family: inherit; font-size: inherit; }
+
+    .app-shell { display: flex; min-height: 100vh; }
+    .sidebar { width: 240px; background: var(--color-surface-elevated); border-right: 1px solid var(--color-border); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-2); }
+    .sidebar-logo { font-weight: 700; font-size: 18px; margin-bottom: var(--space-6); color: var(--color-text-primary); }
+    .sidebar-item { padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); color: var(--color-text-secondary); }
+    .sidebar-item:hover { background: var(--color-primary-light); color: var(--color-primary); }
+    .sidebar-item.active { background: var(--color-primary-light); color: var(--color-primary); font-weight: 600; }
+    .main { flex: 1; min-width: 0; }
+    .header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-6); border-bottom: 1px solid var(--color-border); background: var(--color-surface-elevated); }
+    .header-left { display: flex; align-items: center; gap: var(--space-3); }
+    .header-right { display: flex; align-items: center; gap: var(--space-3); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; color: var(--color-primary); }
+    .content { max-width: 960px; padding: var(--space-6); }
+    .back-row { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4); color: var(--color-text-secondary); font-size: 13px; }
+    .back-row a { color: var(--color-text-secondary); }
+    .issue-header { display: flex; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-4); }
+    .issue-id { color: var(--color-text-muted); font-size: 13px; font-weight: 500; margin-bottom: var(--space-1); }
+    .issue-title { font-size: 24px; font-weight: 700; line-height: 1.2; margin-bottom: var(--space-4); }
+
+    .status-badge { position: relative; display: inline-flex; align-items: center; }
+    .status-trigger { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: 100px; background: var(--color-surface-elevated); font-size: 13px; font-weight: 500; color: var(--color-text-primary); transition: box-shadow 0.15s; min-height: 32px; }
+    .status-trigger:hover { box-shadow: var(--shadow-sm); }
+    .status-trigger:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .status-trigger[aria-busy="true"] { opacity: 0.7; pointer-events: none; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.backlog { background: var(--color-backlog); }
+    .status-dot.todo { background: var(--color-todo); }
+    .status-dot.in-progress { background: var(--color-in-progress); }
+    .status-dot.done { background: var(--color-done); }
+    .status-dot.canceled { background: var(--color-canceled); }
+    .status-label { min-width: 60px; text-align: left; }
+    .status-arrow { font-size: 10px; color: var(--color-text-muted); transition: transform 0.15s; }
+    .status-arrow.open { transform: rotate(180deg); }
+    .status-spinner { width: 14px; height: 14px; border: 2px solid var(--color-border); border-top-color: var(--color-primary); border-radius: 50%; animation: spin 0.6s linear infinite; }
+
+    .status-dropdown { position: absolute; top: calc(100% + 4px); left: 0; min-width: 200px; background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); z-index: 100; padding: var(--space-1); display: none; }
+    .status-dropdown.open { display: block; }
+    .status-option { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); cursor: pointer; font-size: 13px; color: var(--color-text-primary); }
+    .status-option:hover { background: var(--color-primary-light); }
+    .status-option[aria-selected="true"] { background: var(--color-primary-light); font-weight: 600; }
+    .status-option .check { margin-left: auto; color: var(--color-primary); visibility: hidden; }
+    .status-option[aria-selected="true"] .check { visibility: visible; }
+
+    .meta-row { display: flex; align-items: center; gap: var(--space-6); margin-bottom: var(--space-5); font-size: 13px; color: var(--color-text-secondary); flex-wrap: wrap; }
+    .meta-item { display: flex; align-items: center; gap: var(--space-1); }
+    .meta-label { color: var(--color-text-muted); }
+    .labels { display: flex; gap: var(--space-2); margin-bottom: var(--space-5); }
+    .label { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 100px; font-size: 12px; font-weight: 500; }
+    .label-feature { background: #F0F9FF; color: #0369A1; }
+    .label-frontend { background: #F5F3FF; color: #6D28D9; }
+    .section-divider { height: 1px; background: var(--color-border); margin: var(--space-6) 0; }
+    .section-title { font-size: 18px; font-weight: 600; margin-bottom: var(--space-3); }
+    .description { color: var(--color-text-secondary); line-height: 1.6; margin-bottom: var(--space-4); white-space: pre-wrap; }
+    .action-bar { display: flex; gap: var(--space-2); margin-bottom: var(--space-6); }
+    .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); font-size: 13px; font-weight: 500; border: 1px solid var(--color-border); background: var(--color-surface-elevated); color: var(--color-text-primary); }
+    .btn:hover { background: var(--color-surface); }
+    .btn-danger { color: var(--color-danger); }
+    .btn-danger:hover { background: var(--color-danger-light); }
+    .comments-header { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4); color: var(--color-text-secondary); }
+    .comment { display: flex; gap: var(--space-3); margin-bottom: var(--space-4); }
+    .comment-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary-light); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: var(--color-primary); flex-shrink: 0; }
+    .comment-body { flex: 1; }
+    .comment-author { font-weight: 600; font-size: 13px; margin-right: var(--space-2); }
+    .comment-time { color: var(--color-text-muted); font-size: 12px; }
+    .comment-text { color: var(--color-text-secondary); margin-top: var(--space-1); }
+
+    .toast-container { position: fixed; top: var(--space-4); right: var(--space-4); z-index: 1000; display: flex; flex-direction: column; gap: var(--space-2); }
+    .toast { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); min-width: 300px; max-width: 420px; animation: slideIn 0.2s ease-out; }
+    .toast.success { border-left: 4px solid var(--color-success); }
+    .toast.error { border-left: 4px solid var(--color-danger); }
+    .toast-icon { font-size: 16px; flex-shrink: 0; }
+    .toast.success .toast-icon { color: var(--color-success); }
+    .toast.error .toast-icon { color: var(--color-danger); }
+    .toast-body { flex: 1; }
+    .toast-title { font-weight: 600; font-size: 13px; }
+    .toast-message { color: var(--color-text-secondary); font-size: 13px; }
+    .toast-close { background: none; border: none; color: var(--color-text-muted); font-size: 16px; padding: 0 0 0 var(--space-2); cursor: pointer; }
+    .toast-close:hover { color: var(--color-text-primary); }
+    .toast.dismissing { animation: slideOut 0.2s ease-in forwards; }
+
+    .state-controls { position: fixed; bottom: var(--space-4); left: 50%; transform: translateX(-50%); display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-4); background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); z-index: 50; }
+    .state-btn { padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface-elevated); font-size: 12px; color: var(--color-text-secondary); }
+    .state-btn:hover { background: var(--color-surface); }
+    .state-btn.active { background: var(--color-primary-light); color: var(--color-primary); border-color: var(--color-primary); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .content { padding: var(--space-4); }
+      .issue-title { font-size: 20px; }
+      .meta-row { gap: var(--space-3); }
+      .status-dropdown { position: fixed; top: auto; left: var(--space-4); right: var(--space-4); bottom: var(--space-4); min-width: auto; }
+      .status-trigger { min-height: 44px; }
+    }
+  </style>
+</head>
+<body data-state="populated">
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-logo">Linear</div>
+      <div class="sidebar-item active">Issues</div>
+      <div class="sidebar-item">Projects</div>
+      <div class="sidebar-item">Cycles</div>
+      <div class="sidebar-item">Views</div>
+    </aside>
+
+    <div class="main">
+      <header class="header">
+        <div class="header-left">
+          <a href="index.html">← Back to index</a>
+        </div>
+        <div class="header-right">
+          <div class="avatar">JL</div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="back-row">
+          <a href="#">← Back</a>
+          <span>ENG-1</span>
+        </div>
+
+        <h1 class="issue-title">Implement login page</h1>
+
+        <div class="issue-header">
+          <div class="status-badge" id="statusBadge">
+            <button class="status-trigger" id="statusTrigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Status: In Progress. Click to change">
+              <span class="status-dot in-progress" id="statusDot"></span>
+              <span class="status-label" id="statusLabel">In Progress</span>
+              <span class="status-spinner" id="statusSpinner" style="display:none"></span>
+              <span class="status-arrow" id="statusArrow">▼</span>
+            </button>
+            <div class="status-dropdown" id="statusDropdown" role="listbox" aria-label="Select status">
+            </div>
+          </div>
+        </div>
+
+        <div class="meta-row">
+          <span class="meta-item"><span class="meta-label">Assignee:</span> Juan Lagoria</span>
+          <span class="meta-item"><span class="meta-label">Priority:</span> <span id="priorityLabel">Urgent</span></span>
+          <span class="meta-item"><span class="meta-label">Created:</span> Jul 21</span>
+          <span class="meta-item"><span class="meta-label">Updated:</span> Jul 21</span>
+          <span class="meta-item" id="completedMeta" style="display:none"><span class="meta-label">Completed:</span> <span id="completedDate">Jul 21</span></span>
+        </div>
+
+        <div class="labels">
+          <span class="label label-frontend">frontend</span>
+          <span class="label label-feature">feature</span>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <h2 class="section-title">Description</h2>
+        <p class="description" id="description">Add login page with email/password and OAuth providers (Google, GitHub). Include form validation, error handling for invalid credentials, and a "Forgot password?" link. Redirect to dashboard on successful login.</p>
+
+        <div class="action-bar">
+          <button class="btn">Edit</button>
+          <button class="btn btn-danger">Delete</button>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="comments-header">
+          <span>Comments (3)</span>
+        </div>
+
+        <div class="comment">
+          <div class="comment-avatar">AM</div>
+          <div class="comment-body">
+            <span class="comment-author">Ana Martinez</span>
+            <span class="comment-time">2h ago</span>
+            <p class="comment-text">Should we also support magic link authentication?</p>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="comment-avatar">JL</div>
+          <div class="comment-body">
+            <span class="comment-author">Juan Lagoria</span>
+            <span class="comment-time">1h ago</span>
+            <p class="comment-text">Yes, I'll add it as a follow-up task. Let's keep this scope focused on email/password + OAuth for now.</p>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="comment-avatar">PK</div>
+          <div class="comment-body">
+            <span class="comment-author">Priya Kumar</span>
+            <span class="comment-time">30m ago</span>
+            <p class="comment-text">LGTM. The OAuth redirect flow should include a loading state while the provider authenticates.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="state-controls">
+    <span style="font-size:11px;color:var(--color-text-muted);padding-right:4px">States:</span>
+    <button class="state-btn active" data-state="populated">Populated</button>
+    <button class="state-btn" data-state="loading">Loading</button>
+    <button class="state-btn" data-state="error">Error</button>
+    <button class="state-btn" data-state="success">Success</button>
+    <button class="state-btn" data-state="empty">Empty</button>
+  </div>
+
+  <script>
+    const STATUSES = [
+      { id: 'st-backlog',    name: 'Backlog',    color: 'backlog' },
+      { id: 'st-todo',       name: 'Todo',       color: 'todo' },
+      { id: 'st-in-progress', name: 'In Progress', color: 'in-progress' },
+      { id: 'st-done',       name: 'Done',       color: 'done' },
+      { id: 'st-canceled',   name: 'Canceled',   color: 'canceled' }
+    ];
+
+    const VALID_TRANSITIONS = {
+      'st-backlog': ['st-todo', 'st-canceled'],
+      'st-todo': ['st-in-progress', 'st-canceled'],
+      'st-in-progress': ['st-done', 'st-canceled'],
+      'st-done': [],
+      'st-canceled': []
+    };
+
+    const ISSUE = {
+      id: 'ENG-1',
+      title: 'Implement login page',
+      assignee: 'Juan Lagoria',
+      priority: 'Urgent',
+      createdAt: 'Jul 21',
+      updatedAt: 'Jul 21',
+      completedAt: null,
+      description: 'Add login page with email/password and OAuth providers (Google, GitHub). Include form validation, error handling for invalid credentials, and a "Forgot password?" link. Redirect to dashboard on successful login.',
+      labels: ['frontend', 'feature']
+    };
+
+    let currentStatusId = 'st-in-progress';
+    let previousStatusId = 'st-in-progress';
+    let isDropdownOpen = false;
+    let isTransitioning = false;
+
+    const trigger = document.getElementById('statusTrigger');
+    const dropdown = document.getElementById('statusDropdown');
+    const label = document.getElementById('statusLabel');
+    const dot = document.getElementById('statusDot');
+    const arrow = document.getElementById('statusArrow');
+    const spinner = document.getElementById('statusSpinner');
+    const toastContainer = document.getElementById('toastContainer');
+    const completedMeta = document.getElementById('completedMeta');
+    const completedDate = document.getElementById('completedDate');
+    const priorityLabel = document.getElementById('priorityLabel');
+    const description = document.getElementById('description');
+
+    function renderDropdown() {
+      dropdown.innerHTML = '';
+      STATUSES.forEach(s => {
+        const option = document.createElement('div');
+        option.className = 'status-option';
+        option.role = 'option';
+        option.dataset.statusId = s.id;
+        option.setAttribute('aria-selected', s.id === currentStatusId);
+        option.innerHTML = `
+          <span class="status-dot ${s.color}"></span>
+          <span>${s.name}</span>
+          <span class="check">✓</span>
+        `;
+        option.addEventListener('click', () => selectStatus(s.id));
+        dropdown.appendChild(option);
+      });
+    }
+
+    function updateBadge(statusId) {
+      const status = STATUSES.find(s => s.id === statusId);
+      if (!status) return;
+      label.textContent = status.name;
+      dot.className = 'status-dot ' + status.color;
+      trigger.setAttribute('aria-label', 'Status: ' + status.name + '. Click to change');
+      if (statusId === 'st-done') {
+        completedMeta.style.display = 'inline';
+        completedDate.textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      } else {
+        completedMeta.style.display = 'none';
+      }
+    }
+
+    function toggleDropdown(open) {
+      isDropdownOpen = open;
+      dropdown.classList.toggle('open', open);
+      arrow.classList.toggle('open', open);
+      trigger.setAttribute('aria-expanded', open);
+      if (open) {
+        const selected = dropdown.querySelector('[aria-selected="true"]');
+        if (selected) selected.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    function selectStatus(statusId) {
+      if (isTransitioning || statusId === currentStatusId) {
+        toggleDropdown(false);
+        return;
+      }
+
+      previousStatusId = currentStatusId;
+
+      const validNext = VALID_TRANSITIONS[currentStatusId] || [];
+      const isValid = validNext.includes(statusId);
+
+      if (!isValid) {
+        toggleDropdown(false);
+        showToast('error', 'Invalid transition', 'Cannot move from ' +
+          STATUSES.find(s => s.id === currentStatusId).name + ' to ' +
+          STATUSES.find(s => s.id === statusId).name + ' directly');
+        return;
+      }
+
+      setLoading(true);
+      toggleDropdown(false);
+
+      setTimeout(() => {
+        const fails = Math.random() < 0.2;
+        if (fails) {
+          setLoading(false);
+          showToast('error', 'Network error', 'Failed to update status. Please try again.');
+          return;
+        }
+
+        currentStatusId = statusId;
+        updateBadge(statusId);
+        setLoading(false);
+        showToast('success', 'Status updated', 'Status updated to ' +
+          STATUSES.find(s => s.id === statusId).name, false);
+      }, 1200);
+    }
+
+    function setLoading(loading) {
+      isTransitioning = loading;
+      trigger.setAttribute('aria-busy', loading);
+      spinner.style.display = loading ? 'block' : 'none';
+      arrow.style.display = loading ? 'none' : 'inline';
+    }
+
+    function showToast(variant, title, message, isError) {
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + variant;
+      toast.setAttribute('role', variant === 'error' ? 'alert' : 'status');
+      toast.innerHTML = `
+        <span class="toast-icon">${variant === 'success' ? '✓' : '✗'}</span>
+        <div class="toast-body">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close" aria-label="Dismiss">×</button>
+      `;
+      toast.querySelector('.toast-close').addEventListener('click', () => dismissToast(toast));
+      toastContainer.appendChild(toast);
+      setTimeout(() => dismissToast(toast), 5000);
+    }
+
+    function dismissToast(toast) {
+      if (toast.classList.contains('dismissing')) return;
+      toast.classList.add('dismissing');
+      setTimeout(() => toast.remove(), 200);
+    }
+
+    function setPageState(state) {
+      document.body.dataset.state = state;
+      document.querySelectorAll('.state-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.state === state);
+      });
+
+      if (state === 'populated') {
+        currentStatusId = 'st-in-progress';
+        updateBadge(currentStatusId);
+        description.textContent = ISSUE.description;
+        priorityLabel.textContent = 'Urgent';
+        document.querySelector('.comments-header').style.display = 'flex';
+        document.querySelectorAll('.comment').forEach(c => c.style.display = 'flex');
+      } else if (state === 'loading') {
+        setLoading(true);
+      } else if (state === 'error') {
+        setLoading(false);
+        showToast('error', 'Invalid transition', 'Cannot move from In Progress to Todo directly');
+      } else if (state === 'success') {
+        currentStatusId = 'st-done';
+        updateBadge(currentStatusId);
+        showToast('success', 'Status updated', 'Status updated to Done');
+      } else if (state === 'empty') {
+        description.textContent = '';
+        priorityLabel.textContent = '';
+        document.querySelector('.comments-header').style.display = 'none';
+        document.querySelectorAll('.comment').forEach(c => c.style.display = 'none');
+      }
+    }
+
+    trigger.addEventListener('click', () => {
+      if (isTransitioning) return;
+      toggleDropdown(!isDropdownOpen);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (isDropdownOpen && !document.getElementById('statusBadge').contains(e.target)) {
+        toggleDropdown(false);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!isDropdownOpen) return;
+      const options = dropdown.querySelectorAll('.status-option');
+      const currentIndex = Array.from(options).findIndex(o => o.getAttribute('aria-selected') === 'true');
+
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const nextIndex = e.key === 'ArrowDown'
+          ? (currentIndex + 1) % options.length
+          : (currentIndex - 1 + options.length) % options.length;
+        options.forEach(o => o.setAttribute('aria-selected', 'false'));
+        options[nextIndex].setAttribute('aria-selected', 'true');
+        options[nextIndex].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        const selected = dropdown.querySelector('[aria-selected="true"]');
+        if (selected) selectStatus(selected.dataset.statusId);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        toggleDropdown(false);
+        trigger.focus();
+      }
+    });
+
+    document.querySelectorAll('.state-btn').forEach(btn => {
+      btn.addEventListener('click', () => setPageState(btn.dataset.state));
+    });
+
+    renderDropdown();
+    updateBadge(currentStatusId);
+  </script>
+</body>
+</html>

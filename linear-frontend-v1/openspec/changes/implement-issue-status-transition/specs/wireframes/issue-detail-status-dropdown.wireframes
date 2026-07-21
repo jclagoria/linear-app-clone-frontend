@@ -1,0 +1,191 @@
+# Wireframe: Issue Detail — Status Dropdown
+
+> **Version:** 1.0.1
+> **Changelog:** Added standalone Toast component cross-reference. Clarified i18n scope as single-locale. (PATCH)
+
+## Purpose & Flow Context
+
+Allows the user to transition an issue through the workflow by selecting a new status from a dropdown. Serves the "Change Issue Status" flow step. Entry: user on `/issues/:id` clicks status badge. Exit: user remains on same page with updated status.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown trigger |
+| `[●]` | Status color dot | `[↻]` | Loading spinner |
+| `[!]` | Error / alert | `[✓]` | Success |
+| `────────` | Divider / separator |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `main` for content region |
+| Heading order | h1 issue title, h2 section headings |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm.
+
+**App-shell**: Shared header + sidebar + main container. The issue detail page sits in the main content region.
+
+**Content hierarchy** (by visual priority):
+1. Status badge + dropdown (primary action for this change)
+2. Back button + issue identifier
+3. Issue title (h1)
+4. Priority + metadata
+5. Description + labels
+6. Action buttons (Edit, Delete)
+7. Comments section
+
+```
++------------------------------------------------------------------+
+|  [← Back]   [>Todo▼]          [●] No priority                    |
++------------------------------------------------------------------+
+|                                                                     |
+|  ENG-1                                                              |
+|                                                                     |
+|  Implement login page                                               |
+|  ====================                                               |
+|                                                                     |
+|  [● In Progress]  [>▼]      Urgent                                 |
+|                                                                     |
+|  Assignee: Juan     Created: Jul 21    Updated: Jul 21              |
+|                                                                     |
+|  frontend  feature                                                   |
+|                                                                     |
+|  ─────────────────────────────────────────────────────────          |
+|  Description                                                        |
+|                                                                     |
+|  Add login page with email/password and OAuth providers...          |
+|                                                                     |
+|  ─────────────────────────────────────────────────────────          |
+|                                                                     |
+|  [Edit]  [Delete]                                                   |
+|                                                                     |
+|  ─────────────────────────────────────────────────────────          |
+|  Comments (3)                                                       |
++------------------------------------------------------------------+
+```
+
+*Legend: [Button] [>Dropdown] [●] StatusDot*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Status badge trigger | IssueStatusBadge | Click opens dropdown list; shows current status with color dot. On selection: sends PATCH /issues/{id}/status, shows spinner on badge. On success: badge updates to new status color. On error: badge reverts, error toast | Loading: spinner replaces arrow, dropdown disabled. Error 422: revert + error toast. Network error: revert + error toast |
+| Status dropdown list | Select (reused) | Positioned below badge. Lists all workflow statuses. Arrow keys navigate, Enter selects, Escape closes | Click outside closes. Empty state not applicable (workflow statuses always available) |
+| Toast | Toast | Slides in from right on transition result. Success: green left border, "Status updated to {name}". Error: red left border, error message from API | Auto-dismisses after 5s. Manual dismiss with X |
+
+### ToastNotification (standalone component)
+
+| Property | Details |
+|----------|---------|
+| DS component | Toast |
+| Purpose | Feedback for status transition results (success/error) |
+| Placement | Top-right overlay, slides in |
+| Variants | `success` — green left border, check icon; `error` — red left border, X icon |
+| States | Visible (auto-dismiss after 5s), dismissing (slide-out), hidden |
+| Edge cases | Multiple rapid transitions queue toasts; manual dismiss via X button |
+| a11y | `role="alert"` for error toasts, live region for announcements |
+
+## Data Display
+
+No table/list. The status is a single-value selector displayed as a colored pill.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Status badge (default) | Current workflow stage | Color-coded: grey=backlog/todo, blue=in-progress, green=done, grey=canceled |
+| Status dropdown options | Available workflow stages | All statuses visible: Backlog, Todo, In Progress, Done, Canceled |
+| Toast success | Confirmation of change | "Status updated to In Progress" |
+| Toast error | Explain invalid transition | Display API error message like "Invalid transition: Cannot move from Todo to Done directly" |
+
+**i18n scope:** Single-locale (English). Text expansion room and RTL layout not considered.
+
+## States
+
+### Populated (Default)
+
+Issue is loaded with a status. The badge shows the current status name with its color dot. Clicking opens the dropdown.
+
+```
++-------------------------+
+|  [● In Progress]  [>▼]  |
++-------------------------+
+```
+
+### Loading
+
+When a status transition is in flight, the dropdown arrow is replaced by a small spinner. The dropdown is closed and the trigger is disabled.
+
+```
++-------------------------+
+|  [● In Progress]  [↻]   |
++-------------------------+
+```
+
+### Success
+
+After a successful transition, the badge updates to the new status color and name. A success toast slides in at the top-right.
+
+```
++-------------------------+
+|  [● Done]  [>▼]          |
++-------------------------+
+
++-- Toast (top-right) ---+
+| ✓ Status updated to    |
+|   Done                 |
++------------------------+
+```
+
+### Error
+
+After a failed transition (422 BUSINESS_RULE_ERROR or network error), the badge reverts to the previous status. An error toast shows the message.
+
+```
++-------------------------+
+|  [● In Progress]  [>▼]  |
++-------------------------+
+
++-- Toast (top-right) ---+
+| ✗ Invalid transition    |
+|   Cannot move from Todo |
+|   to Done directly      |
++------------------------+
+```
+
+### Empty
+
+Not applicable — a status is always present on an issue. If an issue somehow lacks a status, the badge shows "Unknown" in neutral color.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout, inline status badge |
+| Tablet (768-1024px) | Same, dropdown remains inline |
+| Mobile (<768px) | Full-width dropdown, touch targets ≥44px |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` contains issue detail content |
+| Heading order | h1 for issue title, h2 for "Description" and "Comments" section headings |
+| Reading / Focus order | Back → Status badge → Priority → Assignee → Metadata → Labels → Description → Edit/Delete → Comments |
+| Accessible names | Status badge gets `aria-label="Status: {name}. Click to change"` |
+| Keyboard operability | Tab to badge, Enter/Space opens dropdown, Arrow keys to navigate, Enter selects, Escape closes. Tab moves to next element after dropdown closes |
+| Target size | Status badge ≥32px height, ≥44px on mobile |
+| Focus not obscured | Dropdown renders above content, no sticky regions overlap |
+| Non-color intent | Status names are visible text in addition to colors. Error/success toasts include text, not just icon |
