@@ -1,0 +1,414 @@
+# Wireframe: Issue Detail Page (Assignee Change)
+
+**Version**: 1.1.0
+
+## Changelog
+
+| Version | Change |
+|---------|--------|
+| 1.1.0 | Added Issues List wireframe (pre-existing screen, assignee reflection). Added error state ASCII sketch for Issue Form Modal. |
+| 1.0.0 | Initial wireframes for Issue Detail Page and Issue Form Modal (Assignee Change). |
+
+## Screen Inventory
+
+| Screen | Wireframe Section | States |
+|--------|------------------|--------|
+| Issues List | § Issues List | populated, loading, error |
+| Issue Detail Page | § Issue Detail Page | populated, loading, error, success (assignee changed), error (assignee failed) |
+| Issue Form Modal (Edit) | § Issue Form Modal | populated, submitting, error |
+
+---
+
+## Purpose & Flow Context
+
+Lets the user view an issue's full details including current assignee, and navigate to the edit form to change the assignee. Entry: click issue from Issues List. Exit: click "Back" to return to Issues List, or click "Edit" to open the Issue Form Modal.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `👤` | User / avatar | `[T]` | Toast notification |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header (logo, nav, user menu) + main container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo / Nav / UserMenu | Sticky top |
+| Main | Issue detail content | Padded container, max-width 1280px |
+
+**Content hierarchy** (by visual priority):
+1. Issue identifier + title (h1)
+2. Metadata bar (status badge, priority, assignee, dates)
+3. Description section
+4. Comments section
+
+```
++------------------------------------------------------------------+
+|  [< Back]                       [Edit] [Delete]                   |
++------------------------------------------------------------------+
+|                                                                    |
+|  LAG-123                                                           |
+|  # Issue Title                                                    |
+|                                                                    |
+|  [In Progress]  Medium                                            |
+|                                                                    |
+|  Assignee:  👤 John Doe                                            |
+|  Created:   Jan 15, 2026                                          |
+|  Updated:   Jul 21, 2026                                          |
+|                                                                    |
+|  Labels:  [frontend] [Feature]                                     |
+|                                                                    |
+|  ## Description                                                    |
+|  Issue description text here...                                    |
+|                                                                    |
+|  ----------------------------------------------------------------- |
+|                                                                    |
+|  ## Comments                                                       |
+|  [Comment list...]                                                 |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| [< Back] | Button (ghost) | Navigates to `/issues` | — |
+| [Edit] | Button (secondary) | Opens IssueFormModal in edit mode | — |
+| [Delete] | Button (danger) | Opens ConfirmDeleteDialog | — |
+| Status badge | IssueStatusBadge | Click opens dropdown to change status; shows spinner during API call | Loading state disables interaction |
+| Assignee display | `div` text + avatar | Read-only display of current `assigneeName`; no inline edit — use Edit modal | Shows initials avatar or nothing if unassigned |
+| Toast | Toast (snackbar) | Appears temporarily after assignee change (success/error) | Auto-dismisses after duration |
+
+## Data Display
+
+Key-value metadata list in the detail view: assignee, created date, updated date. Labels displayed as a tag/badge row.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Back" | Navigate to parent list | Consistent with list→detail navigation |
+| "Edit" | Open edit modal | User language — "Edit issue" |
+| "Assignee" | Label for the assignee field | Human label, not raw `assigneeId` |
+| "Assignee updated" (toast) | Confirmation that assign change succeeded | Success feedback |
+| "Assignee is not a member of this team" (toast) | Explain why the assign failed | Plain language, no error codes |
+
+## States
+
+### Populated (Default)
+
+The layout shown in the ASCII sketch above. Issue data is loaded and displayed.
+
+### Loading
+
+```  
++------------------------------------------------------------------+
+|  [==== skeleton bar ====]                                         |
+|                                                                    |
+|  [=========================== skeleton bar ======================] |
+|  [=========================== skeleton bar ======================] |
+|  [==== skeleton bar ====]   [==== skeleton bar ====]              |
+|  [==== skeleton bar ====]                                         |
+|  [=========================== skeleton bar ======================] |
++------------------------------------------------------------------+
+```
+
+### Error
+
+```
++------------------------------------------------------------------+
+|  [ErrorBanner: "Failed to load issue. Please try again."]        |
+|  [Retry]                                                          |
++------------------------------------------------------------------+
+```
+
+Error banner with a retry button. Plain-language message.
+
+### Success (Assignee Changed)
+
+A toast appears: `[T] "Assignee updated"` (green/success variant) slides in from bottom-right, auto-dismisses after 3s. Issue detail view reflects new assignee name.
+
+### Error (Assignee Failed)
+
+A toast appears: `[T] "Assignee is not a member of this team"` or `[T] "Failed to update assignee. Please try again."` (red/error variant), auto-dismisses after 5s. Issue detail view reverts to previous assignee.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout as described; two-column could show metadata sidebar |
+| Tablet (768-1024px) | Single column stack; metadata inline |
+| Mobile (<768px) | Same single column; buttons stack vertically; touch targets ≥44px |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header`, `main`, `contentinfo` |
+| Heading order | h1 → Issue title; h2 → "Description", "Comments" |
+| Reading / Focus order | Back → Edit → Delete → Status badge → metadata → description → comments |
+| Accessible names | Icon-only Edit/Delete buttons get `aria-label="Edit issue"` / `aria-label="Delete issue"` |
+| Keyboard operability | Tab through all controls; Enter/Space to activate; Escape closes modals |
+| Target size | ≥24×24 CSS px on all interactive targets |
+| Focus not obscured | Sticky header does not overlap focused content |
+| Non-color intent | Status uses text + color; priority uses text + icon + color |
+
+---
+
+# Wireframe: Issue Form Modal (Edit / Assignee Change)
+
+## Purpose & Flow Context
+
+Overlay form where the user edits issue fields including the assignee, then submits to save changes. Entry: click "Edit" on the Issue Detail Page. Exit: submit (success → toast + detail page updated) or cancel (→ detail page unchanged).
+
+---
+
+## Layout Regions
+
+**Grid**: N/A — modal overlay, no grid.
+
+**App-shell**: N/A — modal is a floating overlay.
+
+**Content hierarchy** (by visual priority):
+1. Form fields (title, description, status, priority, assignee, labels)
+2. Action buttons (Cancel, Save)
+
+```
++------------------------------------------------------------------+
+|  [X]                                                              |
+|  # Edit Issue                                                     |
+|                                                                    |
+|  Title:                                                           |
+|  [______________________________________________________________] |
+|                                                                    |
+|  Description:                                                     |
+|  [______________________________________________________________] |
+|  [______________________________________________________________] |
+|                                                                    |
+|  Status:        [>In Progress ▼]                                  |
+|  Priority:      [>Medium ▼]                                       |
+|  Assignee:      [>John Doe ▼]   or   [>Unassigned ▼]              |
+|  Labels:        [frontend] [Feature] [+]                          |
+|                                                                    |
+|  [Cancel]                                [Save]                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [>Dropdown] [X = Close] [#Heading]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| [X] | Button (ghost) | Closes modal, discards changes | Escape key also closes |
+| Title input | `input[type="text"]` | Text field for issue title | Required field |
+| Description | `textarea` | Multi-line text | Optional |
+| Status dropdown | Select | Dropdown to change status | Pre-filled with current value |
+| Priority dropdown | Select | Dropdown to change priority | Pre-filled with current value |
+| Assignee dropdown | Select | Dropdown to select assignee or unassign (null) | Options: team members + "Unassigned" to clear |
+| Labels | Tag input | Add/remove labels | Existing pattern |
+| [Cancel] | Button (secondary) | Closes modal, discards changes | — |
+| [Save] | Button (primary) | Submits form; shows spinner while submitting | Disabled during submission |
+
+## Data Display
+
+Form fields pre-filled with existing issue data. Assignee dropdown includes all team members as options, plus "Unassigned" to represent `null`.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Edit Issue" | Modal heading | Consistent with "Edit" button label |
+| "Assignee" | Label for assignee selector | Human label for `assigneeId` field |
+| "Unassigned" | Option to clear assignee | Plain language for `null` |
+| "Save" | Submit action | Standard save call-to-action |
+| "Cancel" | Dismiss without saving | Standard cancel |
+
+## States
+
+### Populated (Default)
+
+The layout shown in the ASCII sketch. All fields pre-filled with current issue data.
+
+### Submitting
+
+Save button shows spinner, all inputs disabled, modal backdrop remains. No double-submit.
+
+```
+|  [Spinner]                                                         |
+|  [Cancel]                    [Save ●●●]                            |
+```
+
+### Error (Validation)
+
+```
++------------------------------------------------------------------+
+|  [X]                                                              |
+|  # Edit Issue                                                     |
+|                                                                    |
+|  Title:                                                           |
+|  [!_____________________________________________________________] |
+|  [Title is required]                                              |
+|                                                                    |
+|  Description:                                                     |
+|  [______________________________________________________________] |
+|  [______________________________________________________________] |
+|                                                                    |
+|  Status:        [>In Progress ▼]                                  |
+|  Priority:      [>Medium ▼]                                       |
+|  Assignee:      [>John Doe ▼]                                     |
+|  Labels:        [frontend] [Feature] [+]                          |
+|                                                                    |
+|  [Cancel]                                [Save]                    |
++------------------------------------------------------------------+
+                              [T] "Assignee is not a member of this team"
+```
+
+Inline validation highlights required fields with red border + error message below. Business rule errors (422 from assignee endpoint) shown as a toast at bottom, modal stays open so user can correct. Toast auto-dismisses after 5s.
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | N/A — modal dialog |
+| Heading order | h2 "Edit Issue" |
+| Reading / Focus order | Focus trapped inside modal: header → title → description → status → priority → assignee → labels → Cancel → Save |
+| Accessible names | Close button: `aria-label="Close"`; Assignee: `aria-label="Assignee"` |
+| Keyboard operability | Tab cycles through form fields; Escape closes; Enter submits; Arrow keys for dropdowns |
+| Target size | ≥24×24 CSS px |
+| Focus not obscured | Modal is centered, no sticky regions inside |
+| Non-color intent | N/A |
+
+---
+
+# Wireframe: Issues List
+
+## Purpose & Flow Context
+
+Pre-existing list view where the updated assignee is reflected after navigating back from the Issue Detail Page. Entry: click "Back" on Issue Detail Page. Exit: click an issue row → Issue Detail Page. This change adds no structural modifications to the Issues List; assignee reflection is automatic via store cache invalidation (`issues:list` cache invalidated on `assignIssue` success).
+
+**Grid**: 12-column layout (inherits shared shell).
+**App-shell**: Shared header + main container (identical to Issue Detail Page shell).
+
+## Layout Regions
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo / Nav / UserMenu | Sticky top |
+| Main | Issue list table | Padded container, max-width 1280px |
+
+**Content hierarchy** (by visual priority):
+1. Page title + create button
+2. Issue table: checkbox, identifier, title, status badge, priority, assignee, updated date
+3. Pagination
+
+```
++------------------------------------------------------------------+
+|  Issues                                                  [New Issue] |
+|                                                                     |
+|  [] LAG-123  Title text...      [In Progress]  Medium  👤 John Doe  |
+|  [] LAG-122  Another issue...   [Backlog]      Low     👤 Jane Doe  |
+|  [] LAG-121  Third item...      [Done]         High    —            |
+|                                                                     |
+|  [< Prev]  1 2 3 ...  [Next >]                                     |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [>Dropdown] [Avatar] [#Heading] [Table]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Issue row link | `tr` + `a` | Click navigates to `/issues/:id` | — |
+| Assignee cell | Avatar + text | Read-only display of `assigneeName`; updates automatically after `assignIssue` via cache invalidation | Shows initials or nothing if unassigned |
+| [New Issue] | Button (primary) | Opens Issue Form Create modal | — |
+| Pagination | Pagination | Navigate pages | First/last page state |
+
+## Data Display
+
+Table with checkbox, identifier, title, status badge, priority, assignee avatar+name, updated date. Sortable by column (existing pattern). Assignee column auto-reflects changes from the detail page via store cache invalidation — no manual refresh needed.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Issues" | Page title | Consistent section heading |
+| "New Issue" | Create CTA | Matches existing pattern |
+| Assignee display | Read-only name + avatar | Data from issue model, no inline edit |
+
+## States
+
+### Populated (Default)
+
+The table layout shown in the ASCII sketch. All issues loaded with current assignee data.
+
+### Loading
+
+```
++------------------------------------------------------------------+
+|  [=========================== skeleton bar ======================] |
+|  [=========================== skeleton bar ======================] |
+|  [=========================== skeleton bar ======================] |
+|  [=========================== skeleton bar ======================] |
++------------------------------------------------------------------+
+```
+
+Skeleton rows mirroring the table structure (5 rows).
+
+### Error
+
+```
++------------------------------------------------------------------+
+|  [ErrorBanner: "Failed to load issues. Please try again."]        |
+|  [Retry]                                                          |
++------------------------------------------------------------------+
+```
+
+Error banner with retry button. Plain-language message.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full table with all columns |
+| Tablet (768-1024px) | Single column card list, avatar+name inline |
+| Mobile (<768px) | Stacked card layout with key fields; touch targets ≥44px |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header`, `main`, `contentinfo` |
+| Heading order | h1 → "Issues" |
+| Reading / Focus order | Header nav → New Issue → table rows → pagination |
+| Keyboard operability | Tab through controls; Arrow keys navigate table; Enter opens issue |
+| Target size | ≥24×24 CSS px |
+| Focus not obscured | Sticky header does not overlap focused content |
+| Non-color intent | Status + priority use text + icon + color |

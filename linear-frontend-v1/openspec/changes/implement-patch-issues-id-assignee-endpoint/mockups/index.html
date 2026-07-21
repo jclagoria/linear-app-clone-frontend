@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockups — Issue Assign</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); padding: var(--space-4); }
+    header { margin-bottom: 2rem; }
+    h1 { font-size: 24px; font-weight: 700; }
+    p { color: var(--color-text-secondary); margin-top: 0.5rem; }
+    .screen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .screen-card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.5rem; text-decoration: none; color: inherit; display: block; transition: box-shadow 0.2s; }
+    .screen-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .screen-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 0.5rem; }
+    .screen-card p { font-size: 14px; color: var(--color-text-secondary); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Issue Assign — Mockups</h1>
+    <p>Interactive HTML mockups for the assignee change flow. Click a screen to explore.</p>
+  </header>
+  <div class="screen-grid">
+    <a href="issues-list.html" class="screen-card">
+      <h2>Issues List</h2>
+      <p>List view with assignee column. Navigate to issue detail by clicking a row.</p>
+    </a>
+    <a href="issue-detail.html" class="screen-card">
+      <h2>Issue Detail Page</h2>
+      <p>Full issue detail view with assignee display. Click "Edit" to open the edit modal.</p>
+    </a>
+    <a href="issue-form-modal.html" class="screen-card">
+      <h2>Issue Form Modal (Edit)</h2>
+      <p>Overlay form for editing issue fields including assignee selection.</p>
+    </a>
+  </div>
+</body>
+</html>
