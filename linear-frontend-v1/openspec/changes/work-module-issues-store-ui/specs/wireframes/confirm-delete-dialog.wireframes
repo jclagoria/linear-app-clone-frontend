@@ -1,0 +1,91 @@
+# Wireframe: ConfirmDeleteDialog
+
+## Purpose & Flow Context
+
+Confirmation before permanently deleting an issue. Entry: click "Delete" on IssueDetailPage. Exit: Confirm → navigate to IssuesPage; Cancel → return to IssueDetailPage.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button | `[X]` | Close / dismiss |
+
+## Layout Regions
+
+**Grid**: Small modal overlay (400px). No app-shell.
+
+```
++------------------------------------------------------------------+
+|  [XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX]                                 |
+|                                                                    |
+|  +-------------------------------------------------------------+  |
+|  |  Delete issue?                                              |  |
+|  |                                                             |  |
+|  |  "Fix login redirect"                                       |  |
+|  |                                                             |  |
+|  |  This action cannot be undone. All data will be              |  |
+|  |  permanently removed.                                       |  |
+|  |                                                             |  |
+|  |  [Cancel]                         [ Delete ]                |  |
+|  +-------------------------------------------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Modal shell | Modal | Backdrop/Esc = cancel | — |
+| Cancel button | Button (secondary) | Close dialog → back to detail | — |
+| Delete button | Button (danger) | Dispatch delete action → close → navigate to list | Spinner while deleting |
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Delete issue?" | Confirm title — prompts decision | Danger context |
+| Issue title in quotes | Identifies what will be deleted | Italic styling to distinguish |
+| "This action cannot be undone…" | Irreversibility warning | Plain language, no codes |
+| "Delete" | Confirm destructive action | Danger variant, red |
+| "Cancel" | Abandon delete | Safe option, secondary |
+
+## States
+
+### Default
+
+Both buttons active. Focus on Cancel (safe default).
+
+### Submitting
+
+Delete button shows spinner and is disabled. Cancel remains enabled. Modal does not close until response.
+
+### Error (API failure)
+
+Inline error below warning text:
+```
++-- -------------------------------------------------------------+  |
+|  [⚠] Could not delete issue. Please try again.                 |
++-- -------------------------------------------------------------+  |
+```
+Both buttons re-enabled.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| All | Small centered modal; no structural changes |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `role="alertdialog" aria-describedby="delete-warning"` |
+| Heading order | `h2` "Delete issue?" |
+| Reading / Focus order | Warning text → Cancel → Delete |
+| Accessible names | Delete button `aria-label="Delete issue"` |
+| Keyboard operability | Tab between Cancel/Delete; Enter = focused action; Esc = Cancel |
+| Focus trap | Cycles within dialog; initial focus on Cancel (safe default) |
+| Non-color intent | "Delete" button uses text label "Delete", not just red color |

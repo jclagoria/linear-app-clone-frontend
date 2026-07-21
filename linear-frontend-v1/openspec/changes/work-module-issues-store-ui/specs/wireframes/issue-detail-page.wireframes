@@ -1,0 +1,157 @@
+# Wireframe: IssueDetailPage
+
+## Purpose & Flow Context
+
+Full issue view with metadata, description, comments, and action controls. Entry: click IssueCard on IssuesPage, or direct URL `/issues/:id`. Exit: back button → IssuesPage, or Edit → IssueFormModal, or Delete → ConfirmDeleteDialog.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `👤` | User / mention |
+| `[#]` | Badge | `💬N` | N comments |
+
+## Layout Regions
+
+**Grid**: 12-column. App-shell shared (Header + Sidebar). Content split into two columns: main (8 cols) + sidebar meta (4 cols).
+
+**Content hierarchy** (by visual priority):
+1. Issue title + identifier — what is this?
+2. Metadata bar — status, priority, assignee
+3. Description — the body
+4. Comments — discussion
+
+```
++------------------------------------------------------------------+
+|  [Header: Logo] [Search] [Notifs] [Avatar] [Theme]               |
++------------------------------------------------------------------+
+|  +-----------+  +-----8 cols------+  +----4 cols----+           |
+|  | [Sidebar] |  | [← Back]        |  |              |           |
+|  |           |  |                  |  | [#Status]    |           |
+|  |           |  |  h1: Fix login   |  | [#Priority]  |           |
+|  |           |  |  redirect        |  |              |           |
+|  | [#Issues] |  |  ENG-123         |  | 👤 Assignee  |           |
+|  | Projects  |  |                  |  | Name          |           |
+|  | Cycles    |  |  [Edit] [Delete] |  |              |           |
+|  |           |  |  ─────────────    |  | Labels:      |           |
+|  |           |  |                  |  | [#bug] [#ui] |           |
+|  |           |  |  Description     |  |              |           |
+|  |           |  |  ─────────────    |  | 📅 Created   |           |
+|  |           |  |  When the user   |  | Jul 15, 2026 |           |
+|  |           |  |  logs in with    |  |              |           |
+|  |           |  |  valid creds...  |  | 📅 Updated   |           |
+|  |           |  |                  |  | Jul 20, 2026 |           |
+|  |           |  |  ─────────────    |  |              |           |
+|  |           |  |  Comments (3)    |  |              |           |
+|  |           |  |  ─────────────    |  |              |           |
+|  |           |  |  👤 Juan C.      |  |              |           |
+|  |           |  |  2h ago          |  |              |           |
+|  |           |  |  I think the     |  |              |           |
+|  |           |  |  issue is in     |  |              |           |
+|  |           |  |  the interceptor |  |              |           |
+|  |           |  |                  |  |              |           |
+|  |           |  |  ─────────────    |  |              |           |
+|  |           |  |  Add a comment...|  |              |           |
+|  |           |  |  [Cancel] [Save] |  |              |           |
+|  |           |  |                  |  |              |           |
+|  +-----------+  +------------------+  +--------------+           |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| "Back" button | Button (ghost) | `←` icon, navigates to `/issues` | — |
+| "Edit" button | Button (ghost) | Opens IssueFormModal in edit mode | — |
+| "Delete" button | Button (danger) | Opens ConfirmDeleteDialog | — |
+| Status badge | Badge | Read-only display on sidebar | — |
+| Priority badge | Badge | Read-only display | — |
+| Assignee | Avatar (md) + name | Read-only | Unassigned → "Unassigned" text |
+| Labels | Badge | Each label as a pill | No labels → section hidden |
+| Comment list | — | Chronological, newest at top | No comments → "No comments yet" |
+| CommentForm | — | Textarea + Cancel/Save buttons | Empty submit disabled |
+
+## Data Display
+
+Two-column layout: main column (8/12) for title, description, comments; sidebar (4/12) for metadata. Description uses rendered markdown. Comments are flat list, not threaded (MVP).
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| h1 | Issue title — what needs to be done | Editable in edit mode |
+| Identifier | Reference ID — for search, linking | Monospace |
+| "Back" | Navigate up to list | Arrow icon + text |
+| "Edit" | Modify issue fields | — |
+| "Delete" | Irreversible removal | Danger variant warns user |
+| "Add a comment…" | Placeholder for comment input | Not a label |
+| "No comments yet" | Empty comment state | — |
+
+## States
+
+### Populated (Default)
+
+Layout shown above with full issue data, comments, and metadata sidebar.
+
+### Loading
+
+```
++------------------------------------------------------------------+
+|  [← Back]                                                        |
+|                                                                    |
+|  [======================= skeleton line =======================]  |
+|  [============== skeleton line ============]                     |
+|                                                                    |
+|  [======= skeleton ======]  [======== skeleton ==========]       |
+|  [======= skeleton ======]                                       |
++------------------------------------------------------------------+
+```
+
+Skeleton mirrors the two-column layout with title bar, description block, and metadata placeholder.
+
+### Empty / Not Found
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                      Issue not found                             |
+|                      This issue may have been deleted or          |
+|                      you don't have access.                      |
+|                      [ Back to Issues ]                          |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Error
+
+Inline banner replacing the detail area (not full page):
+```
++------------------------------------------------------------------+
+|  [⚠] Could not load this issue. [ Retry ]                       |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Two-column layout as shown |
+| Tablet (768-1024px) | Metadata sidebar moves below description; comments remain below |
+| Mobile (<768px) | Single column; metadata sections as collapse-able accordion |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header`, `nav`, `main` (detail content), `aside` (metadata) |
+| Heading order | `h1` (issue title) → `h2` ("Description", "Comments") |
+| Reading / Focus order | Back → title → metadata → description → comments → comment form |
+| Accessible names | Back button `aria-label="Back to issues"`; Edit/Delete have text labels |
+| Keyboard operability | Tab through metadata, description, comments, form |
+| Target size | All interactive elements ≥24×24 px |
+| Non-color intent | Status + priority use text + color badges |

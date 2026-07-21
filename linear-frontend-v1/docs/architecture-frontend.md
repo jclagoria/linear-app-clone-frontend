@@ -1,155 +1,111 @@
-# Architecture — Linear App Clone (Frontend)
+# Architecture — Frontend
 
 ## Overview
 
-Single-page application built with React 19 + Vite, following a layered frontend architecture. Auth is the foundational module — initialized first, consumed by every other layer. The app uses client-side routing with React Router, Zustand for state, and Tailwind CSS + shadcn/ui for styling.
+The Linear App Clone frontend is a single-page application (SPA) built with React 19, TypeScript, and Vite. It follows a feature-slice architecture with shared modules for cross-cutting concerns. Auth guards, API clients, and websocket connections are layered at the app boundary.
 
-The architecture follows **feature-based modular monolith**: each feature owns its components, stores, and types.
+The architecture follows **feature-first modular monolith**: each domain (work, projects, cycles, auth) is self-contained with its own store, components, types, and API calls. Shared infrastructure lives in `src/shared/`.
 
 ## Technical Direction
 
-- **Architecture style**: Feature-based modular monolith
-- **Frontend framework**: React 19 with Vite
-- **Routing**: React Router v7 (client-side)
-- **State**: Zustand (auth) + React Query (server state, future)
-- **API style**: REST with fetch + interceptor pattern
-- **Styling**: Tailwind CSS + shadcn/ui component primitives
+- **Architecture style**: Feature-slice modular monolith
+- **Framework**: React 19 with react-router-dom v7
+- **Routing**: react-router-dom v7 nested layouts with AuthGuard + AppLayout
+- **API style**: REST with JSON, custom interceptor-based ApiClient
+- **State management**: Zustand v5 stores per domain, selectors for derived data
+- **Styling**: Tailwind CSS v4 with design-system tokens as CSS custom properties
 
 ## Project Structure
 
 ```
 src/
-  features/
-    auth/
-      components/     # LoginForm, AuthGuard, UserAvatar
-      stores/         # AuthStore (Zustand)
-      types/          # Auth types (User, Tokens, AuthState)
-      api/            # login(), logout(), refresh()
-      hooks/          # useAuth, useLogin
-      pages/          # LoginPage, SplashPage
-  components/         # Shared UI (shadcn/ui + custom)
-  lib/                # API client, utils, token interceptor
-  router/             # Route config, protected routes
-  types/              # Global TypeScript types
+  app/              # App shell: router, layouts, providers
+  pages/            # Top-level route pages
+  entities/         # Domain entities (session, issue, etc.)
+    session/
+      model/        # Zustand store
+      api/          # API calls
+      ui/           # Auth UI (AuthGuard)
+  features/         # Feature modules (coming soon)
+  shared/           # Cross-cutting shared code
+    lib/            # API client, utils
+    stores/         # Shared stores (websocket, notifications)
+    ui/             # Shared primitives (Button, Input, Modal, etc.)
+    types/          # Shared TypeScript types
+  __tests__/        # Integration / module-level tests
 ```
 
-### Auth Module Architecture
+### Frontend — React SPA (Vite)
 
 | Directory | Responsibility |
 |-----------|---------------|
-| `features/auth/stores/` | Zustand store: `isAuthenticated`, `user`, `accessToken`, `isLoading` |
-| `features/auth/api/` | `login()`, `logout()`, `refresh()` — fetch wrappers |
-| `features/auth/components/` | LoginForm, AuthGuard, UserAvatar |
-| `features/auth/hooks/` | `useAuth` (store selector), `useLogin` (form handler + validation) |
-| `features/auth/pages/` | LoginPage, SplashPage (route-level components) |
+| `src/app/` | Router config, app layouts, providers |
+| `src/pages/` | Route page components (one per route) |
+| `src/entities/` | Domain modules with store, API, UI |
+| `src/shared/lib/` | ApiClient, auth helpers, utilities |
+| `src/shared/stores/` | Cross-domain state (websocket, notifications) |
+| `src/shared/ui/` | Design-system primitives (Button, Input, Badge, Modal, etc.) |
+| `src/shared/types/` | Shared TypeScript interfaces |
 
-### Shared Layer
+## Component Design
 
-| Directory | Responsibility |
-|-----------|---------------|
-| `components/` | Design-system components (Button, Input, ErrorBanner, Spinner) using shadcn/ui primitives |
-| `lib/` | API client with auth interceptor, token management |
-| `router/` | Route definitions, AuthGuard wrapper, navigation utilities |
+### Frontend
+
+- **React 19** with functional components and hooks.
+- **react-router-dom v7** for routing with nested layouts (`AppLayout` wraps authenticated pages).
+- **AuthGuard** wraps the app layout — redirects to `/login` if no session.
+- **Design-system components** in `src/shared/ui/` are co-located with tests and follow consistent API (cva for variants, tailwind-merge for class composition).
+- **API client** wraps fetch with interceptor pipeline (auth token injection, 401 retry with single-flight refresh).
+- **Forms** validated client-side with react-hook-form + Zod schemas.
+- **Domain stores** (Zustand) follow consistent pattern: `model/store.ts`, typed actions, selectors in `selectors/`.
 
 ## State Management
 
-- **Auth state**: Zustand store — holds `accessToken`, `user`, `isAuthenticated`, `isLoading`
-- **Server state** (future): React Query — API data caching, optimistic updates
-- **Client state**: Zustand stores for UI state (theme, sidebar, etc.)
-
-### AuthStore Interface
-
-```typescript
-interface AuthState {
-  user: User | null;
-  accessToken: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
-  hydrate: () => Promise<void>;
-  refreshAccessToken: () => Promise<string>;
-}
-```
+- **Server state**: Fetched on demand via ApiClient, stored in Zustand domain stores (no React Query — keeping it simple).
+- **Client state**: Zustand stores per domain — auth, issues, projects, cycles, UI preferences.
+- **Cross-cutting state**: Websocket store in `src/shared/stores/` for real-time notifications.
+- **Derived state**: Memoized selectors via `createMemoizedSelector` in `src/shared/stores/selectors/`.
 
 ## Data Flow
 
 ```
-User                    AuthStore                    API (Backend)
-  |                         |                            |
-  |-- login(email, pw) ---->|                            |
-  |                         |-- POST /auth/login ------->|
-  |                         |<-- { access, refresh } ----|
-  |                         |                            |
-  |                         |-- store access in memory    |
-  |                         |-- refresh in httpOnly cookie|
-  |                         |                            |
-  |<-- isAuthenticated: true|                            |
-  |                         |                            |
-  |-- (API call) ---------->|                            |
-  |                         |-- interceptor checks token  |
-  |                         |-- if expired: refresh ---->|
-  |                         |<-- new access token -------|
-  |                         |-- attach Bearer token      |
-  |                         |-- fetch() -------------->|
-  |<-- response ------------|                            |
-```
-
-## Boot Sequence
-
-```
-App mount
-  → AuthStore.hydrate()     // check refresh cookie
-  → isLoading = true
-  → [SplashScreen shown]
-  → if refresh valid:
-      → fetch new access token
-      → isAuthenticated = true
-      → render protected app
-  → if refresh invalid/missing:
-      → isAuthenticated = false
-      → redirect to /login
+Page Component
+    |
+    |-- mounts --> reads from Zustand store (useIssueStore)
+    |                    |
+    |                    |-- no data? --> dispatches fetchIssues()
+    |                    |                    |
+    |                    |                    |-- ApiClient.get('/issues')
+    |                    |                    |       |
+    |                    |                    |       |-- interceptor: injects Bearer token
+    |                    |                    |       |-- fetch() --> server
+    |                    |                    |       |-- interceptor: 401? refresh + retry
+    |                    |                    |       |-- response --> JSON
+    |                    |                    |
+    |                    |               store.setIssues(data)
+    |                    |
+    |               re-renders with data
+    |
+    |-- User clicks filter --> store.setFilter(...) --> re-render
+    |-- User clicks card --> router.navigate('/issues/:id')
 ```
 
 ## Security
 
-- **Access token**: In-memory only (Zustand state) — never persisted to localStorage/sessionStorage
-- **Refresh token**: httpOnly secure cookie — set by backend, not accessible to JS
-- **Token injection**: Fetch interceptor reads `accessToken` from AuthStore, attaches `Authorization: Bearer <token>`
-- **Auto-refresh**: Interceptor checks token expiry before each request; silent refresh if near expiry
-- **Logout**: Clears in-memory token, calls backend to clear refresh cookie, redirects
-
-### Layout Module Architecture
-
-The Layout Module provides the application shell that wraps all authenticated pages.
-
-| Directory | Responsibility |
-|-----------|---------------|
-| `src/app/AppLayout.tsx` | Root layout: composes Sidebar + Header + `<Outlet />` |
-| `src/widgets/Sidebar/` | Collapsible nav panel, nav links, collapse toggle |
-| `src/widgets/Header/` | Sticky top bar: search trigger, notifications, avatar, theme toggle |
-
-**Layout states**: Desktop (expanded sidebar), Sidebar Collapsed (icon-only), Mobile-Overlay (sidebar behind hamburger with backdrop).
-
-**Theme**: CSS custom properties under `[data-theme]` attribute. Three modes: light, dark, system. Persisted via Zustand `persist` middleware to localStorage.
-
-**Responsive strategy**: Media queries at 768px (mobile ↔ tablet) and 1024px (tablet ↔ desktop). Sidebar transitions between side-by-side (desktop/tablet) and overlay (mobile).
-
-**Sidebar overlay (mobile)**: Fixed-position panel slides from left; backdrop closes on click/Escape; focus trapped inside when open.
+- **Auth**: JWT dual token — access (short-lived, in-memory) + refresh (httpOnly cookie).
+- **API Client**: Auto-injects `Authorization: Bearer <token>` via request interceptor. On 401, triggers single-flight token refresh and retries.
+- **Route protection**: `AuthGuard` component checks session store; redirects unauthenticated users to `/login`.
+- **Error format**: Backend returns RFC 7807 Problem Details; `ApiError` class maps status codes to typed errors.
 
 ## Current Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Architecture | Feature-based modular monolith | Direct mapping to features, easy to navigate, no over-engineering |
-| Framework | React 19 + Vite | Latest React, fast dev, SPA-appropriate |
-| State | Zustand | Minimal, works outside React, perfect for auth |
-| Styling | Tailwind CSS + shadcn/ui | Rapid dev, accessible primitives, design-system aligned |
-| Routing | React Router v7 | Standard, nested routes, loader/action pattern |
-| Auth | JWT dual token | Stateless, secure refresh rotation |
-| API | REST + fetch | No additional deps, easy interceptor pattern |
-| Layout | Flexbox shell + collapsible sidebar | Simpler than CSS Grid for variable-width sidebar; responsive via media queries |
-| Theme | CSS custom properties + data-theme | Three-mode (light/dark/system) with flash prevention via inline script |
-| Sidebar state | Zustand persist | Collapsed state survives refresh; same pattern as auth |
+| Architecture | Feature-slice modular monolith | Clear domain boundaries, scales well for medium app |
+| Framework | React 19 + Vite | Existing, fast DX, SPA model fits project needs |
+| State | Zustand v5 | Existing, minimal, works outside React |
+| Styling | Tailwind CSS v4 | Existing, utility-first, design-system tokens |
+| Routing | react-router-dom v7 | Existing, nested layouts, loaders |
+| API Client | Custom fetch-based | Existing, interceptor pipeline, lightweight |
+| Validation | react-hook-form + Zod | Existing, performant, shared schemas |
+| Testing | Vitest + Playwright | Existing, fast, Vite-native |

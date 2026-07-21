@@ -1,0 +1,191 @@
+# Wireframe: IssuesPage
+
+## Purpose & Flow Context
+
+Lists all issues for the team with filterable, scrollable IssueCards. Entry: app-shell "Issues" nav link or keyboard shortcut `G then I`. Exit: click card → IssueDetailPage, or "Create issue" → IssueFormModal.
+
+---
+
+## Version & Changelog
+
+| Version | Type | Description |
+|---------|------|-------------|
+| 1.1.0 | MINOR | Added J/K keyboard card navigation (moved from deferred to implemented per spec); trimmed unused notation symbols |
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `👤` | User / mention |
+| `○ ●` | Radio unselected / selected | `[#]` | Badge |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys, J/K for card navigation |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm.
+
+**App-shell**: Shared header + sidebar + content area. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo, search trigger, notifications, avatar, theme toggle | Sticky top, z-50 |
+| Sidebar | Team switcher, nav links (Issues, Projects, Cycles), user menu | Collapsible, fixed left |
+| Main content | Page title + filters + issue list | Scrollable, fills remaining space |
+
+**Content hierarchy** (by visual priority):
+1. Filter bar — primary navigation tool
+2. Issue list — the main data display
+3. Page title + action button
+
+```
++------------------------------------------------------------------+
+|  [Header: Logo] [Search] [Notifs] [Avatar] [Theme]               |
++------------------------------------------------------------------+
+|  +-----------+  +------------------------------------------------+
+|  | [Sidebar] |  |  [h1] Issues                   [New Issue][>]  |
+|  |           |  |                                                  |
+|  | [#Issues] |  |  [Status▼] [Assignee▼] [Project▼] [Clear]      |
+|  | Projects  |  |                                                  |
+|  | Cycles    |  |  +-- IssueCard ---------------------------------+
+|  |           |  |  | ○ ENG-123  Fix login redirect               |
+|  |           |  |  | [#Todo] [#Urgent]        [👤]                |
+|  |           |  |  +----------------------------------------------+
+|  |           |  |  +-- IssueCard ---------------------------------+
+|  |           |  |  | ○ ENG-122  Add dark mode toggle            |
+|  |           |  |  | [#In Progress] [#High]     [👤]              |
+|  |           |  |  +----------------------------------------------+
+|  |           |  |  +-- IssueCard ---------------------------------+
+|  |           |  |  | ○ ENG-121  Update README                   |
+|  |           |  |  | [#Done] [#Low]            [👤]               |
+|  |           |  |  +----------------------------------------------+
+|  |           |  |                                                  |
+|  +-----------+  +------------------------------------------------+
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| "New Issue" button | Button (primary) | Opens IssueFormModal in create mode | — |
+| Status filter | Select | Dropdown: Todo / In Progress / Done / All | All = null filter |
+| Assignee filter | Select | Dropdown with user search | No match → "No users found" |
+| Project filter | Select | Dropdown of projects | No projects → disabled |
+| "Clear" button | Button (ghost) | Resets all filters to null | Hidden when no filters active |
+| IssueCard | IssueCard | Click → navigate to detail | — |
+| Checkbox `○` | — | Selection for bulk ops (future) | Placeholder, not active |
+| Avatar in card | Avatar (sm) | Click → filter by assignee (future) | Placeholder |
+
+## Data Display
+
+List of cards — preferred over table for variable-height rows (titles wrap, metadata flex). Each card is a self-contained unit with ID, title, status badge, priority badge, assignee avatar. Consistent vertical rhythm, 8px internal card padding.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| `h1` "Issues" | Page title — user knows what module they're in | — |
+| "New Issue" button | Primary CTA — create a new work item | Consistent label across views |
+| "No issues yet" (empty) | First-run state — invites creation | See empty state below |
+| Filter dropdown placeholders | "Status", "Assignee", "Project" | Label is the filter dimension |
+| "Clear filters" | Action to remove all active filters | Only when filters active |
+
+## States
+
+### Populated (Default)
+
+The layout shown above: sidebar + filter bar + scrollable list of IssueCards. Cards show identifier, title, status badge, priority indicator, assignee.
+
+### Empty
+
+Two sub-cases:
+
+**First-run (no issues exist at all):**
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                      [📋 Icon Illustration]                       |
+|                      No issues yet                                |
+|                      Create the first issue to get started.       |
+|                      [ Create Issue ]                             |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+**Filtered to zero:**
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                      [🔍 Icon Illustration]                       |
+|                      No issues match your filters                 |
+|                      Try adjusting or clearing your filters.      |
+|                      [ Clear Filters ]                            |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Loading
+
+```
++------------------------------------------------------------------+
+|  [==== skeleton bar ====]                                        |
+|  [==== skeleton bar ====]                                        |
+|  +-- skeleton card ------------------------------+               |
+|  | [======= skeleton line ======]               |               |
+|  | [==== skeleton ====]          [=======]      |               |
+|  +----------------------------------------------+               |
+|  +-- skeleton card ------------------------------+               |
+|  | [======= skeleton line ======]               |               |
+|  | [==== skeleton ====]          [=======]      |               |
+|  +----------------------------------------------+               |
++------------------------------------------------------------------+
+```
+
+3 skeleton card rows mirroring the card height and layout.
+
+### Error
+
+Inline banner below filter bar, not blocking (list still shows cached data if any). If no cache, replaces list.
+
+```
++------------------------------------------------------------------+
+|  [⚠] Could not load issues. [ Retry ]                           |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full sidebar + card list as shown |
+| Tablet (768-1024px) | Sidebar collapsed to icons; filters wrap to 2 rows |
+| Mobile (<768px) | Sidebar → overlay hamburger; filters stack vertically; cards full-width |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header` (app header), `nav` (sidebar), `main` (issue list) |
+| Heading order | `h1` "Issues" → `h2` (section: filter bar) → card titles as `h3` |
+| Reading / Focus order | Sidebar nav links → header controls → page title → filters → card list |
+| Accessible names | Filter selects get `aria-label="Filter by {dimension}"`; "New Issue" button text is label |
+| Keyboard operability | Tab through filters; Arrow keys move between select options; Enter selects; J/K to focus prev/next card; Enter on focused card opens detail |
+| Target size | Filter triggers and cards ≥24×24 px |
+| Focus not obscured | Cards scroll fully into view; sticky header doesn't overlap focused card |
+| Non-color intent | Status uses icon + text badge; priority uses icon + color; never color alone |

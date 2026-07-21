@@ -1,91 +1,84 @@
-# Deployment — Linear App Clone (Frontend)
+# Deployment
 
 ## Overview
 
-Vite SPA deployed to Vercel. Static asset serving with client-side routing. Backend is external (deployed separately). No containerization needed — Vercel handles build + CDN + environment management.
+The Linear App Clone is deployed as a containerized frontend SPA served via a CDN, with API requests proxied to the backend server. The deployment targets cloud infrastructure with Docker containers and automated CI/CD via GitHub Actions.
 
 ## Architecture
 
-```text
-┌─────────────┐     ┌──────────────┐     ┌──────────────┐
-│   Browser   │────>│   Vercel     │────>│  API Backend │
-│ (Vite SPA)  │     │ (CDN + SSR   │     │  (external)  │
-│             │     │  fallback)   │     │              │
-└─────────────┘     └──────────────┘     └──────────────┘
+```
+User --> Cloudflare CDN --> Docker (Vite SPA) --> API Server
+                                  |
+                            serve static assets
+                                  |
+                            nginx (optional: serve + proxy)
 ```
 
 ## Infrastructure
 
 | Component | Service | Notes |
 |-----------|---------|-------|
-| Hosting | Vercel | SPA deploy, CDN, preview deployments |
-| Domain | (TBD) | DNS via Vercel or Cloudflare |
-| CDN | Vercel Edge Network | Static assets, cache-optimized |
-| Env vars | Vercel Environment Variables | `VITE_API_URL`, per-environment |
+| Cloud | Self-hosted / VPS | Single VM or cloud instance |
+| Container | Docker | Multi-stage build for minimal image |
+| Orchestration | Docker Compose | Simple multi-service setup |
+| Database | PostgreSQL | Managed or containerized |
+| Domain | linear-clone.example.com | DNS via Cloudflare |
+| CDN | Cloudflare | Static assets caching |
 
 ## CI/CD
 
 | Step | Tool | Action |
 |------|------|--------|
-| CI | GitHub Actions | Lint, type-check, unit test, build |
-| CD | Vercel Git Integration | Auto-deploy on push to main/branch |
-| Environments | Preview (per branch) → Production (main) | Vercel automatic |
+| CI | GitHub Actions | Lint, typecheck, test, build |
+| CD | GitHub Actions | Deploy to staging / production |
+| Environments | dev → staging → production | Promotion via manual approval |
 
-### Pipeline (GitHub Actions)
+### Pipeline
 
 ```yaml
-name: CI
+name: deploy-frontend
 on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
 jobs:
-  quality:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install
-      - run: pnpm typecheck
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
-  e2e:
-    needs: quality
-    runs-on: ubuntu-latest
+      - checkout
+      - setup Node.js 22
+      - npm ci
+      - npm run lint
+      - npm run typecheck
+      - npm run test:run
+      - npm run build
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install
-      - run: pnpm exec playwright install
-      - run: pnpm exec playwright test
+      - build Docker image
+      - push to registry
+      - deploy via SSH / Docker Compose
 ```
 
 ## Frontend
 
-- **Build**: `vite build` → static `dist/`
-- **Static files**: Served via Vercel CDN
-- **Env vars**: `VITE_API_URL` (backend base URL)
-- **Cache**: `Cache-Control: public, max-age=31536000, immutable` for hashed assets
-- **SPA fallback**: Vercel rewrites `/*` to `/index.html`
+- **Build**: `vite build` — outputs to `dist/`
+- **Static files**: served via nginx or CDN
+- **Env vars**: `VITE_API_BASE`, `VITE_SERVER_URL`, `VITE_DEV_PORT`
+- **Cache**: Static assets fingerprinted by Vite, long-lived cache headers
+- **Runtime config**: API base URL configured at build time via env vars
 
 ## Monitoring
 
 | Tool | Purpose |
 |------|---------|
-| Vercel Analytics | Web vitals, page views |
-| Sentry | Error tracking, source maps |
+| Docker logs | Application logs |
+| Health check | `GET /api/health` endpoint |
 
 ## Backup & Recovery
 
-- **Config**: Vercel project settings + `vercel.json` in repo
-- **Env vars**: Documented in project README
-- **Recovery**: Re-deploy via Vercel dashboard or `git revert` + push
+- **Code**: Git — source of truth
+- **Config**: `.env.example` documents required env vars; infra config in `docker-compose.yml`
+- **Recovery**: Re-deploy from clean checkout + `docker-compose up`
