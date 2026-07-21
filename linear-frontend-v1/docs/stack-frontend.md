@@ -1,43 +1,39 @@
-# Stack — Frontend
+# Stack — Linear App Clone (Frontend)
 
 ## Frontend
 
-- **Runtime**: Node.js 22 LTS
-- **Build Tool**: Vite 8
-- **Framework**: React 19
+- **Runtime**: Node.js 20+ LTS
+- **Framework**: React 19 + Vite 8 (CSR)
+- **State Management**: Zustand 5
 - **Routing**: react-router-dom v7
-- **State Management**: Zustand v5
+- **Forms**: react-hook-form + Zod 4
 - **Styling**: Tailwind CSS v4
-- **Component Variants**: class-variance-authority + tailwind-merge
-- **Form Validation**: react-hook-form v7 + Zod v4
-- **Icons**: lucide-react
-- **API Client**: Custom fetch-based ApiClient with interceptor pipeline
-- **Testing (Unit)**: Vitest + Testing Library + MSW v2
+- **Testing (Unit)**: Vitest + Testing Library + MSW
 - **Testing (E2E)**: Playwright
 
 ## Shared
 
-- **Language**: TypeScript 6.0 (strict mode)
-- **API Protocol**: REST (JSON)
-- **Auth**: JWT dual token (access + refresh via httpOnly cookie)
-- **Real-time**: SSE (planned)
+- **Language**: TypeScript 6
+- **API Protocol**: REST (OpenAPI 3.1 — Design-First)
+- **Real-time**: SSE (Server-Sent Events)
 - **Containerization**: Docker
-- **Code Quality**: ESLint + Prettier + Husky + lint-staged + commitlint
+- **Package Manager**: pnpm
 
 ## Dev & Build
 
 | Tool | Version | Purpose |
 |------|---------|---------|
-| Node.js | 22 LTS | Runtime |
-| npm | 11+ | Package manager |
-| Vite | 8 | Build dev server |
-| TypeScript | 6.0 | Type checking |
-| Docker | latest | Containerization |
+| Node.js | 20+ LTS | Runtime |
+| pnpm | latest | Package manager |
+| Vite | 8 | Build tool |
+| Docker | latest | Container |
+| ESLint | 9 | Linting |
+| Prettier | 3 | Formatting |
 
 ## Testing
 
 | Layer | Tool | Scope |
 |-------|------|-------|
-| Unit | Vitest + Testing Library | Components, stores, utils |
-| Integration | Vitest + MSW | API client, store flows |
+| Unit | Vitest + Testing Library | Components, hooks, utils |
+| Integration | MSW | API mocking, store actions |
 | E2E | Playwright | Full user flows |
