@@ -1,7 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
+import { BusinessRuleError } from '@/shared/lib/api-client'
 import type { Issue } from '@/entities/issue/model/store'
+
+vi.mock('@/entities/issue/api', () => ({
+  changeIssueStatus: vi.fn(),
+}))
 
 const mockIssues: Issue[] = [
   {
@@ -79,6 +84,50 @@ describe('issuesStore', () => {
       expect(state.error).toBe('Network error')
 
       vi.restoreAllMocks()
+    })
+  })
+
+  describe('changeStatus', () => {
+    it('calls API and updates issue on success', async () => {
+      const { changeIssueStatus } = await import('@/entities/issue/api')
+      const updatedIssue = { ...mockIssues[0], status: 'In Progress' }
+      vi.mocked(changeIssueStatus).mockResolvedValue({ data: updatedIssue })
+
+      useIssuesStore.setState({ issues: mockIssues })
+      useCacheStore.getState().set('issues:list?', { data: mockIssues, meta: { cursor: null, hasMore: false } })
+
+      const result = await useIssuesStore.getState().changeStatus('1', 'status-2')
+
+      expect(changeIssueStatus).toHaveBeenCalledWith('1', 'status-2')
+      expect(result.status).toBe('In Progress')
+      expect(useIssuesStore.getState().issues[0].status).toBe('In Progress')
+      expect(useCacheStore.getState().get('issues:list?')).toBeNull()
+    })
+
+    it('reverts issue status on BusinessRuleError', async () => {
+      const { changeIssueStatus } = await import('@/entities/issue/api')
+      vi.mocked(changeIssueStatus).mockRejectedValue(new BusinessRuleError('Invalid transition'))
+
+      useIssuesStore.setState({ issues: mockIssues })
+      const previousStatus = useIssuesStore.getState().issues[0].status
+
+      await expect(useIssuesStore.getState().changeStatus('1', 'status-done')).rejects.toThrow(BusinessRuleError)
+
+      const state = useIssuesStore.getState()
+      expect(state.issues[0].status).toBe(previousStatus)
+    })
+
+    it('reverts issue status on network error', async () => {
+      const { changeIssueStatus } = await import('@/entities/issue/api')
+      vi.mocked(changeIssueStatus).mockRejectedValue(new Error('Network error'))
+
+      useIssuesStore.setState({ issues: mockIssues })
+      const previousStatus = useIssuesStore.getState().issues[0].status
+
+      await expect(useIssuesStore.getState().changeStatus('1', 'status-done')).rejects.toThrow('Network error')
+
+      const state = useIssuesStore.getState()
+      expect(state.issues[0].status).toBe(previousStatus)
     })
   })
 

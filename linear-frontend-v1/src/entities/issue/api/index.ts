@@ -60,6 +60,15 @@ export async function fetchComments(
   return apiClient.get<{ data: Comment[] }>(`/issues/${issueId}/comments`)
 }
 
+export async function changeIssueStatus(
+  id: string,
+  statusId: string,
+): Promise<{ data: Issue }> {
+  return apiClient.patch<{ data: Issue }>(`/issues/${id}/status`, {
+    body: { statusId },
+  })
+}
+
 export async function createComment(
   issueId: string,
   body: string,

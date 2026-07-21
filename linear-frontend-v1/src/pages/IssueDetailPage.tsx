@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useToastStore } from '@/shared/stores/toastStore'
+import { isBusinessRuleError } from '@/shared/lib/api-client/errors'
 import { IssueDetail } from '@/entities/issue/ui/IssueDetail'
 import { IssueFormModal } from '@/entities/issue/ui/IssueFormModal'
 import { ConfirmDeleteDialog } from '@/entities/issue/ui/ConfirmDeleteDialog'
@@ -27,6 +28,7 @@ export function IssueDetailPage() {
   const [commentsError, setCommentsError] = useState<string | null>(null)
   const [showEditForm, setShowEditForm] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [statusChanging, setStatusChanging] = useState(false)
 
   const issue = selectIssueById(issues, id ?? null)
 
@@ -92,6 +94,35 @@ export function IssueDetailPage() {
     navigate('/issues')
   }, [id, removeIssue, addToast, navigate])
 
+  const handleStatusChange = useCallback(async (statusId: string) => {
+    if (!id) return
+    setStatusChanging(true)
+    try {
+      const result = await useIssuesStore.getState().changeStatus(id, statusId)
+      addToast({
+        title: `Status updated to ${result.status}`,
+        variant: 'success',
+        duration: 3000,
+      })
+    } catch (err) {
+      if (isBusinessRuleError(err)) {
+        addToast({
+          title: err.message,
+          variant: 'error',
+          duration: 5000,
+        })
+      } else {
+        addToast({
+          title: 'Failed to update status. Please try again.',
+          variant: 'error',
+          duration: 5000,
+        })
+      }
+    } finally {
+      setStatusChanging(false)
+    }
+  }, [id, addToast])
+
   const pageError = error || commentsError
   const combinedLoading = isLoading || commentsLoading
 
@@ -109,6 +140,8 @@ export function IssueDetailPage() {
           if (id) fetchComments(id).then((r) => setComments(r.data)).catch((e) => setCommentsError(e.message))
           loadIssues()
         }}
+        onStatusChange={handleStatusChange}
+        statusChanging={statusChanging}
       />
 
       <IssueFormModal
