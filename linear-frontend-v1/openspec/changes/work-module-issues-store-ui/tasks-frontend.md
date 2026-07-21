@@ -2,50 +2,50 @@
 
 ## Scaffold
 
-- [ ] Create `src/entities/issue/model/store.ts` — Zustand IssuesStore with `issues[]`, `selectedIssueId`, `filters`, `isLoading`, `error`, `pagination`
-- [ ] Create `src/entities/issue/model/types.ts` — `Issue`, `Comment`, `IssueFilters`, `PaginationCursor` interfaces
-- [ ] Create `src/entities/issue/model/validation.ts` — Zod schemas for issue form (title required/max 255, description max 50000)
-- [ ] Create `src/entities/issue/model/selectors/index.ts` — `selectIssuesByStatus`, `selectFilteredIssues`, `selectIssueById`
-- [ ] Create `src/entities/issue/api/index.ts` — `fetchIssues`, `createIssue`, `updateIssue`, `deleteIssue` using ApiClient
-- [ ] Set up `src/entities/issue/` directory structure: `model/`, `api/`, `ui/`
+- [x] Create `src/entities/issue/model/store.ts` — Zustand IssuesStore with `issues[]`, `selectedIssueId`, `filters`, `isLoading`, `error`, `pagination`
+- [x] Create `src/entities/issue/model/types.ts` — `Issue`, `Comment`, `IssueFilters`, `PaginationCursor` interfaces
+- [x] Create `src/entities/issue/model/validation.ts` — Zod schemas for issue form (title required/max 255, description max 50000)
+- [x] Create `src/entities/issue/model/selectors/index.ts` — `selectIssuesByStatus`, `selectFilteredIssues`, `selectIssueById`
+- [x] Create `src/entities/issue/api/index.ts` — `fetchIssues`, `createIssue`, `updateIssue`, `deleteIssue` using ApiClient
+- [x] Set up `src/entities/issue/` directory structure: `model/`, `api/`, `ui/`
 
 ## Components
 
-- [ ] Create `src/entities/issue/ui/IssueCard.tsx` — compact card with identifier, title, status badge, priority badge, assignee avatar; `role="button"`, click handler
-- [ ] Create `src/entities/issue/ui/IssueList.tsx` — scrollable list with loading (skeleton), empty (no issues + CTA), populated, and error (with cached data fallback) states
-- [ ] Create `src/entities/issue/ui/IssueFilters.tsx` — filter bar with Status, Assignee, Project selects and "Clear" button; reads/writes IssuesStore filters
-- [ ] Create `src/entities/issue/ui/IssueDetail.tsx` — full issue metadata, description, labels as badges, comments list, comment form
-- [ ] Create `src/entities/issue/ui/IssueForm.tsx` — create/edit form with title (required), description, status, priority, assignee, labels; react-hook-form + Zod; submitting/validation-error/api-error states
-- [ ] Create `src/entities/issue/ui/IssueFormModal.tsx` — modal wrapper around IssueForm with focus trap, Esc close, backdrop click close
-- [ ] Create `src/entities/issue/ui/ConfirmDeleteDialog.tsx` — danger confirmation modal with `role="alertdialog"`, submitting spinner, api-error state
-- [ ] Create `src/entities/issue/ui/CommentCard.tsx` — comment display with author avatar, name, timestamp, body
-- [ ] Create `src/entities/issue/ui/CommentList.tsx` — chronological comment list with populated and empty states
-- [ ] Create `src/entities/issue/ui/SkeletonLoader.tsx` — reusable skeleton card placeholders for loading state
-- [ ] Create `src/entities/issue/ui/EmptyState.tsx` — reusable empty state with icon, message, optional CTA button
+- [x] Create `src/entities/issue/ui/IssueCard.tsx` — compact card with identifier, title, status badge, priority badge, assignee avatar; `role="button"`, click handler
+- [x] Create `src/entities/issue/ui/IssueList.tsx` — scrollable list with loading (skeleton), empty (no issues + CTA), populated, and error (with cached data fallback) states
+- [x] Create `src/entities/issue/ui/IssueFilters.tsx` — filter bar with Status, Assignee, Project selects and "Clear" button; reads/writes IssuesStore filters
+- [x] Create `src/entities/issue/ui/IssueDetail.tsx` — full issue metadata, description, labels as badges, comments list, comment form
+- [x] Create `src/entities/issue/ui/IssueForm.tsx` — create/edit form with title (required), description, status, priority, assignee, labels; react-hook-form + Zod; submitting/validation-error/api-error states
+- [x] Create `src/entities/issue/ui/IssueFormModal.tsx` — modal wrapper around IssueForm with focus trap, Esc close, backdrop click close
+- [x] Create `src/entities/issue/ui/ConfirmDeleteDialog.tsx` — danger confirmation modal with `role="alertdialog"`, submitting spinner, api-error state
+- [x] Create `src/entities/issue/ui/CommentCard.tsx` — comment display with author avatar, name, timestamp, body
+- [x] Create `src/entities/issue/ui/CommentList.tsx` — chronological comment list with populated and empty states
+- [x] Create `src/entities/issue/ui/SkeletonLoader.tsx` — reusable skeleton card placeholders for loading state
+- [x] Create `src/entities/issue/ui/EmptyState.tsx` — reusable empty state with icon, message, optional CTA button
 
 ## Pages
 
-- [ ] Create `src/pages/IssuesPage.tsx` — page container composing IssueFilters + IssueList + "New Issue" button
-- [ ] Create `src/pages/IssueDetailPage.tsx` — page container composing IssueDetail + Edit/Delete buttons + modals; loading/not-found/error states
+- [x] Create `src/pages/IssuesPage.tsx` — page container composing IssueFilters + IssueList + "New Issue" button
+- [x] Create `src/pages/IssueDetailPage.tsx` — page container composing IssueDetail + Edit/Delete buttons + modals; loading/not-found/error states
 
 ## State & Data
 
-- [ ] Implement `fetchIssues(filters)` in IssuesStore — dispatches API call, sets loading/error, updates `issues` and `pagination`
-- [ ] Implement `createIssue(data)` in IssuesStore — API call, prepends to `issues` array
-- [ ] Implement `updateIssue(id, partial)` in IssuesStore — API call, immutable update in `issues`
-- [ ] Implement `deleteIssue(id)` in IssuesStore — API call, removes from `issues`, clears `selectedIssueId` if matched
-- [ ] Implement filter setters in IssuesStore — `setStatusFilter`, `setAssigneeFilter`, `setProjectFilter`, `clearFilters`
-- [ ] Implement pagination — cursor-based `loadMore` action
+- [x] Implement `fetchIssues(filters)` in IssuesStore — dispatches API call, sets loading/error, updates `issues` and `pagination`
+- [x] Implement `createIssue(data)` in IssuesStore — API call, prepends to `issues` array
+- [x] Implement `updateIssue(id, partial)` in IssuesStore — API call, immutable update in `issues`
+- [x] Implement `deleteIssue(id)` in IssuesStore — API call, removes from `issues`, clears `selectedIssueId` if matched
+- [x] Implement filter setters in IssuesStore — `setStatusFilter`, `setAssigneeFilter`, `setProjectFilter`, `clearFilters`
+- [x] Implement pagination — cursor-based `loadMore` action
 
 ## Routing
 
-- [ ] Add `/issues` route to `src/app/router.tsx` → IssuesPage
-- [ ] Add `/issues/:id` route to `src/app/router.tsx` → IssueDetailPage
-- [ ] Wire IssueCard click to navigate to `/issues/:id`
-- [ ] Wire "New Issue" button to open IssueFormModal in create mode
-- [ ] Wire "Edit" button on detail page to open IssueFormModal in edit mode
-- [ ] Wire "Delete" button to open ConfirmDeleteDialog
-- [ ] Wire modal submit/cancel transitions (create → issues list, edit → detail, delete confirm → issues list)
+- [x] Add `/issues` route to `src/app/router.tsx` → IssuesPage
+- [x] Add `/issues/:id` route to `src/app/router.tsx` → IssueDetailPage
+- [x] Wire IssueCard click to navigate to `/issues/:id`
+- [x] Wire "New Issue" button to open IssueFormModal in create mode
+- [x] Wire "Edit" button on detail page to open IssueFormModal in edit mode
+- [x] Wire "Delete" button to open ConfirmDeleteDialog
+- [x] Wire modal submit/cancel transitions (create → issues list, edit → detail, delete confirm → issues list)
 
 ## Validation
 

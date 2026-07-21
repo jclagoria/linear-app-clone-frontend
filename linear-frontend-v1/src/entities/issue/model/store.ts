@@ -1,28 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-
-export interface Issue {
-  id: string
-  title: string
-  description: string
-  status: string
-  priority: number
-  assigneeId: string | null
-  projectId: string | null
-  cycleId: string | null
-  labels: string[]
-  createdAt: string
-  updatedAt: string
-}
-
-export interface IssueFilters {
-  status: string | null
-  assigneeId: string | null
-  priority: number | null
-  projectId: string | null
-  search: string | null
-}
+import type { Issue, IssueFilters } from './types'
 
 interface IssuesState {
   issues: Issue[]
@@ -49,6 +28,8 @@ const initialFilters: IssueFilters = {
   assigneeId: null,
   priority: null,
   projectId: null,
+  cycleId: null,
+  labelIds: [],
   search: null,
 }
 
