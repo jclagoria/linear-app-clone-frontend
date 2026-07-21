@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Form — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-danger: #EF4444;
+      --color-surface: #F1F5F9;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: rgba(15, 23, 42, 0.5);
+      color: var(--color-text-primary);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .state-bar {
+      background: #1E293B;
+      color: white;
+      padding: 6px 16px;
+      font-size: 12px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+    }
+    .state-bar button {
+      background: #334155;
+      border: 1px solid #475569;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .state-bar button:hover { background: #475569; }
+    body[data-state="populated"] .state-bar { display: flex; }
+
+    .modal {
+      background: var(--color-surface-elevated);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .modal-header h2 { font-size: 18px; font-weight: 600; line-height: 1.4; }
+    .modal-close {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: var(--color-text-secondary);
+    }
+    .modal-close:hover { background: var(--color-surface); }
+
+    .modal-body { padding: 16px; }
+    .modal-footer {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      padding: 12px 16px;
+      border-top: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .form-label .required { color: var(--color-danger); }
+
+    .form-input {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-family: inherit;
+      background: var(--color-surface-elevated);
+    }
+    .form-input:focus { outline: none; border-color: var(--color-primary); }
+    .form-input.error { border-color: var(--color-danger); }
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+      font-family: inherit;
+      line-height: 1.5;
+    }
+
+    .form-error {
+      font-size: 12px;
+      color: var(--color-danger);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+
+    .select-wrapper { position: relative; }
+    .select-wrapper::after {
+      content: '▼';
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 8px;
+      color: var(--color-text-secondary);
+      pointer-events: none;
+    }
+    .select-wrapper select {
+      width: 100%;
+      padding: 6px 24px 6px 8px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-family: inherit;
+      background: var(--color-surface-elevated);
+      appearance: none;
+      cursor: pointer;
+    }
+    .select-wrapper select:focus { outline: none; border-color: var(--color-primary); }
+
+    .labels-area { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
+    .label-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 10px;
+      background: #EDE9FE;
+      color: #5B21B6;
+    }
+    .label-tag .remove { cursor: pointer; font-size: 12px; line-height: 1; }
+    .label-tag .remove:hover { color: var(--color-danger); }
+    .add-label-btn {
+      font-size: 12px;
+      color: var(--color-primary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      font-family: inherit;
+      padding: 2px 4px;
+    }
+
+    .error-banner {
+      background: #FEF2F2;
+      border: 1px solid #FEE2E2;
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #991B1B;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-primary { background: var(--color-primary); color: white; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary { background: var(--color-surface-elevated); color: var(--color-text-primary); border-color: var(--color-border); }
+    .btn-secondary:hover { background: var(--color-surface); }
+
+    .spinner {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    body[data-state="submitting"] .form-input,
+    body[data-state="submitting"] .form-textarea,
+    body[data-state="submitting"] select,
+    body[data-state="submitting"] .add-label-btn { pointer-events: none; opacity: 0.6; }
+    body[data-state="submitting"] .btn-primary .label { display: none; }
+    body[data-state="submitting"] .btn-primary .spinner { display: inline-block; }
+    body[data-state="submitting"] .btn-primary:disabled { opacity: 1; }
+    body[data-state="submitting"] .modal-close { pointer-events: none; opacity: 0.5; }
+    body:not([data-state="submitting"]) .btn-primary .spinner { display: none; }
+
+    body[data-state="validation-error"] .form-input { border-color: var(--color-danger); }
+    body[data-state="validation-error"] .form-error { display: flex; }
+    .form-error { display: none; }
+
+    body[data-state="api-error"] .error-banner.api { display: flex; }
+    .error-banner.api { display: none; }
+
+    @media (max-width: 767px) {
+      body { padding: 0; align-items: flex-start; }
+      .modal { max-width: 100%; min-height: 100vh; border-radius: 0; }
+      .form-row { flex-direction: column; gap: 0; }
+    }
+  </style>
+</head>
+<body data-state="populated">
+
+  <div class="state-bar">
+    <span>State:</span>
+    <button onclick="setFormState('populated', 'create')">Create (default)</button>
+    <button onclick="setFormState('populated', 'edit')">Edit (pre-filled)</button>
+    <button onclick="setFormState('submitting', 'create')">Submitting</button>
+    <button onclick="setFormState('validation-error', 'create')">Validation Error</button>
+    <button onclick="setFormState('api-error', 'edit')">API Error</button>
+  </div>
+
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 id="modalTitle">Create Issue</h2>
+      <button class="modal-close" aria-label="Close" onclick="closeModal()">&#x2715;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="error-banner api">
+        <span>&#x26A0;&#xFE0F;</span>
+        <span>Could not save issue. Please try again.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Title <span class="required">*</span></label>
+        <input class="form-input" id="fieldTitle" placeholder="Enter issue title" maxlength="255" />
+        <div class="form-error">&#x26A0;&#xFE0F; Title is required</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-input form-textarea" id="fieldDescription" placeholder="Add a description…"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <div class="select-wrapper">
+            <select id="fieldStatus">
+              <option value="todo">Todo</option>
+              <option value="in-progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <div class="select-wrapper">
+            <select id="fieldPriority">
+              <option value="no-priority">No Priority</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Assignee</label>
+        <div class="select-wrapper">
+          <select id="fieldAssignee">
+            <option value="">Unassigned</option>
+            <option value="jc">Juan C.</option>
+            <option value="al">Ana L.</option>
+            <option value="sm">Sam M.</option>
+            <option value="rj">Raj J.</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Labels</label>
+        <div class="labels-area" id="labelsArea">
+          <span class="label-tag">bug <span class="remove" onclick="removeLabel(this)">&#x2715;</span></span>
+          <span class="label-tag">ui <span class="remove" onclick="removeLabel(this)">&#x2715;</span></span>
+          <button class="add-label-btn" onclick="addLabel()">+ Add label</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="saveBtn">
+        <span class="spinner"></span>
+        <span class="label">Save</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function getParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        mode: params.get('mode') || 'create',
+        id: params.get('id') || null
+      };
+    }
+
+    function closeModal() {
+      window.close();
+    }
+
+    function setFormState(state, mode) {
+      document.body.dataset.state = state;
+      const title = document.getElementById('modalTitle');
+      const saveLabel = document.querySelector('.btn-primary .label');
+      if (mode === 'edit') {
+        title.textContent = 'Edit Issue';
+        saveLabel.textContent = 'Save changes';
+      } else {
+        title.textContent = 'Create Issue';
+        saveLabel.textContent = 'Save';
+      }
+    }
+
+    function prefillEdit() {
+      document.getElementById('fieldTitle').value = 'Fix login redirect';
+      document.getElementById('fieldDescription').value = 'When the user logs in with valid credentials after a session timeout, they are redirected to the dashboard instead of the page they were trying to access.';
+      document.getElementById('fieldStatus').value = 'in-progress';
+      document.getElementById('fieldPriority').value = 'urgent';
+      document.getElementById('fieldAssignee').value = 'jc';
+    }
+
+    function removeLabel(el) {
+      el.parentElement.remove();
+    }
+
+    function addLabel() {
+      const name = prompt('Enter label name:');
+      if (name && name.trim()) {
+        const area = document.getElementById('labelsArea');
+        const addBtn = area.querySelector('.add-label-btn');
+        const tag = document.createElement('span');
+        tag.className = 'label-tag';
+        tag.innerHTML = name.trim() + ' <span class="remove" onclick="removeLabel(this)">&#x2715;</span>';
+        area.insertBefore(tag, addBtn);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = getParams();
+      if (params.mode === 'edit') {
+        setFormState('populated', 'edit');
+        prefillEdit();
+      } else {
+        setFormState('populated', 'create');
+      }
+    });
+  </script>
+</body>
+</html>

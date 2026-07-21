@@ -1,0 +1,145 @@
+# Wireframe: IssueFormModal
+
+## Purpose & Flow Context
+
+Overlay dialog for creating or editing an issue. Entry: "New Issue" button on IssuesPage (create mode) or "Edit" button on IssueDetailPage (edit mode). Exit: Submit → issues list / detail page; Cancel or Esc → previous screen.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button | `[>...▼]` | Dropdown |
+| `_______` | Text input | `[X]` | Close |
+| `○` | Unselected | `●` | Selected |
+| `[#]` | Badge | `×` | Remove tag |
+
+## Layout Regions
+
+**Grid**: Modal overlay on the 12-col grid. Modal width: 600px (centered).
+
+**No app-shell** — modal renders on top of the current page with backdrop.
+
+**Content hierarchy**:
+1. Title input — primary required field
+2. Description — freeform body
+3. Structured fields (status, priority, assignee, labels)
+
+```
++------------------------------------------------------------------+
+|  [XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX]                                 |
+|  [X] Close                                                        |
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  [h2] Create Issue / Edit Issue                              | |
+|  |                                                              | |
+|  |  Title *                                                     | |
+|  |  ________________________________________________            | |
+|  |                                                              | |
+|  |  Description                                                 | |
+|  |  ________________________________________________            | |
+|  |  |                                                          | |
+|  |  |                                                          | |
+|  |  |                                                          | |
+|  |  |_________________________________________________________| |
+|  |                                                              | |
+|  |  Status [>Todo ▼]    Priority [>No Priority ▼]              | |
+|  |                                                              | |
+|  |  Assignee [>Unassigned ▼]                                   | |
+|  |                                                              | |
+|  |  Labels                                                      | |
+|  |  [#bug ×] [#ui ×] [+ Add label]                             | |
+|  |                                                              | |
+|  |  [Cancel]                                [ Save ]            | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Modal shell | Modal | Backdrop click = close; Esc = close | Focus trapped inside |
+| Title input | Input | Required, max 255 chars | Shows inline error on empty submit |
+| Description | Textarea | Optional, max 50000 chars | Auto-grow height |
+| Status select | Select | Default "Todo" on create; current on edit | — |
+| Priority select | Select | Default "No Priority" on create; current on edit | — |
+| Assignee select | Select | Default "Unassigned" on create; current on edit | Searchable |
+| Labels | Badge + ghost button | Existing labels as removable badges; "+" adds new | Type-ahead search |
+| Cancel button | Button (secondary) | Close modal, no save | Unsaved changes? → future warning |
+| Save button | Button (primary) | Submit form | Disabled + spinner while submitting |
+
+## Data Display
+
+Form layout — no data display. Labels shown as selected tag pills with remove action.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| h2 "Create Issue" / "Edit Issue" | Title reflects mode | — |
+| "Title *" | Required field label | Asterisk = required |
+| "Description" | Optional body field | Placeholder "Add a description…" |
+| "Status" | Workflow stage | Todo / In Progress / Done |
+| "Priority" | Urgency level | No Priority / Urgent / High / Medium / Low |
+| "Assignee" | Responsible person | Unassigned = default |
+| "Labels" | Categorization tags | Free-form or select from existing |
+| "Save" | Confirm changes | Primary button, validates first |
+| "Cancel" | Abandon changes | No confirmation dialog |
+
+## States
+
+### Create (default)
+
+All fields empty except Status = "Todo" and Priority = "No Priority". Title has focus on open.
+
+### Edit (pre-filled)
+
+All fields populated with current issue values. Title has focus on open.
+
+### Submitting
+
+Save button shows spinner, is disabled. All form fields disabled. Cancel remains enabled.
+
+### Validation Error
+
+Title empty on submit:
+```
++-- Title * -------------------------------------------------------+
+|  _________________________________________                       |
+|  [⚠] Title is required                                           |
++------------------------------------------------------------------+
+```
+Red border on input, error message below. Form stays open.
+
+### Error (API failure)
+
+Inline error banner above form buttons:
+```
++-- --------------------------------------------------------------+
+|  [⚠] Could not save issue. Please try again.                   |
++------------------------------------------------------------------+
+```
+Form remains filled. Save re-enabled.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>768px) | Modal 600px centered |
+| Mobile (<768px) | Modal full-screen; fields stack in single column; footer sticky at bottom |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `role="dialog" aria-modal="true"` on modal container |
+| Heading order | `h2` for modal title (h1 is the page behind) |
+| Reading / Focus order | Title → Description → Status → Priority → Assignee → Labels → Cancel → Save |
+| Accessible names | Close button `aria-label="Close"` |
+| Keyboard operability | Tab through fields in order; Esc = close; Enter in field does not submit; Ctrl+Enter = submit |
+| Focus trap | Tab cycles within modal; initial focus on title input; restore focus on close |
+| Target size | All form controls and buttons ≥24×24 px |
+| Non-color intent | Error states show icon + text, not just red color |
