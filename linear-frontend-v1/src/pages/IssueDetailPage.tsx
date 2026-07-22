@@ -21,6 +21,7 @@ export function IssueDetailPage() {
   const updateIssueInStore = useIssuesStore((s) => s.updateIssue)
   const removeIssue = useIssuesStore((s) => s.removeIssue)
   const selectIssue = useIssuesStore((s) => s.selectIssue)
+  const assignIssue = useIssuesStore((s) => s.assignIssue)
   const addToast = useToastStore((s) => s.addToast)
 
   const [comments, setComments] = useState<Comment[]>([])
@@ -67,19 +68,63 @@ export function IssueDetailPage() {
   }, [navigate])
 
   const handleEdit = useCallback(
-    async (data: IssueFormSchema) => {
+    async (data: IssueFormSchema): Promise<boolean | void> => {
       if (!id) return
-      const result = await updateIssue(id, {
-        title: data.title,
-        description: data.description || undefined,
-        status: data.status,
-        priority: data.priority,
-        assigneeId: data.assigneeId,
-        labels: data.labels,
-      })
-      updateIssueInStore(id, result.data)
+
+      const currentIssue = issues.find((i) => i.id === id)
+      const assigneeChanged = currentIssue && currentIssue.assigneeId !== data.assigneeId
+
+      if (assigneeChanged) {
+        try {
+          await assignIssue(id, data.assigneeId ?? null)
+          addToast({
+            title: 'Assignee updated',
+            variant: 'success',
+            duration: 3000,
+          })
+        } catch (err) {
+          if (isBusinessRuleError(err)) {
+            addToast({
+              title: err.message,
+              variant: 'error',
+              duration: 5000,
+            })
+          } else {
+            addToast({
+              title: 'Failed to update assignee. Please try again.',
+              variant: 'error',
+              duration: 5000,
+            })
+          }
+          throw err
+        }
+      }
+
+      const otherFieldsChanged =
+        currentIssue &&
+        (currentIssue.title !== data.title ||
+          currentIssue.description !== (data.description || '') ||
+          currentIssue.status !== data.status ||
+          currentIssue.priority !== data.priority ||
+          JSON.stringify(currentIssue.labels) !== JSON.stringify(data.labels))
+
+      if (otherFieldsChanged) {
+        const result = await updateIssue(id, {
+          title: data.title,
+          description: data.description || undefined,
+          status: data.status,
+          priority: data.priority,
+          labels: data.labels,
+        })
+        updateIssueInStore(id, result.data)
+        return
+      }
+
+      if (assigneeChanged) {
+        return true
+      }
     },
-    [id, updateIssueInStore],
+    [id, issues, assignIssue, updateIssueInStore, addToast],
   )
 
   const handleDelete = useCallback(async () => {

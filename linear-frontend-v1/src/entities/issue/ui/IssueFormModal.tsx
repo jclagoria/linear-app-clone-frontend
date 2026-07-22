@@ -1,6 +1,7 @@
 import { Modal } from '@/shared/ui/Modal'
 import { IssueForm } from './IssueForm'
 import { useToastStore } from '@/shared/stores/toastStore'
+import { isBusinessRuleError } from '@/shared/lib/api-client/errors'
 import type { Issue } from '../model/types'
 import type { IssueFormSchema } from '../model/validation'
 
@@ -9,7 +10,7 @@ interface IssueFormModalProps {
   mode: 'create' | 'edit'
   issue?: Issue
   onClose: () => void
-  onSubmit: (data: IssueFormSchema) => Promise<void>
+  onSubmit: (data: IssueFormSchema) => Promise<boolean | void>
 }
 
 export function IssueFormModal({
@@ -23,14 +24,34 @@ export function IssueFormModal({
 
   const handleSubmit = async (data: IssueFormSchema) => {
     try {
-      await onSubmit(data)
+      const result = await onSubmit(data)
+      if (result === false) {
+        return
+      }
+      const isAssigneeOnly =
+        issue &&
+        result === true &&
+        issue.title === data.title &&
+        issue.description === (data.description || '') &&
+        issue.status === data.status &&
+        issue.priority === data.priority &&
+        JSON.stringify(issue.labels) === JSON.stringify(data.labels)
+
       addToast({
-        title: mode === 'create' ? 'Issue created' : 'Issue updated',
+        title:
+          mode === 'create'
+            ? 'Issue created'
+            : isAssigneeOnly
+              ? 'Assignee updated'
+              : 'Issue updated',
         variant: 'success',
         duration: 3000,
       })
       onClose()
-    } catch {
+    } catch (err) {
+      if (isBusinessRuleError(err)) {
+        return
+      }
       addToast({
         title: 'Failed to save issue',
         variant: 'error',

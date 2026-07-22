@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { changeIssueStatus } from '@/entities/issue/api'
+import { changeIssueStatus, assignIssue as assignIssueApi } from '@/entities/issue/api'
 import type { Issue, IssueFilters } from './types'
 
 interface IssuesState {
@@ -23,6 +23,7 @@ interface IssuesState {
   updateIssue: (id: string, changes: Partial<Issue>) => void
   removeIssue: (id: string) => void
   changeStatus: (id: string, statusId: string) => Promise<Issue>
+  assignIssue: (id: string, assigneeId: string | null) => Promise<Issue>
 }
 
 const initialFilters: IssueFilters = {
@@ -169,6 +170,47 @@ export const useIssuesStore = create<IssuesState>()(
 
         try {
           const result = await changeIssueStatus(id, statusId)
+          set((state) => ({
+            issues: state.issues.map((issue) =>
+              issue.id === id ? { ...issue, ...result.data } : issue,
+            ),
+          }))
+          return result.data
+        } catch (err) {
+          if (previousIssue) {
+            set((state) => ({
+              issues: state.issues.map((issue) =>
+                issue.id === id ? previousIssue : issue,
+              ),
+            }))
+          }
+          throw err
+        }
+      },
+
+      assignIssue: async (id: string, assigneeId: string | null) => {
+        const previousIssues = get().issues
+        const previousIssue = previousIssues.find((i) => i.id === id)
+
+        set((state) => ({
+          issues: state.issues.map((issue) =>
+            issue.id === id
+              ? {
+                  ...issue,
+                  assigneeId,
+                  assigneeName:
+                    assigneeId === null
+                      ? null
+                      : state.issues.find((i) => i.id === id)?.assigneeName,
+                }
+              : issue,
+          ),
+        }))
+
+        useCacheStore.getState().invalidateByPrefix('issues:list')
+
+        try {
+          const result = await assignIssueApi(id, assigneeId)
           set((state) => ({
             issues: state.issues.map((issue) =>
               issue.id === id ? { ...issue, ...result.data } : issue,

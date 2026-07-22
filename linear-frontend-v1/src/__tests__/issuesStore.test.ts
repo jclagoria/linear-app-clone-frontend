@@ -6,6 +6,7 @@ import type { Issue } from '@/entities/issue/model/store'
 
 vi.mock('@/entities/issue/api', () => ({
   changeIssueStatus: vi.fn(),
+  assignIssue: vi.fn(),
 }))
 
 const mockIssues: Issue[] = [
@@ -128,6 +129,81 @@ describe('issuesStore', () => {
 
       const state = useIssuesStore.getState()
       expect(state.issues[0].status).toBe(previousStatus)
+    })
+  })
+
+  describe('assignIssue', () => {
+    it('calls API and updates issue assignee on success', async () => {
+      const { assignIssue } = await import('@/entities/issue/api')
+      const updatedIssue = { ...mockIssues[0], assigneeId: 'user-1', assigneeName: 'John Doe' }
+      vi.mocked(assignIssue).mockResolvedValue({ data: updatedIssue })
+
+      useIssuesStore.setState({ issues: mockIssues })
+      useCacheStore.getState().set('issues:list?', { data: mockIssues, meta: { cursor: null, hasMore: false } })
+
+      const result = await useIssuesStore.getState().assignIssue('1', 'user-1')
+
+      expect(assignIssue).toHaveBeenCalledWith('1', 'user-1')
+      expect(result.assigneeId).toBe('user-1')
+      expect(useIssuesStore.getState().issues[0].assigneeId).toBe('user-1')
+      expect(useCacheStore.getState().get('issues:list?')).toBeNull()
+    })
+
+    it('optimistically updates assignee before API response', async () => {
+      const { assignIssue } = await import('@/entities/issue/api')
+      let resolvePromise: (value: { data: Issue }) => void
+      const promise = new Promise<{ data: Issue }>((resolve) => {
+        resolvePromise = resolve
+      })
+      vi.mocked(assignIssue).mockReturnValue(promise)
+
+      useIssuesStore.setState({ issues: mockIssues })
+
+      const promiseResult = useIssuesStore.getState().assignIssue('1', 'user-1')
+
+      expect(useIssuesStore.getState().issues[0].assigneeId).toBe('user-1')
+
+      resolvePromise!({ data: { ...mockIssues[0], assigneeId: 'user-1', assigneeName: 'John Doe' } })
+      await promiseResult
+    })
+
+    it('reverts assignee on BusinessRuleError', async () => {
+      const { assignIssue } = await import('@/entities/issue/api')
+      vi.mocked(assignIssue).mockRejectedValue(new BusinessRuleError('Not a team member'))
+
+      useIssuesStore.setState({ issues: mockIssues })
+      const previousAssigneeId = useIssuesStore.getState().issues[0].assigneeId
+
+      await expect(useIssuesStore.getState().assignIssue('1', 'user-3')).rejects.toThrow(BusinessRuleError)
+
+      const state = useIssuesStore.getState()
+      expect(state.issues[0].assigneeId).toBe(previousAssigneeId)
+    })
+
+    it('reverts assignee on network error', async () => {
+      const { assignIssue } = await import('@/entities/issue/api')
+      vi.mocked(assignIssue).mockRejectedValue(new Error('Network error'))
+
+      useIssuesStore.setState({ issues: mockIssues })
+      const previousAssigneeId = useIssuesStore.getState().issues[0].assigneeId
+
+      await expect(useIssuesStore.getState().assignIssue('1', 'user-1')).rejects.toThrow('Network error')
+
+      const state = useIssuesStore.getState()
+      expect(state.issues[0].assigneeId).toBe(previousAssigneeId)
+    })
+
+    it('sets assigneeId to null for unassign', async () => {
+      const { assignIssue } = await import('@/entities/issue/api')
+      const updatedIssue = { ...mockIssues[0], assigneeId: null, assigneeName: null }
+      vi.mocked(assignIssue).mockResolvedValue({ data: updatedIssue })
+
+      useIssuesStore.setState({ issues: mockIssues })
+
+      await useIssuesStore.getState().assignIssue('1', null)
+
+      expect(assignIssue).toHaveBeenCalledWith('1', null)
+      expect(useIssuesStore.getState().issues[0].assigneeId).toBeNull()
     })
   })
 
