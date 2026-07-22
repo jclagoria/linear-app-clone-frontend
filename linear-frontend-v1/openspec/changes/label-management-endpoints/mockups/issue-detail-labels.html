@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail — Labels Section Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-light: #EFF6FF;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-danger: #EF4444;
+      --color-success: #22C55E;
+      --color-warning: #F59E0B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --radius-md: 6px;
+      --radius-full: 9999px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); line-height: 1.5; }
+    .app-shell { max-width: 1200px; margin: 0 auto; padding: var(--space-4); }
+    .back-btn { display: inline-flex; align-items: center; gap: var(--space-1); font-size: 14px; color: var(--color-text-secondary); background: none; border: none; cursor: pointer; padding: var(--space-1) 0; margin-bottom: var(--space-4); }
+    .back-btn:hover { color: var(--color-primary); }
+    .issue-header { margin-bottom: var(--space-4); }
+    .issue-id { font-size: 12px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .issue-title { font-size: 24px; font-weight: 700; margin: var(--space-1) 0; }
+    .issue-meta { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; font-size: 14px; color: var(--color-text-secondary); margin-bottom: var(--space-6); }
+    .status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #F1F5F9; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--color-border); }
+    .priority-label { font-size: 12px; font-weight: 500; }
+    .priority-urgent { color: var(--color-danger); }
+    .priority-high { color: var(--color-warning); }
+    .priority-medium { color: var(--color-primary); }
+
+    /* Labels section */
+    .labels-section { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-6); }
+    .labels-section[aria-label="Issue labels"] {}
+    .labels-list { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; min-height: 32px; }
+    .label-badge { display: inline-flex; align-items: center; gap: var(--space-1); padding: 2px 8px; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; background: #EFF6FF; color: var(--color-primary); border: 1px solid #BFDBFE; }
+    .label-badge .remove-btn { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border: none; background: none; cursor: pointer; font-size: 14px; color: var(--color-text-secondary); border-radius: 50%; padding: 0; }
+    .label-badge .remove-btn:hover { background: rgba(0,0,0,0.08); color: var(--color-text-primary); }
+    .add-label-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: none; font-size: 13px; font-weight: 500; color: var(--color-primary); cursor: pointer; padding: 4px 8px; border-radius: var(--radius-md); }
+    .add-label-btn:hover { background: var(--color-primary-light); }
+    .empty-state { font-size: 14px; color: var(--color-text-secondary); }
+
+    /* Skeleton loading */
+    .skeleton { display: inline-block; height: 24px; border-radius: var(--radius-full); background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton-pill { width: 80px; height: 24px; border-radius: var(--radius-full); }
+    .skeleton-pill-sm { width: 60px; height: 24px; border-radius: var(--radius-full); }
+
+    /* Error banner */
+    .error-banner { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-2) var(--space-4); background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius-md); font-size: 14px; color: #991B1B; }
+    .error-banner .retry-btn { padding: 4px 12px; background: var(--color-danger); color: #fff; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 12px; font-weight: 500; }
+    .error-banner .retry-btn:hover { opacity: 0.9; }
+
+    /* Toast */
+    .toast-container { position: fixed; bottom: 16px; right: 16px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+    .toast { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: var(--radius-md); font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
+    .toast-error { background: #FEF2F2; border-left: 4px solid var(--color-danger); color: #991B1B; }
+    .toast-success { background: #F0FDF4; border-left: 4px solid var(--color-success); color: #166534; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* Description section */
+    .description-section { margin-bottom: var(--space-6); }
+    .description-section h2 { font-size: 18px; font-weight: 600; margin-bottom: var(--space-2); }
+    .description-section p { font-size: 14px; color: var(--color-text-secondary); }
+
+    /* Actions */
+    .actions { display: flex; gap: var(--space-2); margin-bottom: var(--space-6); }
+    .btn { padding: 8px 16px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--color-border); background: var(--color-surface-elevated); }
+    .btn-primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .btn-danger { background: var(--color-danger); color: #fff; border-color: var(--color-danger); }
+
+    /* State controls */
+    .state-controls { position: fixed; top: 16px; right: 16px; display: flex; gap: 4px; z-index: 100; }
+    .state-controls button { padding: 4px 10px; font-size: 11px; font-weight: 500; border: 1px solid var(--color-border); background: var(--color-surface-elevated); border-radius: var(--radius-md); cursor: pointer; }
+    .state-controls button:hover { background: var(--color-primary-light); }
+    .state-controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    /* Hidden states */
+    .state-empty, .state-loading, .state-error { display: none; }
+    body[data-state="empty"] .state-empty { display: flex; }
+    body[data-state="empty"] .state-populated { display: none; }
+    body[data-state="loading"] .state-loading { display: flex; }
+    body[data-state="loading"] .state-populated { display: none; }
+    body[data-state="loading"] .state-empty { display: none; }
+    body[data-state="error"] .state-error { display: flex; }
+    body[data-state="error"] .state-populated { display: none; }
+    body[data-state="error"] .state-empty { display: none; }
+
+    /* Divider */
+    .divider { border: none; border-top: 1px solid var(--color-border); margin: var(--space-6) 0; }
+
+    /* Label colors */
+    .label-bug { background: #FEF2F2; color: #991B1B; border-color: #FECACA; }
+    .label-frontend { background: #EFF6FF; color: #1E40AF; border-color: #BFDBFE; }
+    .label-high { background: #FFFBEB; color: #92400E; border-color: #FDE68A; }
+  </style>
+</head>
+<body data-state="populated">
+
+  <div class="state-controls">
+    <button onclick="setState('populated')" class="active">Populated</button>
+    <button onclick="setState('empty')">Empty</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('error')">Error</button>
+  </div>
+
+  <div class="app-shell">
+    <header>
+      <button class="back-btn" onclick="showToast('info', 'Navigated back to issues list')" aria-label="Back to issues">← Back</button>
+    </header>
+
+    <main>
+      <div class="issue-header">
+        <div class="issue-id">ABC-123</div>
+        <h1 class="issue-title">Fix login redirect loop on expired session</h1>
+      </div>
+
+      <div class="issue-meta">
+        <span class="status-badge">Todo ▼</span>
+        <span class="priority-label priority-urgent">Urgent</span>
+        <span>Assignee: John</span>
+        <span>Created: Jul 22, 2026</span>
+      </div>
+
+      <div class="labels-section" aria-label="Issue labels">
+        <div class="labels-list state-populated">
+          <span class="label-badge label-bug">
+            bug
+            <button class="remove-btn" aria-label="Remove bug label" onclick="detachLabel('bug')">✕</button>
+          </span>
+          <span class="label-badge label-frontend">
+            frontend
+            <button class="remove-btn" aria-label="Remove frontend label" onclick="detachLabel('frontend')">✕</button>
+          </span>
+          <span class="label-badge label-high">
+            high-priority
+            <button class="remove-btn" aria-label="Remove high-priority label" onclick="detachLabel('high-priority')">✕</button>
+          </span>
+          <button class="add-label-btn" onclick="showToast('info', 'Opened label picker')">+ Add label</button>
+        </div>
+
+        <div class="labels-list state-empty">
+          <span class="empty-state">No labels</span>
+          <button class="add-label-btn" onclick="showToast('info', 'Opened label picker')">+ Add label</button>
+        </div>
+
+        <div class="labels-list state-loading">
+          <span class="skeleton skeleton-pill"></span>
+          <span class="skeleton skeleton-pill-sm"></span>
+          <span class="skeleton skeleton-pill"></span>
+        </div>
+
+        <div class="labels-list state-error">
+          <div class="error-banner">
+            <span>Failed to load labels. Please try again.</span>
+            <button class="retry-btn" onclick="setState('loading'); setTimeout(() => setState('populated'), 1500)">Retry</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="description-section">
+        <h2>Description</h2>
+        <p>When a user's session expires and they perform an action that triggers a redirect, the login redirect loop causes the page to refresh repeatedly instead of redirecting to the login page once. This affects all authenticated routes.</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn" onclick="showToast('info', 'Opened edit modal')">Edit</button>
+        <button class="btn btn-danger" onclick="showToast('error', 'Delete confirmation shown')">Delete</button>
+      </div>
+
+      <hr class="divider" />
+
+      <div style="font-size:14px;color:var(--color-text-secondary)">
+        <p><strong>Watchers</strong> · 3 watching</p>
+        <p style="margin-top:8px">John, Sarah, Mike</p>
+      </div>
+
+      <hr class="divider" />
+
+      <div style="font-size:14px;color:var(--color-text-secondary),margin-bottom:32px">
+        <p><strong>Comments</strong></p>
+        <p style="margin-top:8px;color:var(--color-text-secondary)">No comments yet.</p>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    const mockLabels = ['bug', 'frontend', 'high-priority'];
+
+    function setState(state) {
+      document.body.dataset.state = state;
+      document.querySelectorAll('.state-controls button').forEach(function(btn) {
+        btn.classList.toggle('active', btn.textContent.toLowerCase() === state);
+      });
+    }
+
+    function detachLabel(name) {
+      var badges = document.querySelectorAll('.label-badge');
+      for (var i = 0; i < badges.length; i++) {
+        if (badges[i].textContent.trim().startsWith(name)) {
+          badges[i].style.opacity = '0.5';
+          badges[i].style.pointerEvents = 'none';
+          break;
+        }
+      }
+      showToast('success', 'Label detached (optimistic)');
+      setTimeout(function() {
+        showToast('error', 'Failed to detach label. Rolled back.');
+        var badges2 = document.querySelectorAll('.label-badge');
+        for (var j = 0; j < badges2.length; j++) {
+          badges2[j].style.opacity = '1';
+          badges2[j].style.pointerEvents = 'auto';
+        }
+      }, 2000);
+    }
+
+    function showToast(type, message) {
+      var container = document.getElementById('toast-container');
+      var toast = document.createElement('div');
+      toast.className = 'toast toast-' + type;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(function() { toast.remove(); }, 3000);
+    }
+  </script>
+</body>
+</html>

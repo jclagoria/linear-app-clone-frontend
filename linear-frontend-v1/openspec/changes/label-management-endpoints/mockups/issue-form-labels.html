@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Form — Labels Field Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-light: #EFF6FF;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-danger: #EF4444;
+      --color-danger-light: #FEF2F2;
+      --color-success: #22C55E;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --radius-md: 6px;
+      --radius-full: 9999px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: rgba(0,0,0,0.4); color: var(--color-text-primary); line-height: 1.5; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--space-4); }
+
+    .modal { background: var(--color-surface-elevated); border-radius: var(--radius-lg); width: 100%; max-width: 560px; box-shadow: 0 16px 48px rgba(0,0,0,0.2); overflow: hidden; }
+    .modal-header { padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--color-border); }
+    .modal-header h2 { font-size: 18px; font-weight: 600; }
+    .modal-body { padding: var(--space-6); max-height: 70vh; overflow-y: auto; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: var(--space-2); padding: var(--space-4) var(--space-6); border-top: 1px solid var(--color-border); }
+
+    .form-group { margin-bottom: var(--space-4); }
+    .form-label { display: block; font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin-bottom: var(--space-1); text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-input { width: 100%; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 14px; font-family: var(--font-family); outline: none; }
+    .form-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 14px; font-family: var(--font-family); outline: none; resize: vertical; min-height: 80px; }
+    .form-textarea:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+
+    /* Multi-select labels field */
+    .multi-select { position: relative; }
+    .multi-select-trigger { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1); min-height: 40px; padding: 6px 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; background: var(--color-surface-elevated); }
+    .multi-select-trigger:hover { border-color: var(--color-text-secondary); }
+    .multi-select-trigger .placeholder { color: var(--color-text-secondary); font-size: 14px; padding: 2px 4px; }
+    .multi-select-trigger .arrow { margin-left: auto; color: var(--color-text-secondary); font-size: 12px; }
+
+    .multi-select-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 6px; background: var(--color-primary-light); border: 1px solid #BFDBFE; border-radius: var(--radius-full); font-size: 12px; font-weight: 500; color: var(--color-primary); }
+    .multi-select-tag .remove-tag { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border: none; background: none; cursor: pointer; font-size: 12px; color: var(--color-text-secondary); border-radius: 50%; padding: 0; }
+    .multi-select-tag .remove-tag:hover { background: rgba(0,0,0,0.08); color: var(--color-text-primary); }
+
+    .multi-select-dropdown { display: none; position: absolute; top: calc(100% + 2px); left: 0; right: 0; background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 50; max-height: 200px; overflow-y: auto; }
+    .multi-select.open .multi-select-dropdown { display: block; }
+    .multi-select-dropdown .option-row { display: flex; align-items: center; gap: var(--space-2); padding: 8px 12px; cursor: pointer; font-size: 14px; }
+    .multi-select-dropdown .option-row:hover { background: #F8FAFC; }
+    .multi-select-dropdown .option-row .checkbox { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border: 1.5px solid var(--color-border); border-radius: 3px; flex-shrink: 0; }
+    .multi-select-dropdown .option-row .checkbox.checked { background: var(--color-primary); border-color: var(--color-primary); color: #fff; font-size: 11px; }
+    .multi-select-dropdown .option-row .color-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .multi-select-dropdown .option-row .label-name { flex: 1; }
+    .multi-select-dropdown .empty-message { padding: 24px 12px; text-align: center; font-size: 14px; color: var(--color-text-secondary); }
+
+    /* Validation error */
+    .validation-error { display: none; margin-top: var(--space-1); font-size: 12px; color: var(--color-danger); }
+    .form-group.has-error .multi-select-trigger { border-color: var(--color-danger); }
+    .form-group.has-error .validation-error { display: block; }
+
+    /* Buttons */
+    .btn { padding: 8px 16px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; }
+    .btn-ghost { background: none; border: none; color: var(--color-text-secondary); }
+    .btn-ghost:hover { color: var(--color-text-primary); }
+    .btn-primary { background: var(--color-primary); color: #fff; border: none; }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* State controls */
+    .state-controls { position: fixed; top: 16px; right: 16px; display: flex; gap: 4px; z-index: 100; }
+    .state-controls button { padding: 4px 10px; font-size: 11px; font-weight: 500; border: 1px solid var(--color-border); background: var(--color-surface-elevated); border-radius: var(--radius-md); cursor: pointer; }
+    .state-controls button:hover { background: var(--color-primary-light); }
+    .state-controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    body[data-state="create"] .mode-edit { display: none; }
+    body[data-state="edit"] .mode-create { display: none; }
+    body[data-state="submitting"] .mode-create, body[data-state="submitting"] .mode-edit { display: none; }
+    body[data-state="submitting"] .mode-submitting { display: flex; }
+    .mode-submitting { display: none; }
+    body[data-state="validation-error"] .validation-error { display: block; }
+    body[data-state="validation-error"] .multi-select-trigger { border-color: var(--color-danger); }
+    body[data-state="validation-error"] .mode-create { display: block; }
+  </style>
+</head>
+<body data-state="create">
+
+  <div class="state-controls">
+    <button onclick="setState('create')" class="active">Create</button>
+    <button onclick="setState('edit')">Edit</button>
+    <button onclick="setState('submitting')">Submitting</button>
+    <button onclick="setState('validation-error')">Validation Error</button>
+  </div>
+
+  <div class="modal" role="dialog" aria-label="Create issue">
+    <div class="modal-header">
+      <h2 class="mode-create">Create Issue</h2>
+      <h2 class="mode-edit">Edit Issue</h2>
+      <h2 class="mode-submitting">Submitting...</h2>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input class="form-input" type="text" placeholder="Issue title" value="Fix login redirect loop on expired session" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" placeholder="Describe the issue...">When a user's session expires and they perform an action that triggers a redirect, the login redirect loop causes the page to refresh repeatedly.</textarea>
+      </div>
+
+      <div class="form-group" id="labels-group">
+        <label class="form-label">Labels</label>
+        <div class="multi-select" id="multi-select">
+          <div class="multi-select-trigger" onclick="toggleDropdown()">
+            <span class="multi-select-tags" id="selected-tags"></span>
+            <span class="placeholder" id="placeholder" style="display:none">Select or type to search...</span>
+            <span class="arrow">▼</span>
+          </div>
+          <div class="multi-select-dropdown" id="dropdown">
+            <div style="padding:8px">
+              <input class="form-input" type="text" placeholder="Search labels..." id="search-input" oninput="filterDropdown(this.value)" style="margin-bottom:4px" />
+            </div>
+            <div id="dropdown-options"></div>
+            <div class="empty-message" id="dropdown-empty" style="display:none">No labels available</div>
+          </div>
+        </div>
+        <div class="validation-error">One or more selected labels are invalid.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Priority</label>
+        <select class="form-input">
+          <option>None</option>
+          <option selected>Medium</option>
+          <option>High</option>
+          <option>Urgent</option>
+          <option>Low</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Assignee</label>
+        <select class="form-input">
+          <option>Unassigned</option>
+          <option selected>John Doe</option>
+          <option>Sarah Smith</option>
+          <option>Mike Chen</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="showToast('Navigated back')">Cancel</button>
+      <button class="btn btn-primary mode-create" onclick="showToast('Issue created with selected labels')">Create Issue</button>
+      <button class="btn btn-primary mode-edit" onclick="showToast('Changes saved')">Save Changes</button>
+      <button class="btn btn-primary mode-submitting" disabled>Submitting...</button>
+    </div>
+  </div>
+
+  <div id="toast-container" style="position:fixed;bottom:16px;right:16px;z-index:1000;display:flex;flex-direction:column;gap:8px;"></div>
+
+  <script>
+    var allLabels = [
+      { id: '1', name: 'Bug', color: '#EF4444', selected: false },
+      { id: '2', name: 'Frontend', color: '#2563EB', selected: true },
+      { id: '3', name: 'High Priority', color: '#F59E0B', selected: false },
+      { id: '4', name: 'Enhancement', color: '#22C55E', selected: false },
+      { id: '5', name: 'Documentation', color: '#8B5CF6', selected: false },
+      { id: '6', name: 'Backend', color: '#EC4899', selected: false },
+      { id: '7', name: 'Design', color: '#14B8A6', selected: false },
+      { id: '8', name: 'Performance', color: '#F97316', selected: false }
+    ];
+
+    function renderTags() {
+      var container = document.getElementById('selected-tags');
+      var placeholder = document.getElementById('placeholder');
+      var selected = allLabels.filter(function(l) { return l.selected; });
+      container.innerHTML = '';
+      if (selected.length === 0) {
+        placeholder.style.display = 'inline';
+      } else {
+        placeholder.style.display = 'none';
+        selected.forEach(function(label) {
+          var tag = document.createElement('span');
+          tag.className = 'multi-select-tag';
+          tag.innerHTML = label.name + ' <button class="remove-tag" aria-label="Remove ' + label.name + '" onclick="event.stopPropagation(); toggleLabel(\'' + label.id + '\')">✕</button>';
+          container.appendChild(tag);
+        });
+      }
+      renderDropdown();
+    }
+
+    function renderDropdown(filter) {
+      var container = document.getElementById('dropdown-options');
+      var empty = document.getElementById('dropdown-empty');
+      var filtered = filter ? allLabels.filter(function(l) { return l.name.toLowerCase().indexOf(filter.toLowerCase()) !== -1; }) : allLabels;
+
+      container.innerHTML = '';
+      if (filtered.length === 0) {
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      filtered.forEach(function(label) {
+        var row = document.createElement('div');
+        row.className = 'option-row';
+        row.onclick = function() { toggleLabel(label.id); };
+
+        var check = document.createElement('span');
+        check.className = 'checkbox' + (label.selected ? ' checked' : '');
+        check.textContent = label.selected ? '✓' : '';
+
+        var dot = document.createElement('span');
+        dot.className = 'color-dot';
+        dot.style.background = label.color;
+
+        var name = document.createElement('span');
+        name.className = 'label-name';
+        name.textContent = label.name;
+
+        row.appendChild(check);
+        row.appendChild(dot);
+        row.appendChild(name);
+        container.appendChild(row);
+      });
+    }
+
+    function toggleLabel(id) {
+      for (var i = 0; i < allLabels.length; i++) {
+        if (allLabels[i].id === id) {
+          allLabels[i].selected = !allLabels[i].selected;
+          break;
+        }
+      }
+      renderTags();
+      document.getElementById('labels-group').classList.remove('has-error');
+    }
+
+    function toggleDropdown() {
+      document.getElementById('multi-select').classList.toggle('open');
+      if (document.getElementById('multi-select').classList.contains('open')) {
+        document.getElementById('search-input').focus();
+      }
+    }
+
+    function filterDropdown(value) {
+      renderDropdown(value);
+    }
+
+    function setState(state) {
+      document.body.dataset.state = state;
+      document.querySelectorAll('.state-controls button').forEach(function(btn) {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().replace(' ', '-') === state);
+      });
+      if (state === 'edit') {
+        allLabels[1].selected = true;
+        allLabels[2].selected = true;
+        renderTags();
+      }
+      if (state === 'validation-error') {
+        document.getElementById('labels-group').classList.add('has-error');
+      } else {
+        document.getElementById('labels-group').classList.remove('has-error');
+      }
+    }
+
+    function showToast(msg) {
+      var container = document.getElementById('toast-container');
+      var toast = document.createElement('div');
+      toast.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:6px;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:#F0FDF4;border-left:4px solid #22C55E;color:#166534;';
+      toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(function() { toast.remove(); }, 3000);
+    }
+
+    // Initialize with create state
+    renderTags();
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function(e) {
+      var ms = document.getElementById('multi-select');
+      if (!ms.contains(e.target)) {
+        ms.classList.remove('open');
+      }
+    });
+  </script>
+</body>
+</html>
