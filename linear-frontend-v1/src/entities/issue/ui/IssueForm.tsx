@@ -11,7 +11,7 @@ import type { Issue } from '../model/types'
 interface IssueFormProps {
   mode: 'create' | 'edit'
   issue?: Issue
-  onSubmit: (data: IssueFormSchema) => Promise<void>
+  onSubmit: (data: IssueFormSchema) => Promise<boolean | void>
   onCancel: () => void
 }
 
@@ -51,7 +51,12 @@ export function IssueForm({ mode, issue, onSubmit, onCancel }: IssueFormProps) {
 
   const selectedStatus = watch('status')
   const selectedPriority = String(watch('priority'))
+  const selectedAssignee = watch('assigneeId') ?? ''
   const submitError = isSubmitSuccessful ? null : null
+
+  const assigneeOptions = [
+    { label: 'Unassigned', value: '' },
+  ]
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
@@ -102,6 +107,16 @@ export function IssueForm({ mode, issue, onSubmit, onCancel }: IssueFormProps) {
           onChange={(value) => setValue('priority', Number(value))}
           options={priorityOptions}
           placeholder="Select priority"
+        />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-medium text-text">Assignee</label>
+        <Select
+          value={selectedAssignee}
+          onChange={(value) => setValue('assigneeId', value === '' ? null : value)}
+          options={assigneeOptions}
+          placeholder="Select assignee"
         />
       </div>
 

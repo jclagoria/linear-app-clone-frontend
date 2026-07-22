@@ -69,6 +69,15 @@ export async function changeIssueStatus(
   })
 }
 
+export async function assignIssue(
+  id: string,
+  assigneeId: string | null,
+): Promise<{ data: Issue }> {
+  return apiClient.patch<{ data: Issue }>(`/issues/${id}/assignee`, {
+    body: { assigneeId },
+  })
+}
+
 export async function createComment(
   issueId: string,
   body: string,

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+    .app-shell { max-width: 1280px; margin: 0 auto; padding: 1rem; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border-radius: 6px; font-size: 14px; font-weight: 500; border: 1px solid transparent; cursor: pointer; }
+    .btn-ghost { background: transparent; color: var(--color-text-secondary); border: none; }
+    .btn-ghost:hover { background: #F1F5F9; }
+    .btn-secondary { background: #fff; color: var(--color-text-primary); border-color: var(--color-border); }
+    .btn-secondary:hover { background: #F1F5F9; }
+    .btn-danger { background: #fff; color: #DC2626; border-color: #FECACA; }
+    .btn-danger:hover { background: #FEF2F2; }
+    .content { background: var(--color-surface-elevated); border-radius: 8px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .identifier { font-family: monospace; font-size: 14px; color: var(--color-text-secondary); font-weight: 600; }
+    h1 { font-size: 24px; font-weight: 700; margin-top: 0.25rem; margin-bottom: 1rem; }
+    .meta-row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 12px; font-weight: 500; }
+    .status-in-progress { background: #DBEAFE; color: #1D4ED8; }
+    .priority-label { font-size: 12px; color: var(--color-text-secondary); }
+    .meta-grid { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; margin-bottom: 1.5rem; font-size: 14px; }
+    .meta-label { color: var(--color-text-secondary); }
+    .assignee { display: inline-flex; align-items: center; gap: 0.375rem; }
+    .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+    .label-pill { display: inline-block; padding: 2px 8px; border-radius: 9999px; font-size: 12px; background: #F1F5F9; color: var(--color-text-primary); margin-right: 0.375rem; }
+    h2 { font-size: 18px; font-weight: 600; margin-bottom: 0.75rem; margin-top: 1.5rem; }
+    .description { font-size: 14px; line-height: 1.6; color: var(--color-text-primary); margin-bottom: 1.5rem; }
+    hr { border: none; border-top: 1px solid var(--color-border); margin: 1.5rem 0; }
+    .toast-container { position: fixed; bottom: 1rem; right: 1rem; z-index: 100; display: flex; flex-direction: column; gap: 0.5rem; }
+    .toast { display: none; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; border-radius: 6px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: slideIn 0.3s ease; }
+    .toast.show { display: flex; }
+    .toast-success { background: #059669; color: #fff; }
+    .toast-error { background: #DC2626; color: #fff; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* States */
+    body[data-state="loading"] .loaded, body[data-state="loading"] .error-banner-state { display: none; }
+    body[data-state="loading"] .loading-state { display: block; }
+    body[data-state="error"] .loaded, body[data-state="error"] .loading-state { display: none; }
+    body[data-state="error"] .error-banner-state { display: block; }
+    .loading-state, .error-banner-state { display: none; }
+    .skeleton { height: 20px; background: #E2E8F0; border-radius: 4px; margin-bottom: 0.75rem; }
+    .error-banner-state { text-align: center; padding: 3rem 1rem; }
+    .error-banner-state p { color: var(--color-text-secondary); margin-bottom: 1rem; }
+    .error-banner { background: #FEF2F2; border: 1px solid #FECACA; border-radius: 6px; padding: 1rem; text-align: center; }
+
+    .state-bar { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .state-btn { padding: 0.25rem 0.75rem; border: 1px solid var(--color-border); border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px; }
+    .state-btn:hover { background: #F1F5F9; }
+    .state-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .unassigned { color: var(--color-text-secondary); font-style: italic; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="state-bar">
+      <span style="font-size:12px;color:var(--color-text-secondary);margin-right:0.5rem">State:</span>
+      <button class="state-btn active" onclick="setState('populated')">Populated</button>
+      <button class="state-btn" onclick="setState('loading')">Loading</button>
+      <button class="state-btn" onclick="setState('error')">Error</button>
+      <span style="font-size:12px;color:var(--color-text-secondary);margin-left:0.5rem">Toast:</span>
+      <button class="state-btn" onclick="showToast('success')">Success Toast</button>
+      <button class="state-btn" onclick="showToast('error')">Error Toast</button>
+    </div>
+
+    <div class="toolbar">
+      <a href="issues-list.html" class="btn btn-ghost">&larr; Back</a>
+      <div style="display:flex;gap:0.5rem">
+        <button class="btn btn-secondary" onclick="openEditModal()">Edit</button>
+        <button class="btn btn-danger">Delete</button>
+      </div>
+    </div>
+
+    <div class="content loaded">
+      <span class="identifier" id="issue-identifier">LAG-123</span>
+      <h1 id="issue-title">Fix login form validation on mobile</h1>
+      <div class="meta-row">
+        <span class="status-badge status-in-progress">In Progress</span>
+        <span class="priority-label">Medium</span>
+      </div>
+      <div class="meta-grid">
+        <span class="meta-label">Assignee</span>
+        <span id="issue-assignee"><span class="assignee"><span class="avatar">JD</span> John Doe</span></span>
+        <span class="meta-label">Created</span>
+        <span style="color:var(--color-text-secondary)">Jan 15, 2026</span>
+        <span class="meta-label">Updated</span>
+        <span style="color:var(--color-text-secondary)">Jul 21, 2026</span>
+        <span class="meta-label">Labels</span>
+        <span><span class="label-pill">frontend</span><span class="label-pill">Feature</span></span>
+      </div>
+
+      <h2>Description</h2>
+      <div class="description">
+        The login form on mobile devices has validation issues — error messages are cut off on smaller screens and the submit button is hidden behind the keyboard on iOS Safari. This issue tracks fixing the validation layout and scroll behavior.
+      </div>
+
+      <hr />
+      <h2>Comments</h2>
+      <p style="color:var(--color-text-secondary);font-size:14px">No comments yet.</p>
+    </div>
+
+    <div class="loading-state">
+      <div class="skeleton" style="width:30%"></div>
+      <div class="skeleton" style="width:70%"></div>
+      <div class="skeleton" style="width:40%"></div>
+      <div class="skeleton" style="width:50%"></div>
+      <div class="skeleton" style="width:90%"></div>
+    </div>
+
+    <div class="error-banner-state">
+      <div class="error-banner">
+        <p>Failed to load issue. Please try again.</p>
+        <button class="btn btn-primary" onclick="setState('populated')" style="background:var(--color-primary);color:#fff;border:none;padding:0.5rem 1rem;border-radius:6px;cursor:pointer">Retry</button>
+      </div>
+    </div>
+
+    <div class="toast-container" id="toast-container"></div>
+  </div>
+
+  <script>
+    const mockUsers = [
+      { id: 'usr-1', name: 'John Doe', initials: 'JD' },
+      { id: 'usr-2', name: 'Jane Doe', initials: 'JD' },
+      { id: 'usr-3', name: 'Alice Smith', initials: 'AS' },
+    ];
+
+    let currentAssignee = mockUsers[0];
+
+    function setState(state) {
+      document.body.dataset.state = state;
+      document.querySelectorAll('.state-btn').forEach(b => {
+        if (['populated','loading','error'].includes(b.textContent.trim().toLowerCase())) {
+          b.classList.remove('active');
+        }
+      });
+      if (state === 'loading') document.querySelector('.state-btn:nth-child(2)').classList.add('active');
+      else if (state === 'error') document.querySelector('.state-btn:nth-child(3)').classList.add('active');
+      else document.querySelector('.state-btn:nth-child(1)').classList.add('active');
+    }
+
+    function showToast(type) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type} show`;
+      const icon = type === 'success' ? '\u2713' : '\u26A0';
+      const msg = type === 'success' ? 'Assignee updated' : 'Assignee is not a member of this team';
+      toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, type === 'success' ? 3000 : 5000);
+    }
+
+    function openEditModal() {
+      window.location.href = 'issue-form-modal.html';
+    }
+
+    function updateAssigneeFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const assigneeId = params.get('assigneeId');
+      if (assigneeId === 'null' || assigneeId === '') {
+        currentAssignee = null;
+        document.getElementById('issue-assignee').innerHTML = '<span class="unassigned">Unassigned</span>';
+        showToast('success');
+      } else if (assigneeId) {
+        const user = mockUsers.find(u => u.id === assigneeId);
+        if (user) {
+          currentAssignee = user;
+          document.getElementById('issue-assignee').innerHTML = `<span class="assignee"><span class="avatar">${user.initials}</span> ${user.name}</span>`;
+          showToast('success');
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateAssigneeFromUrl();
+    });
+  </script>
+</body>
+</html>
