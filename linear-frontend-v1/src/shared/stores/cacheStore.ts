@@ -25,6 +25,7 @@ const DEFAULT_TTLS: Record<string, number> = {
   cycles: 60_000,
   users: 120_000,
   labels: 120_000,
+  label: 120_000,
 }
 
 const DEFAULT_MAX_SIZE = 100

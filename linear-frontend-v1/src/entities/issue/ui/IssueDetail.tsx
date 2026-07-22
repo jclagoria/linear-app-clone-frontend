@@ -1,12 +1,16 @@
+import { useRef } from 'react'
 import { Button } from '@/shared/ui/Button'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
 import { SkeletonLoader } from './SkeletonLoader'
 import { CommentList } from './CommentList'
 import { IssueStatusBadge } from './IssueStatusBadge'
 import { WatcherSection } from '@/features/watchers/ui/WatcherSection'
+import { LabelList } from '@/entities/label/ui/LabelList'
+import { LabelPicker } from '@/entities/label/ui/LabelPicker'
 import { ArrowLeft, Edit3, Trash2, AlertCircle } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 import type { Issue, Comment } from '../model/types'
+import type { Label } from '@/entities/label/model/types'
 
 interface IssueDetailProps {
   issue: Issue | undefined
@@ -19,6 +23,15 @@ interface IssueDetailProps {
   onRetry: () => void
   onStatusChange?: (statusId: string) => void
   statusChanging?: boolean
+  labels?: Label[]
+  labelsLoading?: boolean
+  labelsError?: string | null
+  onDetachLabel?: (labelId: string) => void
+  onAddLabel?: (label: Label) => void
+  showLabelPicker?: boolean
+  onToggleLabelPicker?: () => void
+  onCloseLabelPicker?: () => void
+  labelsDisabled?: boolean
 }
 
 const priorityLabels: Record<number, { label: string; className: string }> = {
@@ -40,7 +53,17 @@ export function IssueDetail({
   onRetry,
   onStatusChange,
   statusChanging,
+  labels,
+  labelsLoading,
+  labelsError,
+  onDetachLabel,
+  onAddLabel,
+  showLabelPicker,
+  onToggleLabelPicker,
+  onCloseLabelPicker,
+  labelsDisabled,
 }: IssueDetailProps) {
+  const addLabelButtonRef = useRef<HTMLButtonElement>(null)
   if (error) {
     return (
       <div className="space-y-4">
@@ -134,18 +157,25 @@ export function IssueDetail({
         </div>
       </div>
 
-      {issue.labels.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {issue.labels.map((label) => (
-            <span
-              key={label}
-              className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary"
-            >
-              {label}
-            </span>
-          ))}
-        </div>
-      )}
+      <div>
+        <h2 className="mb-2 text-sm font-semibold text-text">Labels</h2>
+        <LabelList
+          labels={labels ?? []}
+          onDetach={onDetachLabel}
+          onAdd={onToggleLabelPicker}
+          isLoading={labelsLoading}
+          error={labelsError}
+          disabled={labelsDisabled}
+        />
+        {showLabelPicker && onCloseLabelPicker && (
+          <LabelPicker
+            selectedIds={(labels ?? []).map((l) => l.id)}
+            onSelect={onAddLabel!}
+            onClose={onCloseLabelPicker}
+            triggerRef={addLabelButtonRef}
+          />
+        )}
+      </div>
 
       {issue.description && (
         <div>

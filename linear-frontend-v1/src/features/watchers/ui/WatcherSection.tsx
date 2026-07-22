@@ -3,6 +3,7 @@ import { useAuthStore } from '@/entities/session/model/store'
 import { useWatchersStore } from '@/features/watchers/model/store'
 import { WatcherList } from '@/entities/watcher/ui/WatcherList'
 import { WatchButton } from './WatchButton'
+import { useShallow } from 'zustand/react/shallow'
 
 interface WatcherSectionProps {
   issueId: string
@@ -11,7 +12,9 @@ interface WatcherSectionProps {
 export function WatcherSection({ issueId }: WatcherSectionProps) {
   const user = useAuthStore((s) => s.user)
 
-  const watchers = useWatchersStore((s) => s.watchersByIssue[issueId] ?? [])
+  const watchers = useWatchersStore(
+    useShallow((s) => s.watchersByIssue[issueId] ?? []),
+  )
   const isLoading = useWatchersStore((s) => s.isLoading)
   const error = useWatchersStore((s) => s.error)
   const fetchWatchers = useWatchersStore((s) => s.fetchWatchers)
