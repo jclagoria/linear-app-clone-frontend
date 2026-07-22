@@ -1,10 +1,11 @@
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { TextInput } from '@/shared/ui/TextInput'
 import { Textarea } from '@/shared/ui/Textarea'
 import { Select } from '@/shared/ui/Select'
 import { Button } from '@/shared/ui/Button'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
+import { LabelsMultiSelect } from '@/entities/label/ui/LabelsMultiSelect'
 import { issueFormSchema, type IssueFormSchema } from '../model/validation'
 import type { Issue } from '../model/types'
 
@@ -36,6 +37,7 @@ export function IssueForm({ mode, issue, onSubmit, onCancel }: IssueFormProps) {
     handleSubmit,
     setValue,
     watch,
+    control,
     formState: { errors, isSubmitting, isSubmitSuccessful },
   } = useForm<IssueFormSchema>({
     resolver: zodResolver(issueFormSchema),
@@ -119,6 +121,18 @@ export function IssueForm({ mode, issue, onSubmit, onCancel }: IssueFormProps) {
           placeholder="Select assignee"
         />
       </div>
+
+      <Controller
+        control={control}
+        name="labels"
+        render={({ field }) => (
+          <LabelsMultiSelect
+            selected={field.value ?? []}
+            onChange={field.onChange}
+            error={errors.labels?.message}
+          />
+        )}
+      />
 
       {errors.title && (
         <span className="text-sm text-danger" role="alert">

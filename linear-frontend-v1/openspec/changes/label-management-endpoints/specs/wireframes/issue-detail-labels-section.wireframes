@@ -1,0 +1,397 @@
+# Wireframe: Issue Detail Page — Labels Section
+
+## Changelog
+
+| Version | Type | Description |
+|---------|------|-------------|
+| 1.1.0 | MINOR | Added IssueFormModal labels field wireframe; added LabelPicker loading state; pinned labels-section aria-label value |
+
+## Purpose & Flow Context
+
+Users view, attach, and detach labels on an issue without leaving the detail page or saving the full issue form. Entry: issue list row click or direct URL to `/issues/:id`. Exit: Back to issue list, or labels updated in place.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⏳` | Loading / skeleton | `⚠` | Error state |
+| `#` | Heading level indicator | `●` | Label badge (colored pill) |
+| `[+ ...]` | Add action trigger | `[✓]` | Checked option |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Single-column layout within the shared app-shell. Spacing cadence: 8px rhythm.
+
+**App-shell**: Shared header (logo, nav, user menu) + max-width container.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Back button, breadcrumb | Sticky top |
+| Issue metadata | Identifier, title, status badge, priority, dates, assignee | Top of main content |
+| Labels section | LabelList component | Between metadata and description |
+| Description | Issue body text | Below labels |
+| Actions | Edit, Delete buttons | Below description |
+| Watchers | WatcherSection | Below actions |
+| Comments | CommentList with divider | Bottom of page |
+
+**Content hierarchy** (by visual priority):
+1. Issue identifier + title (identifies the entity)
+2. Status / priority / assignee metadata (quick triage context)
+3. Labels section (manageable tags)
+4. Description (details)
+5. Action buttons
+6. Watchers, comments
+
+```
++------------------------------------------------------------------+
+|  [← Back]                                                        |
+|                                                                   |
+|  #ABC-123                                                        |
+|  # Issue Title Here                                              |
+|                                                                   |
+|  [Todo ▼]  Urgent  |  Assignee: John  |  Created: Jul 22 2026    |
+|                                                                   |
+|  +-- Labels ---------------------------------------------------+ |
+|  |  ● bug  [X]   ● frontend  [X]   ● high-priority  [X]      | |
+|  |  [+ Add label]                                              | |
+|  +-------------------------------------------------------------+ |
+|                                                                   |
+|  ## Description                                                  |
+|  Issue description text here...                                  |
+|                                                                   |
+|  [Edit]  [Delete]                                                 |
+|                                                                   |
+|  ──────────────────────────────────────────────────────────────   |
+|                                                                   |
+|  WatcherSection                                                   |
+|                                                                   |
+|  CommentList                                                      |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| `[← Back]` | `Button` (ghost) | Navigates to `/issues` | — |
+| `[Todo ▼]` | `IssueStatusBadge` | Dropdown to change status; fires `onStatusChange` | Loading state during API call |
+| Priority label | `span` (colored text) | Static display | Uses priority color tokens |
+| `● bug [X]` | `LabelBadge` (removable) | Pill badge; `[X]` fires `onDetach(labelId)` | Truncate long names with ellipsis |
+| `[+ Add label]` | `Button` (ghost) | Opens `LabelPicker` popover | Disabled during attach API call |
+| `[Edit]` | `Button` (secondary) | Opens edit modal | — |
+| `[Delete]` | `Button` (danger) | Opens confirm dialog | — |
+
+## Data Display
+
+Labels display as a horizontal wrapped flex list of pill badges. Each badge: rounded-full, primary-tinted background, label name text, optional X icon for removal. No sort/pagination — all labels fit inline. Long label names truncate with text-ellipsis.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Labels section heading | Section label: "Labels" | Visible as section label |
+| `● {name}` | Label name — human-readable, same as the backend label definition name | Consistent with label picker |
+| `[X]` on badge | "Remove {label name} label" — accessible name | Icon-only, needs `aria-label` |
+| `[+ Add label]` | "Attach a new label to this issue" | Consistent action label |
+| Empty state text | "No labels" | Concise; followed by Add label CTA |
+| Error message | "Failed to load labels. [Retry]" | Actionable error |
+
+## States
+
+### Populated (Default)
+
+Labels section shows 1+ `LabelBadge` items in a flex-wrap row, each with a remove button. "[+ Add label]" button visible at end of row or on its own line.
+
+```
+  ● bug  [X]   ● frontend  [X]   ● high-priority  [X]   [+ Add label]
+```
+
+### Empty
+
+No labels attached. "[+ Add label]" button is the primary CTA.
+
+```
+  No labels    [+ Add label]
+```
+
+### Loading
+
+Two skeleton pill shapes matching the dimensions of `LabelBadge` components. No "Add label" button until loaded.
+
+```
+  ⏳──────────   ⏳────────────   ⏳────────
+  (skeleton pill)  (skeleton pill)  (skeleton pill)
+```
+
+### Error
+
+`ErrorBanner` inline within the labels section, below the issue metadata line. Retry button re-fetches labels.
+
+```
+  +-- ⚠ --------------------------------------------------------+
+  |  Failed to load labels. Please try again.    [Retry]         |
+  +--------------------------------------------------------------+
+```
+
+### Success / Confirmation
+
+Label attach/detach are optimistic — no explicit success state. On API failure, toast appears with "Failed to attach/detach label" and the optimistic change is rolled back.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout as described |
+| Tablet (768-1024px) | Same layout; labels wrap naturally |
+| Mobile (<768px) | Full-width content; labels wrap; touch targets remain ≥24×24px |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header` for back button + metadata, `main` for issue content including labels section |
+| Heading order | `h1` for issue title, `h2` for "Description", labels section is region without heading (`aria-label="Issue labels"`) |
+| Reading / Focus order | Back → title → status badge → labels list → add label → description → actions |
+| Accessible names | Remove button: `aria-label="Remove {label name} label"`; Add label: `aria-label="Add label to issue"` |
+| Keyboard operability | Tab through label badges; Enter/Space on remove button to detach; Tab to "Add label" to open picker |
+| Target size | ≥24×24 CSS px on all badge remove buttons and action buttons |
+| Focus not obscured | No sticky regions above labels; focus scrolls naturally |
+| Non-color intent | Label badges use text + color; remove icon has accessible name |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*
+
+---
+
+# Wireframe: Label Picker Popover
+
+## Purpose & Flow Context
+
+Inline popover to browse, search, and select available label definitions to attach to the current issue. Entry: clicking "[+ Add label]" on IssueDetailPage. Exit: selecting a label (attaches + closes) or clicking outside / pressing Escape (closes without action).
+
+## Layout Regions
+
+**Grid**: Overlay popover, no grid. Absolute-positioned below the trigger button.
+
+**No app-shell** (popover is not a page).
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Search field | TextInput with placeholder "Search labels..." | Filters list as user types |
+| Label list | Scrollable list of checkable rows | Max-height: 240px, overflow-y scroll |
+| Empty state | "No labels found" | When search yields no results |
+
+```
++------------------------------------------------------------------+
+|  [ Search labels..._____________________________ ]               |
+|  ─────────────────────────────────────────────────               |
+|  [✓] Bug              ●                                             |
+|  [ ] Frontend         ●                                             |
+|  [✓] High Priority    ●                                             |
+|  [ ] Enhancement      ●                                             |
+|  [ ] Documentation    ●                                             |
+|  ─────────────────────────────────────────────────               |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Search input | `TextInput` | Filters label list on input; autofocus on open | Clear button when text entered |
+| Label row | `div[role="option"]` | Click toggles selection; Arrow keys navigate | Selected row shows checkmark |
+| Checkbox | `Checkbox` | Visual selected/unselected state | — |
+| Label color dot | `span` | Colored circle indicator | Matches label definition color |
+
+## Data Display
+
+Filterable list. Each row shows a colored dot (matching label definition color), label name, and checkbox indicator. No columns/sort/pagination — all available labels in a scrollable list.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Search placeholder | "Search labels..." | Instructs user to type to filter |
+| Label row text | Label definition name | Human-readable, consistent with badge display |
+| Empty search state | "No labels found" | No labels match the search query |
+| No labels available | "No labels available" | No label definitions exist in workspace |
+
+## States
+
+### Open — Populated
+
+Search input focused. List shows all available labels. Already-attached labels show checked with `✓`.
+
+### Open — Filtered
+
+Search input has text. List filtered to matching label names. Matching term highlighted if applicable.
+
+### Open — Empty (no results)
+
+Search yielded no matches. Shows "No labels found" message with no CTA (user must modify search or close).
+
+### Open — Empty (no label definitions)
+
+No label definitions exist in the workspace. Shows "No labels available" message.
+
+### Closed (trigger state)
+
+"[+ Add label]" ghost button visible in the LabelList section on IssueDetailPage.
+
+### Open — Loading
+
+Available label definitions are being fetched asynchronously. Popover shows a disabled search input and skeleton option rows matching the expected list layout. If zero label definitions exist after fetch, transitions to "Open — Empty (no label definitions)".
+
+```
++------------------------------------------------------------------+
+|  ⏳ [ Search labels..._____________________________ ]  (disabled) |
+|  ─────────────────────────────────────────────────               |
+|  ⏳ [ ] ●─────────────                                             |
+|  ⏳ [ ] ●─────────────                                             |
+|  ⏳ [ ] ●─────────────                                             |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Popover positioned below trigger, left-aligned, min-width 240px |
+| Mobile (<768px) | Full-width popover within the content area; positioned below trigger |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Popover is a `dialog` with `role="dialog"` and `aria-label="Select a label"` |
+| Heading order | No headings — popover is not a page section |
+| Reading / Focus order | Focus trapped inside popover on open; first focusable element = search input |
+| Accessible names | Search input: `aria-label="Search labels"`; each option: `aria-label="{label name}"`; close: no close button (Escape to close) |
+| Keyboard operability | Arrow Up/Down navigate options; Enter/Space selects focused option; Escape closes; Tab cycles within popover |
+| Target size | ≥24×24 CSS px on each option row |
+| Focus not obscured | Popover overlays content; backdrop click or Escape closes |
+| Non-color intent | Label rows use checkbox indicator + name text; color dots are decorative |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*
+
+---
+
+# Wireframe: Issue Form — Labels Field
+
+## Purpose & Flow Context
+
+Labels multi-select field within the create/edit issue form modal. Entry: "New Issue" button on IssuesList (create) or "Edit" button on IssueDetailPage (edit). Exit: form submitted (labels sent as `labelIds: string[]`) or cancelled (selections discarded).
+
+## Layout Regions
+
+**Grid**: Within the existing IssueFormModal layout — no separate grid. Labels field is a section in the form body, between description and priority/metadata fields.
+
+**No app-shell** (form modal is an overlay, not a page).
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Form body | Title, description, labels multi-select, priority, assignee, dates | Scrollable within modal |
+| Labels field | `Select` (multi-select variant) | Dropdown with search + removable selected tags |
+
+```
++------------------------------------------------------------------+
+|  [Create Issue]                                                    |
+|  ─────────────────────────────────────────────────────             |
+|  Title:  [______________________________________]                  |
+|                                                                     |
+|  Description:                                                      |
+|  [_________________________________________________________]       |
+|  [_________________________________________________________]       |
+|                                                                     |
+|  Labels:  [Select or type to search... ▼]                          |
+|           ● bug [X]  ● frontend [X]                                |
+|                                                                     |
+|  Priority:  [Medium ▼]                                             |
+|  Assignee:  [Select assignee ▼]                                    |
+|                                                                     |
+|  ─────────────────────────────────────────────────────             |
+|  [Cancel]                              [Create Issue (primary)]    |
++------------------------------------------------------------------+
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Labels multi-select | `Select` (multi-select variant) | Dropdown with search; selected labels shown as removable tag pills within the field container; `labelIds: string[]` submitted on save | No label definitions → show "No labels available" disabled state |
+| Label tag inside select | Tag (inline within Select) | Each selected label shown as small pill with remove (X) to deselect | Truncate long names with ellipsis |
+| `[Create Issue]` / `[Save Changes]` | `Button` (primary) | Submits form with `labelIds` in payload | Disabled while submitting; label validation error blocks submit |
+| `[Cancel]` | `Button` (ghost) | Closes modal, discards label selections | — |
+
+## Data Display
+
+Multi-select dropdown. Typing filters available label definitions. Selected labels render as removable tag pills inside the field container. No sort/pagination — all available labels fit in the dropdown list. The dropdown uses a checkmark indicator for selected state.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Labels field label | "Labels" | Persistent label above the multi-select field |
+| Search placeholder | "Select or type to search..." | Instructs user to browse or type to filter |
+| Selected tag remove | "Remove {label name}" | Accessible name for each tag's X button |
+| No labels available | "No labels available" | When zero label definitions exist in the workspace |
+| Submit (create) | "Create Issue" | Primary action — creates the issue with selected labels |
+| Submit (edit) | "Save Changes" | Primary action — saves issue with updated labels |
+
+## States
+
+### Create
+
+Labels multi-select empty. All available label definitions listed for selection. None pre-selected.
+
+### Edit (pre-selected)
+
+Labels multi-select shows current issue labels as pre-selected tag pills. User can add additional labels or remove existing ones before saving.
+
+### Submitting
+
+Form shows loading state on submit button. Labels field and all form controls disabled during submission.
+
+### Validation Error
+
+Server-side error for `labelIds` displays inline below the field: "One or more selected labels are invalid." Field border turns danger color.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Centered overlay modal; multi-select inline with 240px min-width |
+| Mobile (<768px) | Full-screen modal; multi-select full-width; touch targets ≥24×24px |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Modal uses `role="dialog"` with `aria-label="Create issue"` or `aria-label="Edit issue"` |
+| Heading order | Modal title is `h2` within the dialog |
+| Reading / Focus order | Focus trapped inside modal on open; first focusable = title input |
+| Accessible names | Search input inside multi-select: `aria-label="Search labels"`; remove tag: `aria-label="Remove {name} label"` |
+| Keyboard operability | Tab through fields; Arrow keys navigate multi-select options; Enter/Space to toggle selection; Escape closes modal |
+| Target size | ≥24×24 CSS px on all interactive elements |
+| Focus not obscured | Modal overlay prevents focus behind it; backdrop-inert active |
+| Non-color intent | Selected vs unselected states use checkmark icon + name text, not color alone |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

@@ -1,15 +1,18 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useIssuesStore } from '@/entities/issue/model/store'
-import { useToastStore } from '@/shared/stores/toastStore'
-import { isBusinessRuleError } from '@/shared/lib/api-client/errors'
+import { useIssueLabelsStore } from '@/entities/label/model/store'
 import { IssueDetail } from '@/entities/issue/ui/IssueDetail'
 import { IssueFormModal } from '@/entities/issue/ui/IssueFormModal'
 import { ConfirmDeleteDialog } from '@/entities/issue/ui/ConfirmDeleteDialog'
+import { useToastStore } from '@/shared/stores/toastStore'
+import { deleteIssue, updateIssue, fetchComments } from '@/entities/issue/api'
+import { isBusinessRuleError } from '@/shared/lib/api-client'
 import { selectIssueById } from '@/entities/issue/model/selectors'
-import { updateIssue, deleteIssue, fetchComments } from '@/entities/issue/api'
+import { useShallow } from 'zustand/react/shallow'
 import type { Comment } from '@/entities/issue/model/types'
 import type { IssueFormSchema } from '@/entities/issue/model/validation'
+import type { Label } from '@/entities/label/model/types'
 
 export function IssueDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -30,6 +33,17 @@ export function IssueDetailPage() {
   const [showEditForm, setShowEditForm] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [statusChanging, setStatusChanging] = useState(false)
+  const [showLabelPicker, setShowLabelPicker] = useState(false)
+  const [labelsDisabled, setLabelsDisabled] = useState(false)
+
+  const issueLabels = useIssueLabelsStore(
+    useShallow((s) => (id ? s.labelsByIssue[id] ?? [] : [])),
+  )
+  const labelsLoading = useIssueLabelsStore((s) => s.isLoading)
+  const labelsError = useIssueLabelsStore((s) => s.error)
+  const fetchLabels = useIssueLabelsStore((s) => s.fetchLabels)
+  const attachLabel = useIssueLabelsStore((s) => s.attachLabel)
+  const detachLabelStore = useIssueLabelsStore((s) => s.detachLabel)
 
   const issue = selectIssueById(issues, id ?? null)
 
@@ -56,6 +70,12 @@ export function IssueDetailPage() {
         setCommentsLoading(false)
       })
   }, [id])
+
+  useEffect(() => {
+    if (id) {
+      fetchLabels(id)
+    }
+  }, [id, fetchLabels])
 
   useEffect(() => {
     if (!issue && !isLoading && issues.length > 0) {
@@ -168,6 +188,75 @@ export function IssueDetailPage() {
     }
   }, [id, addToast])
 
+  const handleDetachLabel = useCallback(
+    async (labelId: string) => {
+      if (!id) return
+      setLabelsDisabled(true)
+      try {
+        await detachLabelStore(id, labelId)
+        addToast({
+          title: 'Label removed',
+          variant: 'success',
+          duration: 3000,
+        })
+      } catch (err) {
+        if (isBusinessRuleError(err)) {
+          addToast({
+            title: err.message,
+            variant: 'error',
+            duration: 5000,
+          })
+        } else {
+          addToast({
+            title: 'Failed to remove label. Please try again.',
+            variant: 'error',
+            duration: 5000,
+          })
+        }
+      } finally {
+        setLabelsDisabled(false)
+      }
+    },
+    [id, detachLabelStore, addToast],
+  )
+
+  const handleAddLabel = useCallback(
+    async (label: Label) => {
+      if (!id) return
+      setLabelsDisabled(true)
+      try {
+        await attachLabel(id, label.id, label)
+        setShowLabelPicker(false)
+        addToast({
+          title: `Label "${label.name}" added`,
+          variant: 'success',
+          duration: 3000,
+        })
+      } catch (err) {
+        if (isBusinessRuleError(err)) {
+          addToast({
+            title: err.message,
+            variant: 'error',
+            duration: 5000,
+          })
+        } else {
+          addToast({
+            title: 'Failed to add label. Please try again.',
+            variant: 'error',
+            duration: 5000,
+          })
+        }
+      } finally {
+        setLabelsDisabled(false)
+      }
+    },
+    [id, attachLabel, addToast],
+  )
+
+  const handleToggleLabelPicker = useCallback(() => {
+    setShowLabelPicker((prev) => !prev)
+  }, [])
+
   const pageError = error || commentsError
   const combinedLoading = isLoading || commentsLoading
 
@@ -187,6 +276,15 @@ export function IssueDetailPage() {
         }}
         onStatusChange={handleStatusChange}
         statusChanging={statusChanging}
+        labels={issueLabels}
+        labelsLoading={labelsLoading}
+        labelsError={labelsError}
+        onDetachLabel={handleDetachLabel}
+        onAddLabel={handleAddLabel}
+        showLabelPicker={showLabelPicker}
+        onToggleLabelPicker={handleToggleLabelPicker}
+        onCloseLabelPicker={() => setShowLabelPicker(false)}
+        labelsDisabled={labelsDisabled}
       />
 
       <IssueFormModal
