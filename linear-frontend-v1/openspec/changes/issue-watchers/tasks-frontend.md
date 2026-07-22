@@ -2,45 +2,45 @@
 
 ## Scaffold
 
-- [ ] Create `src/entities/watcher/` directory with `model/`, `api/`, `ui/` subdirectories
-- [ ] Create `src/features/watchers/` directory with `model/`, `ui/` subdirectories
+- [x] Create `src/entities/watcher/` directory with `model/`, `api/`, `ui/` subdirectories
+- [x] Create `src/features/watchers/` directory with `model/`, `ui/` subdirectories
 
 ## Components
 
-- [ ] **`WatcherItem`** (`entities/watcher/ui/WatcherItem.tsx`): Single watcher row — avatar (24×24), display name, optional "you" tag for current user. Pure presentational, no state.
-- [ ] **`WatcherList`** (`entities/watcher/ui/WatcherList.tsx`): Renders array of `WatcherItem` in a `<ul role="list" aria-label="Watchers">`. States: loading (3 skeleton rows with `aria-busy="true"`), empty ("No watchers yet"), error (`role="alert"` + retry button), populated (list).
-- [ ] **`WatcherSection`** (`features/watchers/ui/WatcherSection.tsx`): Composes `WatcherList` + `WatchButton`. Coordinates data fetch on mount. Passes `issueId` to store actions. Handles retry.
-- [ ] **`WatchButton`** (`features/watchers/ui/WatchButton.tsx`): Toggle button with `aria-pressed`, dynamic `aria-label`. States: not-watching (outline icon + "Watch"), watching (filled icon + "Watching"), loading (spinner replaces icon, disabled), disabled (unauthenticated). Uses existing `Button` component with `variant="secondary"`.
-- [ ] **Integrate into `IssueDetail`**: Add `<WatcherSection issueId={issue.id} />` in `IssueDetail.tsx` below the description, above the `<hr />` before `CommentList`.
+- [x] **`WatcherItem`** (`entities/watcher/ui/WatcherItem.tsx`): Single watcher row — avatar (24×24), display name, optional "you" tag for current user. Pure presentational, no state.
+- [x] **`WatcherList`** (`entities/watcher/ui/WatcherList.tsx`): Renders array of `WatcherItem` in a `<ul role="list" aria-label="Watchers">`. States: loading (3 skeleton rows with `aria-busy="true"`), empty ("No watchers yet"), error (`role="alert"` + retry button), populated (list).
+- [x] **`WatcherSection`** (`features/watchers/ui/WatcherSection.tsx`): Composes `WatcherList` + `WatchButton`. Coordinates data fetch on mount. Passes `issueId` to store actions. Handles retry.
+- [x] **`WatchButton`** (`features/watchers/ui/WatchButton.tsx`): Toggle button with `aria-pressed`, dynamic `aria-label`. States: not-watching (outline icon + "Watch"), watching (filled icon + "Watching"), loading (spinner replaces icon, disabled), disabled (unauthenticated). Uses existing `Button` component with `variant="secondary"`.
+- [x] **Integrate into `IssueDetail`**: Add `<WatcherSection issueId={issue.id} />` in `IssueDetail.tsx` below the description, above the `<hr />` before `CommentList`.
 
 ## State & Data
 
-- [ ] **Define `Watcher` type** (`entities/watcher/model/types.ts`): `{ id: string, userId: string, issueId: string, name: string, avatarUrl?: string, createdAt: string }`
-- [ ] **Create watcher API module** (`entities/watcher/api/index.ts`):
+- [x] **Define `Watcher` type** (`entities/watcher/model/types.ts`): `{ id: string, userId: string, issueId: string, name: string, avatarUrl?: string, createdAt: string }`
+- [x] **Create watcher API module** (`entities/watcher/api/index.ts`):
   - `fetchWatchers(issueId: string): Promise<{ data: Watcher[] }>`
   - `addWatcher(issueId: string): Promise<{ data: Watcher }>`
   - `removeWatcher(issueId: string, userId: string): Promise<void>`
-- [ ] **Create `useWatchersStore`** (`features/watchers/model/store.ts`): Zustand store with Zustand devtools middleware. Actions:
+- [x] **Create `useWatchersStore`** (`features/watchers/model/store.ts`): Zustand store with Zustand devtools middleware. Actions:
   - `fetchWatchers(issueId)`: sets loading, fetches, stores in `watchersByIssue[issueId]`, handles error
   - `addWatcher(issueId)`: optimistic add to `watchersByIssue[issueId]`, POST API, revert on error, toast on success/error. Handle 409 by re-fetching server state.
   - `removeWatcher(issueId, userId)`: optimistic remove from `watchersByIssue[issueId]`, DELETE API, revert on error, toast on success/error
-- [ ] **Wire toast feedback**: On successful toggle, `addToast({ title: "You are now watching this issue" | "You are no longer watching this issue", variant: "success" })`. On error, `addToast({ title: errorMessage, variant: "error" })`.
+- [x] **Wire toast feedback**: On successful toggle, `addToast({ title: "You are now watching this issue" | "You are no longer watching this issue", variant: "success" })`. On error, `addToast({ title: errorMessage, variant: "error" })`.
 
 ## Routing
 
-- [ ] No new routes needed. WatcherSection renders inline on the existing `/issues/:id` page in `IssueDetail.tsx`.
+- [x] No new routes needed. WatcherSection renders inline on the existing `/issues/:id` page in `IssueDetail.tsx`.
 
 ## Integration
 
-- [ ] Verify `WatcherSection` fetches watchers on mount and re-fetches when `issueId` changes
-- [ ] Verify optimistic add: user clicks "Watch" → watcher appears immediately → POST succeeds → no UI change needed
-- [ ] Verify optimistic remove: user clicks "Watching" → watcher disappears immediately → DELETE succeeds → no UI change needed
-- [ ] Verify error revert: failed POST/DELETE restores previous watcher list and shows error toast
-- [ ] Verify 409 conflict: server says already watching → re-fetch server state → UI syncs
-- [ ] Verify empty state: issue with no watchers shows "No watchers yet" and "Watch" button
-- [ ] Verify error state: network failure shows error message with retry button
-- [ ] Verify loading state: skeleton shown while fetching
-- [ ] Verify unauthenticated: WatchButton is disabled when no active session
+- [x] Verify `WatcherSection` fetches watchers on mount and re-fetches when `issueId` changes
+- [x] Verify optimistic add: user clicks "Watch" → watcher appears immediately → POST succeeds → no UI change needed
+- [x] Verify optimistic remove: user clicks "Watching" → watcher disappears immediately → DELETE succeeds → no UI change needed
+- [x] Verify error revert: failed POST/DELETE restores previous watcher list and shows error toast
+- [x] Verify 409 conflict: server says already watching → re-fetch server state → UI syncs
+- [x] Verify empty state: issue with no watchers shows "No watchers yet" and "Watch" button
+- [x] Verify error state: network failure shows error message with retry button
+- [x] Verify loading state: skeleton shown while fetching
+- [x] Verify unauthenticated: WatchButton is disabled when no active session
 
 ## Validation
 
