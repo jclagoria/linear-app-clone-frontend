@@ -3,6 +3,7 @@ import { ErrorBanner } from '@/shared/ui/ErrorBanner'
 import { SkeletonLoader } from './SkeletonLoader'
 import { CommentList } from './CommentList'
 import { IssueStatusBadge } from './IssueStatusBadge'
+import { WatcherSection } from '@/features/watchers/ui/WatcherSection'
 import { ArrowLeft, Edit3, Trash2, AlertCircle } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
 import type { Issue, Comment } from '../model/types'
@@ -163,6 +164,8 @@ export function IssueDetail({
           Delete
         </Button>
       </div>
+
+      <WatcherSection issueId={issue.id} />
 
       <hr className="border-border" />
 

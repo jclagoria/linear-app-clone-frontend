@@ -1,0 +1,190 @@
+# Wireframe: IssueDetailPage — Watcher Section
+
+## Purpose & Flow Context
+
+Lets the authenticated user view who is watching the current issue and toggle their own subscription. Serves the "Issue Detail: Watch/Unwatch Issue" flow. Entry: issue detail page load. Exit: user toggles watch state or navigates away.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column. Spacing cadence: 8px.
+
+**App-shell**: Shared header + sidebar + container. The watcher section lives in the main content column of the issue detail page.
+
+**Regions (watcher section within main):**
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Watcher section | `<section>` with heading "Watchers" | Below issue metadata, before comment thread |
+| Watcher list | `<ul>` of watcher items | aria-label="Watchers" |
+| Watch toggle | `<button>` — Watch / Watching | Top-right of watcher section header |
+
+**Content hierarchy** (by visual priority):
+1. Watch toggle button — primary action (subscribe/unsubscribe)
+2. Watcher list — who's watching
+3. Section heading — "Watchers" label
+
+```
++------------------------------------------------------------------+
+|  {App Header — Logo / Search / UserMenu / NotifBadge}           |
++------------------------------------------------------------------+
+|  +--------+  +--------------------------------------------------+ |
+|  |        |  |  Issue Detail                                    | |
+|  | Side   |  |                                                  | |
+|  | bar    |  |  Issue Title ...................... [Assign] [..] | |
+|  |        |  |  Metadata: status | priority | labels            | |
+|  |        |  |                                                  | |
+|  |        |  |  +-- Watchers --------------------------------+  | |
+|  |        |  |  |  [h3] Watchers                     [Watch] |  | |
+|  |        |  |  |                                              |  | |
+|  |        |  |  |  [👤] [User Name]                            |  | |
+|  |        |  |  |  [👤] [User Name]                            |  | |
+|  |        |  |  |  [👤] [User Name]                            |  | |
+|  |        |  |  +----------------------------------------------+  | |
+|  |        |  |                                                  |  | |
+|  |        |  |  [Comment thread...]                              |  | |
+|  |        |  +--------------------------------------------------+ | |
+|  +--------+  +--------------------------------------------------+ |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [`[Input]`] `[Link]` [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| WatchButton | `Button` variant `secondary` | Toggle watch state. `aria-pressed` reflects state. Icon changes fill (eye icon). Label swaps Watch/Watching. Disabled while request in-flight. Transition: optimistic UI update → POST/DELETE → revert on error. | 409 conflict → revert + re-fetch. 422 business rule → toast error + revert. |
+| WatcherList | Custom `WatcherList` | Renders `<ul>` of watchers. Each item: avatar (initials fallback) + display name. Max visible height with scroll if >5 items. | Empty list → "No watchers yet". Error → inline message + retry button. |
+| Avatar | `Avatar` component | User initial or avatar image. 24×24px. | Fallback to initials on missing image. |
+| Retry button | `Button` variant `secondary` size `sm` | Re-fetches watcher list. | Only shown in error state. |
+
+## Data Display
+
+List of watchers. Each row: avatar + display name. No sort/filter needed (max ~10-15 watchers). Progressive-disclosure: all watchers visible, no pagination.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Section heading "Watchers" | Identifies the watcher list section | Consistent across all issue detail views |
+| Button "Watch" | User is not subscribed; click to subscribe | Eye icon (outline) |
+| Button "Watching" | User is subscribed; click to unsubscribe | Eye icon (filled) / check |
+| "No watchers yet" | Empty state — no one is watching | Plain language, neutral tone |
+| "Failed to load watchers" | Error state — fetch failed | Plain language, no raw codes |
+| `aria-label` "Watch this issue" | Screen reader label for unwatched state | Descriptive action |
+| `aria-label` "Unwatch this issue" | Screen reader label for watched state | Descriptive action |
+
+## States
+
+### Populated (Default)
+
+Watcher list rendered with 1+ watchers. WatchButton shows "Watching" if the current user is among them, otherwise "Watch". Section heading "Watchers" visible.
+
+```
++-- Watchers --------------------------------+
+|  [h3] Watchers                    [Watch]  |
+|                                             |
+|  [👤] Alice                               |
+|  [👤] Bob                                 |
+|  [👤] Charlie                              |
++---------------------------------------------+
+```
+
+### Empty
+
+No watchers for this issue. Informational text only, no interactive elements in the list. WatchButton still available if user is authenticated.
+
+```
++-- Watchers --------------------------------+
+|  [h3] Watchers                    [Watch]  |
+|                                             |
+|  No watchers yet                            |
+|                                             |
++---------------------------------------------+
+```
+
+### Loading
+
+Skeleton that mirrors populated layout: 3 skeleton avatar rows with pulse animation. WatchButton shows spinner.
+
+```
++-- Watchers --------------------------------+
+|  [h3] Watchers                   [=====]   |
+|                                             |
+|  [====] [=============]                     |
+|  [====] [=============]                     |
+|  [====] [=============]                     |
++---------------------------------------------+
+```
+
+### Error
+
+Fetch failed. Inline error message with `role="alert"`. Retry button below message.
+
+```
++-- Watchers --------------------------------+
+|  [h3] Watchers                             |
+|                                             |
+|  ⚠ Failed to load watchers                 |
+|  [Retry]                                    |
+|                                             |
++---------------------------------------------+
+```
+
+### Success / Confirmation
+
+After toggling watch state:
+- **Watch → Watching**: Button swaps to "Watching" (filled icon). Toast: "You are now watching this issue".
+- **Watching → Watch**: Button swaps to "Watch" (outline icon). Toast: "You are no longer watching this issue".
+
+User avatar appears/disappears from watcher list optimistically. On error, toast shows server message and state reverts.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout: sidebar + main content. Watcher section in main column, right below metadata. |
+| Tablet (768-1024px) | Sidebar collapses to top nav. Watcher section remains in main content column. Full width. |
+| Mobile (<768px) | Nav → hamburger. Watcher section: full width, reduced padding. WatchButton target size ≥44×44px for touch. |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Watcher section uses `<section>` landmark. |
+| Heading order | `h3` or `h4` for "Watchers" heading — depends on issue detail page heading structure (h1 for issue title, h2 for major sections, h3 for watchers). |
+| Reading / Focus order | Section heading → WatchButton → watcher list (ul → li items). Tab order follows visual order. |
+| Accessible names | WatchButton: `aria-label="Watch this issue"` or `"Unwatch this issue"`. Watcher list: `<ul aria-label="Watchers">`. |
+| Keyboard operability | WatchButton: Enter/Space to toggle. Tab through watcher list (non-interactive items are skip-able). Retry button: Enter/Space. |
+| Target size | WatchButton ≥44×44 CSS px. Retry button ≥24×24 CSS px. |
+| Focus not obscured | Watcher section is not in a sticky region; focus is always in the scroll flow. |
+| Non-color intent | Watch state communicated via icon fill + text label, never color alone. Error state uses icon + text + color. |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*
