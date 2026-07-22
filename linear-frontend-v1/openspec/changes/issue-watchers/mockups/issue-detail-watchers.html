@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail — Watcher Section Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5e6ad2;
+      --color-danger: #e5484d;
+      --color-success: #30a46c;
+      --color-warning: #f5a623;
+      --color-surface: #ffffff;
+      --color-surface-alt: #f7f8fa;
+      --color-border: #e2e4e8;
+      --color-text: #1a1d23;
+      --color-text-muted: #6b7280;
+      --color-text-inverse: #ffffff;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --space-0-5: 4px;
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --max-width: 1280px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface-alt); color: var(--color-text); font-size: 14px; line-height: 1.5; }
+
+    /* App shell */
+    .app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+    .header {
+      display: flex; align-items: center; height: 48px; padding: 0 var(--space-3);
+      background: var(--color-surface); border-bottom: 1px solid var(--color-border);
+    }
+    .header-logo { font-weight: 700; font-size: 15px; color: var(--color-text); margin-right: var(--space-3); }
+    .header-search { flex: 1; max-width: 320px; padding: var(--space-0-5) var(--space-1); border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 13px; color: var(--color-text-muted); background: var(--color-surface-alt); }
+    .header-right { display: flex; align-items: center; gap: var(--space-2); margin-left: auto; }
+    .avatar-sm { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary); color: var(--color-text-inverse); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+    .layout { display: flex; flex: 1; }
+
+    .sidebar {
+      width: 220px; background: var(--color-surface); border-right: 1px solid var(--color-border);
+      padding: var(--space-2) 0; flex-shrink: 0;
+    }
+    .sidebar-item { padding: var(--space-1) var(--space-3); font-size: 13px; color: var(--color-text-muted); cursor: default; display: flex; align-items: center; gap: var(--space-1); }
+    .sidebar-item.active { color: var(--color-primary); font-weight: 600; background: var(--color-surface-alt); }
+    .sidebar-item:hover { background: var(--color-surface-alt); }
+    .sidebar-section { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); padding: var(--space-2) var(--space-3) var(--space-0-5); }
+
+    .main { flex: 1; padding: var(--space-4); max-width: 800px; }
+
+    /* Issue detail */
+    .issue-header { margin-bottom: var(--space-3); }
+    .issue-title { font-size: 24px; font-weight: 700; margin-bottom: var(--space-1); }
+    .issue-meta { display: flex; align-items: center; gap: var(--space-1); font-size: 12px; color: var(--color-text-muted); flex-wrap: wrap; }
+    .pill { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+    .pill.status { background: #e8f5e9; color: #2e7d32; }
+    .pill.priority { background: #fff3e0; color: #e65100; }
+    .pill.label { background: var(--color-surface-alt); color: var(--color-text-muted); }
+
+    /* Watcher section */
+    .watchers { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); margin-bottom: var(--space-3); }
+    .watchers-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-1) var(--space-2); border-bottom: 1px solid var(--color-border);
+    }
+    .watchers-header h3 { font-size: 13px; font-weight: 600; color: var(--color-text); }
+
+    .watch-btn {
+      display: flex; align-items: center; gap: var(--space-0-5);
+      padding: 4px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+      font-size: 12px; font-weight: 500; cursor: pointer; background: var(--color-surface);
+      color: var(--color-text); transition: all 0.15s;
+    }
+    .watch-btn:hover:not(:disabled) { border-color: var(--color-primary); color: var(--color-primary); }
+    .watch-btn.watching { background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary); }
+    .watch-btn.watching:hover:not(:disabled) { background: var(--color-danger); border-color: var(--color-danger); }
+    .watch-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .watch-btn .spinner { display: none; width: 12px; height: 12px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    .watch-btn.loading .spinner { display: inline-block; }
+    .watch-btn.loading .label-text { display: none; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .watcher-list { padding: var(--space-1) var(--space-2); min-height: 40px; }
+    .watcher-item {
+      display: flex; align-items: center; gap: var(--space-1); padding: var(--space-0-5) 0;
+    }
+    .watcher-item .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); color: var(--color-text-inverse); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+    .watcher-item .name { font-size: 13px; }
+    .watcher-item .self-tag { font-size: 11px; color: var(--color-primary); font-weight: 500; margin-left: auto; }
+
+    .empty-state { text-align: center; padding: var(--space-3) var(--space-2); color: var(--color-text-muted); font-size: 13px; }
+
+    .error-state { padding: var(--space-2); display: flex; align-items: center; gap: var(--space-1); color: var(--color-danger); font-size: 13px; }
+    .error-state .retry-btn { margin-left: auto; padding: 2px 10px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); cursor: pointer; font-size: 12px; color: var(--color-text); }
+    .error-state .retry-btn:hover { border-color: var(--color-primary); }
+
+    .skeleton { display: flex; flex-direction: column; gap: var(--space-1); padding: var(--space-1) var(--space-2); }
+    .skeleton-row { display: flex; align-items: center; gap: var(--space-1); }
+    .skeleton-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--color-border); animation: pulse 1.5s ease-in-out infinite; }
+    .skeleton-text { height: 12px; border-radius: 4px; background: var(--color-border); flex: 1; animation: pulse 1.5s ease-in-out infinite; }
+    .skeleton-text.short { max-width: 100px; }
+
+    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+
+    /* Toast */
+    .toast-container { position: fixed; bottom: var(--space-3); right: var(--space-3); z-index: 1000; display: flex; flex-direction: column; gap: var(--space-1); }
+    .toast {
+      display: flex; align-items: center; gap: var(--space-1); padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-sm); font-size: 13px; background: var(--color-surface);
+      border: 1px solid var(--color-border); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: slideIn 0.2s ease-out;
+    }
+    .toast.success { border-left: 3px solid var(--color-success); }
+    .toast.error { border-left: 3px solid var(--color-danger); }
+
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    /* State controls */
+    .state-controls { display: flex; gap: var(--space-1); margin-bottom: var(--space-2); flex-wrap: wrap; }
+    .state-btn { padding: 4px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 12px; cursor: pointer; background: var(--color-surface); color: var(--color-text); }
+    .state-btn:hover { border-color: var(--color-primary); }
+    .state-btn.active { background: var(--color-primary); color: var(--color-text-inverse); border-color: var(--color-primary); }
+    .state-label { font-size: 11px; color: var(--color-text-muted); margin-bottom: var(--space-1); }
+
+    /* Comment thread placeholder */
+    .comment-thread { padding: var(--space-3) var(--space-2); color: var(--color-text-muted); font-size: 13px; text-align: center; }
+
+    /* Hide sections by state */
+    body[data-state="loading"] .section-populated { display: none; }
+    body[data-state="loading"] .section-empty { display: none; }
+    body[data-state="loading"] .section-error { display: none; }
+    body[data-state="empty"] .section-populated { display: none; }
+    body[data-state="empty"] .section-loading { display: none; }
+    body[data-state="empty"] .section-error { display: none; }
+    body[data-state="error"] .section-populated { display: none; }
+    body[data-state="error"] .section-loading { display: none; }
+    body[data-state="error"] .section-empty { display: none; }
+    body:not([data-state="loading"]) .section-loading { display: none; }
+    body:not([data-state="empty"]) .section-empty { display: none; }
+    body:not([data-state="error"]) .section-error { display: none; }
+    body[data-state="populated"] .section-loading { display: none; }
+    body[data-state="populated"] .section-empty { display: none; }
+    body[data-state="populated"] .section-error { display: none; }
+
+    .doc-link { display: inline-block; margin-bottom: var(--space-3); font-size: 12px; color: var(--color-primary); text-decoration: none; }
+    .doc-link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body data-state="populated">
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div class="app-shell">
+    <header class="header">
+      <div class="header-logo">Linear</div>
+      <div class="header-search">Search...</div>
+      <div class="header-right">
+        <span style="font-size:12px;color:var(--color-text-muted)">🔔</span>
+        <div class="avatar-sm">JD</div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <nav class="sidebar">
+        <div class="sidebar-item">📋 Inbox</div>
+        <div class="sidebar-item">📁 My Issues</div>
+        <div class="sidebar-item active">📌 Team</div>
+        <div class="sidebar-item">📅 Cycles</div>
+        <div class="sidebar-item">📊 Projects</div>
+        <div class="sidebar-section">Team</div>
+        <div class="sidebar-item">📋 Backlog</div>
+        <div class="sidebar-item">▶ In Progress</div>
+        <div class="sidebar-item">✅ Done</div>
+      </nav>
+
+      <main class="main">
+        <div class="issue-header">
+          <div style="font-size:12px;color:var(--color-text-muted);margin-bottom:var(--space-1)">📋 Backlog / <a href="#" style="color:var(--color-primary);text-decoration:none">LIN-42</a></div>
+          <h1 class="issue-title">Add watcher support to issue detail</h1>
+          <div class="issue-meta">
+            <span class="pill status">● Backlog</span>
+            <span class="pill priority">⚠ High</span>
+            <span class="pill label">enhancement</span>
+            <span>👤 Assigned to You</span>
+          </div>
+        </div>
+
+        <div class="state-controls">
+          <span class="state-label">Simulate state:</span>
+          <button class="state-btn active" data-state="populated">Populated</button>
+          <button class="state-btn" data-state="empty">Empty</button>
+          <button class="state-btn" data-state="loading">Loading</button>
+          <button class="state-btn" data-state="error">Error</button>
+          <button class="state-btn" id="toggleWatchBtn">Toggle Watch</button>
+        </div>
+
+        <div class="watchers">
+          <div class="watchers-header">
+            <h3>Watchers</h3>
+            <button class="watch-btn" id="watchBtn" onclick="toggleWatch()">
+              <span class="label-text">👁 Watch</span>
+              <span class="spinner"></span>
+            </button>
+          </div>
+
+          <div class="section-populated watcher-list" id="populatedList"></div>
+
+          <div class="section-empty watcher-list">
+            <div class="empty-state">No watchers yet</div>
+          </div>
+
+          <div class="section-loading watcher-list">
+            <div class="skeleton">
+              <div class="skeleton-row"><div class="skeleton-avatar"></div><div class="skeleton-text short"></div></div>
+              <div class="skeleton-row"><div class="skeleton-avatar"></div><div class="skeleton-text short"></div></div>
+              <div class="skeleton-row"><div class="skeleton-avatar"></div><div class="skeleton-text short"></div></div>
+            </div>
+          </div>
+
+          <div class="section-error watcher-list">
+            <div class="error-state">⚠ Failed to load watchers<button class="retry-btn" onclick="setViewState('loading');setTimeout(()=>setViewState('populated'),1000)">Retry</button></div>
+          </div>
+        </div>
+
+        <div class="comment-thread">— Comments —</div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const mockWatchers = [
+      { id: 'u1', name: 'Alice Chen', initials: 'AC', isSelf: false },
+      { id: 'u2', name: 'Bob Martinez', initials: 'BM', isSelf: false },
+      { id: 'u3', name: 'Charlie Park', initials: 'CP', isSelf: false },
+      { id: 'u4', name: 'Diana Reyes', initials: 'DR', isSelf: false },
+      { id: 'u5', name: 'You', initials: 'YO', isSelf: true },
+    ];
+
+    let isWatching = true;
+    let currentState = 'populated';
+
+    function renderWatchers(watchers) {
+      const list = document.getElementById('populatedList');
+      const watchingUsers = watchers.filter(w => !w.isSelf);
+      list.innerHTML = '';
+      for (const w of watchingUsers) {
+        const item = document.createElement('div');
+        item.className = 'watcher-item';
+        item.innerHTML = `<div class="avatar">${w.initials}</div><span class="name">${w.name}</span>`;
+        list.appendChild(item);
+      }
+      if (isWatching) {
+        const me = watchers.find(w => w.isSelf);
+        if (me) {
+          const item = document.createElement('div');
+          item.className = 'watcher-item';
+          item.innerHTML = `<div class="avatar">${me.initials}</div><span class="name">${me.name}</span><span class="self-tag">you</span>`;
+          list.appendChild(item);
+        }
+      }
+      updateWatchButton();
+    }
+
+    function updateWatchButton() {
+      const btn = document.getElementById('watchBtn');
+      const label = btn.querySelector('.label-text');
+      if (isWatching) {
+        btn.classList.add('watching');
+        label.textContent = '👁 Watching';
+        btn.setAttribute('aria-pressed', 'true');
+        btn.setAttribute('aria-label', 'Unwatch this issue');
+      } else {
+        btn.classList.remove('watching');
+        label.textContent = '👁 Watch';
+        btn.setAttribute('aria-pressed', 'false');
+        btn.setAttribute('aria-label', 'Watch this issue');
+      }
+    }
+
+    function toggleWatch() {
+      const btn = document.getElementById('watchBtn');
+      btn.classList.add('loading');
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        isWatching = !isWatching;
+        renderWatchers(mockWatchers);
+
+        if (isWatching) {
+          showToast('You are now watching this issue', 'success');
+          if (currentState === 'empty') { setViewState('populated'); }
+        } else {
+          showToast('You are no longer watching this issue', 'success');
+          const remaining = mockWatchers.filter(w => !w.isSelf).length;
+          if (remaining === 0 && !isWatching) { setViewState('empty'); }
+        }
+        setViewState(currentState);
+      }, 600);
+    }
+
+    function showToast(message, type) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => { toast.remove(); }, 3000);
+    }
+
+    function setViewState(state) {
+      currentState = state;
+      document.body.dataset.state = state;
+      document.querySelectorAll('.state-btn[data-state]').forEach(b => {
+        b.classList.toggle('active', b.dataset.state === state);
+      });
+      if (state !== 'populated') {
+        renderWatchers(mockWatchers);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderWatchers(mockWatchers);
+
+      document.querySelectorAll('.state-btn[data-state]').forEach(btn => {
+        btn.addEventListener('click', () => setViewState(btn.dataset.state));
+      });
+    });
+  </script>
+</body>
+</html>

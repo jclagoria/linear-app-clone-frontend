@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Watchers — Mockup Index</title>
+  <style>
+    :root {
+      --color-primary: #5e6ad2;
+      --color-danger: #e5484d;
+      --color-success: #30a46c;
+      --color-warning: #f5a623;
+      --color-surface: #ffffff;
+      --color-surface-alt: #f7f8fa;
+      --color-border: #e2e4e8;
+      --color-text: #1a1d23;
+      --color-text-muted: #6b7280;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --radius-md: 6px;
+      --max-width: 1280px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface-alt); color: var(--color-text); line-height: 1.5; }
+    .container { max-width: var(--max-width); margin: 0 auto; padding: var(--space-4); }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: var(--space-2); }
+    h2 { font-size: 18px; font-weight: 600; margin-bottom: var(--space-2); margin-top: var(--space-3); }
+    p { color: var(--color-text-muted); margin-bottom: var(--space-3); font-size: 14px; }
+    .screen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-2); }
+    .screen-card {
+      background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md);
+      padding: var(--space-3); text-decoration: none; color: var(--color-text); display: block;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+    .screen-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-color: var(--color-primary); }
+    .screen-card h3 { font-size: 15px; font-weight: 600; margin-bottom: var(--space-1); }
+    .screen-card .desc { font-size: 13px; color: var(--color-text-muted); }
+    .badge {
+      display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+      background: var(--color-surface-alt); color: var(--color-text-muted); margin-top: var(--space-1);
+    }
+    .badge.ready { background: #e8f5e9; color: #2e7d32; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Issue Watchers — Interactive Mockups</h1>
+    <p>Change: issue-watchers · Schema: frontend-schema · Use buttons in each mockup to cycle states.</p>
+
+    <h2>Screens</h2>
+    <div class="screen-grid">
+      <a href="issue-detail-watchers.html" class="screen-card">
+        <h3>Issue Detail — Watcher Section</h3>
+        <span class="badge ready">interactive</span>
+        <div class="desc">Watch/unwatch toggle, watcher list, all states (populated, empty, loading, error, success)</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>
