@@ -12,7 +12,7 @@ export interface FetchIssuesParams {
 
 export interface FetchIssuesResponse {
   data: Issue[]
-  meta: { cursor: string | null; hasMore: boolean }
+  pagination: { nextCursor: string | null; hasMore: boolean }
 }
 
 export async function fetchIssues(

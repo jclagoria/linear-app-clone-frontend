@@ -72,31 +72,31 @@ export const useIssuesStore = create<IssuesState>()(
           if (filters.labelIds.length > 0) params.set('labelIds', filters.labelIds.join(','))
 
           const cacheKey = `issues:list?${params.toString()}`
-          const cached = useCacheStore.getState().get<{ data: Issue[]; meta: { cursor: string | null; hasMore: boolean } }>(cacheKey)
+          const cached = useCacheStore.getState().get<{ data: Issue[]; pagination: { nextCursor: string | null; hasMore: boolean } }>(cacheKey)
 
           if (cached && !cached.stale) {
             set({
               issues: cached.data.data,
-              cursor: cached.data.meta.cursor,
-              hasMore: cached.data.meta.hasMore,
+              cursor: cached.data.pagination.nextCursor,
+              hasMore: cached.data.pagination.hasMore,
               isLoading: false,
             })
             return
           }
 
-          const { data, meta } = await fetchIssues({
+          const { data, pagination } = await fetchIssues({
             statusId: filters.statusId,
             assigneeId: filters.assigneeId,
             projectId: filters.projectId,
             labelIds: filters.labelIds,
           })
 
-          useCacheStore.getState().set(cacheKey, { data, meta })
+          useCacheStore.getState().set(cacheKey, { data, pagination })
 
           set({
             issues: data,
-            cursor: meta.cursor,
-            hasMore: meta.hasMore,
+            cursor: pagination.nextCursor,
+            hasMore: pagination.hasMore,
             isLoading: false,
           })
         } catch (err) {
@@ -114,7 +114,7 @@ export const useIssuesStore = create<IssuesState>()(
         set({ isLoading: true })
 
         try {
-          const { data, meta } = await fetchIssues({
+          const { data, pagination } = await fetchIssues({
             cursor,
             statusId: filters.statusId,
             assigneeId: filters.assigneeId,
@@ -124,8 +124,8 @@ export const useIssuesStore = create<IssuesState>()(
 
           set((state) => ({
             issues: [...state.issues, ...data],
-            cursor: meta.cursor,
-            hasMore: meta.hasMore,
+            cursor: pagination.nextCursor,
+            hasMore: pagination.hasMore,
             isLoading: false,
           }))
         } catch (err) {

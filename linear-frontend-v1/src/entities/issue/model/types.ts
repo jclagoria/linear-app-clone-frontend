@@ -34,7 +34,7 @@ export interface IssueFilters {
 }
 
 export interface PaginationCursor {
-  cursor: string | null
+  nextCursor: string | null
   hasMore: boolean
 }
 
