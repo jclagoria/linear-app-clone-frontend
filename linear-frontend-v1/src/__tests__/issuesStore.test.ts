@@ -7,6 +7,7 @@ import type { Issue } from '@/entities/issue/model/store'
 vi.mock('@/entities/issue/api', () => ({
   changeIssueStatus: vi.fn(),
   assignIssue: vi.fn(),
+  deleteComment: vi.fn(),
 }))
 
 const mockIssues: Issue[] = [
@@ -292,6 +293,65 @@ describe('issuesStore', () => {
       useIssuesStore.getState().removeIssue('1')
       expect(useIssuesStore.getState().issues).toHaveLength(2)
       expect(useIssuesStore.getState().selectedIssueId).toBeNull()
+    })
+  })
+
+  describe('deleteCommentFromStore', () => {
+    const mockComments = [
+      { id: 'c1', issueId: 'i1', body: 'First', authorId: 'u1', authorName: 'A', createdAt: '', updatedAt: '' },
+      { id: 'c2', issueId: 'i1', body: 'Second', authorId: 'u2', authorName: 'B', createdAt: '', updatedAt: '' },
+    ]
+
+    beforeEach(() => {
+      useIssuesStore.setState({
+        commentsByIssue: { i1: mockComments },
+      })
+    })
+
+    it('removes comment optimistically before API resolves', async () => {
+      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
+      let resolvePromise!: () => void
+      vi.mocked(deleteCommentApi).mockReturnValue(new Promise((resolve) => { resolvePromise = resolve }))
+
+      const promise = useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')
+
+      const state = useIssuesStore.getState()
+      expect(state.commentsByIssue['i1']).toHaveLength(1)
+      expect(state.commentsByIssue['i1'][0].id).toBe('c2')
+
+      resolvePromise()
+      await promise
+    })
+
+    it('keeps comment removed after API succeeds', async () => {
+      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
+      vi.mocked(deleteCommentApi).mockResolvedValue(undefined)
+
+      await useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')
+
+      const state = useIssuesStore.getState()
+      expect(state.commentsByIssue['i1']).toHaveLength(1)
+      expect(state.commentsByIssue['i1'][0].id).toBe('c2')
+    })
+
+    it('rolls back comment on API error', async () => {
+      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
+      vi.mocked(deleteCommentApi).mockRejectedValue(new Error('Network error'))
+
+      await expect(useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')).rejects.toThrow('Network error')
+
+      const state = useIssuesStore.getState()
+      expect(state.commentsByIssue['i1']).toHaveLength(2)
+      expect(state.commentsByIssue['i1'][0].id).toBe('c1')
+    })
+
+    it('calls deleteComment API with correct params', async () => {
+      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
+      vi.mocked(deleteCommentApi).mockResolvedValue(undefined)
+
+      await useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')
+
+      expect(deleteCommentApi).toHaveBeenCalledWith('i1', 'c1')
     })
   })
 })

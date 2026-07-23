@@ -34,6 +34,7 @@ interface IssueDetailProps {
   labelsDisabled?: boolean
   currentUserId: string | null
   onEditComment: (commentId: string, body: string) => Promise<void>
+  onDeleteComment?: (commentId: string) => Promise<void>
 }
 
 const priorityLabels: Record<number, { label: string; className: string }> = {
@@ -66,6 +67,7 @@ export function IssueDetail({
   labelsDisabled,
   currentUserId,
   onEditComment,
+  onDeleteComment,
 }: IssueDetailProps) {
   const addLabelButtonRef = useRef<HTMLButtonElement>(null)
   if (error) {
@@ -207,6 +209,7 @@ export function IssueDetail({
         comments={comments}
         currentUserId={currentUserId}
         onEditComment={onEditComment}
+        onDeleteComment={onDeleteComment}
       />
     </div>
   )

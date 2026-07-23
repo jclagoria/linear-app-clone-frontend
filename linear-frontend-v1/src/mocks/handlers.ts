@@ -111,6 +111,20 @@ export const handlers = [
 
   // ── Error Simulation Endpoints ──────────────────────────────────────
 
+  // ── Comments ────────────────────────────────────────────────────────
+
+  http.delete(`${API_BASE}/issues/:issueId/comments/:commentId`, async ({ params }) => {
+    const { commentId } = params
+    const failing = commentId === 'fail-403'
+    if (failing) {
+      return HttpResponse.json(
+        { error: { code: 'FORBIDDEN', message: 'Access denied' } },
+        { status: 403 },
+      )
+    }
+    return HttpResponse.json({ data: { success: true } })
+  }),
+
   http.get(`${API_BASE}/errors/bad-request`, () => {
     return HttpResponse.json(
       {
