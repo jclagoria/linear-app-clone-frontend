@@ -1,0 +1,73 @@
+# Wireframe: Issue Creation (teamId Data Flow)
+
+## Purpose & Flow Context
+
+No visual layout changes. This is a data-flow fix: `teamId` is added to the POST body when creating an issue. The IssuesPage and IssueFormModal retain their existing visual wireframes.
+
+## Data Flow Annotation
+
+```
+[Sidebar: TeamSelector]
+  │  user selects team → onSelect(teamId)
+  │
+  ▼
+[TeamStore (shared Zustand store)]
+  │  stores currentTeamId
+  │
+  ▼
+[IssuesPage: handleCreateIssue]
+  │  reads currentTeamId from TeamStore
+  │  calls createIssue({ ...data, teamId })
+  │
+  ▼
+[createIssue API]
+  │  POST /issues { title, description, status, priority, assigneeId, labels, teamId }
+  │
+  ▼
+[API / MSW handler]
+  │  validates teamId is present and non-empty
+  │  returns 201 with created issue
+  │
+  ▼
+[IssuesStore: addIssue]
+  │  issue added to local state, UI updates
+```
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| TeamSelector dropdown | Custom (TeamSelector) | On select, writes to TeamStore | No teams loaded: disabled state |
+| "New Issue" button | Button | Opens IssueFormModal | Disabled if no team selected: tooltip "Select a team first" |
+| Submit button | Button | POST with teamId | Disabled while submitting; error toast on failure |
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "New Issue" button label | "New Issue" | Opens create modal |
+| Toast success | "Issue created" | Confirm creation |
+| Toast error | "Failed to create issue" | Generic error, details in sheet |
+| No-team tooltip | "Select a team first" | Guides user to sidebar |
+
+## States
+
+### Populated (Default)
+
+Unchanged from existing layout. The create flow works as before, but `teamId` is now included in the API request.
+
+### Empty
+
+No change. Empty state shows "No issues yet" + CTA (disabled if no team selected).
+
+### Loading
+
+No change. Shows skeleton bars for issue cards.
+
+### Error
+
+If `createIssue` fails (network or validation), error toast displayed. If missing team context: "Select a team before creating issues" message shown.
+
+### Success
+
+Issue added to list, success toast shown, modal closes.
