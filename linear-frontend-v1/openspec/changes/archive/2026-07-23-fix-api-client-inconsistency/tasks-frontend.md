@@ -11,7 +11,7 @@
 
 - [x] **T5**: Run existing store tests — verify `loadIssues()` and `loadNextPage()` tests pass
 - [x] **T6**: Run integration tests — verify issue listing and pagination end-to-end
-- [ ] **T7**: Manual smoke test — load issues page, paginate, verify auth flow still works
+- [x] **T7**: Manual smoke test — load issues page, paginate, verify auth flow still works
 
 ## Review
 

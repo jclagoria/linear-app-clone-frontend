@@ -121,6 +121,40 @@ The Issues Store SHALL hold the canonical issue list, selected issue, filter par
 - **WHEN** the load next page action is dispatched
 - **THEN** no further requests SHALL be made
 
+### Requirement: LoadIssuesUsesApiClient
+
+All issue data-fetching operations SHALL use the shared `apiClient` singleton to ensure auth token injection, 401 auto-refresh, and error interceptors are applied uniformly.
+
+#### Scenario: Initial load uses apiClient
+
+- **GIVEN** the issues store is initialised
+- **WHEN** `loadIssues()` is called
+- **THEN** the request is sent through `apiClient.get()` instead of raw `fetch()`
+- **AND** the auth token is injected by the request interceptor
+- **AND** a 401 response triggers token auto-refresh instead of a generic error
+
+#### Scenario: Cache-before-fetch is preserved
+
+- **GIVEN** a valid cached response exists for the current filter params
+- **WHEN** `loadIssues()` is called
+- **THEN** the cached data is returned immediately without an API call
+
+### Requirement: LoadNextPageUsesApiClient
+
+#### Scenario: Pagination uses apiClient
+
+- **GIVEN** the issues list has more pages (`hasMore` is true)
+- **WHEN** `loadNextPage()` is called
+- **THEN** the request is sent through `apiClient.get()` with the cursor param
+- **AND** the auth token is injected by the request interceptor
+- **AND** a 401 response triggers token auto-refresh instead of a generic error
+
+#### Scenario: Early return guards are preserved
+
+- **GIVEN** `hasMore` is false OR `isLoading` is true OR `cursor` is null
+- **WHEN** `loadNextPage()` is called
+- **THEN** no API call is made
+
 ### Requirement: IssueList
 
 The IssueList component SHALL display a filtered, scrollable list of issues.
