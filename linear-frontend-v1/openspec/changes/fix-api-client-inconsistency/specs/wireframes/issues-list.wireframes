@@ -1,0 +1,17 @@
+# Wireframe: IssuesList
+
+## Purpose & Flow Context
+
+This change introduces no visual or layout changes to the IssuesList screen. The wireframe is unchanged from the existing design. Refer to the main project's wireframes for the full annotated layout.
+
+## Change Scope
+
+| Aspect | Impact |
+|--------|--------|
+| Layout | Unchanged |
+| Components | Unchanged |
+| States (loading/error/empty) | Unchanged — same skeleton, same error banners |
+| Microcopy | Unchanged |
+| Accessibility | Unchanged |
+
+The only difference is that network requests now pass through `apiClient` instead of raw `fetch`, which is invisible to the user.

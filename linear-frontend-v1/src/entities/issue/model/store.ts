@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { changeIssueStatus, assignIssue as assignIssueApi, fetchComments as fetchCommentsApi, deleteComment as deleteCommentApi } from '@/entities/issue/api'
+import { fetchIssues, changeIssueStatus, assignIssue as assignIssueApi, fetchComments as fetchCommentsApi, deleteComment as deleteCommentApi } from '@/entities/issue/api'
 import type { Issue, IssueFilters, Comment } from './types'
 
 interface IssuesState {
@@ -43,7 +43,6 @@ const initialFilters: IssueFilters = {
   search: null,
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
 
 export const initialIssuesState = {
   issues: [] as Issue[],
@@ -67,8 +66,8 @@ export const useIssuesStore = create<IssuesState>()(
         set({ isLoading: true, error: null })
 
         try {
-          const params = new URLSearchParams()
           const { filters } = get()
+          const params = new URLSearchParams()
           if (filters.status) params.set('status', filters.status)
           if (filters.assigneeId) params.set('assigneeId', filters.assigneeId)
           if (filters.priority !== null) params.set('priority', String(filters.priority))
@@ -88,19 +87,13 @@ export const useIssuesStore = create<IssuesState>()(
             return
           }
 
-          const response = await fetch(`${API_BASE}/issues?${params.toString()}`, {
-            headers: { 'Content-Type': 'application/json' },
+          const { data, meta } = await fetchIssues({
+            status: filters.status,
+            assigneeId: filters.assigneeId,
+            priority: filters.priority,
+            projectId: filters.projectId,
+            search: filters.search,
           })
-
-          if (!response.ok) {
-            throw new Error('Failed to load issues')
-          }
-
-          const json = await response.json()
-          const { data, meta } = json as {
-            data: Issue[]
-            meta: { cursor: string | null; hasMore: boolean }
-          }
 
           useCacheStore.getState().set(cacheKey, { data, meta })
 
@@ -119,33 +112,20 @@ export const useIssuesStore = create<IssuesState>()(
       },
 
       loadNextPage: async () => {
-        const { hasMore, isLoading, cursor } = get()
+        const { hasMore, isLoading, cursor, filters } = get()
         if (!hasMore || isLoading || !cursor) return
 
         set({ isLoading: true })
 
         try {
-          const params = new URLSearchParams({ cursor })
-          const { filters } = get()
-          if (filters.status) params.set('status', filters.status)
-          if (filters.assigneeId) params.set('assigneeId', filters.assigneeId)
-          if (filters.priority !== null) params.set('priority', String(filters.priority))
-          if (filters.projectId) params.set('projectId', filters.projectId)
-          if (filters.search) params.set('search', filters.search)
-
-          const response = await fetch(`${API_BASE}/issues?${params.toString()}`, {
-            headers: { 'Content-Type': 'application/json' },
+          const { data, meta } = await fetchIssues({
+            cursor,
+            status: filters.status,
+            assigneeId: filters.assigneeId,
+            priority: filters.priority,
+            projectId: filters.projectId,
+            search: filters.search,
           })
-
-          if (!response.ok) {
-            throw new Error('Failed to load more issues')
-          }
-
-          const json = await response.json()
-          const { data, meta } = json as {
-            data: Issue[]
-            meta: { cursor: string | null; hasMore: boolean }
-          }
 
           set((state) => ({
             issues: [...state.issues, ...data],
@@ -212,7 +192,8 @@ export const useIssuesStore = create<IssuesState>()(
                     assigneeId === null
                       ? null
                       : state.issues.find((i) => i.id === id)?.assigneeName,
-                }
+}
+
               : issue,
           ),
         }))
