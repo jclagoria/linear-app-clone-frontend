@@ -45,10 +45,8 @@ export async function updateIssue(
   return apiClient.patch<{ data: Issue }>(`/issues/${id}`, { body: data })
 }
 
-export async function deleteIssue(
-  id: string,
-): Promise<{ data: { success: boolean } }> {
-  return apiClient.delete<{ data: { success: boolean } }>(`/issues/${id}`)
+export async function deleteIssue(id: string): Promise<void> {
+  await apiClient.delete<void>(`/issues/${id}`)
 }
 
 export async function fetchComments(
