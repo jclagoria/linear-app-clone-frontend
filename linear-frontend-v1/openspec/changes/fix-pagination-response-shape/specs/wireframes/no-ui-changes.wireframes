@@ -1,0 +1,16 @@
+# Wireframe: No UI Changes
+
+## Purpose & Flow Context
+
+This change is scoped entirely to the data layer — API response type and store destructuring. No screens, components, layout, or visual elements are modified. Existing wireframes (see `openspec/specs/frontend/issues-store.md` for the issues list page) remain unchanged.
+
+## Impact
+
+| Aspect | Status |
+|--------|--------|
+| Layout regions | Unchanged |
+| Components | Unchanged |
+| States (empty/loading/populated/error) | Unchanged |
+| Content & microcopy | Unchanged |
+| Responsive behaviour | Unchanged |
+| Accessibility | Unchanged |
