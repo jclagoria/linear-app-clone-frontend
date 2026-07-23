@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest'
-import { http, HttpResponse } from 'msw'
+
 import { server } from '@/mocks/server'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useAuthStore } from '@/entities/session/model/store'
@@ -9,7 +9,6 @@ import { useUIStore } from '@/shared/stores/uiStore'
 import { selectFilteredIssues } from '@/shared/stores/selectors'
 import type { Issue } from '@/entities/issue/model/store'
 
-const API_BASE = '/api/v1'
 
 const mockIssues: Issue[] = [
   { id: '1', title: 'Bug fix', description: 'Fix the bug', status: 'todo', priority: 1, assigneeId: 'u1', projectId: null, cycleId: null, labels: ['bug'], createdAt: '', updatedAt: '' },
