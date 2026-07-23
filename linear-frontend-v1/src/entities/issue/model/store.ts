@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { changeIssueStatus, assignIssue as assignIssueApi } from '@/entities/issue/api'
-import type { Issue, IssueFilters } from './types'
+import { changeIssueStatus, assignIssue as assignIssueApi, fetchComments as fetchCommentsApi, updateComment as updateCommentApi } from '@/entities/issue/api'
+import type { Issue, IssueFilters, Comment } from './types'
 
 interface IssuesState {
   issues: Issue[]
@@ -12,6 +12,9 @@ interface IssuesState {
   hasMore: boolean
   isLoading: boolean
   error: string | null
+  commentsByIssue: Record<string, Comment[]>
+  commentsLoading: boolean
+  commentsError: string | null
 
   loadIssues: () => Promise<void>
   loadNextPage: () => Promise<void>
@@ -24,6 +27,9 @@ interface IssuesState {
   removeIssue: (id: string) => void
   changeStatus: (id: string, statusId: string) => Promise<Issue>
   assignIssue: (id: string, assigneeId: string | null) => Promise<Issue>
+  fetchComments: (issueId: string) => Promise<void>
+  updateCommentInStore: (issueId: string, commentId: string, body: string) => void
+  setCommentsForIssue: (issueId: string, comments: Comment[]) => void
 }
 
 const initialFilters: IssueFilters = {
@@ -46,6 +52,9 @@ export const initialIssuesState = {
   hasMore: true,
   isLoading: false,
   error: null as string | null,
+  commentsByIssue: {} as Record<string, Comment[]>,
+  commentsLoading: false,
+  commentsError: null as string | null,
 }
 
 export const useIssuesStore = create<IssuesState>()(
@@ -251,6 +260,41 @@ export const useIssuesStore = create<IssuesState>()(
           issues: state.issues.filter((issue) => issue.id !== id),
           selectedIssueId:
             state.selectedIssueId === id ? null : state.selectedIssueId,
+        }))
+      },
+
+      fetchComments: async (issueId: string) => {
+        set({ commentsLoading: true, commentsError: null })
+        try {
+          const result = await fetchCommentsApi(issueId)
+          set((state) => ({
+            commentsByIssue: { ...state.commentsByIssue, [issueId]: result.data },
+            commentsLoading: false,
+          }))
+        } catch (err) {
+          set({
+            commentsError: err instanceof Error ? err.message : 'Failed to load comments',
+            commentsLoading: false,
+          })
+        }
+      },
+
+      updateCommentInStore: (issueId: string, commentId: string, body: string) => {
+        set((state) => ({
+          commentsByIssue: {
+            ...state.commentsByIssue,
+            [issueId]: (state.commentsByIssue[issueId] ?? []).map((c) =>
+              c.id === commentId
+                ? { ...c, body, updatedAt: new Date().toISOString() }
+                : c,
+            ),
+          },
+        }))
+      },
+
+      setCommentsForIssue: (issueId: string, comments: Comment[]) => {
+        set((state) => ({
+          commentsByIssue: { ...state.commentsByIssue, [issueId]: comments },
         }))
       },
     }),

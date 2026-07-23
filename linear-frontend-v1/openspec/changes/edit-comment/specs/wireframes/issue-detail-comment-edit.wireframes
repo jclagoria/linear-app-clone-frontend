@@ -1,0 +1,151 @@
+# Wireframe: Issue Detail — Comment Editing
+
+## Purpose & Flow Context
+
+Lets the comment author edit their own comment inline on the issue detail page. Entry: click edit pencil on own CommentCard. Exit: save updates the body in-place; cancel returns to display mode.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `[p]` | Pencil icon (edit) | `💬N` | N comments |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm.
+
+**App-shell**: Shared header + sidebar + content container (existing). The comment list lives in the main content region of Issue Detail.
+
+**Content hierarchy** (comment section only):
+1. Comment count heading
+2. Comment cards (each with avatar, author, body, edit affordance)
+3. In edit mode: textarea replaces body, save + cancel replace edit pencil
+
+### Populated — Display Mode (default)
+
+```
++------------------------------------------------------------------+
+|  Comments (3)                         💬3                         |
+|                                                                    |
+|  +-- card ----------------------------------------------------+  |
+|  |  [JC]  Juan Carlos Lagoria  3m ago               [p]       |  |
+|  |                                                             |  |
+|  |  This is a great point. Let's explore it further.           |  |
+|  +-------------------------------------------------------------+  |
+|                                                                    |
+|  +-- card ----------------------------------------------------+  |
+|  |  [AL]  Ana Lopez  1h ago                        [p]        |  |
+|  |                                                             |  |
+|  |  I think we should approach this differently.               |  |
+|  +-------------------------------------------------------------+  |
+|                                                                    |
+|  +-- card (non-author --- no edit) ---------------------------+  |
+|  |  [MT]  Maria Torres  2h ago                                |  |
+|  |                                                             |  |
+|  |  Agreed. Let's schedule a follow-up.                         |  |
+|  +-------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Populated — Edit Mode (one comment in edit)
+
+```
++------------------------------------------------------------------+
+|  Comments (3)                         💬3                         |
+|                                                                    |
+|  +-- card ----------------------------------------------------+  |
+|  |  [JC]  Juan Carlos Lagoria  3m ago                          |  |
+|  |                                                             |  |
+|  |  [textarea……………………………………………………………………]               |  |
+|  |  [………………………………………………………………………………]               |  |
+|  |  [………………………………………………………………………………]               |  |
+|  |                                                             |  |
+|  |  [Save]  [Cancel]                                           |  |
+|  +-------------------------------------------------------------+  |
+|                                                                    |
+|  +-- card ----------------------------------------------------+  |
+|  |  [AL]  Ana Lopez  1h ago                        [p]        |  |
+|  |                                                             |  |
+|  |  I think we should approach this differently.               |  |
+|  +-------------------------------------------------------------+  |
+|                                                                    |
+|  +-- card (non-author) ---------------------------------------+  |
+|  |  [MT]  Maria Torres  2h ago                                |  |
+|  |                                                             |  |
+|  |  Agreed. Let's schedule a follow-up.                         |  |
+|  +-------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+---
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Edit button | Button (tertiary, sm) with `[p]` icon | Visible only when `comment.authorId === currentUserId`. Click → card enters edit mode. `aria-label="Edit comment"` | — |
+| Textarea | Textarea editor | Pre-filled with current body, auto-focused. Min height: 3 rows. | Empty body on save → validation error (frontend), PATCH 400 (backend) |
+| Save button | Button (primary, sm) | Calls `updateComment()`. Disabled + spinner during save. `aria-label="Save comment"` | Error → preserve text, re-enable |
+| Cancel button | Button (ghost, sm) | Discards edits, restores original body, exits edit mode. Also triggered by Escape. `aria-label="Cancel edit"` | Same as click |
+
+---
+
+## States
+
+### Populated — Display Mode
+
+As shown in sketch above. Each comment card shows avatar, name, timestamp, body. Edit pencil visible on own comments.
+
+### Populated — Edit Mode
+
+One comment at a time in edit mode. Textarea replaces body paragraph; save + cancel replace edit pencil. Other comments unaffected.
+
+### Saving
+
+Save button shows spinner, both buttons and textarea disabled. Card visual stays in edit-mode layout but inert.
+
+### Error after Save
+
+Error toast appears at top. Textarea stays open with unsaved edits. Save button re-enabled. Cancel still available.
+
+### Loading (Comments)
+
+Skeleton cards (existing pattern — unchanged by this feature).
+
+### Empty (No Comments)
+
+Existing EmptyState — unchanged by this feature.
+
+### Error (Comments Load Failed)
+
+Existing ErrorBanner — unchanged by this feature.
+
+---
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout as described |
+| Tablet (768-1024px) | No change — single-column comments layout remains |
+| Mobile (<768px) | Save/cancel buttons stack vertically if textarea is full width; touch targets ≥44px |
+
+---
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Inherits from Issue Detail page (`main`) |
+| Heading order | h3 "Comments (N)" — already existing |
+| Reading / Focus order | Edit pencil → focus moves to textarea on edit mode open; Tab from textarea → Save → Cancel; on cancel focus returns to edit pencil; on save focus stays on comment card |
+| Accessible names | Edit button `aria-label="Edit comment"`, Save `aria-label="Save comment"`, Cancel `aria-label="Cancel edit"` |
+| Keyboard operability | Enter/Space on edit pencil → open edit mode; Tab through textarea → Save → Cancel → next comment; Escape → cancel edit |
+| Target size | ≥24×24 CSS px on edit pencil; ≥44×44 on save/cancel (mobile) |
+| Non-color intent | Edit pencil icon + text intent; save/cancel use text labels not color only |

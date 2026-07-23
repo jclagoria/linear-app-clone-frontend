@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail — Comment Edit Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-error: #DC2626;
+      --color-error-bg: #FEF2F2;
+      --color-success: #16A34A;
+      --color-success-bg: #F0FDF4;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+      --max-width: 720px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); line-height: 1.5; }
+
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 240px;
+      background: var(--color-surface-elevated);
+      border-right: 1px solid var(--color-border);
+      padding: var(--space-4);
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      font-weight: 700;
+      font-size: 1.125rem;
+      margin-bottom: var(--space-6);
+      color: var(--color-text-primary);
+    }
+
+    .sidebar-nav {
+      list-style: none;
+    }
+
+    .sidebar-nav li {
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-1);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+
+    .sidebar-nav li.active {
+      background: #EFF6FF;
+      color: var(--color-primary);
+      font-weight: 500;
+    }
+
+    .main-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-header {
+      height: 56px;
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface-elevated);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-6);
+      gap: var(--space-3);
+    }
+
+    .top-header .breadcrumb {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+    }
+
+    .top-header .breadcrumb strong {
+      color: var(--color-text-primary);
+    }
+
+    .content {
+      flex: 1;
+      padding: var(--space-6);
+      max-width: var(--max-width);
+    }
+
+    .issue-header {
+      margin-bottom: var(--space-6);
+    }
+
+    .issue-header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+    }
+
+    .issue-header .meta {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+    }
+
+    .comments-section {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+    }
+
+    .comments-heading {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .comment-card {
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .comment-card:last-child {
+      border-bottom: none;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .avatar-jc { background: #7C3AED; }
+    .avatar-al { background: #059669; }
+    .avatar-mt { background: #D97706; }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+
+    .timestamp {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+    }
+
+    .comment-actions {
+      margin-left: auto;
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    .comment-body {
+      font-size: 0.875rem;
+      color: var(--color-text-primary);
+      padding-left: calc(32px + var(--space-3));
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-family);
+      font-size: 0.8125rem;
+      cursor: pointer;
+      transition: opacity 0.15s;
+      text-decoration: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-tertiary {
+      background: transparent;
+      color: var(--color-text-secondary);
+      padding: var(--space-1);
+      min-width: 24px;
+      min-height: 24px;
+    }
+
+    .btn-tertiary:hover:not(:disabled) {
+      background: #F1F5F9;
+      color: var(--color-text-primary);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+      padding: var(--space-1) var(--space-3);
+      height: 28px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: #1D4ED8;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+      padding: var(--space-1) var(--space-3);
+      height: 28px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: #F1F5F9;
+    }
+
+    .edit-textarea {
+      width: 100%;
+      min-height: 72px;
+      padding: var(--space-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-family: var(--font-family);
+      font-size: 0.875rem;
+      resize: vertical;
+      background: var(--color-surface-elevated);
+    }
+
+    .edit-textarea:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+    }
+
+    .edit-textarea:disabled {
+      background: #F8FAFC;
+      color: #94A3B8;
+    }
+
+    .edit-controls {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-2);
+      padding-left: calc(32px + var(--space-3));
+    }
+
+    .spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast-container {
+      position: fixed;
+      top: var(--space-4);
+      right: var(--space-4);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .toast {
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      animation: slideIn 0.2s ease-out;
+    }
+
+    .toast-error {
+      background: var(--color-error-bg);
+      border: 1px solid #FECACA;
+      color: var(--color-error);
+    }
+
+    .toast-success {
+      background: var(--color-success-bg);
+      border: 1px solid #BBF7D0;
+      color: var(--color-success);
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .state-controls {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-4);
+      padding: var(--space-3);
+      background: #F1F5F9;
+      border-radius: var(--radius-md);
+      font-size: 0.8125rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .state-controls .label {
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      margin-right: var(--space-1);
+    }
+
+    .state-btn {
+      padding: var(--space-1) var(--space-3);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface-elevated);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-family: var(--font-family);
+    }
+
+    .state-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+      border-color: var(--color-primary);
+    }
+
+    .state-btn:hover:not(.active) {
+      background: #F8FAFC;
+    }
+
+    .state-badge {
+      display: inline-block;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      padding: 1px 6px;
+      border-radius: 99px;
+      background: #E2E8F0;
+      color: var(--color-text-secondary);
+      margin-left: var(--space-2);
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .skeleton-card {
+      padding: var(--space-4) 0;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .skeleton-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+    }
+
+    .skeleton-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .skeleton-name {
+      width: 120px;
+      height: 14px;
+    }
+
+    .skeleton-body {
+      width: 100%;
+      height: 14px;
+      margin-bottom: var(--space-2);
+    }
+
+    .skeleton-body.short {
+      width: 65%;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-8);
+      color: var(--color-text-secondary);
+    }
+
+    .empty-state h3 {
+      font-size: 1rem;
+      margin-bottom: var(--space-2);
+      color: var(--color-text-primary);
+    }
+
+    .empty-state p {
+      font-size: 0.875rem;
+      margin-bottom: var(--space-4);
+    }
+
+    .error-banner {
+      padding: var(--space-3) var(--space-4);
+      background: var(--color-error-bg);
+      border: 1px solid #FECACA;
+      border-radius: var(--radius-md);
+      color: var(--color-error);
+      font-size: 0.875rem;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="state-controls">
+  <span class="label">State:</span>
+  <button class="state-btn active" data-state="display">Display</button>
+  <button class="state-btn" data-state="edit-mode">Edit Mode</button>
+  <button class="state-btn" data-state="saving">Saving</button>
+  <button class="state-btn" data-state="error-save">Error on Save</button>
+  <button class="state-btn" data-state="loading">Loading</button>
+  <button class="state-btn" data-state="empty">Empty</button>
+  <button class="state-btn" data-state="error-load">Load Error</button>
+</div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-logo">Linear Clone</div>
+    <ul class="sidebar-nav">
+      <li>Inbox</li>
+      <li class="active">Issues</li>
+      <li>Projects</li>
+      <li>Cycles</li>
+      <li>Teams</li>
+    </ul>
+  </aside>
+
+  <div class="main-area">
+    <header class="top-header">
+      <span class="breadcrumb">Issues / <strong>LIN-42</strong></span>
+    </header>
+
+    <main class="content">
+      <div class="issue-header">
+        <h1>Improve search performance</h1>
+        <div class="meta">Feature · In Progress · Priority: High</div>
+      </div>
+
+      <div class="toast-container" id="toast-container"></div>
+
+      <div class="comments-section" id="comments-section">
+        <div class="comments-heading">
+          <span>Comments (<span id="comment-count">3</span>)</span>
+          <span class="state-badge" id="comments-state-badge">display</span>
+        </div>
+
+        <div id="comments-content">
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+  const currentUserId = 'user-jc';
+
+  const mockComments = [
+    {
+      id: 'c1',
+      authorId: 'user-jc',
+      authorName: 'Juan Carlos Lagoria',
+      authorInitials: 'JC',
+      avatarColor: 'avatar-jc',
+      timestamp: '3m ago',
+      body: 'This is a great point. Let\'s explore it further. We should schedule a follow-up to discuss the indexing strategy.'
+    },
+    {
+      id: 'c2',
+      authorId: 'user-al',
+      authorName: 'Ana Lopez',
+      authorInitials: 'AL',
+      avatarColor: 'avatar-al',
+      timestamp: '1h ago',
+      body: 'I think we should approach this differently. A materialized view might give us better read performance than the current query approach.'
+    },
+    {
+      id: 'c3',
+      authorId: 'user-mt',
+      authorName: 'Maria Torres',
+      authorInitials: 'MT',
+      avatarColor: 'avatar-mt',
+      timestamp: '2h ago',
+      body: 'Agreed. Let\'s schedule a follow-up to review the query plans first.'
+    }
+  ];
+
+  const currentState = {
+    mode: 'display',
+    editingCommentId: null,
+    savedBody: null,
+    showToast: null,
+  };
+
+  function renderComments(comments) {
+    const container = document.getElementById('comments-content');
+    container.innerHTML = '';
+
+    comments.forEach(comment => {
+      const isAuthor = comment.authorId === currentUserId;
+      const isEditing = currentState.editingCommentId === comment.id;
+      const card = document.createElement('div');
+      card.className = 'comment-card';
+
+      const header = document.createElement('div');
+      header.className = 'comment-header';
+
+      const avatar = document.createElement('div');
+      avatar.className = `avatar ${comment.avatarColor}`;
+      avatar.textContent = comment.authorInitials;
+
+      const name = document.createElement('span');
+      name.className = 'author-name';
+      name.textContent = comment.authorName;
+
+      const ts = document.createElement('span');
+      ts.className = 'timestamp';
+      ts.textContent = comment.timestamp;
+
+      const actions = document.createElement('div');
+      actions.className = 'comment-actions';
+
+      let bodyContent;
+
+      if (isEditing) {
+        const textarea = document.createElement('textarea');
+        textarea.className = 'edit-textarea';
+        textarea.value = currentState.savedBody !== null ? currentState.savedBody : comment.body;
+        textarea.disabled = currentState.mode === 'saving';
+        textarea.id = 'edit-textarea';
+        textarea.setAttribute('aria-label', 'Edit comment body');
+
+        const controls = document.createElement('div');
+        controls.className = 'edit-controls';
+
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'btn btn-primary';
+        saveBtn.id = 'save-btn';
+        saveBtn.setAttribute('aria-label', 'Save comment');
+        saveBtn.disabled = currentState.mode === 'saving';
+
+        if (currentState.mode === 'saving') {
+          const spinner = document.createElement('span');
+          spinner.className = 'spinner';
+          saveBtn.appendChild(spinner);
+        } else {
+          saveBtn.textContent = 'Save';
+        }
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'btn btn-ghost';
+        cancelBtn.textContent = 'Cancel';
+        cancelBtn.id = 'cancel-btn';
+        cancelBtn.setAttribute('aria-label', 'Cancel edit');
+        cancelBtn.disabled = currentState.mode === 'saving';
+
+        controls.appendChild(saveBtn);
+        controls.appendChild(cancelBtn);
+
+        bodyContent = document.createElement('div');
+        bodyContent.style.paddingLeft = 'calc(32px + 0.75rem)';
+        bodyContent.appendChild(textarea);
+        bodyContent.appendChild(controls);
+      } else {
+        bodyContent = document.createElement('div');
+        bodyContent.className = 'comment-body';
+        bodyContent.textContent = comment.body;
+      }
+
+      if (isAuthor && !isEditing) {
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-tertiary';
+        editBtn.setAttribute('aria-label', 'Edit comment');
+        editBtn.textContent = '✏️';
+        editBtn.title = 'Edit comment';
+        actions.appendChild(editBtn);
+      }
+
+      header.appendChild(avatar);
+      header.appendChild(name);
+      header.appendChild(ts);
+      header.appendChild(actions);
+      card.appendChild(header);
+      card.appendChild(bodyContent);
+      container.appendChild(card);
+    });
+  }
+
+  function renderLoading() {
+    const container = document.getElementById('comments-content');
+    container.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+      const skeleton = document.createElement('div');
+      skeleton.className = 'skeleton-card';
+      skeleton.innerHTML = `
+        <div class="skeleton-header">
+          <div class="skeleton skeleton-avatar"></div>
+          <div class="skeleton skeleton-name"></div>
+        </div>
+        <div class="skeleton skeleton-body"></div>
+        <div class="skeleton skeleton-body short"></div>
+      `;
+      container.appendChild(skeleton);
+    }
+  }
+
+  function renderEmpty() {
+    const container = document.getElementById('comments-content');
+    container.innerHTML = `
+      <div class="empty-state">
+        <h3>No comments yet</h3>
+        <p>Be the first to share your thoughts on this issue.</p>
+        <button class="btn btn-primary" disabled style="opacity:0.5">Add a comment</button>
+      </div>
+    `;
+  }
+
+  function renderError() {
+    const container = document.getElementById('comments-content');
+    container.innerHTML = `
+      <div class="error-banner">
+        <span>⚠️</span>
+        <span>Failed to load comments. Please try again.</span>
+      </div>
+    `;
+  }
+
+  function showToast(type, message) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 4000);
+  }
+
+  function setState(state) {
+    const badge = document.getElementById('comments-state-badge');
+    const container = document.getElementById('comments-content');
+    const toastContainer = document.getElementById('toast-container');
+    toastContainer.innerHTML = '';
+    badge.textContent = state;
+
+    document.querySelectorAll('.state-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.state === state);
+    });
+
+    switch (state) {
+      case 'display':
+        currentState.mode = 'display';
+        currentState.editingCommentId = null;
+        currentState.savedBody = null;
+        document.getElementById('comment-count').textContent = '3';
+        renderComments(mockComments);
+        break;
+
+      case 'edit-mode':
+        currentState.mode = 'display';
+        currentState.editingCommentId = 'c1';
+        currentState.savedBody = null;
+        document.getElementById('comment-count').textContent = '3';
+        renderComments(mockComments);
+        setTimeout(() => {
+          const ta = document.getElementById('edit-textarea');
+          if (ta) ta.focus();
+        }, 50);
+        break;
+
+      case 'saving':
+        currentState.mode = 'saving';
+        currentState.editingCommentId = 'c1';
+        currentState.savedBody = 'This is a great point. Let\'s explore it further — I\'ve updated my thoughts on the indexing approach.';
+        document.getElementById('comment-count').textContent = '3';
+        renderComments(mockComments);
+        break;
+
+      case 'error-save':
+        currentState.mode = 'display';
+        currentState.editingCommentId = 'c1';
+        currentState.savedBody = 'This is a great point. Let\'s explore it further — I\'ve updated my thoughts on the indexing approach.';
+        document.getElementById('comment-count').textContent = '3';
+        renderComments(mockComments);
+        showToast('error', 'Failed to save comment. Please try again.');
+        break;
+
+      case 'loading':
+        currentState.mode = 'display';
+        currentState.editingCommentId = null;
+        currentState.savedBody = null;
+        document.getElementById('comment-count').textContent = '—';
+        renderLoading();
+        break;
+
+      case 'empty':
+        currentState.mode = 'display';
+        currentState.editingCommentId = null;
+        currentState.savedBody = null;
+        document.getElementById('comment-count').textContent = '0';
+        renderEmpty();
+        break;
+
+      case 'error-load':
+        currentState.mode = 'display';
+        currentState.editingCommentId = null;
+        currentState.savedBody = null;
+        document.getElementById('comment-count').textContent = '—';
+        renderError();
+        break;
+    }
+  }
+
+  document.querySelectorAll('.state-btn').forEach(btn => {
+    btn.addEventListener('click', () => setState(btn.dataset.state));
+  });
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-tertiary');
+    if (btn && btn.textContent.includes('✏️')) {
+      setState('edit-mode');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const saveBtn = e.target.closest('#save-btn');
+    if (saveBtn) {
+      setState('saving');
+      setTimeout(() => {
+        showToast('success', 'Comment saved successfully.');
+        setState('display');
+        const jc = mockComments.find(c => c.id === 'c1');
+        if (jc) jc.body = document.getElementById('edit-textarea')?.value || jc.body;
+        currentState.editingCommentId = null;
+        currentState.savedBody = null;
+        renderComments(mockComments);
+      }, 1500);
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const cancelBtn = e.target.closest('#cancel-btn');
+    if (cancelBtn) {
+      setState('display');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && currentState.editingCommentId) {
+      setState('display');
+    }
+  });
+
+  setState('display');
+</script>
+
+</body>
+</html>

@@ -5,9 +5,11 @@ import type { Comment } from '../model/types'
 
 interface CommentListProps {
   comments: Comment[]
+  currentUserId: string | null
+  onEditComment: (commentId: string, body: string) => Promise<void>
 }
 
-export function CommentList({ comments }: CommentListProps) {
+export function CommentList({ comments, currentUserId, onEditComment }: CommentListProps) {
   if (comments.length === 0) {
     return (
       <EmptyState
@@ -25,7 +27,11 @@ export function CommentList({ comments }: CommentListProps) {
       </h3>
       {comments.map((comment) => (
         <div key={comment.id} role="listitem">
-          <CommentCard comment={comment} />
+          <CommentCard
+            comment={comment}
+            currentUserId={currentUserId}
+            onEdit={onEditComment}
+          />
         </div>
       ))}
     </div>

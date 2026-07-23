@@ -86,3 +86,14 @@ export async function createComment(
     body: { body },
   })
 }
+
+export async function updateComment(
+  issueId: string,
+  commentId: string,
+  body: string,
+): Promise<{ data: Comment }> {
+  return apiClient.patch<{ data: Comment }>(
+    `/issues/${issueId}/comments/${commentId}`,
+    { body: { body } },
+  )
+}
