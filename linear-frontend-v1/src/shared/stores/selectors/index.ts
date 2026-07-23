@@ -70,29 +70,17 @@ export const selectUnreadCount = createMemoizedSelector(
 )
 
 export interface ActiveFilters {
-  status: string | null
+  statusId: string | null
   assigneeId: string | null
-  priority: number | null
   projectId: string | null
-  search: string | null
 }
 
 export const selectFilteredIssues = createMemoizedSelector(
   (issues: Issue[], filters: ActiveFilters): Issue[] => {
     return issues.filter((issue) => {
-      if (filters.status && issue.status !== filters.status) return false
+      if (filters.statusId && issue.status !== filters.statusId) return false
       if (filters.assigneeId && issue.assigneeId !== filters.assigneeId) return false
-      if (filters.priority !== null && issue.priority !== filters.priority) return false
       if (filters.projectId && issue.projectId !== filters.projectId) return false
-      if (filters.search) {
-        const query = filters.search.toLowerCase()
-        if (
-          !issue.title.toLowerCase().includes(query) &&
-          !issue.description.toLowerCase().includes(query)
-        ) {
-          return false
-        }
-      }
       return true
     })
   },

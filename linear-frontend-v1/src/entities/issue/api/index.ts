@@ -2,13 +2,11 @@ import { apiClient } from '@/shared/lib/api-client'
 import type { Issue, Comment, CreateIssueData, UpdateIssueData } from '../model/types'
 
 export interface FetchIssuesParams {
-  status?: string | null
+  statusId?: string | null
   assigneeId?: string | null
-  priority?: number | null
   projectId?: string | null
   cycleId?: string | null
   labelIds?: string[]
-  search?: string | null
   cursor?: string | null
 }
 
@@ -21,13 +19,12 @@ export async function fetchIssues(
   params: FetchIssuesParams = {},
 ): Promise<FetchIssuesResponse> {
   const queryParams: Record<string, string> = {}
-  if (params.status) queryParams.status = params.status
+  if (params.statusId) queryParams.statusId = params.statusId
   if (params.assigneeId) queryParams.assigneeId = params.assigneeId
-  if (params.priority !== null && params.priority !== undefined)
-    queryParams.priority = String(params.priority)
   if (params.projectId) queryParams.projectId = params.projectId
   if (params.cycleId) queryParams.cycleId = params.cycleId
-  if (params.search) queryParams.search = params.search
+  if (params.labelIds && params.labelIds.length > 0)
+    queryParams.labelIds = params.labelIds.join(',')
   if (params.cursor) queryParams.cursor = params.cursor
 
   return apiClient.get<FetchIssuesResponse>('/issues', {

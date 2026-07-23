@@ -29,13 +29,11 @@ export function IssuesPage() {
 
   const [showForm, setShowForm] = useState(false)
   const hasActiveFilters =
-    filters.status !== null ||
+    filters.statusId !== null ||
     filters.assigneeId !== null ||
-    filters.priority !== null ||
     filters.projectId !== null ||
     filters.cycleId !== null ||
-    filters.labelIds.length > 0 ||
-    filters.search !== null
+    filters.labelIds.length > 0
 
   const filteredIssues = selectFilteredIssues(issues, filters)
 

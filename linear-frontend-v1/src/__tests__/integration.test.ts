@@ -106,7 +106,7 @@ describe('Filter → Selector Integration', () => {
   })
 
   it('applied filters produce correct derived data', () => {
-    useIssuesStore.getState().setFilters({ status: 'todo' })
+    useIssuesStore.getState().setFilters({ statusId: 'todo' })
     const { filters, issues } = useIssuesStore.getState()
 
     const filtered = selectFilteredIssues(issues, filters)
@@ -120,21 +120,12 @@ describe('Filter → Selector Integration', () => {
   })
 
   it('clear filters returns all issues', () => {
-    useIssuesStore.getState().setFilters({ status: 'done' })
+    useIssuesStore.getState().setFilters({ statusId: 'done' })
     useIssuesStore.getState().clearFilters()
 
     const { filters, issues } = useIssuesStore.getState()
     const result = selectFilteredIssues(issues, filters)
     expect(result).toHaveLength(3)
-  })
-
-  it('search filter matches title and description', () => {
-    useIssuesStore.getState().setFilters({ search: 'bug' })
-    const { filters, issues } = useIssuesStore.getState()
-
-    const result = selectFilteredIssues(issues, filters)
-    expect(result).toHaveLength(1)
-    expect(result[0].id).toBe('1')
   })
 })
 

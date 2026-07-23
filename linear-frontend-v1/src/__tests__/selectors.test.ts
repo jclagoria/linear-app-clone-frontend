@@ -104,23 +104,18 @@ describe('selectors', () => {
 
   describe('selectFilteredIssues', () => {
     it('filters by status', () => {
-      const result = selectFilteredIssues(issues, { status: 'todo', assigneeId: null, priority: null, projectId: null, search: null })
+      const result = selectFilteredIssues(issues, { statusId: 'todo', assigneeId: null, projectId: null })
       expect(result).toHaveLength(2)
       expect(result.every((i) => i.status === 'todo')).toBe(true)
     })
 
     it('filters by assignee', () => {
-      const result = selectFilteredIssues(issues, { status: null, assigneeId: 'u1', priority: null, projectId: null, search: null })
-      expect(result).toHaveLength(2)
-    })
-
-    it('filters by search', () => {
-      const result = selectFilteredIssues(issues, { status: null, assigneeId: null, priority: null, projectId: null, search: 'bug' })
+      const result = selectFilteredIssues(issues, { statusId: null, assigneeId: 'u1', projectId: null })
       expect(result).toHaveLength(2)
     })
 
     it('returns all issues with no filters', () => {
-      const result = selectFilteredIssues(issues, { status: null, assigneeId: null, priority: null, projectId: null, search: null })
+      const result = selectFilteredIssues(issues, { statusId: null, assigneeId: null, projectId: null })
       expect(result).toHaveLength(4)
     })
   })

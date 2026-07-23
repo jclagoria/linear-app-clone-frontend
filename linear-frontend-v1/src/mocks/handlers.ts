@@ -77,10 +77,10 @@ export const handlers = [
   http.get(`${API_BASE}/issues`, ({ request }) => {
     const url = new URL(request.url)
     const cursor = url.searchParams.get('cursor')
-    const status = url.searchParams.get('status')
+    const statusId = url.searchParams.get('statusId')
 
     let filtered = [...mockIssues]
-    if (status) filtered = filtered.filter((i) => i.status === status)
+    if (statusId) filtered = filtered.filter((i) => i.status === statusId)
 
     if (cursor === 'page2') {
       return HttpResponse.json({

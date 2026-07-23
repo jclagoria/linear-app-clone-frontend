@@ -26,13 +26,11 @@ export interface Comment {
 }
 
 export interface IssueFilters {
-  status: string | null
+  statusId: string | null
   assigneeId: string | null
-  priority: number | null
   projectId: string | null
   cycleId: string | null
   labelIds: string[]
-  search: string | null
 }
 
 export interface PaginationCursor {
