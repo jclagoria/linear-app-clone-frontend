@@ -2,6 +2,7 @@ import { LayoutDashboard, ListTodo, FolderKanban, RefreshCw, Settings, PanelLeft
 import { cn } from '@/shared/lib/utils'
 import { NavLink } from './NavLink'
 import { TeamSelector } from './TeamSelector'
+import { useTeamStore } from '@/entities/team/model/store'
 
 const navItems = [
   { to: '/', icon: <LayoutDashboard className="h-4 w-4" />, label: 'Dashboard' },
@@ -23,6 +24,16 @@ interface SidebarProps {
 }
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
+  const currentTeamId = useTeamStore((s) => s.currentTeamId)
+  const setCurrentTeamId = useTeamStore((s) => s.setCurrentTeamId)
+
+  const handleTeamSelect = (teamId: string) => {
+    const team = teams.find((t) => t.id === teamId)
+    if (team) {
+      setCurrentTeamId(team.id, team.name)
+    }
+  }
+
   return (
     <aside
       className={cn(
@@ -33,8 +44,8 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
     >
       <TeamSelector
         teams={teams}
-        currentTeamId="team-1"
-        onSelect={(id) => console.log('Team selected:', id)}
+        currentTeamId={currentTeamId ?? 'team-1'}
+        onSelect={handleTeamSelect}
         collapsed={collapsed}
       />
 

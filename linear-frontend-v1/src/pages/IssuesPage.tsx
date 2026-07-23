@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
 import { useToastStore } from '@/shared/stores/toastStore'
+import { useTeamStore } from '@/entities/team/model/store'
 import { Button } from '@/shared/ui/Button'
 import { Plus } from 'lucide-react'
 import { IssueFilters } from '@/entities/issue/ui/IssueFilters'
@@ -26,6 +27,7 @@ export function IssuesPage() {
   const clearFilters = useIssuesStore((s) => s.clearFilters)
   const addIssue = useIssuesStore((s) => s.addIssue)
   const addToast = useToastStore((s) => s.addToast)
+  const currentTeamId = useTeamStore((s) => s.currentTeamId)
 
   const [showForm, setShowForm] = useState(false)
   const hasActiveFilters =
@@ -54,6 +56,15 @@ export function IssuesPage() {
 
   const handleCreateIssue = useCallback(
     async (data: IssueFormSchema) => {
+      if (!currentTeamId) {
+        addToast({
+          title: 'Please select a team first',
+          variant: 'error',
+          duration: 3000,
+        })
+        return
+      }
+
       const result = await createIssue({
         title: data.title,
         description: data.description || undefined,
@@ -61,6 +72,7 @@ export function IssuesPage() {
         priority: data.priority,
         assigneeId: data.assigneeId,
         labels: data.labels,
+        teamId: currentTeamId,
       })
       addIssue(result.data)
       addToast({
@@ -69,7 +81,7 @@ export function IssuesPage() {
         duration: 3000,
       })
     },
-    [addIssue, addToast],
+    [addIssue, addToast, currentTeamId],
   )
 
   return (
@@ -79,6 +91,8 @@ export function IssuesPage() {
         <Button
           onClick={() => setShowForm(true)}
           icon={<Plus className="h-4 w-4" />}
+          disabled={!currentTeamId}
+          title={!currentTeamId ? 'Select a team first' : undefined}
         >
           New Issue
         </Button>
@@ -100,12 +114,14 @@ export function IssuesPage() {
         onLoadMore={loadNextPage}
         onRetry={loadIssues}
         hasActiveFilters={hasActiveFilters}
-        onCreateIssue={() => setShowForm(true)}
+        onCreateIssue={() => currentTeamId && setShowForm(true)}
       />
 
       <IssueFormModal
         isOpen={showForm}
         mode="create"
+        disabled={!currentTeamId}
+        disabledMessage="Select a team before creating issues"
         onClose={() => setShowForm(false)}
         onSubmit={handleCreateIssue}
       />

@@ -9,6 +9,8 @@ interface IssueFormModalProps {
   isOpen: boolean
   mode: 'create' | 'edit'
   issue?: Issue
+  disabled?: boolean
+  disabledMessage?: string
   onClose: () => void
   onSubmit: (data: IssueFormSchema) => Promise<boolean | void>
 }
@@ -17,6 +19,8 @@ export function IssueFormModal({
   isOpen,
   mode,
   issue,
+  disabled = false,
+  disabledMessage,
   onClose,
   onSubmit,
 }: IssueFormModalProps) {
@@ -66,11 +70,17 @@ export function IssueFormModal({
       onClose={onClose}
       title={mode === 'create' ? 'New Issue' : 'Edit Issue'}
     >
+      {disabled && disabledMessage && (
+        <div className="mb-4 rounded-md bg-yellow-50 p-3 text-sm text-yellow-800" role="alert">
+          {disabledMessage}
+        </div>
+      )}
       <IssueForm
         mode={mode}
         issue={issue}
         onSubmit={handleSubmit}
         onCancel={onClose}
+        disabled={disabled}
       />
     </Modal>
   )

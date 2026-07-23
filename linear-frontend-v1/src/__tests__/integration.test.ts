@@ -74,7 +74,7 @@ describe('Issue List + Cache Integration', () => {
   })
 
   it('cache hit returns without fetch call', async () => {
-    useCacheStore.getState().set('issues:list?', { data: mockIssues, meta: { cursor: null, hasMore: false } })
+    useCacheStore.getState().set('issues:list?', { data: mockIssues, pagination: { nextCursor: null, hasMore: false } })
     const fetchSpy = vi.spyOn(globalThis, 'fetch')
 
     useIssuesStore.setState({ isLoading: true })

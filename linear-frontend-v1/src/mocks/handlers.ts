@@ -90,13 +90,13 @@ export const handlers = [
     if (cursor === 'page2') {
       return HttpResponse.json({
         data: [{ id: '4', title: 'Page 2 issue', description: 'More', status: 'todo', priority: 1, assigneeId: null, projectId: null, cycleId: null, labels: [], createdAt: '', updatedAt: '' }],
-        meta: { cursor: null, hasMore: false },
+        pagination: { nextCursor: null, hasMore: false },
       })
     }
 
     return HttpResponse.json({
       data: filtered,
-      meta: { cursor: filtered.length > 2 ? 'page2' : null, hasMore: filtered.length > 2 },
+      pagination: { nextCursor: filtered.length > 2 ? 'page2' : null, hasMore: filtered.length > 2 },
     })
   }),
 
@@ -112,6 +112,50 @@ export const handlers = [
     }
 
     return HttpResponse.json({ data: issue })
+  }),
+
+  http.post(`${API_BASE}/issues`, async ({ request }) => {
+    const body = (await request.json()) as {
+      title: string
+      description?: string
+      status?: string
+      priority?: number
+      assigneeId?: string | null
+      projectId?: string | null
+      cycleId?: string | null
+      labels?: string[]
+      teamId: string
+    }
+
+    if (!body.teamId) {
+      return HttpResponse.json(
+        {
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'teamId is required',
+            details: [{ field: 'teamId', message: 'teamId is required' }],
+          },
+        },
+        { status: 400 },
+      )
+    }
+
+    const newIssue = {
+      id: String(Date.now()),
+      title: body.title,
+      description: body.description || '',
+      status: body.status || 'todo',
+      priority: body.priority || 1,
+      assigneeId: body.assigneeId || null,
+      projectId: body.projectId || null,
+      cycleId: body.cycleId || null,
+      labels: body.labels || [],
+      teamId: body.teamId,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    return HttpResponse.json({ data: newIssue }, { status: 201 })
   }),
 
   // ── Error Simulation Endpoints ──────────────────────────────────────

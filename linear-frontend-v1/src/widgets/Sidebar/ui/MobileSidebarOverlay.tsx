@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { cn } from '@/shared/lib/utils'
 import { NavLink } from './NavLink'
 import { TeamSelector } from './TeamSelector'
+import { useTeamStore } from '@/entities/team/model/store'
 import { LayoutDashboard, ListTodo, FolderKanban, RefreshCw, Settings } from 'lucide-react'
 
 const navItems = [
@@ -28,6 +29,15 @@ export function MobileSidebarOverlay({ isOpen, onClose }: MobileSidebarOverlayPr
   const overlayRef = useRef<HTMLDivElement>(null)
   const firstNavLinkRef = useRef<HTMLAnchorElement>(null)
   const navigate = useNavigate()
+  const currentTeamId = useTeamStore((s) => s.currentTeamId)
+  const setCurrentTeamId = useTeamStore((s) => s.setCurrentTeamId)
+
+  const handleTeamSelect = useCallback((teamId: string) => {
+    const team = teams.find((t) => t.id === teamId)
+    if (team) {
+      setCurrentTeamId(team.id, team.name)
+    }
+  }, [setCurrentTeamId])
 
   const handleNavClick = useCallback(
     (to: string) => {
@@ -102,8 +112,8 @@ export function MobileSidebarOverlay({ isOpen, onClose }: MobileSidebarOverlayPr
       >
         <TeamSelector
           teams={teams}
-          currentTeamId="team-1"
-          onSelect={(id) => console.log('Team selected:', id)}
+          currentTeamId={currentTeamId ?? 'team-1'}
+          onSelect={handleTeamSelect}
         />
 
         <div className="border-b border-[var(--border-color)] px-3 py-2">

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Creation (teamId) — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-bg: #F8FAFC;
+      --color-surface: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-danger: #EF4444;
+      --color-success: #22C55E;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-bg); color: var(--color-text); padding: 2rem; }
+    h1 { font-size: 1.5rem; margin-bottom: 1rem; }
+    .flow-diagram { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; }
+    .step { display: flex; align-items: flex-start; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border); }
+    .step:last-child { border-bottom: none; }
+    .step-num { background: var(--color-primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 600; flex-shrink: 0; }
+    .step-content { flex: 1; }
+    .step-title { font-weight: 600; margin-bottom: 0.25rem; }
+    .step-desc { font-size: 0.875rem; color: var(--color-text-secondary); }
+    .code { background: #F1F5F9; border-radius: 4px; padding: 0.125rem 0.375rem; font-family: monospace; font-size: 0.8rem; }
+    .state-toggles { display: flex; gap: 0.5rem; margin: 1rem 0; }
+    .state-toggles button { padding: 0.375rem 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); cursor: pointer; font-size: 0.8rem; }
+    .state-toggles button:hover { background: #F1F5F9; }
+    #simulation { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.5rem; }
+    #simulation .log { margin-top: 1rem; font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; background: #0F172A; color: #22C55E; padding: 0.75rem; border-radius: 4px; min-height: 60px; }
+  </style>
+</head>
+<body>
+  <h1>Issue Creation — teamId Data Flow</h1>
+  <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">No visual layout changes. This mockup demonstrates the data flow for the teamId fix.</p>
+
+  <div class="flow-diagram">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Team Selection</div>
+        <div class="step-desc">User selects a team in the sidebar <span class="code">TeamSelector</span>. The selected <span class="code">teamId</span> is written to a shared <span class="code">TeamStore</span>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Open Create Issue Modal</div>
+        <div class="step-desc">User clicks "New Issue" button on <span class="code">IssuesPage</span>. Modal opens with the create-issue form.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Submit Form</div>
+        <div class="step-desc">User fills form fields and clicks Submit. <span class="code">handleCreateIssue</span> reads <span class="code">currentTeamId</span> from <span class="code">TeamStore</span>.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">API Call</div>
+        <div class="step-desc"><span class="code">createIssue({ title, description, status, priority, teamId })</span> sends POST to <span class="code">/api/v1/issues</span> with teamId in body.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <div class="step-title">Success / Error</div>
+        <div class="step-desc">On 201: issue added to store, modal closes, success toast. On error: error toast, modal stays open.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Simulation</h2>
+  <div class="state-toggles">
+    <button onclick="simulate('success')">Simulate Success</button>
+    <button onclick="simulate('error')">Simulate Error</button>
+    <button onclick="simulate('missing-team')">Simulate Missing Team</button>
+  </div>
+
+  <div id="simulation">
+    <p style="font-weight: 600;">Current team: <span id="current-team">Team Alpha (team-1)</span></p>
+    <p>Form data: <span class="code" id="form-data">{ title: "Fix login bug", status: "Todo", priority: 2 }</span></p>
+    <p>API payload: <span class="code" id="api-payload">-</span></p>
+    <button onclick="submitIssue()" style="margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--color-primary); color: white; border: none; border-radius: var(--radius-md); cursor: pointer;">Submit Issue</button>
+    <div class="log" id="log">Ready. Click "Submit Issue" to simulate.</div>
+  </div>
+
+  <script>
+    const teamStore = { currentTeamId: 'team-1', currentTeamName: 'Team Alpha' };
+
+    function simulate(state) {
+      if (state === 'missing-team') {
+        teamStore.currentTeamId = null;
+        teamStore.currentTeamName = 'None';
+        document.getElementById('current-team').textContent = 'None (no team selected)';
+        appendLog('⚠ User has no team selected — block submission');
+      } else {
+        teamStore.currentTeamId = 'team-1';
+        teamStore.currentTeamName = 'Team Alpha';
+        document.getElementById('current-team').textContent = 'Team Alpha (team-1)';
+        appendLog('✓ Team selected: ' + teamStore.currentTeamName);
+      }
+    }
+
+    function appendLog(msg) {
+      const log = document.getElementById('log');
+      log.textContent += '\n' + msg;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function submitIssue() {
+      const formData = { title: 'Fix login bug', description: '', status: 'Todo', priority: 2 };
+
+      if (!teamStore.currentTeamId) {
+        appendLog('✗ ERROR: No team selected. Cannot create issue.');
+        document.getElementById('api-payload').textContent = 'BLOCKED — missing teamId';
+        return;
+      }
+
+      const payload = { ...formData, teamId: teamStore.currentTeamId };
+      document.getElementById('api-payload').textContent = JSON.stringify(payload);
+
+      appendLog('→ POST /api/v1/issues');
+      appendLog('→ Body: ' + JSON.stringify(payload));
+
+      setTimeout(() => {
+        const success = Math.random() > 0.3;
+        if (success) {
+          appendLog('✓ 201 Created — Issue added to list');
+        } else {
+          appendLog('✗ 422 Validation Error — Invalid teamId');
+        }
+      }, 500);
+    }
+  </script>
+</body>
+</html>
