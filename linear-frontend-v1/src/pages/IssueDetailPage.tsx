@@ -1,22 +1,23 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/entities/session/model/store'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useIssueLabelsStore } from '@/entities/label/model/store'
 import { IssueDetail } from '@/entities/issue/ui/IssueDetail'
 import { IssueFormModal } from '@/entities/issue/ui/IssueFormModal'
 import { ConfirmDeleteDialog } from '@/entities/issue/ui/ConfirmDeleteDialog'
 import { useToastStore } from '@/shared/stores/toastStore'
-import { deleteIssue, updateIssue, fetchComments } from '@/entities/issue/api'
-import { isBusinessRuleError } from '@/shared/lib/api-client'
+import { updateIssue, updateComment, deleteIssue } from '@/entities/issue/api'
+import { isBusinessRuleError, isForbiddenError } from '@/shared/lib/api-client'
 import { selectIssueById } from '@/entities/issue/model/selectors'
 import { useShallow } from 'zustand/react/shallow'
-import type { Comment } from '@/entities/issue/model/types'
 import type { IssueFormSchema } from '@/entities/issue/model/validation'
 import type { Label } from '@/entities/label/model/types'
 
 export function IssueDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const user = useAuthStore((s) => s.user)
   const issues = useIssuesStore((s) => s.issues)
   const isLoading = useIssuesStore((s) => s.isLoading)
   const error = useIssuesStore((s) => s.error)
@@ -25,11 +26,16 @@ export function IssueDetailPage() {
   const removeIssue = useIssuesStore((s) => s.removeIssue)
   const selectIssue = useIssuesStore((s) => s.selectIssue)
   const assignIssue = useIssuesStore((s) => s.assignIssue)
+  const fetchComments = useIssuesStore((s) => s.fetchComments)
+  const updateCommentInStore = useIssuesStore((s) => s.updateCommentInStore)
+  const comments = useIssuesStore(
+    useShallow((s) => (id ? s.commentsByIssue[id] ?? [] : [])),
+  )
+  const commentsLoading = useIssuesStore((s) => s.commentsLoading)
+  const commentsError = useIssuesStore((s) => s.commentsError)
   const addToast = useToastStore((s) => s.addToast)
+  const currentUserId = user?.id ?? null
 
-  const [comments, setComments] = useState<Comment[]>([])
-  const [commentsLoading, setCommentsLoading] = useState(false)
-  const [commentsError, setCommentsError] = useState<string | null>(null)
   const [showEditForm, setShowEditForm] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [statusChanging, setStatusChanging] = useState(false)
@@ -58,18 +64,8 @@ export function IssueDetailPage() {
 
   useEffect(() => {
     if (!id) return
-    setCommentsLoading(true)
-    setCommentsError(null)
     fetchComments(id)
-      .then((result) => {
-        setComments(result.data)
-        setCommentsLoading(false)
-      })
-      .catch((err) => {
-        setCommentsError(err instanceof Error ? err.message : 'Failed to load comments')
-        setCommentsLoading(false)
-      })
-  }, [id])
+  }, [id, fetchComments])
 
   useEffect(() => {
     if (id) {
@@ -257,6 +253,37 @@ export function IssueDetailPage() {
     setShowLabelPicker((prev) => !prev)
   }, [])
 
+  const handleEditComment = useCallback(
+    async (commentId: string, body: string) => {
+      if (!id) return
+      try {
+        await updateComment(id, commentId, body)
+        updateCommentInStore(id, commentId, body)
+        addToast({
+          title: 'Comment updated',
+          variant: 'success',
+          duration: 3000,
+        })
+      } catch (err) {
+        if (isForbiddenError(err)) {
+          addToast({
+            title: 'Not the comment owner',
+            variant: 'error',
+            duration: 5000,
+          })
+          return
+        }
+        addToast({
+          title: 'Failed to update comment. Please try again.',
+          variant: 'error',
+          duration: 5000,
+        })
+        throw err
+      }
+    },
+    [id, addToast],
+  )
+
   const pageError = error || commentsError
   const combinedLoading = isLoading || commentsLoading
 
@@ -271,8 +298,8 @@ export function IssueDetailPage() {
         onEdit={() => setShowEditForm(true)}
         onDelete={() => setShowDeleteDialog(true)}
         onRetry={() => {
-          if (id) fetchComments(id).then((r) => setComments(r.data)).catch((e) => setCommentsError(e.message))
           loadIssues()
+          if (id) fetchComments(id)
         }}
         onStatusChange={handleStatusChange}
         statusChanging={statusChanging}
@@ -285,6 +312,8 @@ export function IssueDetailPage() {
         onToggleLabelPicker={handleToggleLabelPicker}
         onCloseLabelPicker={() => setShowLabelPicker(false)}
         labelsDisabled={labelsDisabled}
+        currentUserId={currentUserId}
+        onEditComment={handleEditComment}
       />
 
       <IssueFormModal

@@ -32,6 +32,8 @@ interface IssueDetailProps {
   onToggleLabelPicker?: () => void
   onCloseLabelPicker?: () => void
   labelsDisabled?: boolean
+  currentUserId: string | null
+  onEditComment: (commentId: string, body: string) => Promise<void>
 }
 
 const priorityLabels: Record<number, { label: string; className: string }> = {
@@ -62,6 +64,8 @@ export function IssueDetail({
   onToggleLabelPicker,
   onCloseLabelPicker,
   labelsDisabled,
+  currentUserId,
+  onEditComment,
 }: IssueDetailProps) {
   const addLabelButtonRef = useRef<HTMLButtonElement>(null)
   if (error) {
@@ -199,7 +203,11 @@ export function IssueDetail({
 
       <hr className="border-border" />
 
-      <CommentList comments={comments} />
+      <CommentList
+        comments={comments}
+        currentUserId={currentUserId}
+        onEditComment={onEditComment}
+      />
     </div>
   )
 }

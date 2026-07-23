@@ -15,6 +15,7 @@ vi.mock('@/entities/issue/api', () => ({
   fetchComments: vi.fn().mockResolvedValue({ data: [] }),
   updateIssue: vi.fn(),
   deleteIssue: vi.fn(),
+  updateComment: vi.fn(),
 }))
 
 vi.mock('@/entities/label/api', () => ({
@@ -356,6 +357,216 @@ describe('IssueDetailPage Label Attach/Detach', () => {
       expect(toasts).toHaveLength(1)
       expect(toasts[0].title).toBe('Label cannot be removed')
       expect(toasts[0].variant).toBe('error')
+    })
+  })
+})
+
+import { useAuthStore } from '@/entities/session/model/store'
+
+const mockComments = [
+  {
+    id: 'c1',
+    issueId: '1',
+    body: 'Original comment body',
+    authorId: 'u1',
+    authorName: 'User',
+    createdAt: '2024-01-01T12:00:00Z',
+    updatedAt: '2024-01-01T12:00:00Z',
+  },
+  {
+    id: 'c2',
+    issueId: '1',
+    body: 'Comment by another user',
+    authorId: 'u2',
+    authorName: 'Other User',
+    createdAt: '2024-01-02T12:00:00Z',
+    updatedAt: '2024-01-02T12:00:00Z',
+  },
+]
+
+describe('IssueDetailPage Edit Comment', () => {
+  beforeEach(async () => {
+    useAuthStore.setState({
+      user: { id: 'u1', name: 'User', email: 'user@test.com' },
+      accessToken: 'token',
+      isAuthenticated: true,
+      isLoading: false,
+      error: null,
+    })
+    useIssuesStore.setState({
+      issues: [mockIssue],
+      selectedIssueId: null,
+      commentsByIssue: {},
+      commentsLoading: false,
+      commentsError: null,
+      filters: { status: null, assigneeId: null, priority: null, projectId: null, search: null, labelIds: [], cycleId: null },
+      cursor: null,
+      hasMore: true,
+      isLoading: false,
+      error: null,
+    })
+    useToastStore.setState({ toasts: [] })
+    vi.clearAllMocks()
+  })
+
+  function renderPage() {
+    return render(
+      <MemoryRouter initialEntries={['/issues/1']}>
+        <Routes>
+          <Route path="issues/:id" element={<IssueDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+  }
+
+  it('shows edit button only for comment author', async () => {
+    const { fetchComments } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+
+    renderPage()
+
+    await screen.findByText('Test Issue')
+
+    const editButtons = await screen.findAllByRole('button', { name: /edit comment/i })
+    expect(editButtons).toHaveLength(1)
+  })
+
+  it('shows success toast on successful comment edit', async () => {
+    const { fetchComments, updateComment } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(updateComment).mockResolvedValue({
+      data: { ...mockComments[0], body: 'Updated body content', updatedAt: '2024-01-01T13:00:00Z' },
+    })
+
+    renderPage()
+
+    await screen.findByText('Test Issue')
+
+    const user = userEvent.setup()
+    const editButton = await screen.findByRole('button', { name: /edit comment/i })
+    await user.click(editButton)
+
+    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    await user.clear(textarea)
+    await user.type(textarea, 'Updated body content')
+
+    await user.click(screen.getByRole('button', { name: /save comment/i }))
+
+    await waitFor(() => {
+      expect(updateComment).toHaveBeenCalledWith('1', 'c1', 'Updated body content')
+    })
+
+    await waitFor(() => {
+      const toasts = useToastStore.getState().toasts
+      expect(toasts).toHaveLength(1)
+      expect(toasts[0].title).toBe('Comment updated')
+      expect(toasts[0].variant).toBe('success')
+    })
+  })
+
+  it('updates comment in store after successful edit', async () => {
+    const { fetchComments, updateComment } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(updateComment).mockResolvedValue({
+      data: { ...mockComments[0], body: 'Updated body content', updatedAt: '2024-01-01T13:00:00Z' },
+    })
+
+    renderPage()
+
+    await screen.findByText('Test Issue')
+
+    // Wait for comments to load
+    await screen.findByText('Original comment body')
+
+    const user = userEvent.setup()
+    await user.click(screen.getByRole('button', { name: /edit comment/i }))
+
+    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    await user.clear(textarea)
+    await user.type(textarea, 'Updated body content')
+
+    await user.click(screen.getByRole('button', { name: /save comment/i }))
+
+    await waitFor(() => {
+      const comments = useIssuesStore.getState().commentsByIssue['1']
+      const updatedComment = comments.find((c) => c.id === 'c1')
+      expect(updatedComment?.body).toBe('Updated body content')
+    })
+  })
+
+  it('shows error toast on 403 ForbiddenError', async () => {
+    const { fetchComments, updateComment } = await import('@/entities/issue/api')
+    const { ForbiddenError } = await import('@/shared/lib/api-client/errors')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(updateComment).mockRejectedValue(new ForbiddenError())
+
+    renderPage()
+
+    await screen.findByText('Test Issue')
+
+    const user = userEvent.setup()
+    const editButton = await screen.findByRole('button', { name: /edit comment/i })
+    await user.click(editButton)
+
+    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    await user.clear(textarea)
+    await user.type(textarea, 'Updated body')
+
+    await user.click(screen.getByRole('button', { name: /save comment/i }))
+
+    await waitFor(() => {
+      const toasts = useToastStore.getState().toasts
+      expect(toasts).toHaveLength(1)
+      expect(toasts[0].title).toBe('Not the comment owner')
+      expect(toasts[0].variant).toBe('error')
+    })
+  })
+
+  it('shows generic error toast on network error', async () => {
+    const { fetchComments, updateComment } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(updateComment).mockRejectedValue(new Error('Network error'))
+
+    renderPage()
+
+    await screen.findByText('Test Issue')
+
+    const user = userEvent.setup()
+    const editButton = await screen.findByRole('button', { name: /edit comment/i })
+    await user.click(editButton)
+
+    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    await user.clear(textarea)
+    await user.type(textarea, 'Updated body')
+
+    await user.click(screen.getByRole('button', { name: /save comment/i }))
+
+    await waitFor(() => {
+      const toasts = useToastStore.getState().toasts
+      expect(toasts).toHaveLength(1)
+      expect(toasts[0].title).toBe('Failed to update comment. Please try again.')
+      expect(toasts[0].variant).toBe('error')
+    })
+  })
+
+  it('non-author does not see edit button', async () => {
+    useAuthStore.setState({
+      user: { id: 'u3', name: 'Non Author', email: 'non@test.com' },
+      accessToken: 'token',
+      isAuthenticated: true,
+      isLoading: false,
+      error: null,
+    })
+
+    const { fetchComments } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+
+    renderPage()
+
+    await screen.findByText('Test Issue')
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: /edit comment/i })).not.toBeInTheDocument()
     })
   })
 })

@@ -2,32 +2,32 @@
 
 ## Scaffold
 
-- [ ] Add `updateComment` API function in `src/entities/issue/api/index.ts` — `PATCH /api/v1/issues/{issueId}/comments/{commentId}` with `{ body: string }`
-- [ ] Add `updateComment` action to the issue Zustand store — updates comment body in local state on success
+- [x] Add `updateComment` API function in `src/entities/issue/api/index.ts` — `PATCH /api/v1/issues/{issueId}/comments/{commentId}` with `{ body: string }`
+- [x] Add `updateComment` action to the issue Zustand store — updates comment body in local state on success
 
 ## Components
 
-- [ ] Add edit button (tertiary variant with pencil icon) to `CommentCard` – visible only when `comment.authorId === currentUserId`; `aria-label="Edit comment"`
-- [ ] Add edit mode state toggle to `CommentCard` — `useState<boolean>` controlling textarea vs body display
-- [ ] Add textarea in edit mode — pre-filled with current body, auto-focused, min-height 3 rows, `aria-label="Edit comment body"`
-- [ ] Add Save button (primary sm) — disabled + spinner during save, calls `onEdit` prop, `aria-label="Save comment"`
-- [ ] Add Cancel button (ghost sm) — discards edits, restores original body, exits edit mode; also triggered by Escape, `aria-label="Cancel edit"`
-- [ ] Add saving state — Save button shows spinner, textarea and both buttons disabled
-- [ ] Add error state — show error toast, textarea preserved with edits, save re-enabled
+- [x] Add edit button (tertiary variant with pencil icon) to `CommentCard` – visible only when `comment.authorId === currentUserId`; `aria-label="Edit comment"`
+- [x] Add edit mode state toggle to `CommentCard` — `useState<boolean>` controlling textarea vs body display
+- [x] Add textarea in edit mode — pre-filled with current body, auto-focused, min-height 3 rows, `aria-label="Edit comment body"`
+- [x] Add Save button (primary sm) — disabled + spinner during save, calls `onEdit` prop, `aria-label="Save comment"`
+- [x] Add Cancel button (ghost sm) — discards edits, restores original body, exits edit mode; also triggered by Escape, `aria-label="Cancel edit"`
+- [x] Add saving state — Save button shows spinner, textarea and both buttons disabled
+- [x] Add error state — show error toast, textarea preserved with edits, save re-enabled
 
 ## State & Data
 
-- [ ] Wire `onEditComment` callback through `CommentList` → `CommentCard` via props
-- [ ] Add `handleEditComment` in `IssueDetailPage` — calls `updateComment` API, updates local comments state on success, shows toast on error
-- [ ] Handle 403 Forbidden — exit edit mode, show "Not the comment owner" toast
+- [x] Wire `onEditComment` callback through `CommentList` → `CommentCard` via props
+- [x] Add `handleEditComment` in `IssueDetailPage` — calls `updateComment` API, updates local comments state on success, shows toast on error
+- [x] Handle 403 Forbidden — exit edit mode, show "Not the comment owner" toast
 
 ## Routing
 
-- [ ] No new routes — edit is an inline interaction on existing `/issues/:id` route
+- [x] No new routes — edit is an inline interaction on existing `/issues/:id` route
 
 ## Integration
 
-- [ ] Connect `updateComment` API function to the backend `PATCH /api/v1/issues/{issueId}/comments/{commentId}` endpoint
+- [x] Connect `updateComment` API function to the backend `PATCH /api/v1/issues/{issueId}/comments/{commentId}` endpoint
 
 ## Validation
 
