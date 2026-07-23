@@ -5,12 +5,12 @@ import { IssueStatusBadge } from '@/entities/issue/ui/IssueStatusBadge'
 
 describe('IssueStatusBadge', () => {
   it('renders the current status label', () => {
-    render(<IssueStatusBadge status="Todo" onStatusChange={() => {}} />)
+    render(<IssueStatusBadge statusId="Todo" onStatusChange={() => {}} />)
     expect(screen.getByRole('combobox')).toHaveTextContent('Todo')
   })
 
   it('renders with correct ARIA attributes', () => {
-    render(<IssueStatusBadge status="In Progress" onStatusChange={() => {}} />)
+    render(<IssueStatusBadge statusId="In Progress" onStatusChange={() => {}} />)
     const button = screen.getByRole('combobox')
     expect(button).toHaveAttribute('aria-haspopup', 'listbox')
     expect(button).toHaveAttribute('aria-expanded', 'false')
@@ -18,7 +18,7 @@ describe('IssueStatusBadge', () => {
   })
 
   it('shows loading state with aria-busy', () => {
-    render(<IssueStatusBadge status="Todo" loading onStatusChange={() => {}} />)
+    render(<IssueStatusBadge statusId="Todo" loading onStatusChange={() => {}} />)
     const button = screen.getByRole('combobox')
     expect(button).toHaveAttribute('aria-busy', 'true')
     expect(button).toBeDisabled()
@@ -26,7 +26,7 @@ describe('IssueStatusBadge', () => {
 
   it('opens dropdown on click', async () => {
     const user = userEvent.setup()
-    render(<IssueStatusBadge status="Todo" onStatusChange={() => {}} />)
+    render(<IssueStatusBadge statusId="Todo" onStatusChange={() => {}} />)
     await user.click(screen.getByRole('combobox'))
     expect(screen.getByRole('listbox')).toBeInTheDocument()
     expect(screen.getAllByRole('option')).toHaveLength(5)
@@ -35,7 +35,7 @@ describe('IssueStatusBadge', () => {
   it('calls onStatusChange when selecting a different status', async () => {
     const handleChange = vi.fn()
     const user = userEvent.setup()
-    render(<IssueStatusBadge status="Todo" onStatusChange={handleChange} />)
+    render(<IssueStatusBadge statusId="Todo" onStatusChange={handleChange} />)
 
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByText('In Progress'))
@@ -46,7 +46,7 @@ describe('IssueStatusBadge', () => {
   it('does not call onStatusChange when selecting the same status', async () => {
     const handleChange = vi.fn()
     const user = userEvent.setup()
-    render(<IssueStatusBadge status="Todo" onStatusChange={handleChange} />)
+    render(<IssueStatusBadge statusId="Todo" onStatusChange={handleChange} />)
 
     await user.click(screen.getByRole('combobox'))
     await user.click(screen.getByRole('option', { name: /Todo/ }))

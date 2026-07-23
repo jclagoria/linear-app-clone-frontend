@@ -3,7 +3,7 @@ import type { Issue, IssueFilters } from '../types'
 export function selectIssuesByStatus(issues: Issue[]): Record<string, Issue[]> {
   return issues.reduce(
     (groups, issue) => {
-      const status = issue.status || 'unknown'
+      const status = issue.statusId || 'unknown'
       if (!groups[status]) groups[status] = []
       groups[status].push(issue)
       return groups
@@ -25,7 +25,7 @@ export function selectFilteredIssues(
   filters: IssueFilters,
 ): Issue[] {
   return issues.filter((issue) => {
-    if (filters.statusId && issue.status !== filters.statusId) return false
+    if (filters.statusId && issue.statusId !== filters.statusId) return false
     if (filters.assigneeId && issue.assigneeId !== filters.assigneeId)
       return false
     if (filters.projectId && issue.projectId !== filters.projectId) return false

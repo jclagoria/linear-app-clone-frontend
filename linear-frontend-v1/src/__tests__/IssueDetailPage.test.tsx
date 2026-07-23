@@ -30,7 +30,7 @@ const mockIssue: Issue = {
   id: '1',
   title: 'Test Issue',
   description: 'Test description',
-  status: 'Todo',
+  statusId: 'Todo',
   priority: 2,
   assigneeId: 'u1',
   assigneeName: 'User',
@@ -40,6 +40,13 @@ const mockIssue: Issue = {
   identifier: 'TST-1',
   createdAt: '2024-01-01T00:00:00Z',
   updatedAt: '2024-01-01T00:00:00Z',
+  teamId: 't1',
+  parentId: null,
+  sortOrder: 0,
+  sequence: 1,
+  completedAt: null,
+  canceledAt: null,
+  deletedAt: null,
 }
 
 describe('IssueDetailPage Status Integration', () => {
@@ -69,7 +76,7 @@ describe('IssueDetailPage Status Integration', () => {
 
   it('shows success toast on valid status transition', async () => {
     const { changeIssueStatus } = await import('@/entities/issue/api')
-    const updatedIssue = { ...mockIssue, status: 'In Progress' }
+    const updatedIssue = { ...mockIssue, statusId: 'In Progress' }
     vi.mocked(changeIssueStatus).mockResolvedValue({ data: updatedIssue })
 
     renderPage()
@@ -150,7 +157,7 @@ describe('IssueDetailPage Status Integration', () => {
     expect(button).toHaveAttribute('aria-busy', 'true')
     expect(button).toBeDisabled()
 
-    resolvePromise({ data: { ...mockIssue, status: 'In Progress' } })
+    resolvePromise({ data: { ...mockIssue, statusId: 'In Progress' } })
 
     await waitFor(() => {
       expect(screen.getByRole('combobox')).not.toBeDisabled()

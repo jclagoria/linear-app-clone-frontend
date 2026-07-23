@@ -2,7 +2,7 @@ export interface Issue {
   id: string
   title: string
   description: string
-  status: string
+  statusId: string
   priority: number
   assigneeId: string | null
   assigneeName?: string | null
@@ -10,6 +10,13 @@ export interface Issue {
   cycleId: string | null
   labels: string[]
   identifier: string
+  teamId: string
+  parentId: string | null
+  sortOrder: number
+  sequence: number
+  completedAt: string | null
+  canceledAt: string | null
+  deletedAt: string | null
   createdAt: string
   updatedAt: string
 }
@@ -41,7 +48,7 @@ export interface PaginationCursor {
 export interface CreateIssueData {
   title: string
   description?: string
-  status?: string
+  statusId?: string
   priority?: number
   assigneeId?: string | null
   projectId?: string | null
@@ -53,7 +60,7 @@ export interface CreateIssueData {
 export interface UpdateIssueData {
   title?: string
   description?: string
-  status?: string
+  statusId?: string
   priority?: number
   assigneeId?: string | null
   projectId?: string | null

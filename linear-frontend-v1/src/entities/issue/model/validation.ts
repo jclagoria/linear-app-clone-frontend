@@ -10,7 +10,7 @@ export const issueFormSchema = z.object({
     .max(50000, 'Description must be 50000 characters or fewer')
     .optional()
     .default(''),
-  status: z.string().optional().default('Todo'),
+  statusId: z.string().optional().default('Todo'),
   priority: z.number().min(0).max(4).optional().default(0),
   assigneeId: z.string().nullable().optional().default(null),
   projectId: z.string().nullable().optional().default(null),
@@ -23,7 +23,7 @@ export type IssueFormSchema = z.infer<typeof issueFormSchema>
 export const issueFormFieldLabels: Record<keyof IssueFormSchema, string> = {
   title: 'Title',
   description: 'Description',
-  status: 'Status',
+  statusId: 'Status',
   priority: 'Priority',
   assigneeId: 'Assignee',
   projectId: 'Project',

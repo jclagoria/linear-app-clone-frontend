@@ -68,7 +68,7 @@ export function IssuesPage() {
       const result = await createIssue({
         title: data.title,
         description: data.description || undefined,
-        status: data.status || 'Todo',
+        status: data.statusId || 'Todo',
         priority: data.priority,
         assigneeId: data.assigneeId,
         labels: data.labels,

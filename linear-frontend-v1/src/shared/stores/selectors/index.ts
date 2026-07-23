@@ -11,8 +11,8 @@ export const selectIssuesByStatus = createMemoizedSelector(
   (issues: Issue[]) => {
     const grouped: Record<string, Issue[]> = {}
     for (const issue of issues) {
-      if (!grouped[issue.status]) grouped[issue.status] = []
-      grouped[issue.status].push(issue)
+      if (!grouped[issue.statusId]) grouped[issue.statusId] = []
+      grouped[issue.statusId].push(issue)
     }
     return Object.entries(grouped).map(([status, items]) => ({
       status,
@@ -33,7 +33,7 @@ export const selectProjectProgress = createMemoizedSelector(
     const projectIssues = issues.filter((i) => i.projectId === projectId)
     if (projectIssues.length === 0) return null
 
-    const completed = projectIssues.filter((i) => i.status === 'done').length
+    const completed = projectIssues.filter((i) => i.statusId === 'done').length
     return {
       total: projectIssues.length,
       completed,
@@ -78,7 +78,7 @@ export interface ActiveFilters {
 export const selectFilteredIssues = createMemoizedSelector(
   (issues: Issue[], filters: ActiveFilters): Issue[] => {
     return issues.filter((issue) => {
-      if (filters.statusId && issue.status !== filters.statusId) return false
+      if (filters.statusId && issue.statusId !== filters.statusId) return false
       if (filters.assigneeId && issue.assigneeId !== filters.assigneeId) return false
       if (filters.projectId && issue.projectId !== filters.projectId) return false
       return true
