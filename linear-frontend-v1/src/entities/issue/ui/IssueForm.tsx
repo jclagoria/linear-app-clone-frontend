@@ -12,6 +12,7 @@ import type { Issue } from '../model/types'
 interface IssueFormProps {
   mode: 'create' | 'edit'
   issue?: Issue
+  disabled?: boolean
   onSubmit: (data: IssueFormSchema) => Promise<boolean | void>
   onCancel: () => void
 }
@@ -31,7 +32,7 @@ const priorityOptions = [
   { label: 'Low', value: '4' },
 ]
 
-export function IssueForm({ mode, issue, onSubmit, onCancel }: IssueFormProps) {
+export function IssueForm({ mode, issue, disabled = false, onSubmit, onCancel }: IssueFormProps) {
   const {
     register,
     handleSubmit,
@@ -149,7 +150,7 @@ export function IssueForm({ mode, issue, onSubmit, onCancel }: IssueFormProps) {
         >
           Cancel
         </Button>
-        <Button type="submit" loading={isSubmitting}>
+        <Button type="submit" loading={isSubmitting} disabled={disabled}>
           {mode === 'create' ? 'Create issue' : 'Save changes'}
         </Button>
       </div>

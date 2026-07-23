@@ -58,7 +58,7 @@ describe('issuesStore', () => {
       const { fetchIssues } = await import('@/entities/issue/api')
       vi.mocked(fetchIssues).mockResolvedValue({
         data: mockIssues,
-        meta: { cursor: 'cursor-2', hasMore: true },
+        pagination: { nextCursor: 'cursor-2', hasMore: true },
       })
 
       const promise = useIssuesStore.getState().loadIssues()
@@ -223,7 +223,7 @@ describe('issuesStore', () => {
       const { fetchIssues } = await import('@/entities/issue/api')
       vi.mocked(fetchIssues).mockResolvedValue({
         data: moreIssues,
-        meta: { cursor: null, hasMore: false },
+        pagination: { nextCursor: null, hasMore: false },
       })
 
       await useIssuesStore.getState().loadNextPage()

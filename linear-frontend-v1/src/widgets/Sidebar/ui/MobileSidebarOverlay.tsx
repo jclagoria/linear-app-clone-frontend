@@ -30,14 +30,14 @@ export function MobileSidebarOverlay({ isOpen, onClose }: MobileSidebarOverlayPr
   const firstNavLinkRef = useRef<HTMLAnchorElement>(null)
   const navigate = useNavigate()
   const currentTeamId = useTeamStore((s) => s.currentTeamId)
-  const setCurrentTeam = useTeamStore((s) => s.setCurrentTeam)
+  const setCurrentTeamId = useTeamStore((s) => s.setCurrentTeamId)
 
   const handleTeamSelect = useCallback((teamId: string) => {
     const team = teams.find((t) => t.id === teamId)
     if (team) {
-      setCurrentTeam(team.id, team.name)
+      setCurrentTeamId(team.id, team.name)
     }
-  }, [setCurrentTeam])
+  }, [setCurrentTeamId])
 
   const handleNavClick = useCallback(
     (to: string) => {

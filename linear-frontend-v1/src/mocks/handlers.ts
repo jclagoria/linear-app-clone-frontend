@@ -90,13 +90,13 @@ export const handlers = [
     if (cursor === 'page2') {
       return HttpResponse.json({
         data: [{ id: '4', title: 'Page 2 issue', description: 'More', status: 'todo', priority: 1, assigneeId: null, projectId: null, cycleId: null, labels: [], createdAt: '', updatedAt: '' }],
-        meta: { cursor: null, hasMore: false },
+        pagination: { nextCursor: null, hasMore: false },
       })
     }
 
     return HttpResponse.json({
       data: filtered,
-      meta: { cursor: filtered.length > 2 ? 'page2' : null, hasMore: filtered.length > 2 },
+      pagination: { nextCursor: filtered.length > 2 ? 'page2' : null, hasMore: filtered.length > 2 },
     })
   }),
 

@@ -25,12 +25,12 @@ interface SidebarProps {
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const currentTeamId = useTeamStore((s) => s.currentTeamId)
-  const setCurrentTeam = useTeamStore((s) => s.setCurrentTeam)
+  const setCurrentTeamId = useTeamStore((s) => s.setCurrentTeamId)
 
   const handleTeamSelect = (teamId: string) => {
     const team = teams.find((t) => t.id === teamId)
     if (team) {
-      setCurrentTeam(team.id, team.name)
+      setCurrentTeamId(team.id, team.name)
     }
   }
 

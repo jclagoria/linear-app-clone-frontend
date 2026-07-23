@@ -17,8 +17,8 @@ describe('teamStore', () => {
   })
 
   it('sets current team', () => {
-    const { setCurrentTeam } = useTeamStore.getState()
-    setCurrentTeam('team-1', 'Team Alpha')
+    const { setCurrentTeamId } = useTeamStore.getState()
+    setCurrentTeamId('team-1', 'Team Alpha')
 
     const { currentTeamId, currentTeamName } = useTeamStore.getState()
     expect(currentTeamId).toBe('team-1')
@@ -26,12 +26,12 @@ describe('teamStore', () => {
   })
 
   it('updates current team when called again', () => {
-    const { setCurrentTeam } = useTeamStore.getState()
+    const { setCurrentTeamId } = useTeamStore.getState()
 
-    setCurrentTeam('team-1', 'Team Alpha')
+    setCurrentTeamId('team-1', 'Team Alpha')
     expect(useTeamStore.getState().currentTeamId).toBe('team-1')
 
-    setCurrentTeam('team-2', 'Team Beta')
+    setCurrentTeamId('team-2', 'Team Beta')
     const { currentTeamId, currentTeamName } = useTeamStore.getState()
     expect(currentTeamId).toBe('team-2')
     expect(currentTeamName).toBe('Team Beta')

@@ -120,6 +120,8 @@ export function IssuesPage() {
       <IssueFormModal
         isOpen={showForm}
         mode="create"
+        disabled={!currentTeamId}
+        disabledMessage="Select a team before creating issues"
         onClose={() => setShowForm(false)}
         onSubmit={handleCreateIssue}
       />

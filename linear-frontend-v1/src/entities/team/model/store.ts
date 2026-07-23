@@ -4,7 +4,7 @@ import { devtools } from 'zustand/middleware'
 interface TeamState {
   currentTeamId: string | null
   currentTeamName: string | null
-  setCurrentTeam: (id: string, name: string) => void
+  setCurrentTeamId: (id: string, name: string) => void
 }
 
 export const useTeamStore = create<TeamState>()(
@@ -12,7 +12,7 @@ export const useTeamStore = create<TeamState>()(
     (set) => ({
       currentTeamId: null,
       currentTeamName: null,
-      setCurrentTeam: (id: string, name: string) =>
+      setCurrentTeamId: (id: string, name: string) =>
         set({ currentTeamId: id, currentTeamName: name }),
     }),
     { name: 'team-store' },

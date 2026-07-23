@@ -12,7 +12,7 @@ describe('createIssue with teamId', () => {
   })
 
   it('creates issue with teamId in POST body', async () => {
-    useTeamStore.getState().setCurrentTeam('team-1', 'Team Alpha')
+    useTeamStore.getState().setCurrentTeamId('team-1', 'Team Alpha')
 
     const result = await createIssue({
       title: 'Test Issue',
