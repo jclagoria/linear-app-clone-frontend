@@ -5,6 +5,7 @@ import { BusinessRuleError } from '@/shared/lib/api-client'
 import type { Issue } from '@/entities/issue/model/store'
 
 vi.mock('@/entities/issue/api', () => ({
+  fetchIssues: vi.fn(),
   changeIssueStatus: vi.fn(),
   assignIssue: vi.fn(),
   deleteComment: vi.fn(),
@@ -40,6 +41,7 @@ describe('issuesStore', () => {
       error: null,
     })
     useCacheStore.getState().clear()
+    vi.clearAllMocks()
   })
 
   describe('initial state', () => {
@@ -53,14 +55,11 @@ describe('issuesStore', () => {
 
   describe('loadIssues', () => {
     it('sets loading state and populates issues', async () => {
-      const mockResponse = {
-        ok: true,
-        json: async () => ({
-          data: mockIssues,
-          meta: { cursor: 'cursor-2', hasMore: true },
-        }),
-      }
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(mockResponse as Response)
+      const { fetchIssues } = await import('@/entities/issue/api')
+      vi.mocked(fetchIssues).mockResolvedValue({
+        data: mockIssues,
+        meta: { cursor: 'cursor-2', hasMore: true },
+      })
 
       const promise = useIssuesStore.getState().loadIssues()
       expect(useIssuesStore.getState().isLoading).toBe(true)
@@ -72,20 +71,17 @@ describe('issuesStore', () => {
       expect(state.issues).toHaveLength(3)
       expect(state.cursor).toBe('cursor-2')
       expect(state.hasMore).toBe(true)
-
-      vi.restoreAllMocks()
     })
 
     it('sets error on failure', async () => {
-      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network error'))
+      const { fetchIssues } = await import('@/entities/issue/api')
+      vi.mocked(fetchIssues).mockRejectedValue(new Error('Network error'))
 
       await useIssuesStore.getState().loadIssues()
 
       const state = useIssuesStore.getState()
       expect(state.isLoading).toBe(false)
       expect(state.error).toBe('Network error')
-
-      vi.restoreAllMocks()
     })
   })
 
@@ -224,14 +220,11 @@ describe('issuesStore', () => {
         },
       ]
 
-      const mockResponse = {
-        ok: true,
-        json: async () => ({
-          data: moreIssues,
-          meta: { cursor: null, hasMore: false },
-        }),
-      }
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue(mockResponse as Response)
+      const { fetchIssues } = await import('@/entities/issue/api')
+      vi.mocked(fetchIssues).mockResolvedValue({
+        data: moreIssues,
+        meta: { cursor: null, hasMore: false },
+      })
 
       await useIssuesStore.getState().loadNextPage()
 
@@ -239,18 +232,15 @@ describe('issuesStore', () => {
       expect(state.issues).toHaveLength(4)
       expect(state.hasMore).toBe(false)
       expect(state.cursor).toBeNull()
-
-      vi.restoreAllMocks()
     })
 
     it('does nothing if hasMore is false', async () => {
       useIssuesStore.setState({ hasMore: false })
-      const fetchSpy = vi.spyOn(globalThis, 'fetch')
 
       await useIssuesStore.getState().loadNextPage()
 
-      expect(fetchSpy).not.toHaveBeenCalled()
-      fetchSpy.mockRestore()
+      const { fetchIssues } = await import('@/entities/issue/api')
+      expect(fetchIssues).not.toHaveBeenCalled()
     })
   })
 
