@@ -47,6 +47,7 @@ export interface CreateIssueData {
   projectId?: string | null
   cycleId?: string | null
   labels?: string[]
+  teamId: string
 }
 
 export interface UpdateIssueData {
