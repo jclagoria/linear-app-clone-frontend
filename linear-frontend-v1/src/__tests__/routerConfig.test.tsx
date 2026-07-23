@@ -51,7 +51,7 @@ describe('Router Config', () => {
     useIssuesStore.setState({
       issues: [],
       selectedIssueId: null,
-      filters: { status: null, assigneeId: null, priority: null, projectId: null, search: null, labelIds: [], cycleId: null },
+      filters: { statusId: null, assigneeId: null, projectId: null, cycleId: null, labelIds: [] },
       cursor: null,
       hasMore: true,
       isLoading: false,
@@ -85,7 +85,7 @@ describe('Router Config', () => {
     useIssuesStore.setState({
       issues: [mockIssue],
       selectedIssueId: null,
-      filters: { status: null, assigneeId: null, priority: null, projectId: null, search: null, labelIds: [], cycleId: null },
+      filters: { statusId: null, assigneeId: null, projectId: null, cycleId: null, labelIds: [] },
       cursor: null,
       hasMore: true,
       isLoading: false,
