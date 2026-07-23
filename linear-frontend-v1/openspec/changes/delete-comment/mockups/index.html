@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mockups — Delete Comment Flow</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --space-4: 1rem;
+      --space-3: 0.75rem;
+      --space-2: 0.5rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Inter, system-ui, -apple-system, sans-serif; background: var(--color-surface); color: var(--color-text-primary); line-height: 1.5; }
+    .container { max-width: 720px; margin: var(--space-6) auto; padding: 0 var(--space-4); }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: var(--space-2); }
+    p.subtitle { color: var(--color-text-secondary); font-size: 14px; margin-bottom: var(--space-6); }
+    .screen-card { display: block; background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-3); text-decoration: none; color: var(--color-text-primary); transition: box-shadow 0.15s; }
+    .screen-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .screen-card .title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .screen-card .desc { font-size: 13px; color: var(--color-text-secondary); }
+    .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #E0E7FF; color: #3730A3; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Delete Comment Flow</h1>
+    <p class="subtitle">Interactive mockups for the comment deletion feature on the Issue Detail page.</p>
+
+    <a class="screen-card" href="issue-detail.html">
+      <div class="title">Issue Detail — Comment Delete</div>
+      <div class="desc">Full flow: populated comments, inline confirm, deleting, error, success, loading skeleton, empty state</div>
+      <div class="badge">7 states</div>
+    </a>
+  </div>
+</body>
+</html>
