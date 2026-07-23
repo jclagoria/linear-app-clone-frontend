@@ -25,10 +25,8 @@ export function selectFilteredIssues(
   filters: IssueFilters,
 ): Issue[] {
   return issues.filter((issue) => {
-    if (filters.status && issue.status !== filters.status) return false
+    if (filters.statusId && issue.status !== filters.statusId) return false
     if (filters.assigneeId && issue.assigneeId !== filters.assigneeId)
-      return false
-    if (filters.priority !== null && issue.priority !== filters.priority)
       return false
     if (filters.projectId && issue.projectId !== filters.projectId) return false
     if (filters.cycleId && issue.cycleId !== filters.cycleId) return false
@@ -37,12 +35,6 @@ export function selectFilteredIssues(
         issue.labels.includes(label),
       )
       if (!hasAllLabels) return false
-    }
-    if (filters.search) {
-      const search = filters.search.toLowerCase()
-      const matchesTitle = issue.title.toLowerCase().includes(search)
-      const matchesId = issue.identifier?.toLowerCase().includes(search)
-      if (!matchesTitle && !matchesId) return false
     }
     return true
   })

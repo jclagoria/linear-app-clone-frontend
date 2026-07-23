@@ -17,48 +17,27 @@ const statusOptions = [
   { label: 'Cancelled', value: 'Cancelled' },
 ]
 
-const priorityOptions = [
-  { label: 'All priorities', value: '' },
-  { label: 'No priority', value: '0' },
-  { label: 'Urgent', value: '1' },
-  { label: 'High', value: '2' },
-  { label: 'Medium', value: '3' },
-  { label: 'Low', value: '4' },
-]
-
 export function IssueFilters({
   filters,
   onFilterChange,
   onClearFilters,
 }: IssueFiltersProps) {
   const hasActiveFilters =
-    filters.status !== null ||
+    filters.statusId !== null ||
     filters.assigneeId !== null ||
-    filters.priority !== null ||
     filters.projectId !== null ||
     filters.cycleId !== null ||
-    filters.labelIds.length > 0 ||
-    filters.search !== null
+    filters.labelIds.length > 0
 
   return (
     <div className="mb-4 flex flex-wrap items-center gap-2" role="search" aria-label="Filter issues">
       <Filter className="h-4 w-4 text-text-muted" aria-hidden="true" />
       <Select
         options={statusOptions}
-        value={filters.status ?? ''}
-        onChange={(value) => onFilterChange({ status: value || null })}
+        value={filters.statusId ?? ''}
+        onChange={(value) => onFilterChange({ statusId: value || null })}
         placeholder="Status"
         aria-label="Filter by status"
-        className="w-36"
-      />
-      <Select
-        options={priorityOptions}
-        value={filters.priority !== null ? String(filters.priority) : ''}
-        onChange={(value) =>
-          onFilterChange({ priority: value ? Number(value) : null })
-        }
-        placeholder="Priority"
-        aria-label="Filter by priority"
         className="w-36"
       />
       {hasActiveFilters && (

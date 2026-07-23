@@ -34,7 +34,7 @@ describe('issuesStore', () => {
     useIssuesStore.setState({
       issues: [],
       selectedIssueId: null,
-      filters: { status: null, assigneeId: null, priority: null, projectId: null, search: null },
+      filters: { statusId: null, assigneeId: null, projectId: null, cycleId: null, labelIds: [] },
       cursor: null,
       hasMore: true,
       isLoading: false,
@@ -256,13 +256,11 @@ describe('issuesStore', () => {
 
   describe('filters', () => {
     it('sets and clears filters', () => {
-      useIssuesStore.getState().setFilters({ status: 'todo', priority: 2 })
-      expect(useIssuesStore.getState().filters.status).toBe('todo')
-      expect(useIssuesStore.getState().filters.priority).toBe(2)
+      useIssuesStore.getState().setFilters({ statusId: 'todo' })
+      expect(useIssuesStore.getState().filters.statusId).toBe('todo')
 
       useIssuesStore.getState().clearFilters()
-      expect(useIssuesStore.getState().filters.status).toBeNull()
-      expect(useIssuesStore.getState().filters.priority).toBeNull()
+      expect(useIssuesStore.getState().filters.statusId).toBeNull()
     })
   })
 

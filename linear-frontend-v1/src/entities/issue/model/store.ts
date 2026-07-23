@@ -34,13 +34,11 @@ interface IssuesState {
 }
 
 const initialFilters: IssueFilters = {
-  status: null,
+  statusId: null,
   assigneeId: null,
-  priority: null,
   projectId: null,
   cycleId: null,
   labelIds: [],
-  search: null,
 }
 
 
@@ -68,11 +66,10 @@ export const useIssuesStore = create<IssuesState>()(
         try {
           const { filters } = get()
           const params = new URLSearchParams()
-          if (filters.status) params.set('status', filters.status)
+          if (filters.statusId) params.set('statusId', filters.statusId)
           if (filters.assigneeId) params.set('assigneeId', filters.assigneeId)
-          if (filters.priority !== null) params.set('priority', String(filters.priority))
           if (filters.projectId) params.set('projectId', filters.projectId)
-          if (filters.search) params.set('search', filters.search)
+          if (filters.labelIds.length > 0) params.set('labelIds', filters.labelIds.join(','))
 
           const cacheKey = `issues:list?${params.toString()}`
           const cached = useCacheStore.getState().get<{ data: Issue[]; meta: { cursor: string | null; hasMore: boolean } }>(cacheKey)
@@ -88,11 +85,10 @@ export const useIssuesStore = create<IssuesState>()(
           }
 
           const { data, meta } = await fetchIssues({
-            status: filters.status,
+            statusId: filters.statusId,
             assigneeId: filters.assigneeId,
-            priority: filters.priority,
             projectId: filters.projectId,
-            search: filters.search,
+            labelIds: filters.labelIds,
           })
 
           useCacheStore.getState().set(cacheKey, { data, meta })
@@ -120,11 +116,10 @@ export const useIssuesStore = create<IssuesState>()(
         try {
           const { data, meta } = await fetchIssues({
             cursor,
-            status: filters.status,
+            statusId: filters.statusId,
             assigneeId: filters.assigneeId,
-            priority: filters.priority,
             projectId: filters.projectId,
-            search: filters.search,
+            labelIds: filters.labelIds,
           })
 
           set((state) => ({

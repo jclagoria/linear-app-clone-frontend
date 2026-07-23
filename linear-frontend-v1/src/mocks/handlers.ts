@@ -77,10 +77,15 @@ export const handlers = [
   http.get(`${API_BASE}/issues`, ({ request }) => {
     const url = new URL(request.url)
     const cursor = url.searchParams.get('cursor')
-    const status = url.searchParams.get('status')
+    const statusId = url.searchParams.get('statusId')
+    const labelIds = url.searchParams.get('labelIds')
 
     let filtered = [...mockIssues]
-    if (status) filtered = filtered.filter((i) => i.status === status)
+    if (statusId) filtered = filtered.filter((i) => i.status === statusId)
+    if (labelIds) {
+      const ids = labelIds.split(',')
+      filtered = filtered.filter((i) => ids.some((id) => i.labels.includes(id)))
+    }
 
     if (cursor === 'page2') {
       return HttpResponse.json({
