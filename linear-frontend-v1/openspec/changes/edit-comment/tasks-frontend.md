@@ -31,23 +31,23 @@
 
 ## Validation
 
-- [ ] Unit test: `CommentCard` renders edit button only for comment author
-- [ ] Unit test: `CommentCard` toggles to edit mode on click, shows textarea with pre-filled body
-- [ ] Unit test: `CommentCard` cancel restores original body and exits edit mode
-- [ ] Unit test: `CommentCard` save button disabled during saving state
-- [ ] Unit test: `CommentCard` Escape key cancels edit
-- [ ] Integration test: `updateComment` API function calls correct endpoint with body payload
-- [ ] Integration test: successful PATCH updates comment in store
-- [ ] Integration test: failed PATCH (network error) shows error toast, preserves textarea edits
-- [ ] Integration test: failed PATCH (403) shows "Not the comment owner" toast, exits edit mode
-- [ ] E2E test: author edits their comment and sees updated body
-- [ ] E2E test: non-author does not see edit button
-- [ ] Accessibility: verify `aria-label` attributes on edit/save/cancel buttons
+- [x] Unit test: `CommentCard` renders edit button only for comment author
+- [x] Unit test: `CommentCard` toggles to edit mode on click, shows textarea with pre-filled body
+- [x] Unit test: `CommentCard` cancel restores original body and exits edit mode
+- [x] Unit test: `CommentCard` save button disabled during saving state
+- [x] Unit test: `CommentCard` Escape key cancels edit
+- [x] Integration test: `updateComment` API function calls correct endpoint with body payload
+- [x] Integration test: successful PATCH updates comment in store
+- [x] Integration test: failed PATCH (network error) shows error toast, preserves textarea edits
+- [x] Integration test: failed PATCH (403) shows "Not the comment owner" toast, exits edit mode
+- [x] E2E test: author edits their comment and sees updated body
+- [x] E2E test: non-author does not see edit button
+- [x] Accessibility: verify `aria-label` attributes on edit/save/cancel buttons
 
 ## Review
 
-- [ ] Verify all BDD scenarios from specs-frontend pass (EditButtonVisibility, EditCommentInline)
-- [ ] Verify keyboard flow: Tab → Enter/Space on edit → type → Tab to Save → Enter → focus returns
-- [ ] Verify Escape cancels edit mode
-- [ ] Verify state toggles match wireframes: display, editing, saving, error
-- [ ] Verify no regression on existing comment display for non-authors
+- [x] Verify all BDD scenarios from specs-frontend pass (EditButtonVisibility, EditCommentInline)
+- [x] Verify keyboard flow: Tab → Enter/Space on edit → type → Tab to Save → Enter → focus returns
+- [x] Verify Escape cancels edit mode
+- [x] Verify state toggles match wireframes: display, editing, saving, error
+- [x] Verify no regression on existing comment display for non-authors
