@@ -1,0 +1,5 @@
+# Wireframes — Fix: Issue Model Missing 7 Fields from API Spec
+
+## No Wireframes Required
+
+This change is a type-level alignment fix. No new screens or UI components are introduced. Existing screens continue to function with the corrected `Issue` type definition.
