@@ -1,0 +1,5 @@
+# Wireframe: Delete Issue API Type Fix
+
+## Purpose & Flow Context
+
+No wireframe required — this change is a TypeScript return type correction in the API layer with no UI impact. The `deleteIssue()` function signature changes from `Promise<{ data: { success: boolean } }>` to `Promise<void>`.
