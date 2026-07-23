@@ -1,0 +1,260 @@
+# Wireframe: Comment Card — Delete Flow (Issue Detail Page)
+
+## Purpose & Flow Context
+
+Allows the comment author to delete their own comment with a confirmation step. Serves the "Delete Comment" user flow. Entry: issue detail page with comments loaded. Exit: comment removed from list + toast confirmation.
+
+**Doc version:** 0.2.0 (PATCH — add loading/empty state sketches; fix DS component reference)
+
+### Changelog
+
+| Version | Change |
+|---------|--------|
+| 0.2.0 | Add wireframe sketches for loading skeleton and empty state; align delete button DS reference with CommentCard entity naming |
+| 0.1.0 | Initial wireframes for comment delete flow |
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[avatar]` | User avatar (initials) |
+| `_______` | Text / editable area | `[X]` | Close / dismiss |
+| `⚠` | Warning / destructive action | `#` | Heading |
+| `👤` | User / author | `→` | Focus moves to |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `main` for page content |
+| Heading order | h1 for issue title, h2 for "Description", h3 for "Comments (N)" |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape (dismiss confirm) |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout within shared app-shell. Comment section occupies the full content area under issue metadata.
+
+**Content hierarchy** (within comment section):
+1. Comments heading
+2. Comment cards (each with avatar, author name, timestamp, body, actions)
+
+```
++------------------------------------------------------------------+
+|  App-shell: Header / Nav / Max-width container                   |
+|                                                                  |
+|  +-- Issue Detail Page (main) --------------------------------+  |
+|  |                                                              |  |
+|  |  # Issue Title                               [Edit] [Delete] |  |
+|  |  Identifier · Status · Priority · Assignee · Created/Updated |  |
+|  |                                                              |  |
+|  |  ## Description                                              |  |
+|  |  Issue body text here...                                     |  |
+|  |                                                              |  |
+|  |  ## Labels                                                   |  |
+|  |  [label-1] [label-2] [+ Add label]                           |  |
+|  |                                                              |  |
+|  |  -------- divider --------                                   |  |
+|  |                                                              |  |
+|  |  ### Comments (N)                                            |  |
+|  |                                                              |  |
+|  |  +-- CommentCard (author) --------------------------------+  |  |
+|  |  | [avatar] Author Name · 2h ago                [✏] [🗑]   |  |  |
+|  |  | Comment body text here...                                |  |  |
+|  |  +----------------------------------------------------------+  |  |
+|  |                                                              |  |  |
+|  |  +-- CommentCard (non-author) ----------------------------+  |  |
+|  |  | [avatar] Other User · 5h ago                           |  |  |
+|  |  | Their comment text...                                   |  |  |
+|  |  +----------------------------------------------------------+  |  |
+|  |                                                              |  |
+|  +--------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+*Legend: [Button] [Avatar] [#Heading] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Delete button [🗑] | Delete button (CommentCard) | Click opens inline confirmation; visible only for comment author; `aria-label="Delete comment"` | Truncation: N/A — fixed icon size |
+| Cancel button | `Button variant="secondary" size="sm"` | Dismisses confirmation, returns focus to delete button | — |
+| Confirm Delete button | `Button variant="danger" size="sm"` | Calls deleteComment API; shows spinner while loading | Network error: comment stays, error message shown |
+| Inline confirmation area | Inline prompt pattern | Replaces action buttons row; shows question + Cancel/Delete buttons | — |
+| Error alert | `<p role="alert">` | Appears below confirmation on failure | — |
+| Toast (success) | `Toast variant="success"` | "Comment deleted" toast after successful deletion | Auto-dismiss after 3s |
+| Toast (error) | `Toast variant="error"` | "Failed to delete comment" on API failure | Auto-dismiss after 5s |
+
+## Data Display
+
+Comment cards in vertical list (not table). Single-column layout. No sorting/pagination needed — all comments shown. Progressive disclosure: actions (edit/delete) visible only for author; confirmation replaces actions on demand.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Comments heading | "Comments ({count})" — section label with count | h3 element |
+| Delete button | `aria-label="Delete comment"` — screen reader only | Icon button, no visible label |
+| Confirmation text | "Are you sure you want to delete this comment?" — warning + ask confirmation | Plain language, not technical |
+| Delete button (confirm) | "Delete" — confirm destructive action | Button label |
+| Cancel button | "Cancel" — dismiss, no action | Button label |
+| Success toast | "Comment deleted" — confirmation of completion | Success variant |
+| Error message | "Failed to delete comment. Please try again." — plain-language error + recovery | Error variant |
+
+## States
+
+### Populated (Default)
+
+Default comment card with visible edit + delete buttons for author.
+
+```
++-- CommentCard -----------------------------+
+| [avatar] Author Name · 2h ago    [✏] [🗑] |
+| Comment body text here...                  |
++--------------------------------------------+
+```
+
+### Confirm-Delete (Inline Confirmation Open)
+
+Author clicked delete button; action buttons replaced by confirmation prompt.
+
+```
++-- CommentCard -----------------------------+
+| [avatar] Author Name · 2h ago              |
+| Comment body text here...                  |
+|                                             |
+| Are you sure you want to delete             |
+| this comment?                               |
+|                           [Cancel] [Delete] |
++--------------------------------------------+
+```
+
+### Deleting (Submitting)
+
+User clicked "Delete"; Delete button shows spinner, both buttons disabled.
+
+```
++-- CommentCard -----------------------------+
+| [avatar] Author Name · 2h ago              |
+| Comment body text here...                  |
+|                                             |
+| Are you sure you want to delete             |
+| this comment?                               |
+|                     [Cancel] [Delete ⏳]    |
++--------------------------------------------+
+```
+
+### Error
+
+API call failed; error message shown inline, user can retry.
+
+```
++-- CommentCard -----------------------------+
+| [avatar] Author Name · 2h ago              |
+| Comment body text here...                  |
+|                                             |
+| ⚠ Failed to delete comment.                |
+|   Please try again.                         |
+|                                             |
+| Are you sure you want to delete             |
+| this comment?                               |
+|                           [Cancel] [Delete] |
++--------------------------------------------+
+```
+
+### Success (Deleted)
+
+Comment removed from list; toast at bottom-right indicates success.
+
+```
++-- comments list ---------------------------+
+| ### Comments (N-1)                         |
+|                                             |
+| [remaining comment cards...]                |
++--------------------------------------------+
+
+        +-- Toast (bottom-right) ----------+
+        | ✓  Comment deleted               |
+        +-----------------------------------+
+```
+
+### Loading (Comments Loading)
+
+Skeleton placeholder mirroring the populated layout while comments fetch.
+
+```
++-- Issue Detail (main) ------------------------+
+|                                                 |
+|  ### Comments                                  |
+|                                                 |
+|  +-- SkeletonCard --------------------------+  |
+|  |  [~~~~] ~~~~~~~~~~~~~ · ~~~~~~           |  |
+|  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      |  |
+|  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      |  |
+|  +------------------------------------------+  |
+|                                                 |
+|  +-- SkeletonCard --------------------------+  |
+|  |  [~~~~] ~~~~~~~~~~~~~ · ~~~~~~           |  |
+|  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      |  |
+|  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      |  |
+|  +------------------------------------------+  |
+|                                                 |
+|  +-- SkeletonCard --------------------------+  |
+|  |  [~~~~] ~~~~~~~~~~~~~ · ~~~~~~           |  |
+|  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      |  |
+|  |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      |  |
+|  +------------------------------------------+  |
++--------------------------------------------------+
+```
+
+*`[~~~~]` = shimmer placeholder; 3 skeleton cards match typical comment count.*
+
+### Empty (No Comments)
+
+No comments yet; EmptyState component with guide-to-action.
+
+```
++-- Issue Detail (main) ------------------------+
+|                                                 |
+|  ### Comments (0)                              |
+|                                                 |
+|  +-- EmptyState ----------------------------+  |
+|  |                                            |  |
+|  |        [💬]                               |  |
+|  |     "No comments yet"                     |  |
+|  |  "Be the first to share your              |  |
+|  |           thoughts."                      |  |
+|  |                                            |  |
+|  +------------------------------------------+  |
++--------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout: comment cards with horizontal action buttons |
+| Tablet (768-1024px) | Same layout; touch targets remain ≥24×24px |
+| Mobile (<768px) | Comment cards stack at full width; action buttons size adjusted to mobile touch targets; inline confirmation adapts to narrower width |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` contains issue detail + comments section |
+| Heading order | h1 (issue title) → h2 (Description) → h3 (Comments (N)) |
+| Reading / Focus order | Back → Issue header → Description → Labels → Actions → Comments heading → Comment cards top→bottom |
+| Accessible names | Delete icon button gets `aria-label="Delete comment"` |
+| Keyboard operability | Tab through comment actions; Enter/Space to activate delete; Escape to dismiss confirmation |
+| Target size | Delete button ≥24×24px; visible label not required for icon-only with aria-label |
+| Focus management | Confirm open → focus to "Delete" button; Cancel / Escape → focus back to delete button; Delete success → focus to next comment card or Comments heading |
+| Non-color intent | Delete icon (🗑) + aria-label conveys action; danger color is supplemental |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

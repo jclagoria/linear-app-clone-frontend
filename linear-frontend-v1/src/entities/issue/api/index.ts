@@ -97,3 +97,10 @@ export async function updateComment(
     { body: { body } },
   )
 }
+
+export async function deleteComment(
+  issueId: string,
+  commentId: string,
+): Promise<void> {
+  await apiClient.delete<void>(`/issues/${issueId}/comments/${commentId}`)
+}

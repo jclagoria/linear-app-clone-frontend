@@ -16,6 +16,7 @@ vi.mock('@/entities/issue/api', () => ({
   updateIssue: vi.fn(),
   deleteIssue: vi.fn(),
   updateComment: vi.fn(),
+  deleteComment: vi.fn(),
 }))
 
 vi.mock('@/entities/label/api', () => ({
@@ -567,6 +568,189 @@ describe('IssueDetailPage Edit Comment', () => {
 
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: /edit comment/i })).not.toBeInTheDocument()
+    })
+  })
+})
+
+describe('IssueDetailPage Delete Comment', () => {
+  beforeEach(async () => {
+    useAuthStore.setState({
+      user: { id: 'u1', name: 'User', email: 'user@test.com' },
+      accessToken: 'token',
+      isAuthenticated: true,
+      isLoading: false,
+      error: null,
+    })
+    useIssuesStore.setState({
+      issues: [mockIssue],
+      selectedIssueId: null,
+      commentsByIssue: {},
+      commentsLoading: false,
+      commentsError: null,
+      filters: { status: null, assigneeId: null, priority: null, projectId: null, search: null, labelIds: [], cycleId: null },
+      cursor: null,
+      hasMore: true,
+      isLoading: false,
+      error: null,
+    })
+    useToastStore.setState({ toasts: [] })
+    vi.clearAllMocks()
+  })
+
+  it('shows delete button only for comment author', async () => {
+    const { fetchComments } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+
+    render(
+      <MemoryRouter initialEntries={['/issues/1']}>
+        <Routes>
+          <Route path="issues/:id" element={<IssueDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await screen.findByText('Test Issue')
+
+    const deleteButtons = await screen.findAllByRole('button', { name: /delete comment/i })
+    expect(deleteButtons).toHaveLength(1)
+  })
+
+  it('removes comment from store on successful delete', async () => {
+    const { fetchComments, deleteComment } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(deleteComment).mockResolvedValue(undefined)
+
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/issues/1']}>
+        <Routes>
+          <Route path="issues/:id" element={<IssueDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
+
+    await user.click(screen.getByRole('button', { name: /delete comment/i }))
+    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+
+    await waitFor(() => {
+      const comments = useIssuesStore.getState().commentsByIssue['1']
+      expect(comments).toHaveLength(1)
+      expect(comments[0].id).toBe('c2')
+    })
+  })
+
+  it('shows success toast on successful delete', async () => {
+    const { fetchComments, deleteComment } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(deleteComment).mockResolvedValue(undefined)
+
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/issues/1']}>
+        <Routes>
+          <Route path="issues/:id" element={<IssueDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
+
+    await user.click(screen.getByRole('button', { name: /delete comment/i }))
+    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+
+    await waitFor(() => {
+      const toasts = useToastStore.getState().toasts
+      expect(toasts).toHaveLength(1)
+      expect(toasts[0].title).toBe('Comment deleted')
+      expect(toasts[0].variant).toBe('success')
+    })
+  })
+
+  it('shows error toast on 403 ForbiddenError', async () => {
+    const { fetchComments, deleteComment } = await import('@/entities/issue/api')
+    const { ForbiddenError } = await import('@/shared/lib/api-client/errors')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(deleteComment).mockRejectedValue(new ForbiddenError())
+
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/issues/1']}>
+        <Routes>
+          <Route path="issues/:id" element={<IssueDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
+
+    await user.click(screen.getByRole('button', { name: /delete comment/i }))
+    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+
+    await waitFor(() => {
+      const toasts = useToastStore.getState().toasts
+      expect(toasts).toHaveLength(1)
+      expect(toasts[0].title).toBe('You don\'t have permission to delete this comment.')
+      expect(toasts[0].variant).toBe('error')
+    })
+  })
+
+  it('shows generic error toast on network error', async () => {
+    const { fetchComments, deleteComment } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(deleteComment).mockRejectedValue(new Error('Network error'))
+
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/issues/1']}>
+        <Routes>
+          <Route path="issues/:id" element={<IssueDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
+
+    await user.click(screen.getByRole('button', { name: /delete comment/i }))
+    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+
+    await waitFor(() => {
+      const toasts = useToastStore.getState().toasts
+      expect(toasts).toHaveLength(1)
+      expect(toasts[0].title).toBe('Failed to delete comment. Please try again.')
+      expect(toasts[0].variant).toBe('error')
+    })
+  })
+
+  it('restores comment in store on delete failure (rollback)', async () => {
+    const { fetchComments, deleteComment } = await import('@/entities/issue/api')
+    vi.mocked(fetchComments).mockResolvedValue({ data: mockComments })
+    vi.mocked(deleteComment).mockRejectedValue(new Error('Network error'))
+
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/issues/1']}>
+        <Routes>
+          <Route path="issues/:id" element={<IssueDetailPage />} />
+        </Routes>
+      </MemoryRouter>,
+    )
+
+    await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
+
+    await user.click(screen.getByRole('button', { name: /delete comment/i }))
+    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+
+    await waitFor(() => {
+      const comments = useIssuesStore.getState().commentsByIssue['1']
+      expect(comments).toHaveLength(2)
+      expect(comments.find((c) => c.id === 'c1')?.body).toBe('Original comment body')
     })
   })
 })

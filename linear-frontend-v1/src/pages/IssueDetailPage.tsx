@@ -28,6 +28,7 @@ export function IssueDetailPage() {
   const assignIssue = useIssuesStore((s) => s.assignIssue)
   const fetchComments = useIssuesStore((s) => s.fetchComments)
   const updateCommentInStore = useIssuesStore((s) => s.updateCommentInStore)
+  const deleteCommentFromStore = useIssuesStore((s) => s.deleteCommentFromStore)
   const comments = useIssuesStore(
     useShallow((s) => (id ? s.commentsByIssue[id] ?? [] : [])),
   )
@@ -281,7 +282,37 @@ export function IssueDetailPage() {
         throw err
       }
     },
-    [id, addToast],
+    [id, updateCommentInStore, addToast],
+  )
+
+  const handleDeleteComment = useCallback(
+    async (commentId: string) => {
+      if (!id) return
+      try {
+        await deleteCommentFromStore(id, commentId)
+        addToast({
+          title: 'Comment deleted',
+          variant: 'success',
+          duration: 3000,
+        })
+      } catch (err) {
+        if (isForbiddenError(err)) {
+          addToast({
+            title: 'You don\'t have permission to delete this comment.',
+            variant: 'error',
+            duration: 5000,
+          })
+          throw err
+        }
+        addToast({
+          title: 'Failed to delete comment. Please try again.',
+          variant: 'error',
+          duration: 5000,
+        })
+        throw err
+      }
+    },
+    [id, deleteCommentFromStore, addToast],
   )
 
   const pageError = error || commentsError
@@ -314,6 +345,7 @@ export function IssueDetailPage() {
         labelsDisabled={labelsDisabled}
         currentUserId={currentUserId}
         onEditComment={handleEditComment}
+        onDeleteComment={handleDeleteComment}
       />
 
       <IssueFormModal

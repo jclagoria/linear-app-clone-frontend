@@ -138,3 +138,44 @@ describe('Filter → Selector Integration', () => {
     expect(result[0].id).toBe('1')
   })
 })
+
+const mockCommentForDelete = { id: 'c1', issueId: '1', body: 'Comment text', authorId: 'u1', authorName: 'User', createdAt: '2024-01-01T12:00:00Z', updatedAt: '2024-01-01T12:00:00Z' }
+
+describe('Comment Deletion Integration', () => {
+  beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }))
+  afterAll(() => server.close())
+  afterEach(() => {
+    server.resetHandlers()
+    useIssuesStore.setState({
+      issues: [],
+      commentsByIssue: {},
+      isLoading: false,
+      error: null,
+    })
+  })
+
+  it('store deleteCommentFromStore removes from state and calls API', async () => {
+    useIssuesStore.setState({
+      commentsByIssue: { '1': [mockCommentForDelete] },
+    })
+
+    await useIssuesStore.getState().deleteCommentFromStore('1', 'c1')
+
+    const state = useIssuesStore.getState()
+    expect(state.commentsByIssue['1']).toHaveLength(0)
+  })
+
+  it('store deleteCommentFromStore rolls back on API 403', async () => {
+    useIssuesStore.setState({
+      commentsByIssue: { '1': [mockCommentForDelete] },
+    })
+
+    await expect(
+      useIssuesStore.getState().deleteCommentFromStore('1', 'fail-403'),
+    ).rejects.toThrow()
+
+    const state = useIssuesStore.getState()
+    expect(state.commentsByIssue['1']).toHaveLength(1)
+    expect(state.commentsByIssue['1'][0].id).toBe('c1')
+  })
+})

@@ -7,9 +7,10 @@ interface CommentListProps {
   comments: Comment[]
   currentUserId: string | null
   onEditComment: (commentId: string, body: string) => Promise<void>
+  onDeleteComment?: (commentId: string) => Promise<void>
 }
 
-export function CommentList({ comments, currentUserId, onEditComment }: CommentListProps) {
+export function CommentList({ comments, currentUserId, onEditComment, onDeleteComment }: CommentListProps) {
   if (comments.length === 0) {
     return (
       <EmptyState
@@ -31,6 +32,7 @@ export function CommentList({ comments, currentUserId, onEditComment }: CommentL
             comment={comment}
             currentUserId={currentUserId}
             onEdit={onEditComment}
+            onDelete={onDeleteComment}
           />
         </div>
       ))}

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { changeIssueStatus, assignIssue as assignIssueApi, fetchComments as fetchCommentsApi, updateComment as updateCommentApi } from '@/entities/issue/api'
+import { changeIssueStatus, assignIssue as assignIssueApi, fetchComments as fetchCommentsApi, deleteComment as deleteCommentApi } from '@/entities/issue/api'
 import type { Issue, IssueFilters, Comment } from './types'
 
 interface IssuesState {
@@ -30,6 +30,7 @@ interface IssuesState {
   fetchComments: (issueId: string) => Promise<void>
   updateCommentInStore: (issueId: string, commentId: string, body: string) => void
   setCommentsForIssue: (issueId: string, comments: Comment[]) => void
+  deleteCommentFromStore: (issueId: string, commentId: string) => Promise<void>
 }
 
 const initialFilters: IssueFilters = {
@@ -296,6 +297,31 @@ export const useIssuesStore = create<IssuesState>()(
         set((state) => ({
           commentsByIssue: { ...state.commentsByIssue, [issueId]: comments },
         }))
+      },
+
+      deleteCommentFromStore: async (issueId: string, commentId: string) => {
+        const previousComments = get().commentsByIssue[issueId] ?? []
+
+        set((state) => ({
+          commentsByIssue: {
+            ...state.commentsByIssue,
+            [issueId]: (state.commentsByIssue[issueId] ?? []).filter(
+              (c) => c.id !== commentId,
+            ),
+          },
+        }))
+
+        try {
+          await deleteCommentApi(issueId, commentId)
+        } catch (err) {
+          set((state) => ({
+            commentsByIssue: {
+              ...state.commentsByIssue,
+              [issueId]: previousComments,
+            },
+          }))
+          throw err
+        }
       },
     }),
     { name: 'issues-store' },

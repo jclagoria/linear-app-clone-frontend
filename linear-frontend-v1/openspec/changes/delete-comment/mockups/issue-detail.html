@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail — Delete Comment Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-danger: #DC2626;
+      --color-danger-hover: #B91C1C;
+      --color-success: #16A34A;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-shimmer: #E2E8F0;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); line-height: 1.5; font-size: 14px; min-height: 100vh; }
+
+    .app-shell { max-width: 1024px; margin: 0 auto; padding: var(--space-4); }
+    .main { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); }
+
+    .back-link { display: inline-block; font-size: 13px; color: var(--color-text-secondary); text-decoration: none; margin-bottom: var(--space-4); }
+    .back-link:hover { color: var(--color-primary); }
+
+    .issue-header h1 { font-size: 24px; font-weight: 700; margin-bottom: var(--space-2); }
+    .issue-meta { font-size: 13px; color: var(--color-text-secondary); margin-bottom: var(--space-4); }
+    .issue-meta strong { color: var(--color-text-primary); }
+
+    .section-heading { font-size: 15px; font-weight: 600; margin: var(--space-6) 0 var(--space-3); }
+
+    .comment-list { list-style: none; display: flex; flex-direction: column; gap: var(--space-3); }
+
+    .comment-card {
+      background: var(--color-surface-elevated); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); padding: var(--space-3) var(--space-4);
+      transition: opacity 0.2s;
+    }
+    .comment-card.removed { opacity: 0.3; pointer-events: none; }
+
+    .comment-header { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .avatar {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px; border-radius: 50%; font-size: 12px; font-weight: 600;
+      color: #fff; flex-shrink: 0;
+    }
+    .avatar.blue { background: #3B82F6; }
+    .avatar.green { background: #10B981; }
+    .avatar.purple { background: #8B5CF6; }
+    .comment-author { font-weight: 600; font-size: 13px; }
+    .comment-time { color: var(--color-text-secondary); font-size: 12px; }
+    .comment-actions { margin-left: auto; display: flex; gap: var(--space-1); }
+    .comment-body { font-size: 14px; color: var(--color-text-primary); white-space: pre-wrap; margin-bottom: var(--space-2); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 12px; border: none; border-radius: var(--radius-sm);
+      font-size: 13px; font-family: var(--font-family); cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      min-height: 28px;
+    }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-sm { padding: 4px 8px; font-size: 12px; min-width: 28px; justify-content: center; }
+    .btn-icon { background: transparent; color: var(--color-text-secondary); padding: 4px; min-width: 28px; justify-content: center; }
+    .btn-icon:hover { background: #F1F5F9; color: var(--color-text-primary); }
+    .btn-secondary { background: #F1F5F9; color: var(--color-text-primary); border: 1px solid var(--color-border); }
+    .btn-secondary:hover { background: #E2E8F0; }
+    .btn-danger { background: var(--color-danger); color: #fff; }
+    .btn-danger:hover { background: var(--color-danger-hover); }
+    .btn-primary { background: var(--color-primary); color: #fff; }
+    .btn-primary:hover { background: #1D4ED8; }
+
+    .confirm-prompt {
+      border-top: 1px solid var(--color-border); padding-top: var(--space-3);
+      margin-top: var(--space-2);
+    }
+    .confirm-prompt p { font-size: 13px; color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+    .confirm-actions { display: flex; gap: var(--space-2); }
+
+    .error-alert {
+      background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3); font-size: 13px; color: #991B1B;
+      margin-bottom: var(--space-2);
+    }
+
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .toast-container {
+      position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: var(--space-2);
+      pointer-events: none;
+    }
+    .toast {
+      display: flex; align-items: center; gap: var(--space-2);
+      background: var(--color-surface-elevated); border: 1px solid var(--color-border);
+      border-left: 4px solid var(--color-success); border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-size: 14px; pointer-events: auto; min-width: 280px;
+      animation: slideIn 0.3s ease-out;
+    }
+    .toast.error { border-left-color: var(--color-danger); }
+    .toast .toast-icon { font-size: 18px; }
+    .toast .toast-close { margin-left: auto; background: none; border: none; cursor: pointer; font-size: 16px; color: var(--color-text-secondary); padding: 2px; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .skeleton-card {
+      background: var(--color-surface-elevated); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); padding: var(--space-3) var(--space-4);
+    }
+    .skeleton-line {
+      height: 12px; background: linear-gradient(90deg, var(--color-shimmer) 25%, #F1F5F9 50%, var(--color-shimmer) 75%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm); margin-bottom: var(--space-2);
+    }
+    .skeleton-line:first-child { width: 180px; height: 14px; }
+    .skeleton-line:nth-child(2) { width: 100%; }
+    .skeleton-line:nth-child(3) { width: 85%; }
+    .skeleton-line:last-child { width: 60%; margin-bottom: 0; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    .empty-state {
+      text-align: center; padding: var(--space-8) var(--space-4); color: var(--color-text-secondary);
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: var(--space-2); }
+    .empty-state p:first-of-type { font-weight: 600; color: var(--color-text-primary); margin-bottom: var(--space-1); }
+    .empty-state p:last-of-type { font-size: 13px; }
+
+    .state-controls { margin-bottom: var(--space-4); display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+    .state-controls label { font-size: 12px; color: var(--color-text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .state-controls .btn { font-size: 12px; }
+
+    .hidden { display: none !important; }
+
+    hr { border: none; border-top: 1px solid var(--color-border); margin: var(--space-4) 0; }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="main">
+      <a class="back-link" href="index.html">&larr; Back to mockups</a>
+
+      <div class="state-controls">
+        <label>State:</label>
+        <button class="btn btn-secondary" data-state="populated" onclick="setState('populated')">Populated</button>
+        <button class="btn btn-secondary" data-state="confirm-delete" onclick="setState('confirm-delete')">Confirm delete</button>
+        <button class="btn btn-secondary" data-state="deleting" onclick="setState('deleting')">Deleting</button>
+        <button class="btn btn-secondary" data-state="error" onclick="setState('error')">Error</button>
+        <button class="btn btn-secondary" data-state="success" onclick="setState('success')">Success</button>
+        <button class="btn btn-secondary" data-state="loading" onclick="setState('loading')">Loading</button>
+        <button class="btn btn-secondary" data-state="empty" onclick="setState('empty')">Empty</button>
+      </div>
+
+      <div class="issue-header">
+        <h1>Cannot update payment method</h1>
+        <div class="issue-meta">
+          PROJ-42 &middot; <strong>Bug</strong> &middot; <strong>High</strong> &middot; Assigned to you &middot; Created 3d ago
+        </div>
+      </div>
+
+      <div class="issue-description" style="font-size:14px; color:var(--color-text-secondary); line-height:1.6; margin-bottom:var(--space-2);">
+        <p>When I try to update my billing info, the save button is grayed out even though all fields are filled correctly. This happens in both Chrome and Firefox.</p>
+      </div>
+
+      <div class="issue-labels" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:var(--space-4);">
+        <span style="font-size:12px; padding:2px 8px; border-radius:10px; background:#FEF3C7; color:#92400E;">bug</span>
+        <span style="font-size:12px; padding:2px 8px; border-radius:10px; background:#DBEAFE; color:#1E40AF;">billing</span>
+      </div>
+
+      <hr />
+
+      <div id="comments-section">
+        <h3 class="section-heading" id="comments-heading">Comments (<span id="comment-count">3</span>)</h3>
+
+        <div id="loading-state" class="hidden">
+          <div class="comment-list">
+            <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+            <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+            <div class="skeleton-card"><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div><div class="skeleton-line"></div></div>
+          </div>
+        </div>
+
+        <div id="empty-state" class="hidden">
+          <div class="empty-state">
+            <div class="empty-icon">&#128172;</div>
+            <p>No comments yet</p>
+            <p>Be the first to share your thoughts.</p>
+          </div>
+        </div>
+
+        <div id="comment-list-container">
+          <ul class="comment-list" id="comment-list">
+          </ul>
+        </div>
+      </div>
+
+      <div id="toast-container" class="toast-container"></div>
+    </div>
+  </div>
+
+  <script>
+    var comments = [
+      {
+        id: 1,
+        author: 'You',
+        initials: 'YO',
+        avatarColor: 'blue',
+        time: '2h ago',
+        isAuthor: true,
+        body: 'I think this might be a caching issue. I cleared my browser cache and it started working again. Can we add a cache-busting header?'
+      },
+      {
+        id: 2,
+        author: 'Sarah Chen',
+        initials: 'SC',
+        avatarColor: 'green',
+        time: '5h ago',
+        isAuthor: false,
+        body: 'Reproduced on staging. The form validation seems to fire before all fields are mounted. Looking into it.'
+      },
+      {
+        id: 3,
+        author: 'Mike Torres',
+        initials: 'MT',
+        avatarColor: 'purple',
+        time: '1d ago',
+        isAuthor: false,
+        body: 'This is blocking our deploy to production. Can we prioritize for this sprint?'
+      }
+    ];
+
+    var currentState = 'populated';
+    var confirmCommentId = null;
+    var deletedCommentIds = [];
+
+    function renderComments() {
+      var list = document.getElementById('comment-list');
+      var visible = comments.filter(function(c) { return deletedCommentIds.indexOf(c.id) === -1; });
+      var count = document.getElementById('comment-count');
+      count.textContent = visible.length;
+
+      list.innerHTML = '';
+      visible.forEach(function(c) {
+        var isConfirming = confirmCommentId === c.id;
+        var li = document.createElement('li');
+        li.style.listStyle = 'none';
+
+        var card = document.createElement('div');
+        card.className = 'comment-card';
+        if (deletedCommentIds.indexOf(c.id) !== -1) {
+          card.classList.add('removed');
+        }
+
+        var header = document.createElement('div');
+        header.className = 'comment-header';
+
+        var avatar = document.createElement('span');
+        avatar.className = 'avatar ' + c.avatarColor;
+        avatar.textContent = c.initials;
+
+        var author = document.createElement('span');
+        author.className = 'comment-author';
+        author.textContent = c.author;
+
+        var time = document.createElement('span');
+        time.className = 'comment-time';
+        time.textContent = c.time;
+
+        header.appendChild(avatar);
+        header.appendChild(author);
+        header.appendChild(time);
+
+        var body = document.createElement('div');
+        body.className = 'comment-body';
+        body.textContent = c.body;
+
+        card.appendChild(header);
+        card.appendChild(body);
+
+        if (c.isAuthor && !isConfirming) {
+          var actions = document.createElement('div');
+          actions.className = 'comment-actions';
+
+          var editBtn = document.createElement('button');
+          editBtn.className = 'btn btn-icon btn-sm';
+          editBtn.innerHTML = '&#9998;';
+          editBtn.setAttribute('aria-label', 'Edit comment');
+
+          var deleteBtn = document.createElement('button');
+          deleteBtn.className = 'btn btn-icon btn-sm';
+          deleteBtn.innerHTML = '&#128465;';
+          deleteBtn.setAttribute('aria-label', 'Delete comment');
+          deleteBtn.onclick = (function(commentId) {
+            return function() { openConfirm(commentId); };
+          })(c.id);
+
+          actions.appendChild(editBtn);
+          actions.appendChild(deleteBtn);
+          card.appendChild(actions);
+
+          if (currentState === 'confirm-delete' || currentState === 'deleting' || currentState === 'error') {
+            openConfirm(c.id);
+          }
+        }
+
+        if (isConfirming) {
+          var prompt = document.createElement('div');
+          prompt.className = 'confirm-prompt';
+
+          if (currentState === 'error') {
+            var err = document.createElement('div');
+            err.className = 'error-alert';
+            err.innerHTML = '&#9888; Failed to delete comment. Please try again.';
+            prompt.appendChild(err);
+          }
+
+          var text = document.createElement('p');
+          text.textContent = 'Are you sure you want to delete this comment?';
+          prompt.appendChild(text);
+
+          var actionsRow = document.createElement('div');
+          actionsRow.className = 'confirm-actions';
+
+          var cancelBtn = document.createElement('button');
+          cancelBtn.className = 'btn btn-secondary btn-sm';
+          cancelBtn.textContent = 'Cancel';
+          cancelBtn.disabled = currentState === 'deleting';
+          cancelBtn.onclick = function() { closeConfirm(); };
+
+          var deleteConfirmBtn = document.createElement('button');
+          deleteConfirmBtn.className = 'btn btn-danger btn-sm';
+          if (currentState === 'deleting') {
+            var spinner = document.createElement('span');
+            spinner.className = 'spinner';
+            deleteConfirmBtn.innerHTML = '';
+            deleteConfirmBtn.appendChild(spinner);
+            deleteConfirmBtn.disabled = true;
+          } else {
+            deleteConfirmBtn.textContent = 'Delete';
+            deleteConfirmBtn.onclick = function() { performDelete(c.id); };
+          }
+
+          actionsRow.appendChild(cancelBtn);
+          actionsRow.appendChild(deleteConfirmBtn);
+          prompt.appendChild(actionsRow);
+          card.appendChild(prompt);
+
+          if (currentState === 'confirm-delete' || currentState === 'deleting') {
+            setTimeout(function() { deleteConfirmBtn.focus(); }, 50);
+          }
+        }
+
+        li.appendChild(card);
+        list.appendChild(li);
+      });
+    }
+
+    function openConfirm(commentId) {
+      confirmCommentId = commentId;
+      renderComments();
+    }
+
+    function closeConfirm() {
+      confirmCommentId = null;
+      renderComments();
+    }
+
+    function performDelete(commentId) {
+      currentState = 'deleting';
+      renderComments();
+      setTimeout(function() {
+        deletedCommentIds.push(commentId);
+        confirmCommentId = null;
+        currentState = 'success';
+        renderComments();
+        deleteBtnEl = document.querySelector('.comment-card.removed');
+        if (!deleteBtnEl) {
+          var heading = document.getElementById('comments-heading');
+          if (heading) heading.focus();
+        }
+        showToast('check', 'Comment deleted');
+        currentState = 'populated';
+      }, 1500);
+    }
+
+    function showToast(icon, message) {
+      var container = document.getElementById('toast-container');
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      var iconSpan = document.createElement('span');
+      iconSpan.className = 'toast-icon';
+      iconSpan.innerHTML = icon === 'check' ? '&#10003;' : '&#9888;';
+      var msgSpan = document.createElement('span');
+      msgSpan.textContent = message;
+      var closeBtn = document.createElement('button');
+      closeBtn.className = 'toast-close';
+      closeBtn.innerHTML = '&times;';
+      closeBtn.onclick = function() { toast.remove(); };
+      toast.appendChild(iconSpan);
+      toast.appendChild(msgSpan);
+      toast.appendChild(closeBtn);
+      container.appendChild(toast);
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
+    }
+
+    function showState(state) {
+      var loadingEl = document.getElementById('loading-state');
+      var emptyEl = document.getElementById('empty-state');
+      var listContainer = document.getElementById('comment-list-container');
+
+      loadingEl.classList.add('hidden');
+      emptyEl.classList.add('hidden');
+      listContainer.classList.remove('hidden');
+
+      switch (state) {
+        case 'populated':
+          deletedCommentIds = [];
+          confirmCommentId = null;
+          currentState = 'populated';
+          renderComments();
+          break;
+        case 'confirm-delete':
+          deletedCommentIds = [];
+          currentState = 'confirm-delete';
+          renderComments();
+          break;
+        case 'deleting':
+          deletedCommentIds = [];
+          currentState = 'deleting';
+          renderComments();
+          break;
+        case 'error':
+          deletedCommentIds = [];
+          currentState = 'error';
+          renderComments();
+          break;
+        case 'success':
+          currentState = 'success';
+          renderComments();
+          break;
+        case 'loading':
+          deletedCommentIds = [];
+          confirmCommentId = null;
+          loadingEl.classList.remove('hidden');
+          listContainer.classList.add('hidden');
+          setTimeout(function() {
+            loadingEl.classList.add('hidden');
+            listContainer.classList.remove('hidden');
+            currentState = 'populated';
+            renderComments();
+          }, 2000);
+          break;
+        case 'empty':
+          deletedCommentIds = comments.map(function(c) { return c.id; });
+          confirmCommentId = null;
+          emptyEl.classList.remove('hidden');
+          listContainer.classList.add('hidden');
+          currentState = 'empty';
+          break;
+      }
+      highlightActiveBtn(state);
+    }
+
+    function setState(state) {
+      showState(state);
+    }
+
+    function highlightActiveBtn(state) {
+      var btns = document.querySelectorAll('[data-state]');
+      btns.forEach(function(b) {
+        b.style.background = b.dataset.state === state ? '#E0E7FF' : '';
+        b.style.color = b.dataset.state === state ? '#3730A3' : '';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      renderComments();
+      highlightActiveBtn('populated');
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && confirmCommentId !== null) {
+          closeConfirm();
+        }
+      });
+    });
+
+    var confirmCommentId = null;
+    var deletedCommentIds = [];
+    var currentState = 'populated';
+  </script>
+</body>
+</html>
