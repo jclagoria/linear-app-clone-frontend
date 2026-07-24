@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form View — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-danger: #DC2626;
+      --color-danger-light: #FEE2E2;
+      --color-success: #16A34A;
+      --color-success-light: #DCFCE7;
+      --color-neutral: #F1F5F9;
+      --color-border: #E2E8F0;
+      --color-border-focus: #2563EB;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-text-muted: #94A3B8;
+      --color-surface: #FFFFFF;
+      --color-surface-input: #FFFFFF;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+      --max-width: 720px;
+      --spacing-cadence: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-family);
+      background: var(--color-neutral);
+      color: var(--color-text-primary);
+      line-height: 1.5;
+    }
+
+    /* App Shell */
+    .app-header {
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-3) var(--space-6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .app-header .logo { font-weight: 600; font-size: 1rem; }
+    .app-header nav { display: flex; gap: var(--space-4); font-size: 0.875rem; }
+    .app-header nav a { text-decoration: none; color: var(--color-text-secondary); }
+    .app-header nav a:hover { color: var(--color-text-primary); }
+    .app-header .user { width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; }
+
+    main { max-width: var(--max-width); margin: var(--space-8) auto; padding: 0 var(--space-4); }
+
+    /* Form Container */
+    .form-container {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+    }
+
+    .form-title { font-size: 1.125rem; font-weight: 600; margin-bottom: var(--space-1); }
+    .form-description { font-size: 0.875rem; color: var(--color-text-secondary); margin-bottom: var(--space-6); }
+
+    /* Field Group */
+    .field-group { margin-bottom: var(--space-5); }
+    .field-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: var(--space-1);
+      color: var(--color-text-primary);
+    }
+    .field-input {
+      width: 100%;
+      padding: var(--space-2) var(--space-3);
+      font-size: 0.875rem;
+      font-family: var(--font-family);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-input);
+      color: var(--color-text-primary);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field-input:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 2px var(--color-primary), 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+    .field-input::placeholder { color: var(--color-text-muted); }
+    .field-hint { font-size: 0.75rem; color: var(--color-text-secondary); margin-top: var(--space-1); }
+    .field-error { font-size: 0.75rem; color: var(--color-danger); margin-top: var(--space-1); display: flex; align-items: center; gap: var(--space-1); }
+    .field-success { font-size: 0.75rem; color: var(--color-success); margin-top: var(--space-1); display: flex; align-items: center; gap: var(--space-1); }
+
+    .field-input.has-error { border-color: var(--color-danger); }
+    .field-input.has-error:focus {
+      border-color: var(--color-danger);
+      box-shadow: 0 0 0 2px var(--color-danger), 0 0 0 4px rgba(220, 38, 38, 0.1);
+    }
+    .field-input.has-success { border-color: var(--color-success); }
+
+    textarea.field-input { min-height: 120px; resize: vertical; }
+
+    /* Async validation spinner */
+    .async-spinner {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-1);
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      margin-top: var(--space-1);
+    }
+    .spinner-icon {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--color-border);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Actions */
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-3);
+      margin-top: var(--space-6);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-border);
+    }
+    .btn {
+      padding: var(--space-2) var(--space-4);
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: var(--font-family);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+      border: 1px solid var(--color-primary);
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--color-primary-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-ghost {
+      background: transparent;
+      color: var(--color-text-secondary);
+      border: 1px solid transparent;
+    }
+    .btn-ghost:hover { background: var(--color-neutral); }
+
+    /* Success state */
+    .success-banner {
+      background: var(--color-success-light);
+      border: 1px solid var(--color-success);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      display: none;
+    }
+    .success-banner.visible { display: block; }
+    .success-banner h3 { font-size: 0.875rem; font-weight: 600; color: var(--color-success); margin-bottom: var(--space-1); }
+    .success-banner p { font-size: 0.875rem; color: var(--color-text-primary); }
+
+    /* State toggles */
+    .state-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-surface);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      justify-content: center;
+      gap: var(--space-2);
+      z-index: 100;
+      flex-wrap: wrap;
+    }
+    .state-btn {
+      padding: var(--space-1) var(--space-3);
+      font-size: 0.75rem;
+      font-family: var(--font-family);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      background: var(--color-surface);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .state-btn:hover { background: var(--color-neutral); }
+    .state-btn.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    body { padding-bottom: 60px; }
+
+    /* Loading overlay */
+    .form-container.is-loading .field-input { opacity: 0.5; pointer-events: none; }
+    .form-container.is-loading textarea.field-input { opacity: 0.5; pointer-events: none; }
+
+    @media (max-width: 768px) {
+      .form-container { padding: var(--space-4); }
+      .form-actions { flex-direction: column-reverse; }
+      .btn { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="logo">Linear Clone</div>
+    <nav>
+      <a href="#">Issues</a>
+      <a href="#">Projects</a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="user">JL</div>
+  </header>
+
+  <main>
+    <div class="form-container" id="formContainer">
+      <h1 class="form-title" id="formTitle">Create Issue</h1>
+      <p class="form-description" id="formDescription">Fill in the details to create a new issue.</p>
+
+      <div id="successBanner" class="success-banner">
+        <h3>✓ Issue created successfully</h3>
+        <p>Your issue has been created and is now in the backlog.</p>
+      </div>
+
+      <form id="issueForm" novalidate>
+        <div class="field-group">
+          <label class="field-label" for="title">Title</label>
+          <input
+            type="text"
+            id="title"
+            class="field-input"
+            placeholder="e.g., Login button not working on mobile"
+          />
+          <p class="field-hint" id="titleHint">Brief description of the issue</p>
+          <p class="field-error" id="titleError" style="display:none;">⚠ Title is required</p>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="description">Description</label>
+          <textarea
+            id="description"
+            class="field-input"
+            placeholder="Describe the issue in detail..."
+          ></textarea>
+          <p class="field-hint" id="descriptionHint">Optional detailed description</p>
+          <p class="field-error" id="descriptionError" style="display:none;"></p>
+        </div>
+
+        <div class="field-group" id="asyncFieldGroup" style="display:none;">
+          <label class="field-label" for="projectSlug">Project Slug</label>
+          <input
+            type="text"
+            id="projectSlug"
+            class="field-input"
+            placeholder="my-project"
+          />
+          <p class="field-hint" id="slugHint">Unique identifier for your project</p>
+          <p class="async-spinner" id="slugSpinner" style="display:none;">
+            <span class="spinner-icon"></span> Checking availability...
+          </p>
+          <p class="field-success" id="slugSuccess" style="display:none;">✓ Name is available</p>
+          <p class="field-error" id="slugError" style="display:none;">⚠ This name is already taken</p>
+        </div>
+
+        <div class="form-actions" id="formActions">
+          <button type="button" class="btn btn-ghost" id="cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitBtn">Create Issue</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <div class="state-bar" id="stateBar">
+    <button class="state-btn active" data-state="empty">Empty</button>
+    <button class="state-btn" data-state="populated">Populated</button>
+    <button class="state-btn" data-state="error">Error</button>
+    <button class="state-btn" data-state="loading">Loading</button>
+    <button class="state-btn" data-state="success">Success</button>
+    <button class="state-btn" data-state="async-pending">Async Pending</button>
+    <button class="state-btn" data-state="async-valid">Async Valid</button>
+    <button class="state-btn" data-state="async-invalid">Async Invalid</button>
+  </div>
+
+  <script>
+    const form = document.getElementById('issueForm');
+    const titleInput = document.getElementById('title');
+    const descInput = document.getElementById('description');
+    const titleError = document.getElementById('titleError');
+    const descError = document.getElementById('descriptionError');
+    const titleHint = document.getElementById('titleHint');
+    const descHint = document.getElementById('descriptionHint');
+    const successBanner = document.getElementById('successBanner');
+    const formActions = document.getElementById('formActions');
+    const submitBtn = document.getElementById('submitBtn');
+    const asyncFieldGroup = document.getElementById('asyncFieldGroup');
+    const slugSpinner = document.getElementById('slugSpinner');
+    const slugSuccess = document.getElementById('slugSuccess');
+    const slugError = document.getElementById('slugError');
+    const formContainer = document.getElementById('formContainer');
+    const stateBar = document.getElementById('stateBar');
+
+    const mockData = {
+      title: 'Login button not working on mobile',
+      description: 'When users tap the login button on iOS Safari, the form does not submit. The issue occurs on iPhone 14 Pro running iOS 17.2.',
+      slug: 'available-name'
+    };
+
+    function clearAll() {
+      titleInput.value = '';
+      descInput.value = '';
+      titleError.style.display = 'none';
+      descError.style.display = 'none';
+      titleHint.style.display = '';
+      descHint.style.display = '';
+      titleInput.classList.remove('has-error');
+      descInput.classList.remove('has-error');
+      successBanner.classList.remove('visible');
+      formActions.style.display = '';
+      formContainer.classList.remove('is-loading');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Create Issue';
+      asyncFieldGroup.style.display = 'none';
+      slugSpinner.style.display = 'none';
+      slugSuccess.style.display = 'none';
+      slugError.style.display = 'none';
+      document.getElementById('projectSlug').value = '';
+      document.getElementById('projectSlug').classList.remove('has-error', 'has-success');
+    }
+
+    function setState(state) {
+      clearAll();
+
+      document.querySelectorAll('.state-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.state === state);
+      });
+
+      switch (state) {
+        case 'empty':
+          break;
+
+        case 'populated':
+          titleInput.value = mockData.title;
+          descInput.value = mockData.description;
+          break;
+
+        case 'error':
+          titleInput.classList.add('has-error');
+          titleError.style.display = '';
+          titleHint.style.display = 'none';
+          descHint.style.display = '';
+          break;
+
+        case 'loading':
+          titleInput.value = mockData.title;
+          descInput.value = mockData.description;
+          formContainer.classList.add('is-loading');
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="spinner-icon"></span> Creating...';
+          break;
+
+        case 'success':
+          formActions.style.display = 'none';
+          successBanner.classList.add('visible');
+          break;
+
+        case 'async-pending':
+          asyncFieldGroup.style.display = '';
+          document.getElementById('projectSlug').value = 'my-project';
+          slugSpinner.style.display = '';
+          break;
+
+        case 'async-valid':
+          asyncFieldGroup.style.display = '';
+          document.getElementById('projectSlug').value = mockData.slug;
+          document.getElementById('projectSlug').classList.add('has-success');
+          slugSuccess.style.display = '';
+          break;
+
+        case 'async-invalid':
+          asyncFieldGroup.style.display = '';
+          document.getElementById('projectSlug').value = 'taken-name';
+          document.getElementById('projectSlug').classList.add('has-error');
+          slugError.style.display = '';
+          break;
+      }
+    }
+
+    stateBar.addEventListener('click', (e) => {
+      if (e.target.classList.contains('state-btn')) {
+        setState(e.target.dataset.state);
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let hasError = false;
+
+      if (!titleInput.value.trim()) {
+        titleInput.classList.add('has-error');
+        titleError.style.display = '';
+        titleHint.style.display = 'none';
+        hasError = true;
+      }
+
+      if (!hasError) {
+        setState('loading');
+        setTimeout(() => setState('success'), 1500);
+      }
+    });
+
+    // Initialize
+    setState('empty');
+  </script>
+</body>
+</html>
