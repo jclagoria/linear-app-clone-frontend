@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form Module — Mockups</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: var(--space-6); }
+    h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: var(--space-4); }
+    p { color: var(--color-text-secondary); margin-bottom: var(--space-6); }
+    ul { list-style: none; }
+    li { margin-bottom: 0.5rem; }
+    a {
+      display: block;
+      padding: var(--space-4);
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--color-primary);
+      font-weight: 500;
+      transition: border-color 0.15s;
+    }
+    a:hover { border-color: var(--color-primary); }
+    .meta { font-size: 0.875rem; color: var(--color-text-secondary); font-weight: 400; margin-top: 0.25rem; }
+  </style>
+</head>
+<body>
+  <h1>Form Module — Mockups</h1>
+  <p>Interactive HTML mockups. Click a screen to open it.</p>
+  <ul>
+    <li>
+      <a href="form-view.html">
+        Form View
+        <span class="meta">States: populated, error, loading, success, empty, async validation</span>
+      </a>
+    </li>
+  </ul>
+</body>
+</html>

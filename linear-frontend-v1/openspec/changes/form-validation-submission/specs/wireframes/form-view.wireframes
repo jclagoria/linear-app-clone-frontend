@@ -1,0 +1,337 @@
+# Wireframe: Form View
+
+## Purpose & Flow Context
+
+The Form View screen lets users input data, trigger field-level validation on blur, and submit the form. It serves as the primary screen across all three flows: Standard Form Submission, Double Submission Prevention, and Async Validation. Entry from any page containing a form (issue create, project settings, profile edit). Exit on successful submission (success state or redirect) or user cancel.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / validation error | `○ ●` | Radio unselected / selected |
+| `[✓]` | Checkbox checked | `[ ]` | Checkbox unchecked |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo, navigation, user menu | Shared across all screens |
+| Main | Form container | Max-width 720px, centered |
+| Footer | (if applicable) | Optional, depends on parent page |
+
+**Content hierarchy** (by visual priority):
+1. Form heading and description
+2. Form fields (primary input area)
+3. Submit/cancel actions
+4. Status messages (error/success)
+
+```
++------------------------------------------------------------------+
+|  Header — Logo / Navigation / UserMenu                          |
++------------------------------------------------------------------+
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Main — Form Container                                     |  |
+|  |                                                            |  |
+|  |  # {Form Title}                                            |  |
+|  |  {Description / instructions}                              |  |
+|  |                                                            |  |
+|  |  +------------------------------------------------------+  |  |
+|  |  |  Field Group 1                                       |  |  |
+|  |  |  [Label]                                             |  |  |
+|  |  |  [_______________________________________________]   |  |  |
+|  |  |  Hint text or Error message                          |  |  |
+|  |  +------------------------------------------------------+  |  |
+|  |                                                            |  |
+|  |  +------------------------------------------------------+  |  |
+|  |  |  Field Group 2                                       |  |  |
+|  |  |  [Label]                                             |  |  |
+|  |  |  [_______________________________________________]   |  |  |
+|  |  |  Hint text or Error message                          |  |  |
+|  |  +------------------------------------------------------+  |  |
+|  |                                                            |  |
+|  |  +------------------------------------------------------+  |  |
+|  |  |  Actions                                             |  |  |
+|  |  |  [Cancel]                          [Submit]          |  |  |
+|  |  +------------------------------------------------------+  |  |
+|  |                                                            |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Form title | h2 heading | Static | — |
+| Field label | TextField/SelectField/CheckboxField/TextareaField | Associated with input via htmlFor | — |
+| Text input | TextField | Focus → primary ring, blur → validation trigger | Truncation on overflow |
+| Select dropdown | SelectField | Opens on click, keyboard arrow navigation | — |
+| Checkbox | CheckboxField | Toggles on click/space | — |
+| Textarea | TextareaField | Auto-resize optional, character count | — |
+| Submit button | SubmitButton | Primary variant, loading state during submit | Disabled during submit |
+| Cancel button | Button | Ghost variant, returns to previous screen | — |
+| Error message | TextField/SelectField/CheckboxField/TextareaField (error state) | Shown when touched + invalid, danger color | — |
+| Success message | (inline or toast) | Shown after successful submission | — |
+
+## Data Display
+
+Forms use structured input fields, not serialized strings. Each field is a separate component with label, input, hint/error. Fields are grouped logically with spacing.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Form title | What this form does in user language | e.g., "Create Issue", "Edit Profile" |
+| Description | Brief instruction or context | — |
+| Field label | What the user should enter | Human-readable, not data model |
+| Placeholder | Example value or format hint | Not a substitute for label |
+| Hint text | Additional guidance | Shown when no error |
+| Error message | What's wrong and how to fix | Plain language, no codes |
+| Submit button | Primary action | e.g., "Create", "Save", "Submit" |
+| Cancel button | Discard and return | "Cancel" |
+
+---
+
+## States
+
+### Populated (Default)
+
+The form displays with all fields in their default state. Fields show labels and optional placeholder text. Submit and cancel buttons are active.
+
+```
++------------------------------------------------------------------+
+|  # Create Issue                                                  |
+|  Fill in the details to create a new issue.                      |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Title                                                     |  |
+|  |  [_______________________________________________]         |  |
+|  |  Brief description of the issue                            |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Description                                               |  |
+|  |  [_______________________________________________]         |  |
+|  |  [_______________________________________________]         |  |
+|  |  [_______________________________________________]         |  |
+|  |  Optional detailed description                             |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Cancel]                                [Create Issue]    |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Error
+
+One or more fields have been touched and contain invalid values. Error messages display below the relevant fields. The form remains interactive for correction.
+
+```
++------------------------------------------------------------------+
+|  # Create Issue                                                  |
+|  Fill in the details to create a new issue.                      |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Title                                                     |  |
+|  |  [_______________________________________________]         |  |
+|  |  ⚠ Title is required                                       |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Description                                               |  |
+|  |  [_______________________________________________]         |  |
+|  |  [_______________________________________________]         |  |
+|  |  [_______________________________________________]         |  |
+|  |  Optional detailed description                             |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Cancel]                                [Create Issue]    |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Loading (Submitting)
+
+The submit button shows a loading spinner and is disabled. All form fields are disabled to prevent editing during submission. Cancel button remains active.
+
+```
++------------------------------------------------------------------+
+|  # Create Issue                                                  |
+|  Fill in the details to create a new issue.                      |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Title                                                     |  |
+|  |  [_______________________________________________]  (disabled) |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Description                                               |  |
+|  |  [_______________________________________________]  (disabled) |
+|  |  [_______________________________________________]  (disabled) |
+|  |  [_______________________________________________]  (disabled) |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Cancel]                          [Spinner Creating...]   |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Success / Confirmation
+
+After successful submission, the form displays a success message. The form may reset or redirect depending on context.
+
+```
++------------------------------------------------------------------+
+|  # Create Issue                                                  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  ✓ Issue created successfully                              |  |
+|  |  Your issue has been created and is now in the backlog.    |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Create Another]                      [View Issue]        |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Empty (No Data)
+
+This state applies when the form is first loaded with no default values. All fields are empty, showing only labels and placeholder text.
+
+```
++------------------------------------------------------------------+
+|  # Create Issue                                                  |
+|  Fill in the details to create a new issue.                      |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Title                                                     |  |
+|  |  [e.g., Login button not working on mobile]                |  |
+|  |  Brief description of the issue                            |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Description                                               |  |
+|  |  [Describe the issue in detail...]                         |  |
+|  |  [_______________________________________________]         |  |
+|  |  [_______________________________________________]         |  |
+|  |  Optional detailed description                             |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Cancel]                                [Create Issue]    |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Async Validation (Pending)
+
+When a field with async validation is being checked (e.g., username availability), a loading indicator appears next to the field. The field is in a "validating" state.
+
+```
++------------------------------------------------------------------+
+|  # Create Project                                                |
+|  Set up your new project.                                        |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Project Name                                              |  |
+|  |  [my-project_________________________________]  [Spinner]  |  |
+|  |  Checking availability...                                  |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Cancel]                                [Create Project]  |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Async Validation (Valid)
+
+Async validation has passed. The field shows a valid indicator (optional) or returns to default state.
+
+```
++------------------------------------------------------------------+
+|  # Create Project                                                |
+|  Set up your new project.                                        |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Project Name                                              |  |
+|  |  [available-name_________________________________]         |  |
+|  |  ✓ Name is available                                       |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Cancel]                                [Create Project]  |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+### Async Validation (Invalid)
+
+Async validation has failed. The field shows an error message.
+
+```
++------------------------------------------------------------------+
+|  # Create Project                                                |
+|  Set up your new project.                                        |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  Project Name                                              |  |
+|  |  [taken-name___________________________________]           |  |
+|  |  ⚠ This name is already taken                              |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  [Cancel]                                [Create Project]  |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout as described, 720px max-width |
+| Tablet (768-1024px) | Full-width form, reduced padding |
+| Mobile (<768px) | Full-width fields, stacked buttons, increased touch targets |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | header, main, contentinfo |
+| Heading order | h1 (page) → h2 (form title) |
+| Reading / Focus order | Top → bottom through fields, then actions |
+| Accessible names | All inputs have associated labels |
+| Keyboard operability | Tab through fields, Enter/Space for buttons |
+| Target size | ≥44×44 CSS px on mobile for all interactive targets |
+| Focus not Obscured | Sticky header does not cover focused field |
+| Non-color intent | Error messages use text + icon, not color alone |
