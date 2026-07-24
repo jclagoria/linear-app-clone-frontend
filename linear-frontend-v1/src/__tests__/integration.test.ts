@@ -11,9 +11,9 @@ import type { Issue } from '@/entities/issue/model/store'
 
 
 const mockIssues: Issue[] = [
-  { id: '1', title: 'Bug fix', description: 'Fix the bug', status: 'todo', priority: 1, assigneeId: 'u1', projectId: null, cycleId: null, labels: ['bug'], createdAt: '', updatedAt: '' },
-  { id: '2', title: 'Add feature', description: 'New feature', status: 'in_progress', priority: 2, assigneeId: 'u1', projectId: 'p1', cycleId: null, labels: [], createdAt: '', updatedAt: '' },
-  { id: '3', title: 'Documentation', description: 'Write docs', status: 'done', priority: 3, assigneeId: null, projectId: null, cycleId: null, labels: ['docs'], createdAt: '', updatedAt: '' },
+  { id: '1', title: 'Bug fix', description: 'Fix the bug', statusId: 'todo', priority: 1, assigneeId: 'u1', projectId: null, cycleId: null, labels: ['bug'], createdAt: '', updatedAt: '', teamId: 't1', parentId: null, sortOrder: 0, sequence: 1, completedAt: null, canceledAt: null, deletedAt: null },
+  { id: '2', title: 'Add feature', description: 'New feature', statusId: 'in_progress', priority: 2, assigneeId: 'u1', projectId: 'p1', cycleId: null, labels: [], createdAt: '', updatedAt: '', teamId: 't1', parentId: null, sortOrder: 1, sequence: 2, completedAt: null, canceledAt: null, deletedAt: null },
+  { id: '3', title: 'Documentation', description: 'Write docs', statusId: 'done', priority: 3, assigneeId: null, projectId: null, cycleId: null, labels: ['docs'], createdAt: '', updatedAt: '', teamId: 't1', parentId: null, sortOrder: 2, sequence: 3, completedAt: null, canceledAt: null, deletedAt: null },
 ]
 
 describe('Auth → Guard Integration', () => {
@@ -92,8 +92,9 @@ describe('Issue List + Cache Integration', () => {
     useCacheStore.getState().set('issues:list?', { data: mockIssues, meta: { cursor: null, hasMore: false } })
 
     useIssuesStore.getState().addIssue({
-      id: '5', title: 'New', description: 'New issue', status: 'todo', priority: 1,
+      id: '5', title: 'New', description: 'New issue', statusId: 'todo', priority: 1,
       assigneeId: null, projectId: null, cycleId: null, labels: [], createdAt: '', updatedAt: '',
+      teamId: 't1', parentId: null, sortOrder: 0, sequence: 5, completedAt: null, canceledAt: null, deletedAt: null,
     })
 
     expect(useCacheStore.getState().get('issues:list?')).toBeNull()

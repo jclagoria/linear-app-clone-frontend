@@ -12,24 +12,28 @@ import type { Cycle } from '@/shared/stores/selectors'
 
 const issues: Issue[] = [
   {
-    id: '1', title: 'Bug A', description: 'Fix crash', status: 'todo',
+    id: '1', title: 'Bug A', description: 'Fix crash', statusId: 'todo',
     priority: 1, assigneeId: 'u1', projectId: 'p1', cycleId: null,
     labels: [], createdAt: '', updatedAt: '',
+    teamId: 't1', parentId: null, sortOrder: 0, sequence: 1, completedAt: null, canceledAt: null, deletedAt: null,
   },
   {
-    id: '2', title: 'Feature B', description: 'Add login', status: 'in_progress',
+    id: '2', title: 'Feature B', description: 'Add login', statusId: 'in_progress',
     priority: 2, assigneeId: 'u2', projectId: 'p1', cycleId: null,
     labels: [], createdAt: '', updatedAt: '',
+    teamId: 't1', parentId: null, sortOrder: 1, sequence: 2, completedAt: null, canceledAt: null, deletedAt: null,
   },
   {
-    id: '3', title: 'Done C', description: 'Finished', status: 'done',
+    id: '3', title: 'Done C', description: 'Finished', statusId: 'done',
     priority: 3, assigneeId: null, projectId: 'p2', cycleId: null,
     labels: [], createdAt: '', updatedAt: '',
+    teamId: 't1', parentId: null, sortOrder: 2, sequence: 3, completedAt: null, canceledAt: null, deletedAt: null,
   },
   {
-    id: '4', title: 'Bug D', description: 'UI glitch', status: 'todo',
+    id: '4', title: 'Bug D', description: 'UI glitch', statusId: 'todo',
     priority: 1, assigneeId: 'u1', projectId: null, cycleId: null,
     labels: [], createdAt: '', updatedAt: '',
+    teamId: 't1', parentId: null, sortOrder: 3, sequence: 4, completedAt: null, canceledAt: null, deletedAt: null,
   },
 ]
 
@@ -106,7 +110,7 @@ describe('selectors', () => {
     it('filters by status', () => {
       const result = selectFilteredIssues(issues, { statusId: 'todo', assigneeId: null, projectId: null })
       expect(result).toHaveLength(2)
-      expect(result.every((i) => i.status === 'todo')).toBe(true)
+      expect(result.every((i) => i.statusId === 'todo')).toBe(true)
     })
 
     it('filters by assignee', () => {

@@ -37,7 +37,7 @@ export function IssueFormModal({
         result === true &&
         issue.title === data.title &&
         issue.description === (data.description || '') &&
-        issue.status === data.status &&
+        issue.statusId === data.statusId &&
         issue.priority === data.priority &&
         JSON.stringify(issue.labels) === JSON.stringify(data.labels)
 

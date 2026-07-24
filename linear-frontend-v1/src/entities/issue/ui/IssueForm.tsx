@@ -45,7 +45,7 @@ export function IssueForm({ mode, issue, disabled = false, onSubmit, onCancel }:
     defaultValues: {
       title: issue?.title ?? '',
       description: issue?.description ?? '',
-      status: issue?.status ?? 'Todo',
+      status: issue?.statusId ?? 'Todo',
       priority: issue?.priority ?? 0,
       assigneeId: issue?.assigneeId ?? null,
       labels: issue?.labels ?? [],

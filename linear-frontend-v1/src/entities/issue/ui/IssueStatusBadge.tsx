@@ -19,12 +19,12 @@ const statusColorMap: Record<string, string> = {
 }
 
 interface IssueStatusBadgeProps {
-  status: string
+  statusId: string
   loading?: boolean
   onStatusChange: (statusId: string) => void
 }
 
-export function IssueStatusBadge({ status, loading, onStatusChange }: IssueStatusBadgeProps) {
+export function IssueStatusBadge({ statusId, loading, onStatusChange }: IssueStatusBadgeProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -55,7 +55,7 @@ export function IssueStatusBadge({ status, loading, onStatusChange }: IssueStatu
     return () => document.removeEventListener('mousedown', handler)
   }, [open, close])
 
-  const colorClass = statusColorMap[status] ?? statusColorMap.Todo
+  const colorClass = statusColorMap[statusId] ?? statusColorMap.Todo
 
   return (
     <div ref={containerRef} className="relative inline-flex">
@@ -65,7 +65,7 @@ export function IssueStatusBadge({ status, loading, onStatusChange }: IssueStatu
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-busy={loading}
-        aria-label={`Status: ${status}. Click to change`}
+        aria-label={`Status: ${statusId}. Click to change`}
         disabled={loading}
         onClick={() => !loading && setOpen(!open)}
         className={cn(
@@ -75,7 +75,7 @@ export function IssueStatusBadge({ status, loading, onStatusChange }: IssueStatu
           colorClass,
         )}
       >
-        {status}
+        {statusId}
         {loading ? (
           <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
         ) : (
@@ -90,7 +90,7 @@ export function IssueStatusBadge({ status, loading, onStatusChange }: IssueStatu
           className="absolute top-full left-0 z-50 mt-1 w-44 rounded-md border border-border bg-surface py-1 shadow-lg"
         >
           {STATUS_OPTIONS.map((option) => {
-            const isSelected = option.value === status
+            const isSelected = option.value === statusId
             const optionColor = statusColorMap[option.value] ?? ''
             return (
               <li
@@ -98,7 +98,7 @@ export function IssueStatusBadge({ status, loading, onStatusChange }: IssueStatu
                 role="option"
                 aria-selected={isSelected}
                 onClick={() => {
-                  if (option.value !== status) {
+                  if (option.value !== statusId) {
                     onStatusChange(option.value)
                   }
                   close()

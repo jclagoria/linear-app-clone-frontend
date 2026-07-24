@@ -121,7 +121,7 @@ export function IssueDetailPage() {
         currentIssue &&
         (currentIssue.title !== data.title ||
           currentIssue.description !== (data.description || '') ||
-          currentIssue.status !== data.status ||
+          currentIssue.statusId !== data.statusId ||
           currentIssue.priority !== data.priority ||
           JSON.stringify(currentIssue.labels) !== JSON.stringify(data.labels))
 
@@ -129,7 +129,7 @@ export function IssueDetailPage() {
         const result = await updateIssue(id, {
           title: data.title,
           description: data.description || undefined,
-          status: data.status,
+          statusId: data.statusId,
           priority: data.priority,
           labels: data.labels,
         })
@@ -162,7 +162,7 @@ export function IssueDetailPage() {
     try {
       const result = await useIssuesStore.getState().changeStatus(id, statusId)
       addToast({
-        title: `Status updated to ${result.status}`,
+        title: `Status updated to ${result.statusId}`,
         variant: 'success',
         duration: 3000,
       })

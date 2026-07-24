@@ -39,7 +39,7 @@ export function IssueCard({ issue, selected, onClick }: IssueCardProps) {
   )
 
   const priority = priorityLabels[issue.priority] ?? priorityLabels[0]
-  const statusColor = statusColors[issue.status] ?? statusColors.Todo
+  const statusColor = statusColors[issue.statusId] ?? statusColors.Todo
   const initials = issue.assigneeName
     ? issue.assigneeName
         .split(' ')
@@ -89,7 +89,7 @@ export function IssueCard({ issue, selected, onClick }: IssueCardProps) {
             statusColor,
           )}
         >
-          {issue.status}
+          {issue.statusId}
         </span>
         <span className={cn('text-xs', priority.className)}>
           {priority.label}
