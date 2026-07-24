@@ -1,0 +1,259 @@
+# Wireframe: Cycle List
+
+## Purpose & Flow Context
+
+The Cycle List displays all cycles (sprints/iterations) for the current team, updating in real-time as other team members create, activate, update, or complete cycles via WebSocket events. Entry: user navigates to Cycles section. Exit: user clicks a cycle card to view detail, or navigates away. This wireframe covers the list-level layout and how real-time cycle events (activation, completion) manifest on this screen.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Cycle List sits in the main content area.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Shared app-shell header | See header-connection-status.wireframes |
+| Toolbar | Search, status filter, "New Cycle" button | Below header |
+| Active Cycle Banner | Highlights the currently active cycle | Prominent, full width |
+| Cycle List | Vertical list of cycle cards | Scrollable, below banner |
+| Empty State | When no cycles | Full width in content area |
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Issues]  [Projects]  [Cycles ▼]  [● Connected] [🔔] [👤] |
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]                       [+ New Cycle]  |
++------------------------------------------------------------------+
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ▶ Sprint 14 (Active)                  Jan 15 – Jan 29      | |
+|  |  [============================----] 75%   8/12 issues done   | |
+|  |  👤 Sarah (lead)  👤 Mike  👤 Emily                           | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
+|  --- Past Cycles ---                                               |
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ✓ Sprint 13                          Jan 1 – Jan 14        | |
+|  |  [==============================--] 90%   11/12 issues done  | |
+|  |  Completed Jan 14                                           | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ✓ Sprint 12                          Dec 18 – Dec 31       | |
+|  |  [================================] 100%  10/10 issues done | |
+|  |  Completed Dec 31                                           | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
+|  --- Upcoming Cycles ---                                           |
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ○ Sprint 15                          Jan 30 – Feb 12       | |
+|  |  Not started                                                | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Search Input | Input | Filters cycles by name | Debounced |
+| Status Filter | Dropdown | Filters by cycle status (active, completed, upcoming) | Single select |
+| New Cycle Button | Button | Opens create cycle form/modal | Primary action |
+| Active Cycle Banner | Card | Click navigates to active cycle detail | Prominent styling |
+| Cycle Card | Card | Click navigates to cycle detail | Shows progress, members, dates |
+
+## Data Display
+
+Cycles are displayed in three sections:
+1. **Active Cycle** — highlighted banner at top (if any)
+2. **Past Cycles** — completed cycles, sorted by most recent
+3. **Upcoming Cycles** — planned cycles, sorted by start date
+
+Each cycle card shows:
+- Cycle name
+- Status indicator (active/completed/upcoming)
+- Date range
+- Progress bar (issues done / total)
+- Member avatars
+
+**Real-time list-level behaviour:**
+- `cycle.created`: New cycle card inserts in appropriate section (upcoming) with highlight
+- `cycle.activated`: A cycle moves from "Upcoming" to "Active" section with highlight animation
+- `cycle.completed`: Active cycle moves to "Past" section, progress bar fills to completion
+- `cycle.updated`: Card highlights briefly, fields update in place
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Search Placeholder | Suggests search | "Search cycles..." |
+| Active Cycle Label | Identifies current cycle | "Sprint 14 (Active)" |
+| Progress Text | Shows completion | "8/12 issues done" |
+| Date Range | Shows cycle duration | "Jan 15 – Jan 29" |
+| Section Headers | Group cycles by status | "Past Cycles", "Upcoming Cycles" |
+| Empty State | No cycles in team | "No cycles yet. Create your first cycle to start planning sprints." |
+
+## States
+
+### Populated (Default)
+
+List shows active cycle banner, past cycles, and upcoming cycles.
+
+```
+(see Layout Regions sketch above)
+```
+
+### Updated (Real-time Event Received)
+
+A real-time event activates or completes a cycle. The affected card highlights; cycle may move between sections.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]                       [+ New Cycle]  |
++------------------------------------------------------------------+
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ▶ Sprint 14 (Active)                  Jan 15 – Jan 29      | |
+|  |  [==============================------] 80%   9/12 issues    | | ← UPDATED (highlighted)
+|  |  👤 Sarah (lead)  👤 Mike  👤 Emily                           | |    (progress updated)
+|  +--------------------------------------------------------------+ |
+|                                                                    |
+|  --- Past Cycles ---                                               |
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ✓ Sprint 13                          Jan 1 – Jan 14        | |
+|  |  [==============================--] 90%   11/12 issues done  | |
+|  |  Completed Jan 14                                           | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
++------------------------------------------------------------------+
+  (real-time event: cycle.updated — active cycle progress updates, card highlights)
+```
+
+### Cycle Activated (Real-time Event)
+
+A cycle moves from "Upcoming" to "Active" — banner appears, old active moves to past.
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ▶ Sprint 15 (Active)                  Jan 30 – Feb 12      | | ← NEW ACTIVE (highlighted, inserted as banner)
+|  |  [----] 0%   0/15 issues                                     | |
+|  |  👤 Sarah (lead)                                              | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
+|  --- Past Cycles ---                                               |
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ✓ Sprint 14                          Jan 15 – Jan 29       | | ← MOVED to past
+|  |  [==============================--] 90%   11/12 issues done  | |
+|  |  Completed Jan 29                                            | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
++------------------------------------------------------------------+
+  (real-time event: cycle.activated — new cycle becomes active,
+   previous active moves to past section)
+```
+
+### Loading (Initial Load or Reconnect)
+
+Skeleton mirrors the populated layout — skeleton banner + skeleton cards.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]                       [+ New Cycle]  |
++------------------------------------------------------------------+
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  [==== skeleton ====]              [========= skeleton ====] | |
+|  |  [===========----]                 [== skeleton ====]        | |
+|  |  [👤][👤]                                                   | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
+|  --- Past Cycles ---                                               |
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  [==== skeleton ====]              [========= skeleton ====] | |
+|  |  [===========----]                 [== skeleton ====]        | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Empty (No Cycles)
+
+Full-width empty state with guide-to-action.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]                       [+ New Cycle]  |
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon Illustration]                           |
+|                     No cycles yet                                  |
+|                     Create your first cycle to start planning     |
+|                     sprints.                                      |
+|                     [+ Create Cycle]                               |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout, active banner prominent, sections visible |
+| Tablet (768-1024px) | Same layout, slightly compact |
+| Mobile (<768px) | Single column, active banner full width, section headers collapsible, "New Cycle" becomes FAB |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` landmark contains cycle list; active banner is a `section` with aria-label |
+| Heading order | h1: "Cycles" (page title, implied), h2: "Past Cycles", "Upcoming Cycles" |
+| Reading / Focus order | Top to bottom: Toolbar → Active Cycle Banner → Past Cycles → Upcoming Cycles |
+| Accessible names | Search: aria-label="Search cycles", New Cycle: aria-label="Create new cycle", Active banner: aria-label="Active cycle: {name}" |
+| Keyboard operability | Tab through toolbar, banner, and cycle cards; Enter/Space opens cycle detail |
+| Target size | ≥24×24 CSS px on toolbar controls and cycle cards |
+| Focus not obscured | Toolbar is not sticky |
+| Non-color intent | Status icon + label text, progress bar + percentage text |
+
+## Assumptions
+
+- **Existing screen**: This is an existing list view receiving real-time updates. The wireframe focuses on real-time-specific behaviour (section transitions on activate/complete, highlight animations).
+- **Cycle sections**: The three-section layout (Active/Past/Upcoming) is the existing screen structure. Real-time events cause items to move between sections.
+- **Active cycle**: Only one cycle can be active at a time. The `cycle.activated` event moves a cycle from Upcoming to Active and the previous Active to Past.

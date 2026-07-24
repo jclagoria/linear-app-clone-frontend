@@ -1,0 +1,201 @@
+# Wireframe: Project List
+
+## Purpose & Flow Context
+
+The Project List displays all projects for the current team, updating in real-time as other team members create, update, or complete projects via WebSocket events. Entry: user navigates to Projects section. Exit: user clicks a project card to view detail, or navigates away. This screen is a container for ProjectCard components — the real-time behaviour is in the card-level animations (see project-card.wireframes); this wireframe covers the list-level layout and how real-time updates manifest at the list level.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Project List sits in the main content area.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Shared app-shell header | See header-connection-status.wireframes |
+| Toolbar | Search, view toggle (list/grid), "New Project" button | Below header |
+| Project Grid | Grid of ProjectCard components | 3 columns on desktop, responsive |
+| Empty State | When no projects | Full width in content area |
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Issues]  [Projects ▼]  [Cycles]  [● Connected] [🔔] [👤] |
++------------------------------------------------------------------+
+|  [🔍 Search___]  [▦ List] [□ Grid]                 [+ New Project] |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-------------------------+ +-------------------------+ +-------+ |
+|  |  🚀 Frontend Redesign  | |  📊 Analytics Dashboard | |  🎯 API | |
+|  |  [===========----] 75% | |  [=========------] 55% | |  [===] 30% | |
+|  |  [👤][👤][👤]          | |  [👤][👤]               | |  [👤]   | |
+|  +-------------------------+ +-------------------------+ +-------+ |
+|                                                                    |
+|  +-------------------------+ +-------------------------+           |
+|  |  🔧 Mobile App          | |  📝 Documentation Hub   |           |
+|  |  [==========--------] 60% | |  [==================] 100%|           |
+|  |  [👤][👤][👤][👤]      | |  [👤]                   |           |
+|  +-------------------------+ +-------------------------+           |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Search Input | Input | Filters projects by name | Debounced, min 2 chars |
+| View Toggle | Button group | Switches between list and grid view | Persists preference |
+| New Project Button | Button | Opens create project form/modal | Primary action |
+| ProjectCard | ProjectCard | Click navigates to project detail | Real-time update animations (see project-card.wireframes) |
+
+## Data Display
+
+Projects are displayed in a grid (default) or list layout. Each card shows:
+- Project icon
+- Project name
+- Progress bar with percentage
+- Member avatars (stacked, shows +N if >3)
+
+**Real-time list-level behaviour:**
+- New projects (`project.created`) insert at top/start of grid with brief highlight
+- Updated projects (`project.updated`) trigger card-level animations (see project-card.wireframes)
+- Completed projects may move to a "Completed" section or update progress bar to 100%
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Search Placeholder | Suggests search | "Search projects..." |
+| View Toggle Labels | Identify view mode | "List", "Grid" icons |
+| New Project Button | Creates new project | "New Project" |
+| Empty State | No projects in team | "No projects yet. Create your first project to get started." |
+
+## States
+
+### Populated (Default)
+
+Grid shows projects with cards.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [▦ List] [□ Grid]                 [+ New Project] |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-------------------------+ +-------------------------+ +-------+ |
+|  |  🚀 Frontend Redesign  | |  📊 Analytics Dashboard | |  🎯 API | |
+|  |  [===========----] 75% | |  [=========------] 55% | |  [===] 30% | |
+|  |  [👤][👤][👤]          | |  [👤][👤]               | |  [👤]   | |
+|  +-------------------------+ +-------------------------+ +-------+ |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Updated (Real-time Event Received)
+
+A real-time event modifies a project. The affected card highlights briefly; new projects insert at start.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [▦ List] [□ Grid]                 [+ New Project] |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-------------------------+ +-------------------------+ +-------+ |
+|  |  🚀 Frontend Redesign  | |  📊 Analytics Dashboard | |  🎯 API | |
+|  |  [===========----] 75% | |  [=======-------] 50%  | |  [===] 30% | | ← UPDATED (highlighted)
+|  |  [👤][👤][👤]          | |  [👤][👤]               | |  [👤]   | |    (progress changed 55% → 50%)
+|  +-------------------------+ +-------------------------+ +-------+ |
+|                                                                    |
++------------------------------------------------------------------+
+  (real-time event: project.updated — card highlights, progress bar updates)
+```
+
+### Loading (Initial Load or Reconnect)
+
+Skeleton mirrors the grid layout — 3 skeleton cards with placeholder bars.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [▦ List] [□ Grid]                 [+ New Project] |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-------------------------+ +-------------------------+ +-------+ |
+|  |  [== skeleton ====]     | |  [== skeleton ====]     | | [====] | |
+|  |  [===========----]      | |  [===========----]      | | [====] | |
+|  |  [👤][👤]               | |  [👤][👤]               | | [👤]   | |
+|  +-------------------------+ +-------------------------+ +-------+ |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Empty (No Projects)
+
+Full-width empty state with guide-to-action.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [▦ List] [□ Grid]                 [+ New Project] |
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon Illustration]                           |
+|                     No projects yet                                |
+|                     Create your first project to get started.     |
+|                     [+ Create Project]                             |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | 3-column grid, all elements visible |
+| Tablet (768-1024px) | 2-column grid, sidebar hidden |
+| Mobile (<768px) | Single column, cards full width, "New Project" becomes FAB |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` landmark contains project grid |
+| Heading order | h1: "Projects" (page title, implied) |
+| Reading / Focus order | Top to bottom: Toolbar → Project cards in grid order (left-to-right, top-to-bottom) |
+| Accessible names | Search: aria-label="Search projects", New Project: aria-label="Create new project", View toggle: aria-label="Switch to {view} view" |
+| Keyboard operability | Tab through toolbar then cards; Enter/Space opens project; Arrow keys navigate grid |
+| Target size | ≥24×24 CSS px on toolbar controls and project cards |
+| Focus not obscured | Toolbar is not sticky |
+| Non-color intent | Progress bar + percentage text, project icon + name |
+
+## Assumptions
+
+- **Existing screen**: This is an existing grid/list view receiving real-time updates. The wireframe focuses on real-time-specific behaviour (list-level insert/highlight animations).
+- **Card behaviour**: Individual card-level real-time animations are defined in project-card.wireframes. This wireframe shows list-level manifestation only.
+- **View toggle**: List/grid toggle is existing UI; shown here for layout context.

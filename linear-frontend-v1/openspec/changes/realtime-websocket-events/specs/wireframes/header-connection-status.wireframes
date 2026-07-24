@@ -1,0 +1,155 @@
+# Wireframe: Header with Connection Status & Notification Badge
+
+## Purpose & Flow Context
+
+The application header displays the WebSocket connection status indicator and notification badge. This is the primary entry point for monitoring real-time connection health and accessing notifications. Entry: app load after authentication. Exit: user navigates away or closes tab.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo, Navigation, ConnectionStatusIndicator, NotificationBadge, UserMenu | Sticky top, full width |
+| Main Content | Page-specific content | Below header, scrollable |
+| Sidebar (optional) | Contextual navigation | Hidden on mobile |
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Nav Items]              [● Connected] [🔔3] [Avatar]  |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-----------------------------+  +-----------------------------+  |
+|  |                             |  |                             |  |
+|  |  {Main Content Area}        |  |  {Sidebar (optional)}       |  |
+|  |                             |  |                             |  |
+|  +-----------------------------+  +-----------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Logo | Link | Click navigates to home | None |
+| Nav Items | Link | Click navigates to section | Active state highlighted |
+| ConnectionStatusIndicator | ConnectionStatusIndicator | Shows WebSocket state, click to retry when disconnected | Compact on mobile |
+| NotificationBadge | NotificationBadge | Shows unread count, click opens NotificationPanel | Hides when count is 0 |
+| UserMenu | Dropdown | Click opens user menu | Keyboard accessible |
+
+## Data Display
+
+This is a navigation header, not a data display screen. The ConnectionStatusIndicator displays connection state, and the NotificationBadge displays unread notification count.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| ConnectionStatusIndicator text | Communicates connection health | "Connected", "Connecting...", "Reconnecting...", "Disconnected" |
+| NotificationBadge count | Shows urgency of unread items | "0" hidden, "1-99" numeric, "99+" for overflow |
+| UserMenu trigger | Shows current user | Avatar image or initials |
+
+## States
+
+### Populated (Default — Connected)
+
+The header shows all elements with connection indicator in "connected" state (green dot).
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Nav Items]              [● Connected] [🔔3] [👤]     |
++------------------------------------------------------------------+
+```
+
+### Empty (No Notifications)
+
+Connection indicator shows connected, notification badge hidden.
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Nav Items]              [● Connected]      [👤]      |
++------------------------------------------------------------------+
+```
+
+### Loading (Connecting)
+
+Connection indicator shows "connecting" state with pulse animation.
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Nav Items]              [● Connecting...]  [👤]      |
++------------------------------------------------------------------+
+```
+
+### Error (Disconnected)
+
+Connection indicator shows "disconnected" state (red dot), clickable to retry.
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Nav Items]              [● Disconnected]   [👤]      |
++------------------------------------------------------------------+
+```
+
+### Success (Reconnection)
+
+Connection indicator transitions from "reconnecting" to "connected" with brief green flash.
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Nav Items]              [● Connected]      [👤]      |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout as described, all elements visible |
+| Tablet (768-1024px) | Nav items may collapse to hamburger, connection status shows text |
+| Mobile (<768px) | Nav → hamburger menu, connection status shows dot only (no text), notification badge compact |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `header` landmark contains all elements |
+| Heading order | No headings in header (navigation only) |
+| Reading / Focus order | Left to right: Logo → Nav → ConnectionStatus → NotificationBadge → UserMenu |
+| Accessible names | ConnectionStatusIndicator: aria-label="Connection status: {state}", NotificationBadge: aria-label="{count} unread notifications" |
+| Keyboard operability | Tab through elements, Enter/Space activates, Escape closes dropdowns |
+| Target size | ≥24×24 CSS px on all interactive targets |
+| Focus not obscured | Header is sticky but doesn't obscure focused elements below |
+| Non-color intent | ConnectionStatusIndicator uses dot color + text label |

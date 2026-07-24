@@ -1,0 +1,152 @@
+# Wireframe: Issue Card
+
+## Purpose & Flow Context
+
+The Issue Card displays issue summary with real-time status and assignee updates via optimistic updates. Entry: user views issue list. Exit: user clicks card to navigate to issue detail.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Issue card is part of issue list grid layout.
+
+**App-shell**: Issue card is within main content area.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Issue Card | Status icon, title, priority, assignee, labels | Clickable card, hover state |
+
+```
++------------------------------------------------------------------+
+|  ○  Fix login timeout issue        [👤] [🔧]                    |
+|     BUG  🔴 Urgent  💬3  📎1                                     |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Status Icon | StatusCycleIndicator | Shows issue status, cycles on 'S' key press | Pulse animation during optimistic |
+| Issue Title | Text | Click navigates to issue detail | Truncates with ellipsis if too long |
+| Priority Icon | Icon | Shows issue priority level | None |
+| Assignee Avatar | Avatar | Shows assigned user | Click opens assignee selector |
+| Labels | Label chips | Shows issue labels | Horizontal scroll if too many |
+
+## Data Display
+
+Issue cards are displayed in a list or grid layout. Each card shows:
+- Status (color-coded dot)
+- Title (truncated)
+- Priority (icon)
+- Assignee (avatar)
+- Labels (colored chips)
+- Comment count (💬N)
+- Attachment count (📎N)
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Status Icon | Communicates issue status | Color-coded dot with label |
+| Issue Title | Describes the issue | User-friendly language |
+| Priority Icon | Shows urgency level | 🔴 Urgent, 🟡 High, 🔵 Medium, ⚪ Low |
+| Assignee Avatar | Shows who is responsible | User avatar or initials |
+| Labels | Categorizes the issue | Bug, Feature, Enhancement, etc. |
+
+## States
+
+### Idle (Default)
+
+Card shows issue with normal styling.
+
+```
++------------------------------------------------------------------+
+|  ○  Fix login timeout issue        [👤] [🔧]                    |
+|     BUG  🔴 Urgent  💬3  📎1                                     |
++------------------------------------------------------------------+
+```
+
+### Optimistic (Status Change)
+
+Card shows pulse animation on status field, new value displayed immediately.
+
+```
++------------------------------------------------------------------+
+|  ●  Fix login timeout issue        [👤] [🔧]                    |
+|     BUG  🔴 Urgent  💬3  📎1                                     |
++------------------------------------------------------------------+
+  (status dot has pulse animation)
+```
+
+### Confirmed (Update Complete)
+
+Card shows brief green flash on updated field, then returns to normal.
+
+```
++------------------------------------------------------------------+
+|  ●  Fix login timeout issue        [👤] [🔧]                    |
+|     BUG  🔴 Urgent  💬3  📎1                                     |
++------------------------------------------------------------------+
+  (status dot had brief green flash)
+```
+
+### Reverted (Update Failed)
+
+Card shows flash red on reverted field, returns to original value.
+
+```
++------------------------------------------------------------------+
+|  ○  Fix login timeout issue        [👤] [🔧]                    |
+|     BUG  🔴 Urgent  💬3  📎1                                     |
++------------------------------------------------------------------+
+  (status dot had brief red flash, reverted to original)
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full card layout with all elements |
+| Tablet (768-1024px) | Compact layout, some elements may stack |
+| Mobile (<768px) | Minimal layout, priority and labels may hide |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Card is within main landmark |
+| Heading order | Card title is h3 within article |
+| Reading / Focus order | Tab to card, Enter/Space navigates to issue |
+| Accessible names | Card: aria-label="Issue: {title}, Status: {status}, Priority: {priority}" |
+| Keyboard operability | Tab to card, Enter/Space navigates, 'S' key cycles status |
+| Target size | ≥24×24 CSS px on entire card |
+| Focus not obscured | Card focus ring visible |
+| Non-color intent | Status dot + label text, not just color |

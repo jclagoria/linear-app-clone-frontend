@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Project Card — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F7F8FC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E6E8EC;
+      --color-text-primary: #1A1D26;
+      --color-text-secondary: #6B7280;
+      --color-success: #2DA44E;
+      --color-danger: #CF222E;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+
+    .controls { padding: var(--space-4) var(--space-6); display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .controls button { padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); cursor: pointer; font-size: 12px; }
+    .controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .page-content { padding: 0 var(--space-6) var(--space-6); color: var(--color-text-secondary); font-size: 14px; }
+
+    .card-showcase { max-width: 320px; margin: 0 auto; padding: var(--space-6); }
+
+    .project-card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); cursor: pointer; transition: box-shadow 0.15s; }
+    .project-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .project-icon { font-size: 20px; margin-bottom: var(--space-2); }
+    .project-name { font-size: 16px; font-weight: 600; margin-bottom: var(--space-3); transition: all 0.3s; }
+    .progress-bar { height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden; margin-bottom: var(--space-2); }
+    .progress-fill { height: 100%; background: var(--color-primary); border-radius: 3px; transition: width 0.5s ease-out; }
+    .progress-text { font-size: 12px; color: var(--color-text-secondary); margin-bottom: var(--space-3); }
+    .member-avatars { display: flex; }
+    .avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; margin-left: -6px; border: 2px solid var(--color-surface-elevated); }
+    .avatar:first-child { margin-left: 0; }
+
+    .flash-green { animation: flashGreen 0.8s ease-out; }
+    @keyframes flashGreen { 0% { box-shadow: 0 0 0 3px rgba(45,164,78,0.4); } 100% { box-shadow: none; } }
+    .flash-red { animation: flashRed 0.8s ease-out; }
+    @keyframes flashRed { 0% { box-shadow: 0 0 0 3px rgba(207,34,46,0.4); } 100% { box-shadow: none; } }
+    .pulse { animation: pulseName 0.6s ease-in-out; }
+    @keyframes pulseName { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <span style="font-size:12px;color:var(--color-text-secondary);margin-right:8px;">Card State:</span>
+    <button class="active" onclick="setState('idle')">Idle</button>
+    <button onclick="setState('optimistic')">Optimistic</button>
+    <button onclick="setState('confirmed')">Confirmed</button>
+    <button onclick="setState('reverted')">Reverted</button>
+  </div>
+
+  <div class="page-content">
+    <p>ProjectCard shows project summary with progress. Use buttons to preview optimistic update states.</p>
+  </div>
+
+  <div class="card-showcase">
+    <div id="card" class="project-card" role="article" aria-label="Project: Frontend Redesign, Progress: 75%">
+      <div class="project-icon">🚀</div>
+      <div id="projectName" class="project-name">Frontend Redesign</div>
+      <div class="progress-bar"><div id="progressFill" class="progress-fill" style="width:75%"></div></div>
+      <div id="progressText" class="progress-text">75% complete</div>
+      <div class="member-avatars">
+        <div class="avatar">S</div>
+        <div class="avatar" style="background:#059669;">M</div>
+        <div class="avatar" style="background:#D97706;">E</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setState(state) {
+      const card = document.getElementById('card');
+      const name = document.getElementById('projectName');
+      const fill = document.getElementById('progressFill');
+      const text = document.getElementById('progressText');
+      card.className = 'project-card';
+      name.className = 'project-name';
+
+      document.querySelectorAll('.controls button').forEach((b, i) => {
+        if (i < 4) b.classList.toggle('active', b.textContent.toLowerCase() === state);
+      });
+
+      if (state === 'idle') {
+        name.textContent = 'Frontend Redesign';
+        fill.style.width = '75%';
+        text.textContent = '75% complete';
+      } else if (state === 'optimistic') {
+        name.textContent = 'Frontend Redesign v2';
+        name.classList.add('pulse');
+        fill.style.width = '80%';
+        text.textContent = '80% complete';
+        card.setAttribute('aria-busy', 'true');
+      } else if (state === 'confirmed') {
+        name.textContent = 'Frontend Redesign v2';
+        card.classList.add('flash-green');
+        card.setAttribute('aria-busy', 'false');
+      } else if (state === 'reverted') {
+        name.textContent = 'Frontend Redesign';
+        card.classList.add('flash-red');
+        fill.style.width = '75%';
+        text.textContent = '75% complete';
+        card.setAttribute('aria-busy', 'false');
+      }
+    }
+  </script>
+</body>
+</html>

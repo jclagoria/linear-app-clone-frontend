@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Assignee Selector — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F7F8FC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E6E8EC;
+      --color-text-primary: #1A1D26;
+      --color-text-secondary: #6B7280;
+      --color-danger: #CF222E;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+
+    .controls { padding: var(--space-4); display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .controls button { padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); cursor: pointer; font-size: 12px; }
+    .controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .page-content { padding: 0 var(--space-4) var(--space-6); color: var(--color-text-secondary); font-size: 14px; text-align: center; }
+
+    .selector-showcase { margin-top: 40px; }
+
+    .selector { position: relative; display: inline-block; }
+    .selector-trigger { display: flex; align-items: center; gap: var(--space-2); padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); cursor: pointer; font-size: 14px; min-width: 180px; }
+    .selector-trigger:hover { border-color: var(--color-primary); }
+    .trigger-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+    .trigger-name { flex: 1; text-align: left; }
+    .trigger-chevron { font-size: 10px; color: var(--color-text-secondary); transition: transform 0.2s; }
+    .selector.open .trigger-chevron { transform: rotate(180deg); }
+
+    .dropdown { position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-height: 240px; overflow-y: auto; z-index: 10; display: none; }
+    .selector.open .dropdown { display: block; }
+    .dropdown-item { display: flex; align-items: center; gap: var(--space-2); padding: 8px 12px; cursor: pointer; font-size: 14px; transition: background 0.1s; }
+    .dropdown-item:hover { background: var(--color-surface); }
+    .dropdown-item.selected { background: #EEF2FF; }
+    .dropdown-item .item-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+    .dropdown-item .check { margin-left: auto; color: var(--color-primary); font-size: 14px; opacity: 0; }
+    .dropdown-item.selected .check { opacity: 1; }
+
+    .toast-inline { position: fixed; bottom: 16px; right: 16px; padding: 10px 16px; background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-left: 3px solid var(--color-danger); border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-size: 13px; animation: slideIn 0.3s ease-out; z-index: 100; display: none; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <span style="font-size:12px;color:var(--color-text-secondary);margin-right:8px;">State:</span>
+    <button class="active" onclick="setState('closed')">Closed</button>
+    <button onclick="setState('open')">Open</button>
+    <button onclick="setState('selecting')">Keyboard Nav</button>
+    <button onclick="setState('applied')">Applied</button>
+    <button onclick="setState('reverted')">Reverted</button>
+  </div>
+
+  <div class="page-content">
+    <p>IssueAssigneeSelector — dropdown for assigning issues with optimistic update.</p>
+  </div>
+
+  <div class="selector-showcase">
+    <div id="selector" class="selector">
+      <div class="selector-trigger" onclick="toggleDropdown()" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-label="Assign issue to">
+        <div id="triggerAvatar" class="trigger-avatar">S</div>
+        <span id="triggerName" class="trigger-name">Sarah Chen</span>
+        <span class="trigger-chevron">▼</span>
+      </div>
+      <div id="dropdown" class="dropdown" role="listbox">
+        <div class="dropdown-item" data-user="unassigned" onclick="selectUser('unassigned', '', 'Unassigned')">
+          <div class="item-avatar" style="background:var(--color-muted);">?</div>
+          <span>Unassigned</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="dropdown-item selected" data-user="sarah" onclick="selectUser('sarah', 'S', 'Sarah Chen')">
+          <div class="item-avatar">S</div>
+          <span>Sarah Chen</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="dropdown-item" data-user="mike" onclick="selectUser('mike', 'M', 'Mike Johnson')">
+          <div class="item-avatar" style="background:#059669;">M</div>
+          <span>Mike Johnson</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="dropdown-item" data-user="emily" onclick="selectUser('emily', 'E', 'Emily Park')">
+          <div class="item-avatar" style="background:#D97706;">E</div>
+          <span>Emily Park</span>
+          <span class="check">✓</span>
+        </div>
+        <div class="dropdown-item" data-user="alex" onclick="selectUser('alex', 'A', 'Alex Rivera')">
+          <div class="item-avatar" style="background:#CF222E;">A</div>
+          <span>Alex Rivera</span>
+          <span class="check">✓</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-inline"></div>
+
+  <script>
+    const users = { sarah: { initials: 'S', name: 'Sarah Chen' }, mike: { initials: 'M', name: 'Mike Johnson' }, emily: { initials: 'E', name: 'Emily Park' }, alex: { initials: 'A', name: 'Alex Rivera' }, unassigned: { initials: '?', name: 'Unassigned' } };
+    let current = 'sarah';
+    let previous = 'sarah';
+
+    function toggleDropdown() {
+      document.getElementById('selector').classList.toggle('open');
+    }
+
+    function selectUser(id, initials, name) {
+      previous = current;
+      current = id;
+      document.getElementById('triggerAvatar').textContent = initials;
+      document.getElementById('triggerName').textContent = name;
+      document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.classList.toggle('selected', item.dataset.user === id);
+      });
+      document.getElementById('selector').classList.remove('open');
+      simulateOptimistic(id);
+    }
+
+    function simulateOptimistic(id) {
+      const trigger = document.querySelector('.selector-trigger');
+      trigger.style.opacity = '0.6';
+      setTimeout(() => { trigger.style.opacity = '1'; }, 800);
+    }
+
+    function setState(state) {
+      document.querySelectorAll('.controls button').forEach((b, i) => {
+        if (i < 5) b.classList.toggle('active', b.textContent.toLowerCase().replace(' ', '') === state.replace(' ', ''));
+      });
+      const selector = document.getElementById('selector');
+      const toast = document.getElementById('toast');
+      selector.className = 'selector';
+      toast.style.display = 'none';
+
+      if (state === 'closed') {
+        selectUser('sarah', 'S', 'Sarah Chen');
+      } else if (state === 'open') {
+        selectUser('sarah', 'S', 'Sarah Chen');
+        selector.classList.add('open');
+      } else if (state === 'selecting') {
+        selectUser('sarah', 'S', 'Sarah Chen');
+        selector.classList.add('open');
+        const items = document.querySelectorAll('.dropdown-item');
+        if (items[2]) items[2].style.background = 'var(--color-surface)';
+      } else if (state === 'applied') {
+        selectUser('mike', 'M', 'Mike Johnson');
+      } else if (state === 'reverted') {
+        selectUser('sarah', 'S', 'Sarah Chen');
+        toast.textContent = 'Assignment failed. Issue returned to previous assignee.';
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 3000);
+      }
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.selector')) document.getElementById('selector').classList.remove('open');
+    });
+  </script>
+</body>
+</html>

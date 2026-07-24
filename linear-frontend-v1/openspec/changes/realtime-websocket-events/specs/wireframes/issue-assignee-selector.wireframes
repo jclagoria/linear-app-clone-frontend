@@ -1,0 +1,176 @@
+# Wireframe: Issue Assignee Selector
+
+## Purpose & Flow Context
+
+The Issue Assignee Selector is a dropdown component that allows users to assign or reassign an issue to a team member. Entry: user clicks assignee avatar or "Assign" button on IssueCard or IssueDetail. Exit: user selects an assignee (optimistic update applied) or clicks outside/presses Escape (dropdown closes without change).
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Dropdown is positioned absolute relative to trigger, not part of grid layout.
+
+**App-shell**: Dropdown overlays content, positioned below trigger element.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Trigger Button | Current assignee avatar + name + chevron, or "Unassigned" placeholder | Click opens dropdown |
+| Dropdown Menu | Search input (optional), user list with avatars | Positioned below trigger, max-height with scroll |
+
+```
++-------------------------------+
+|  [👤  Sarah Chen      ▼]    |
++-------------------------------+
+|  [>  Unassigned             ] |
+|  [>  👤  Sarah Chen         ] |
+|  [>  👤  Mike Johnson       ] |
+|  [>  👤  Emily Park         ] |
+|  [>  👤  Alex Rivera        ] |
++-------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Trigger Button | Button | Click opens dropdown, shows current assignee or "Unassigned" | Keyboard Enter/Space opens |
+| Dropdown Menu | List | Contains user options, scrollable if many users | Max-height with scroll |
+| User Option | List Item | Click selects assignee, closes dropdown | Hover highlight, keyboard arrow navigation |
+| Unassigned Option | List Item | Click removes assignee | First option in list |
+| User Avatar | Avatar | Shows user avatar or initials | 24px circle |
+| User Name | Text | Shows user full name | Truncates if too long |
+
+## Data Display
+
+User options are displayed in a vertical list, sorted by:
+1. Current assignee (if any) at top
+2. Team members alphabetically by name
+3. "Unassigned" option always available
+
+Each option shows:
+- User avatar (24px circle)
+- User full name
+- Active indicator (checkmark) if currently assigned
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Trigger Label | Shows current assignee | "Sarah Chen" or "Unassigned" |
+| Unassigned Option | Allows removing assignment | "Unassigned", "No assignee" |
+| User Name | Identifies team member | Full name, e.g. "Sarah Chen" |
+| Active Indicator | Shows current selection | Checkmark icon next to assigned user |
+
+## States
+
+### Closed (Default)
+
+Trigger button shows current assignee, dropdown hidden.
+
+```
++-------------------------------+
+|  [👤  Sarah Chen      ▼]    |
++-------------------------------+
+```
+
+### Open (Dropdown Visible)
+
+Dropdown appears below trigger, showing user list.
+
+```
++-------------------------------+
+|  [👤  Sarah Chen      ▲]    |
++-------------------------------+
+|  [>  Unassigned             ] |
+|  [>  👤  Sarah Chen      ✓ ] |
+|  [>  👤  Mike Johnson       ] |
+|  [>  👤  Emily Park         ] |
+|  [>  👤  Alex Rivera        ] |
++-------------------------------+
+```
+
+### Selecting (Keyboard Navigation)
+
+User navigates options with arrow keys, current option highlighted.
+
+```
++-------------------------------+
+|  [👤  Sarah Chen      ▲]    |
++-------------------------------+
+|  [>  Unassigned             ] |
+|  [>  👤  Sarah Chen      ✓ ] |
+|  [>  👤  Mike Johnson  ■■■ ] |  ← highlighted
+|  [>  👤  Emily Park         ] |
+|  [>  👤  Alex Rivera        ] |
++-------------------------------+
+```
+
+### Applied (Optimistic Update)
+
+User selected new assignee, dropdown closes, trigger updates immediately.
+
+```
++-------------------------------+
+|  [👤  Mike Johnson    ▼]    |
++-------------------------------+
+  (trigger updated, API request in background)
+```
+
+### Reverted (Update Failed)
+
+Optimistic update failed, trigger reverts to previous assignee.
+
+```
++-------------------------------+
+|  [👤  Sarah Chen      ▼]    |
++-------------------------------+
+  (trigger reverted, error toast shown)
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full dropdown with all options, positioned below trigger |
+| Tablet (768-1024px) | Same as desktop |
+| Mobile (<768px) | Full-width dropdown at bottom of screen, larger touch targets, may use native select |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Dropdown is within main landmark |
+| Heading order | No headings in dropdown |
+| Reading / Focus order | Focus moves to dropdown when opened, arrow keys navigate options |
+| Accessible names | Trigger: aria-label="Assign issue to", Options: aria-label="{user name}" |
+| Keyboard operability | Enter/Space opens, Arrow keys navigate, Enter selects, Escape closes |
+| Target size | ≥24×24 CSS px on trigger and all options |
+| Focus not obscured | Dropdown doesn't obscure trigger (positioned below) |
+| Non-color intent | User name + avatar, not just color |

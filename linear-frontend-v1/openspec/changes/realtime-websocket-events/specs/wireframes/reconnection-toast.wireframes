@@ -1,0 +1,152 @@
+# Wireframe: Reconnection Toast
+
+## Purpose & Flow Context
+
+The Reconnection Toast appears when the WebSocket connection drops or reconnection fails, providing the user with status information and optional retry action. Entry: connection failure detected. Exit: user dismisses toast or it auto-dismisses after 5 seconds.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Toast is positioned fixed, not part of grid layout.
+
+**App-shell**: Toast overlays content, positioned bottom-right.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Toast Container | Warning icon, message text, retry button, dismiss button | Fixed position, bottom-right, z-index high |
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  ⚠  Connection lost. Reconnecting...  [Retry]  [X]        |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Warning Icon | Icon | Visual indicator of warning state | None |
+| Message Text | Text | Describes connection issue | Truncates if too long |
+| Retry Button | Button | Click triggers manual reconnection | Disabled during reconnection |
+| Dismiss Button | Button | Click closes toast | Keyboard accessible via Escape |
+
+## Data Display
+
+This is a notification toast, not a data display screen. It displays connection status information.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Warning Icon | Visual warning indicator | ⚠️ triangle icon |
+| Message Text | Communicates connection issue | "Connection lost. Reconnecting...", "Unable to connect. Check your network." |
+| Retry Button | Offers manual reconnection | "Retry", "Reconnect" |
+| Dismiss Button | Allows user to dismiss | [X] icon or "Dismiss" text |
+
+## States
+
+### Visible (Connection Lost)
+
+Toast appears with warning icon, message, and retry button.
+
+```
++------------------------------------------------------------+
+|  ⚠  Connection lost. Reconnecting...  [Retry]  [X]        |
++------------------------------------------------------------+
+```
+
+### Visible (Max Retries Exhausted)
+
+Toast appears with error icon, message, and retry button.
+
+```
++------------------------------------------------------------+
+|  ⚠  Unable to connect. Please check your network.  [Retry]  [X] |
++------------------------------------------------------------+
+```
+
+### Visible (Network Failure)
+
+Toast appears with network error message.
+
+```
++------------------------------------------------------------+
+|  ⚠  Network error. Reconnect when online.  [Retry]  [X]   |
++------------------------------------------------------------+
+```
+
+### Dismissed
+
+Toast slides out to right and is removed from DOM.
+
+```
++------------------------------------------------------------+
+|  (empty - toast has slid out)                               |
++------------------------------------------------------------+
+```
+
+### Loading (Reconnection in Progress)
+
+Retry button shows loading spinner, disabled.
+
+```
++------------------------------------------------------------+
+|  ⚠  Reconnecting...  [⟳ Retry]  [X]                       |
++------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full toast with all elements, bottom-right position |
+| Tablet (768-1024px) | Same as desktop |
+| Mobile (<768px) | Toast spans full width at bottom, larger touch targets |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | No landmarks (toast is overlay) |
+| Heading order | No headings in toast |
+| Reading / Focus order | Focus moves to toast when it appears |
+| Accessible names | Retry button: aria-label="Retry connection", Dismiss button: aria-label="Dismiss notification" |
+| Keyboard operability | Tab to buttons, Enter/Space activates, Escape dismisses toast |
+| Target size | ≥24×24 CSS px on Retry and Dismiss buttons |
+| Focus not obscured | Toast doesn't obscure focused element (positioned bottom-right) |
+| Non-color intent | Warning icon + text, not just red color |

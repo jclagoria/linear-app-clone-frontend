@@ -1,0 +1,226 @@
+# Wireframe: Project Form
+
+## Purpose & Flow Context
+
+The Project Form allows users to create or edit project details with optimistic updates. Entry: user clicks "Create Project" button or "Edit" on ProjectCard/ProjectDetail. Exit: user saves (optimistic update applied) or cancels (form closes without changes).
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Form uses 12-column grid, content area spans 8 columns centered.
+
+**App-shell**: Form is within main content area or modal overlay.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Form Container | Vertical stack of form fields and actions | Max-width 600px, centered |
+| Name Field | Label + text input | Required field |
+| Description Field | Label + textarea | Optional field |
+| Action Bar | Save + Cancel buttons | Sticky bottom in modal, inline in page |
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |                                                            |  |
+|  |  Project Name                                              |  |
+|  |  ________________________________                          |  |
+|  |                                                            |  |
+|  |  Description                                               |  |
+|  |  ________________________________                          |  |
+|  |  ________________________________                          |  |
+|  |  ________________________________                          |  |
+|  |                                                            |  |
+|  |  [Save]  [Cancel]                                          |  |
+|  |                                                            |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Name Input | Input | Text input for project name, required | Validation error if empty |
+| Description Textarea | Textarea | Multi-line text input for description | Optional, can be empty |
+| Save Button | Button | Click saves project, closes form | Disabled during save, validates required fields |
+| Cancel Button | Button | Click closes form without saving | Discards changes |
+
+## Data Display
+
+This is a form, not a data display screen. Form fields collect:
+- Project name (required, max 255 characters)
+- Project description (optional, max 2000 characters)
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Name Label | Identifies the name field | "Project Name" |
+| Name Placeholder | Suggests input | "Enter project name" |
+| Description Label | Identifies the description field | "Description" |
+| Description Placeholder | Suggests input | "Enter project description (optional)" |
+| Save Button | Submits form | "Save", "Create Project" (on create) |
+| Cancel Button | Discards changes | "Cancel" |
+| Validation Error | Explains validation failure | "Project name is required" |
+
+## States
+
+### Idle (Default)
+
+Form shows empty fields (create) or populated fields (edit), ready for input.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Project Name                                              |
+|  ________________________________                          |
+|                                                            |
+|  Description                                               |
+|  ________________________________                          |
+|  ________________________________                          |
+|  ________________________________                          |
+|                                                            |
+|  [Save]  [Cancel]                                          |
+|                                                            |
++------------------------------------------------------------+
+```
+
+### Populated (Edit Mode)
+
+Form shows existing project values, ready for editing.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Project Name                                              |
+|  Frontend Redesign                               |  |
+|                                                            |
+|  Description                                               |
+|  Redesign the frontend application with modern             |
+|  technologies and improved UX.                             |
+|                                                            |
+|  [Save]  [Cancel]                                          |
+|                                                            |
++------------------------------------------------------------+
+```
+
+### Optimistic (Saving)
+
+Form shows new values, save button disabled with loading indicator.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Project Name                                              |
+|  Frontend Redesign v2                             |  |
+|                                                            |
+|  Description                                               |
+|  Redesign the frontend application with modern             |
+|  technologies and improved UX. Updated scope.              |
+|                                                            |
+|  [⟳ Save]  [Cancel]                                        |
+|                                                            |
++------------------------------------------------------------+
+  (save button shows spinner, disabled)
+```
+
+### Confirmed (Save Complete)
+
+Form closes, parent screen updates with new values.
+
+```
++------------------------------------------------------------+
+|  (form closed, parent screen visible with updated project) |
++------------------------------------------------------------+
+```
+
+### Reverted (Save Failed)
+
+Form reverts to previous values, error toast shown.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Project Name                                              |
+|  Frontend Redesign                               |  |
+|                                                            |
+|  Description                                               |
+|  Redesign the frontend application with modern             |
+|  technologies and improved UX.                             |
+|                                                            |
+|  [Save]  [Cancel]                                          |
+|                                                            |
++------------------------------------------------------------+
+  (values reverted, error toast: "Failed to save project")
+```
+
+### Error (Validation Failed)
+
+Form shows validation errors inline.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Project Name                                              |
+|  ________________________________                          |
+|  ⚠ Project name is required                                |
+|                                                            |
+|  Description                                               |
+|  ________________________________                          |
+|  ________________________________                          |
+|                                                            |
+|  [Save]  [Cancel]                                          |
+|                                                            |
++------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full form layout, max-width 600px, centered |
+| Tablet (768-1024px) | Same as desktop |
+| Mobile (<768px) | Full-width form, stacked fields, save/cancel buttons full-width |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Form is within main landmark, or dialog if modal |
+| Heading order | Form title is h2 |
+| Reading / Focus order | Top to bottom: Name → Description → Save → Cancel |
+| Accessible names | Name input: aria-label="Project name", Description: aria-label="Project description" |
+| Keyboard operability | Tab through fields, Enter submits, Escape cancels (if modal) |
+| Target size | ≥24×24 CSS px on inputs and buttons |
+| Focus not obscured | Form doesn't obscure focused element |
+| Non-color intent | Labels + icons, not just red for errors |

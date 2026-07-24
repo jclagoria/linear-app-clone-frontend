@@ -1,0 +1,183 @@
+# Wireframe: Notification Panel
+
+## Purpose & Flow Context
+
+The Notification Panel displays recent notifications with real-time delivery via WebSocket. Entry: user clicks notification badge. Exit: user clicks outside panel or presses Escape.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Notification panel is positioned fixed, not part of grid layout.
+
+**App-shell**: Panel overlays content, positioned below notification badge.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Panel Container | Header, notification list, empty state | Fixed position, below badge, max-height with scroll |
+| Header | "Notifications" title, "Mark All Read" action | Sticky top |
+| Notification List | List of notification items | Scrollable |
+| Empty State | "No notifications" message | Shown when no notifications |
+
+```
++------------------------------------------------------------------+
+|  Notifications                    [Mark All Read]                |
++------------------------------------------------------------------+
+|  ●  John commented on "Fix login"    2m ago                      |
+|  ●  Sarah updated project "Frontend" 5m ago                     |
+|     Mike completed cycle "Sprint 1"  1h ago                      |
+|     (more items...)                                               |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Header Title | Text | Displays "Notifications" | None |
+| Mark All Read | Button | Click marks all notifications as read | Disabled when no unread |
+| Notification Item | NotificationItem | Click navigates to related entity | Shows unread indicator |
+| Empty State | Text | Displays when no notifications | None |
+
+## Data Display
+
+Notifications are displayed in a list, sorted by most recent first. Each item shows:
+- Unread indicator (blue dot)
+- User avatar
+- Notification message
+- Timestamp
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Header Title | Identifies the panel | "Notifications" |
+| Mark All Read | Offers bulk action | "Mark All Read", "Mark all as read" |
+| Notification Message | Describes the event | "{User} commented on "{issue}"", "{User} updated project "{project}"" |
+| Timestamp | Shows when event occurred | "2m ago", "1h ago", "Yesterday" |
+| Empty State | Communicates no notifications | "No notifications", "You're all caught up!" |
+
+## States
+
+### Populated (Default)
+
+Panel shows list of notifications with unread indicators.
+
+```
++------------------------------------------------------------------+
+|  Notifications                    [Mark All Read]                |
++------------------------------------------------------------------+
+|  ●  John commented on "Fix login"    2m ago                      |
+|  ●  Sarah updated project "Frontend" 5m ago                     |
+|     Mike completed cycle "Sprint 1"  1h ago                      |
++------------------------------------------------------------------+
+```
+
+### Empty (No Notifications)
+
+Panel shows empty state message.
+
+```
++------------------------------------------------------------------+
+|  Notifications                    [Mark All Read]                |
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon Illustration]                           |
+|                     No notifications                              |
+|                     You're all caught up!                         |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Loading (Fetching Notifications)
+
+Panel shows skeleton loading state.
+
+```
++------------------------------------------------------------------+
+|  Notifications                    [Mark All Read]                |
++------------------------------------------------------------------+
+|  [==== skeleton bar ====]   [==== skeleton ====]                 |
+|  [==== skeleton bar ====]   [==== skeleton ====]                 |
+|  [==== skeleton bar ====]   [==== skeleton ====]                 |
++------------------------------------------------------------------+
+```
+
+### Error (Failed to Load)
+
+Panel shows error message with retry option.
+
+```
++------------------------------------------------------------------+
+|  Notifications                    [Mark All Read]                |
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Error Icon]                                  |
+|                     Failed to load notifications                 |
+|                     [Retry]                                       |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Success (Mark All Read Complete)
+
+Panel briefly shows success indication, then updates to show all read.
+
+```
++------------------------------------------------------------------+
+|  Notifications                    [Mark All Read]                |
++------------------------------------------------------------------+
+|     John commented on "Fix login"    2m ago                      |
+|     Sarah updated project "Frontend" 5m ago                     |
+|     Mike completed cycle "Sprint 1"  1h ago                      |
++------------------------------------------------------------------+
+  (all unread indicators removed)
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full panel with all elements, max-width 400px |
+| Tablet (768-1024px) | Same as desktop |
+| Mobile (<768px) | Full-width panel at bottom, larger touch targets |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Panel has role="region", aria-label="Notifications" |
+| Heading order | No headings in panel |
+| Reading / Focus order | Focus moves to panel when opened, tab through items |
+| Accessible names | Mark All Read: aria-label="Mark all notifications as read", Notification items: aria-label="{notification message}" |
+| Keyboard operability | Tab to items, Enter/Space navigates, Escape closes panel |
+| Target size | ≥24×24 CSS px on all interactive targets |
+| Focus not obscured | Panel doesn't obscure focused element (positioned below badge) |
+| Non-color intent | Unread indicator + text, not just blue color |

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F7F8FC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E6E8EC;
+      --color-text-primary: #1A1D26;
+      --color-text-secondary: #6B7280;
+      --color-success: #2DA44E;
+      --color-warning: #E3B341;
+      --color-danger: #CF222E;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+    .header { display: flex; align-items: center; height: 56px; padding: 0 var(--space-6); background: var(--color-surface-elevated); border-bottom: 1px solid var(--color-border); }
+    .header-logo { font-size: 18px; font-weight: 700; color: var(--color-primary); margin-right: var(--space-6); text-decoration: none; }
+    .header-nav { display: flex; gap: var(--space-4); margin-right: auto; }
+    .header-nav a { font-size: 14px; color: var(--color-text-secondary); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+    .header-nav a.active { color: var(--color-text-primary); font-weight: 500; }
+    .conn-indicator { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-size: 12px; margin-right: var(--space-4); }
+    .conn-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); }
+
+    .breadcrumb { padding: var(--space-3) var(--space-6); font-size: 13px; color: var(--color-text-secondary); border-bottom: 1px solid var(--color-border); background: var(--color-surface-elevated); }
+    .breadcrumb a { color: var(--color-primary); text-decoration: none; }
+
+    .detail-layout { display: grid; grid-template-columns: 1fr 280px; max-width: 1100px; margin: 0 auto; gap: 0; }
+    .detail-main { padding: var(--space-6); border-right: 1px solid var(--color-border); }
+    .detail-sidebar { padding: var(--space-6); background: var(--color-surface-elevated); }
+
+    .issue-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-6); }
+    .status-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--color-warning); }
+    .issue-title { font-size: 24px; font-weight: 600; }
+    .issue-desc { font-size: 14px; line-height: 1.6; color: var(--color-text-primary); margin-bottom: var(--space-6); }
+    .issue-desc p { margin-bottom: var(--space-3); }
+
+    .comments-section h3 { font-size: 16px; font-weight: 600; margin-bottom: var(--space-4); }
+    .comment { display: flex; gap: var(--space-3); margin-bottom: var(--space-4); }
+    .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+    .comment-body { flex: 1; }
+    .comment-meta { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+    .comment-text { font-size: 14px; line-height: 1.5; }
+    .comment-input { display: flex; gap: var(--space-2); margin-top: var(--space-4); }
+    .comment-input input { flex: 1; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 14px; }
+    .comment-input button { padding: var(--space-2) var(--space-4); background: var(--color-primary); color: #fff; border: none; border-radius: var(--radius-md); font-size: 13px; cursor: pointer; }
+
+    .sidebar-field { margin-bottom: var(--space-4); }
+    .sidebar-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+    .sidebar-value { font-size: 14px; display: flex; align-items: center; gap: var(--space-2); }
+    .sidebar-value select { padding: 4px 8px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 13px; }
+    .sidebar-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .sidebar-tag { padding: 2px 8px; background: #EEF2FF; color: #4F46E5; border-radius: 4px; font-size: 12px; }
+
+    .controls { padding: var(--space-3) var(--space-6); display: flex; gap: var(--space-2); border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+    .controls button { padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); cursor: pointer; font-size: 12px; }
+    .controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    .highlight { animation: highlightFade 1.5s ease-out; }
+    @keyframes highlightFade { 0% { background: #DBEAFE; } 100% { background: inherit; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="header-logo">Linear</a>
+    <nav class="header-nav">
+      <a href="issue-list.html" class="active">Issues</a>
+      <a href="project-list.html">Projects</a>
+      <a href="cycle-list.html">Cycles</a>
+    </nav>
+    <div class="conn-indicator"><span class="conn-dot"></span><span>Connected</span></div>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="issue-list.html">Issues</a> &gt; Fix login timeout issue
+  </div>
+
+  <div class="controls">
+    <span style="font-size:12px;color:var(--color-text-secondary);margin-right:8px;">State:</span>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('updated')">Real-time Update</button>
+  </div>
+
+  <div id="content" class="detail-layout">
+    <div class="detail-main">
+      <div class="issue-header">
+        <div class="status-dot"></div>
+        <h1 class="issue-title">Fix login timeout issue</h1>
+      </div>
+      <div class="issue-desc">
+        <p>Users are experiencing a 30-second timeout when attempting to login with SSO credentials. This affects all enterprise customers using Okta.</p>
+        <p>Steps to reproduce:</p>
+        <p>1. Navigate to login page<br>2. Click "Sign in with SSO"<br>3. Enter Okta credentials<br>4. Observe 30s timeout</p>
+      </div>
+      <div class="comments-section">
+        <h3>Comments (3)</h3>
+        <div id="comments">
+          <div class="comment">
+            <div class="comment-avatar">M</div>
+            <div class="comment-body">
+              <div class="comment-meta">Mike Johnson · 2h ago</div>
+              <div class="comment-text">I can reproduce this on Chrome and Firefox. Looking into the auth module.</div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar" style="background:#059669;">S</div>
+            <div class="comment-body">
+              <div class="comment-meta">Sarah Chen · 1h ago</div>
+              <div class="comment-text">Found the issue — token refresh is blocking the main thread.</div>
+            </div>
+          </div>
+          <div class="comment">
+            <div class="comment-avatar" style="background:#D97706;">E</div>
+            <div class="comment-body">
+              <div class="comment-meta">Emily Park · 30m ago</div>
+              <div class="comment-text">PR ready for review: #421</div>
+            </div>
+          </div>
+        </div>
+        <div class="comment-input">
+          <input type="text" placeholder="Add a comment..." aria-label="Add a comment" />
+          <button>Send</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail-sidebar">
+      <div class="sidebar-field">
+        <div class="sidebar-label">Status</div>
+        <div class="sidebar-value"><select><option>In Progress</option><option>Todo</option><option>Done</option></select></div>
+      </div>
+      <div class="sidebar-field">
+        <div class="sidebar-label">Assignee</div>
+        <div class="sidebar-value">👤 Sarah Chen</div>
+      </div>
+      <div class="sidebar-field">
+        <div class="sidebar-label">Priority</div>
+        <div class="sidebar-value"><select><option>Urgent</option><option>High</option><option>Medium</option><option>Low</option></select></div>
+      </div>
+      <div class="sidebar-field">
+        <div class="sidebar-label">Labels</div>
+        <div class="sidebar-tags"><span class="sidebar-tag">Bug</span></div>
+      </div>
+      <div class="sidebar-field">
+        <div class="sidebar-label">Created</div>
+        <div class="sidebar-value">Jan 15</div>
+      </div>
+      <div class="sidebar-field" id="updatedField">
+        <div class="sidebar-label">Updated</div>
+        <div class="sidebar-value">2m ago</div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    function setState(state) {
+      document.querySelectorAll('.controls button').forEach((b, i) => {
+        if (i < 3) b.classList.toggle('active', b.textContent.toLowerCase().includes(state));
+      });
+      if (state === 'loading') {
+        document.getElementById('content').innerHTML = `
+          <div class="detail-main">
+            <div class="issue-header"><div class="skeleton" style="width:12px;height:12px;border-radius:50%;background:#E5E7EB;"></div><div class="skeleton" style="width:200px;height:24px;background:#E5E7EB;border-radius:4px;"></div></div>
+            <div class="skeleton" style="width:100%;height:60px;background:#E5E7EB;border-radius:4px;margin-bottom:12px;"></div>
+            <div class="skeleton" style="width:80%;height:14px;background:#E5E7EB;border-radius:4px;margin-bottom:8px;"></div>
+            <div class="skeleton" style="width:60%;height:14px;background:#E5E7EB;border-radius:4px;"></div>
+          </div>
+          <div class="detail-sidebar">
+            <div class="skeleton" style="width:100%;height:40px;background:#E5E7EB;border-radius:4px;margin-bottom:16px;"></div>
+            <div class="skeleton" style="width:80%;height:40px;background:#E5E7EB;border-radius:4px;margin-bottom:16px;"></div>
+            <div class="skeleton" style="width:90%;height:40px;background:#E5E7EB;border-radius:4px;"></div>
+          </div>`;
+      } else if (state === 'updated') {
+        const desc = document.querySelector('.issue-desc');
+        if (desc) desc.classList.add('highlight');
+        const updatedField = document.getElementById('updatedField');
+        if (updatedField) { updatedField.classList.add('highlight'); updatedField.querySelector('.sidebar-value').textContent = 'just now'; }
+        const newComment = document.createElement('div');
+        newComment.className = 'comment highlight';
+        newComment.innerHTML = `
+          <div class="comment-avatar" style="background:#CF222E;">A</div>
+          <div class="comment-body">
+            <div class="comment-meta">Alex Rivera · just now</div>
+            <div class="comment-text">Merged the fix. Deploying to staging.</div>
+          </div>`;
+        const comments = document.getElementById('comments');
+        if (comments) comments.appendChild(newComment);
+        setTimeout(() => { if (desc) desc.classList.remove('highlight'); if (updatedField) updatedField.classList.remove('highlight'); newComment.classList.remove('highlight'); }, 1500);
+      }
+    }
+  </script>
+</body>
+</html>
