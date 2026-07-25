@@ -109,7 +109,7 @@ features/
       ShortcutSettingsRow.tsx
       DeleteConfirmModal.tsx
       ToastContainer.tsx
-      KeyboardShortcutWrapper.tsx (high-order wrapper)
+      KeyboardShortcutWrapper.tsx (wrapper component)
 
 entities/
   issue/
@@ -126,7 +126,7 @@ entities/
 | ShortcutSettingsRow | Displays and edits a single shortcut | shortcut, onSave, onReset | viewing, editing, conflict |
 | DeleteConfirmModal | Confirms destructive deletion | isOpen, onConfirm, onCancel | open, closed |
 | ToastContainer | Displays success/error/info toasts | toasts, onDismiss | active toasts array |
-| KeyboardShortcutWrapper | High-order component that enables shortcuts for wrapped content | shortcuts, context | — |
+| KeyboardShortcutWrapper | Wrapper component that enables shortcuts for wrapped content | shortcuts, context | — |
 | Kbd | Displays a keyboard key label | key | default, pressed |
 | Modal | Reusable modal shell with focus trap | isOpen, onClose, title, children | open, closing |
 | Toast | Individual toast notification | type, message, onDismiss, autoDismiss | visible, dismissing |

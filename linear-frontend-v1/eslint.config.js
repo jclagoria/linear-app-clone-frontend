@@ -20,6 +20,7 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'boundaries/element-types': 'error',
     },
     settings: {
       react: { version: '19.0' },
