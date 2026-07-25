@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delete Confirmation Modal — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-danger: #DC2626;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+
+    .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal { background: var(--color-surface-elevated); border-radius: var(--radius-md); width: 100%; max-width: 400px; box-shadow: 0 8px 32px rgba(0,0,0,0.16); }
+    .modal-header { padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--color-border); }
+    .modal-header h2 { font-size: 18px; font-weight: 600; }
+    .modal-body { padding: var(--space-4) var(--space-6); }
+    .modal-body p { font-size: 14px; line-height: 1.5; margin-bottom: var(--space-2); }
+    .modal-body .warning { color: var(--color-text-secondary); font-size: 13px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: var(--space-2); padding: var(--space-3) var(--space-6); border-top: 1px solid var(--color-border); }
+    .btn-delete { font-size: 13px; padding: 6px 14px; border-radius: var(--radius-sm); border: none; background: var(--color-danger); color: #fff; cursor: pointer; font-family: inherit; min-height: 28px; min-width: 24px; min-height: 24px; }
+    .btn-delete:hover { opacity: 0.9; }
+    .btn-cancel { font-size: 13px; padding: 6px 14px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: none; cursor: pointer; color: var(--color-text-secondary); font-family: inherit; min-width: 24px; min-height: 24px; }
+    .btn-cancel:hover { background: var(--color-shortcut-bg); }
+
+    .error-msg { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-danger); padding: var(--space-2) 0; }
+
+    @media (max-width: 768px) {
+      .modal { max-width: 100%; margin: var(--space-4); }
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <div class="modal-header">
+        <h2 id="dialog-title">Delete Issue</h2>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete this issue?</p>
+        <p class="warning">This action cannot be undone.</p>
+        <!-- State: error -->
+        <div class="error-msg" id="error-state" style="display: none;">
+          <span>Failed to delete issue. Please try again.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="history.back()">Cancel</button>
+        <button class="btn-delete" aria-label="Confirm delete issue" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- State: success -->
+  <div class="toast success" id="toast-success" style="display: none; position: fixed; bottom: 24px; right: 24px; padding: 10px 16px; border-radius: 6px; font-size: 13px; background: #F0FDF4; border: 1px solid #BBF7D0; color: #16A34A; box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
+    <span>Issue deleted</span>
+  </div>
+
+  <script>
+    let currentState = new URLSearchParams(window.location.search).get('state') || 'default';
+
+    function applyState() {
+      const errorEl = document.getElementById('error-state');
+      if (currentState === 'error') {
+        errorEl.style.display = 'flex';
+      }
+    }
+
+    function confirmDelete() {
+      if (currentState === 'error') {
+        document.getElementById('toast-success').style.display = 'flex';
+        setTimeout(() => { document.getElementById('toast-success').style.display = 'none'; }, 3000);
+      } else {
+        currentState = 'error';
+        applyState();
+      }
+    }
+
+    applyState();
+  </script>
+</body>
+</html>

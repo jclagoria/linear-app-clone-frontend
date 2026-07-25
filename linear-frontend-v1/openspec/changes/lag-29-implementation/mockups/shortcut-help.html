@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shortcut Help Modal — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-shortcut-bg: #F1F5F9;
+      --color-shortcut-border: #CBD5E1;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+
+    .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 100; }
+    .modal { background: var(--color-surface-elevated); border-radius: var(--radius-md); width: 100%; max-width: 640px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 8px 32px rgba(0,0,0,0.16); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--color-border); }
+    .modal-header h1 { font-size: 18px; font-weight: 600; }
+    .btn-close { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--color-text-secondary); padding: var(--space-2); border-radius: var(--radius-sm); min-width: 24px; min-height: 24px; display: flex; align-items: center; justify-content: center; }
+    .btn-close:hover { background: var(--color-shortcut-bg); }
+    .modal-tabs { display: flex; gap: var(--space-2); padding: var(--space-3) var(--space-6); border-bottom: 1px solid var(--color-border); }
+    .tab { font-size: 13px; padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid transparent; background: none; cursor: pointer; color: var(--color-text-secondary); font-family: inherit; }
+    .tab:hover { background: var(--color-shortcut-bg); }
+    .tab.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .modal-body { overflow-y: auto; padding: var(--space-4) var(--space-6); flex: 1; }
+    .category { margin-bottom: var(--space-4); }
+    .category h3 { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2); }
+    .shortcut-row { display: flex; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--color-border); }
+    .shortcut-row:last-child { border-bottom: none; }
+    .shortcut-keys { display: flex; gap: 4px; min-width: 120px; }
+    kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; font-family: var(--font-family); font-size: 13px; font-weight: 500; background: var(--color-shortcut-bg); border: 1px solid var(--color-shortcut-border); border-radius: var(--radius-sm); color: var(--color-text-primary); }
+    .shortcut-action { font-size: 14px; color: var(--color-text-primary); }
+
+    @media (max-width: 768px) {
+      .modal { max-width: 100%; max-height: 100vh; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h1 id="modal-title">Keyboard Shortcuts</h1>
+        <button class="btn-close" aria-label="Close keyboard shortcuts" onclick="history.back()">&times;</button>
+      </div>
+      <div class="modal-tabs" role="tablist">
+        <button class="tab active" role="tab" data-filter="all">All</button>
+        <button class="tab" role="tab" data-filter="global">Global</button>
+        <button class="tab" role="tab" data-filter="list">List</button>
+        <button class="tab" role="tab" data-filter="issue">Issue</button>
+      </div>
+      <div class="modal-body" id="shortcut-list"></div>
+    </div>
+  </div>
+
+  <script>
+    const shortcuts = [
+      { category: 'global', key: ['C'], action: 'Create new issue' },
+      { category: 'global', key: ['G', 'I'], action: 'Go to Issues' },
+      { category: 'global', key: ['G', 'P'], action: 'Go to Projects' },
+      { category: 'global', key: ['G', 'C'], action: 'Go to Cycles' },
+      { category: 'global', key: ['/'], action: 'Search' },
+      { category: 'global', key: ['?'], action: 'Show keyboard shortcuts' },
+      { category: 'global', key: ['Esc'], action: 'Close / Deselect' },
+      { category: 'list', key: ['J'], action: 'Move selection down' },
+      { category: 'list', key: ['K'], action: 'Move selection up' },
+      { category: 'list', key: ['Enter'], action: 'Open selected item' },
+      { category: 'issue', key: ['S'], action: 'Cycle status' },
+      { category: 'issue', key: ['A'], action: 'Assign issue' },
+      { category: 'issue', key: ['L'], action: 'Add label' },
+      { category: 'issue', key: ['E'], action: 'Edit title' },
+      { category: 'issue', key: ['Del'], action: 'Delete issue' },
+    ];
+
+    let activeFilter = 'all';
+
+    function render() {
+      const container = document.getElementById('shortcut-list');
+      const filtered = activeFilter === 'all' ? shortcuts : shortcuts.filter(s => s.category === activeFilter);
+      const groups = {};
+      filtered.forEach(s => {
+        if (!groups[s.category]) groups[s.category] = [];
+        groups[s.category].push(s);
+      });
+      const categoryLabels = { global: 'Global', list: 'List', issue: 'Issue' };
+      let html = '';
+      for (const [cat, items] of Object.entries(groups)) {
+        html += `<div class="category"><h3>${categoryLabels[cat]}</h3>`;
+        items.forEach(s => {
+          html += `<div class="shortcut-row"><div class="shortcut-keys">${s.key.map(k => `<kbd>${k}</kbd>`).join('')}</div><span class="shortcut-action">${s.action}</span></div>`;
+        });
+        html += '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeFilter = tab.dataset.filter;
+        render();
+      });
+    });
+
+    render();
+  </script>
+</body>
+</html>
