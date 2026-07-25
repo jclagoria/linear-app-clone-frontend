@@ -1,0 +1,169 @@
+# Wireframe: Connection Error Modal
+
+## Purpose & Flow Context
+
+The Connection Error Modal appears after 10 failed reconnection attempts, offering the user manual reconnect or logout options. Entry: max reconnection attempts exhausted. Exit: user clicks Reconnect or Logout.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X] | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Modal is centered overlay, not part of grid layout.
+
+**App-shell**: Modal overlays content with semi-transparent background.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Modal Overlay | Semi-transparent black background | Click outside closes modal |
+| Modal Content | Title, description, action buttons | Centered card, max-width 400px |
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |                                                            |  |
+|  |  Connection Failed                                         |  |
+|  |                                                            |  |
+|  |  Unable to establish a stable connection.                  |  |
+|  |  Please check your network and try again.                  |  |
+|  |                                                            |  |
+|  |  [Reconnect]  [Logout]                                     |  |
+|  |                                                            |  |
+|  +------------------------------------------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Modal Overlay | Overlay | Click outside closes modal | None |
+| Title | Heading | Displays error title | None |
+| Description | Text | Explains error and options | None |
+| Reconnect Button | Button | Click triggers manual reconnection | Disabled during reconnection; hidden in fatal-error variant |
+| Logout Button | Button | Click logs user out | Secondary/danger style; primary action in fatal-error variant |
+
+## Data Display
+
+This is an error modal, not a data display screen. It displays error information and action options.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Title | Communicates error state | "Connection Failed", "Unable to Connect" |
+| Description | Explains error and options | "Unable to establish a stable connection. Please check your network and try again." |
+| Reconnect Button | Offers manual reconnection | "Reconnect", "Try Again" |
+| Logout Button | Offers alternative action | "Logout", "Sign Out" |
+
+## States
+
+### Visible (Reconnect Offer)
+
+Modal appears with title, description, and two action buttons.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Connection Failed                                         |
+|                                                            |
+|  Unable to establish a stable connection.                  |
+|  Please check your network and try again.                  |
+|                                                            |
+|  [Reconnect]  [Logout]                                     |
+|                                                            |
++------------------------------------------------------------+
+```
+
+### Visible (Reconnecting)
+
+Reconnect button shows loading spinner, disabled.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Connection Failed                                         |
+|                                                            |
+|  Unable to establish a stable connection.                  |
+|  Please check your network and try again.                  |
+|                                                            |
+|  [⟳ Reconnect]  [Logout]                                   |
+|                                                            |
++------------------------------------------------------------+
+```
+
+### Visible (Fatal Error — Unrecoverable)
+
+Modal appears with error title, description, and only Logout button. Reconnect is hidden — the error is unrecoverable.
+
+```
++------------------------------------------------------------+
+|                                                            |
+|  Connection Lost                                           |
+|                                                            |
+|  The connection could not be restored after multiple       |
+|  attempts. Please sign out and try again later.           |
+|                                                            |
+|  [Logout]                                                  |
+|                                                            |
++------------------------------------------------------------+
+```
+
+### Dismissed
+
+Modal fades out and is removed from DOM.
+
+```
++------------------------------------------------------------+
+|  (empty - modal has faded out)                             |
++------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Centered modal, max-width 400px |
+| Tablet (768-1024px) | Same as desktop |
+| Mobile (<768px) | Full-width modal, larger touch targets |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | No landmarks (modal is overlay) |
+| Heading order | Modal title is h2 |
+| Reading / Focus order | Focus trapped in modal, moves to title then buttons |
+| Accessible names | Reconnect button: aria-label="Reconnect to server", Logout button: aria-label="Logout and close application" |
+| Keyboard operability | Tab cycles through buttons, Escape closes modal |
+| Target size | ≥24×24 CSS px on Reconnect and Logout buttons |
+| Focus not obscured | Focus is trapped in modal, not obscured |
+| Non-color intent | Title and description text, not just red color |

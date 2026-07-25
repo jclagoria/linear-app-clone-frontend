@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connection Error Modal — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F7F8FC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E6E8EC;
+      --color-text-primary: #1A1D26;
+      --color-text-secondary: #6B7280;
+      --color-danger: #CF222E;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); min-height: 100vh; }
+
+    .controls { padding: var(--space-4); display: flex; gap: var(--space-2); }
+    .controls button { padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); cursor: pointer; font-size: 12px; }
+    .controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .page-content { padding: var(--space-6); color: var(--color-text-secondary); font-size: 14px; }
+
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; animation: fadeIn 0.2s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-content { background: var(--color-surface-elevated); border-radius: var(--radius-md); padding: var(--space-6); max-width: 400px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.16); animation: scaleIn 0.2s ease-out; }
+    @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-title { font-size: 18px; font-weight: 600; margin-bottom: var(--space-3); }
+    .modal-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: var(--space-6); }
+    .modal-actions { display: flex; gap: var(--space-3); }
+    .btn { padding: 8px 16px; border-radius: var(--radius-md); font-size: 14px; font-weight: 500; cursor: pointer; border: 1px solid var(--color-border); background: var(--color-surface-elevated); }
+    .btn:hover { background: var(--color-surface); }
+    .btn-primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    .btn-primary:hover { opacity: 0.9; }
+    .btn-danger { background: var(--color-danger); color: #fff; border-color: var(--color-danger); }
+    .btn-danger:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.6; cursor: default; }
+  </style>
+</head>
+<body>
+  <div class="controls">
+    <span style="font-size:12px;color:var(--color-text-secondary);margin-right:8px;">Modal State:</span>
+    <button class="active" onclick="showModal('reconnect')">Reconnect Offer</button>
+    <button onclick="showModal('reconnecting')">Reconnecting</button>
+    <button onclick="showModal('fatal')">Fatal Error</button>
+    <button onclick="hideModal()">Dismiss</button>
+  </div>
+
+  <div class="page-content">
+    <p>ConnectionErrorModal appears after 10 failed reconnection attempts. Use the buttons above to preview each variant.</p>
+  </div>
+
+  <div id="modalContainer"></div>
+
+  <script>
+    const modals = {
+      reconnect: { title: 'Connection Failed', desc: 'Unable to establish a stable connection. Please check your network and try again.', actions: `<button class="btn btn-primary" onclick="hideModal()">Reconnect</button><button class="btn" onclick="hideModal()">Logout</button>` },
+      reconnecting: { title: 'Connection Failed', desc: 'Unable to establish a stable connection. Please check your network and try again.', actions: `<button class="btn btn-primary" disabled>⟳ Reconnect</button><button class="btn" onclick="hideModal()">Logout</button>` },
+      fatal: { title: 'Connection Lost', desc: 'The connection could not be restored after multiple attempts. Please sign out and try again later.', actions: `<button class="btn btn-danger" onclick="hideModal()">Logout</button>` },
+    };
+
+    function showModal(type) {
+      const m = modals[type];
+      document.getElementById('modalContainer').innerHTML = `
+        <div class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="if(event.target===this)hideModal()">
+          <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">${m.title}</h2>
+            <p class="modal-desc">${m.desc}</p>
+            <div class="modal-actions">${m.actions}</div>
+          </div>
+        </div>`;
+      document.querySelectorAll('.controls button').forEach((b, i) => {
+        if (i < 3) b.classList.toggle('active', ['reconnect','reconnecting','fatal'][i] === type);
+      });
+    }
+
+    function hideModal() {
+      document.getElementById('modalContainer').innerHTML = '';
+      document.querySelectorAll('.controls button').forEach((b, i) => { if (i < 3) b.classList.remove('active'); });
+    }
+
+    showModal('reconnect');
+  </script>
+</body>
+</html>

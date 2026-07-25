@@ -1,0 +1,232 @@
+# Wireframe: Issue List
+
+## Purpose & Flow Context
+
+The Issue List displays all issues for the current team, updating in real-time as other team members create, update, status-change, assign, or delete issues via WebSocket events. Entry: user navigates to Issues section. Exit: user clicks an issue card to view detail, or navigates away. This screen is a container for IssueCard components — the real-time behaviour is in the card-level animations (see issue-card.wireframes); this wireframe covers the list-level layout, loading, and how real-time updates manifest at the list level (new items inserted, items removed, reorder).
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. The Issue List sits in the main content area.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo, Navigation, ConnectionStatusIndicator, NotificationBadge, UserMenu | Shared app-shell header (see header-connection-status.wireframes) |
+| Toolbar | Filter controls, search, view toggle, "New Issue" button | Below header, full width of content area |
+| Issue List | Vertical list of IssueCard components | Scrollable, main content area |
+| Sidebar (optional) | Team/project filters | Hidden on mobile |
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Issues ▼]  [Projects]  [Cycles]  [● Connected] [🔔] [👤] |
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]  [>Assignee ▼]  [>Priority ▼]  [+ New] |
++------------------------------------------------------------------+
+|                                                                    |
+|  +--------------------------------------------------------------+ |
+|  |  ○  Fix login timeout issue        [👤] [🔧]                | |
+|  |     BUG  🔴 Urgent  💬3  📎1                                 | |
+|  +--------------------------------------------------------------+ |
+|  |  ●  Update dashboard design        [👤] [🔧]                | |
+|  |     FEAT  🔵 Medium  💬1                                     | |
+|  +--------------------------------------------------------------+ |
+|  |  ○  Add dark mode support          [👤] [🔧]                | |
+|  |     FEAT  🟡 High  💬0  📎2                                  | |
+|  +--------------------------------------------------------------+ |
+|  |  ○  Refactor auth module           [👤] [🔧]                | |
+|  |     BUG  ⚪ Low  💬5                                         | |
+|  +--------------------------------------------------------------+ |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Search Input | Input | Filters issue list by title/description | Debounced, min 2 chars |
+| Status Filter | Dropdown | Filters by issue status | Multi-select allowed |
+| Assignee Filter | Dropdown | Filters by assigned user | Includes "Unassigned" option |
+| Priority Filter | Dropdown | Filters by priority level | Single or multi-select |
+| New Issue Button | Button | Opens create issue form/modal | Primary action |
+| IssueCard | IssueCard | Click navigates to issue detail | Real-time update animations (see issue-card.wireframes) |
+
+## Data Display
+
+Issues are displayed in a vertical list, sorted by most recently updated by default. Each item is an IssueCard component showing:
+- Status (color-coded dot)
+- Title (truncated)
+- Priority (icon)
+- Assignee (avatar)
+- Labels (colored chips)
+- Comment count (💬N)
+- Attachment count (📎N)
+
+**Real-time list-level behaviour:**
+- New issues (`issue.created`) insert at top of list with a brief highlight animation
+- Updated issues (`issue.updated`, `issue.statusChanged`, `issue.assigned`) trigger card-level animations (see issue-card.wireframes)
+- Deleted issues (`issue.deleted`) fade out and are removed from list
+- List order may change on update (if sorted by "last updated")
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Search Placeholder | Suggests search | "Search issues..." |
+| Filter Labels | Identify filter controls | "Status", "Assignee", "Priority" |
+| New Issue Button | Creates new issue | "New Issue", "+ New" |
+| Empty Search | No matching issues | "No issues match your search" |
+| Empty List | No issues in team | "No issues yet. Create your first issue to get started." |
+
+## States
+
+### Populated (Default)
+
+List shows issues with all filter controls visible.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]  [>Assignee ▼]  [>Priority ▼]  [+ New] |
++------------------------------------------------------------------+
+|  ○  Fix login timeout issue        [👤] [🔧]                    |
+|     BUG  🔴 Urgent  💬3  📎1                                     |
++------------------------------------------------------------------+
+|  ●  Update dashboard design        [👤] [🔧]                    |
+|     FEAT  🔵 Medium  💬1                                         |
++------------------------------------------------------------------+
+|  ○  Add dark mode support          [👤] [🔧]                    |
+|     FEAT  🟡 High  💬0  📎2                                      |
++------------------------------------------------------------------+
+```
+
+### Updated (Real-time Event Received)
+
+A real-time event modifies an issue. The affected card highlights briefly, new issues insert at top.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]  [>Assignee ▼]  [>Priority ▼]  [+ New] |
++------------------------------------------------------------------+
+|  ●  Fix login timeout issue        [👤] [🔧]                    |  ← NEW (highlighted, just inserted by event)
+|     BUG  🟡 High  💬3  📎1                                       |     (status changed from Urgent → High)
++------------------------------------------------------------------+
+|  ○  Update dashboard design        [👤] [🔧]                    |
+|     FEAT  🔵 Medium  💬1                                         |
++------------------------------------------------------------------+
+|  ○  Add dark mode support          [👤] [🔧]                    |
+|     FEAT  🟡 High  💬0  📎2                                      |
++------------------------------------------------------------------+
+  (real-time event: issue.statusChanged — card highlights, list reorders)
+```
+
+### Loading (Initial Load or Reconnect)
+
+Skeleton mirrors the populated layout — 4 skeleton cards with placeholder bars for status, title, priority, assignee.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]  [>Assignee ▼]  [>Priority ▼]  [+ New] |
++------------------------------------------------------------------+
+|  [○]  [==== skeleton bar ====]    [👤] [🔧]                    |
+|     [== skeleton ==]  [=== skeleton ===]                         |
++------------------------------------------------------------------+
+|  [○]  [==== skeleton bar ====]    [👤] [🔧]                    |
+|     [== skeleton ==]  [=== skeleton ===]                         |
++------------------------------------------------------------------+
+|  [○]  [==== skeleton bar ====]    [👤] [🔧]                    |
+|     [== skeleton ==]  [=== skeleton ===]                         |
++------------------------------------------------------------------+
+|  [○]  [==== skeleton bar ====]    [👤] [🔧]                    |
+|     [== skeleton ==]  [=== skeleton ===]                         |
++------------------------------------------------------------------+
+```
+
+### Empty (No Issues)
+
+List shows empty state with guide-to-action.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]  [>Assignee ▼]  [>Priority ▼]  [+ New] |
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon Illustration]                           |
+|                     No issues yet                                  |
+|                     Create your first issue to get started.       |
+|                     [+ Create Issue]                               |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Error (Failed to Load)
+
+List shows error message with retry option.
+
+```
++------------------------------------------------------------------+
+|  [🔍 Search___]  [>Status ▼]  [>Assignee ▼]  [>Priority ▼]  [+ New] |
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Error Icon]                                  |
+|                     Failed to load issues                         |
+|                     [Retry]                                       |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout with sidebar, all filters visible |
+| Tablet (768-1024px) | Sidebar collapses, filters may overflow to dropdown |
+| Mobile (<768px) | Filters collapse to single dropdown, list full width, "New Issue" becomes FAB |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` landmark contains list; toolbar is a separate `nav` or `div` with role="search" |
+| Heading order | h1: "Issues" (page title, not shown in sketch but implied) |
+| Reading / Focus order | Top to bottom: Toolbar → Issue cards in list order |
+| Accessible names | Search: aria-label="Search issues", Filters: aria-label="Filter by {filter}", New Issue: aria-label="Create new issue" |
+| Keyboard operability | Tab through toolbar then cards; Enter/Space opens issue; Arrow keys navigate list |
+| Target size | ≥24×24 CSS px on filter controls, new issue button, and issue cards |
+| Focus not obscured | Toolbar is not sticky (scrolls with content) |
+| Non-color intent | Status dot + label text, priority icon + label |
+
+## Assumptions
+
+- **Existing screen**: This is an existing list view receiving real-time updates. The wireframe focuses on the real-time-specific behaviour (list-level insert/remove/reorder animations) and the container layout for IssueCard components.
+- **Card behaviour**: Individual card-level real-time animations (pulse, highlight, flash) are defined in issue-card.wireframes. This wireframe shows list-level manifestation only.
+- **Filters**: Filter controls are existing UI; shown here for layout context. Filter behaviour is not changed by the real-time feature.

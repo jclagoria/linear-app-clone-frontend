@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Header + Connection Status — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F7F8FC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E6E8EC;
+      --color-text-primary: #1A1D26;
+      --color-text-secondary: #6B7280;
+      --color-success: #2DA44E;
+      --color-warning: #E3B341;
+      --color-danger: #CF222E;
+      --color-muted: #9CA3AF;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+
+    /* Header */
+    .header { display: flex; align-items: center; height: 56px; padding: 0 var(--space-6); background: var(--color-surface-elevated); border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 100; }
+    .header-logo { font-size: 18px; font-weight: 700; color: var(--color-primary); margin-right: var(--space-6); text-decoration: none; }
+    .header-nav { display: flex; gap: var(--space-4); margin-right: auto; }
+    .header-nav a { font-size: 14px; color: var(--color-text-secondary); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+    .header-nav a:hover { background: var(--color-surface); }
+    .header-nav a.active { color: var(--color-text-primary); font-weight: 500; }
+
+    /* Connection indicator */
+    .conn-indicator { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-1) var(--space-3); border-radius: var(--radius-md); cursor: default; font-size: 12px; margin-right: var(--space-4); }
+    .conn-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .conn-connected .conn-dot { background: var(--color-success); }
+    .conn-connecting .conn-dot { background: var(--color-warning); animation: pulse 1.5s ease-in-out infinite; }
+    .conn-reconnecting .conn-dot { background: #EA580C; animation: pulse 1.5s ease-in-out infinite; cursor: pointer; }
+    .conn-disconnected .conn-dot { background: var(--color-danger); cursor: pointer; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* Notification badge */
+    .notif-badge { position: relative; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-md); cursor: pointer; margin-right: var(--space-3); font-size: 18px; }
+    .notif-badge:hover { background: var(--color-surface); }
+    .notif-count { position: absolute; top: 2px; right: 2px; background: var(--color-danger); color: #fff; font-size: 10px; font-weight: 600; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .notif-count.hidden { display: none; }
+
+    /* User menu */
+    .user-menu { width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; cursor: pointer; }
+
+    /* State controls */
+    .controls { padding: var(--space-6); display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .controls button { padding: var(--space-2) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); cursor: pointer; font-size: 13px; }
+    .controls button:hover { background: var(--color-surface); }
+    .controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    .main { padding: var(--space-6); }
+    .main p { color: var(--color-text-secondary); font-size: 14px; }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <a href="index.html" class="header-logo">Linear</a>
+    <nav class="header-nav" role="navigation">
+      <a href="issue-list.html" class="active">Issues</a>
+      <a href="project-list.html">Projects</a>
+      <a href="cycle-list.html">Cycles</a>
+    </nav>
+    <div id="connIndicator" class="conn-indicator conn-connected" role="status" aria-label="Connection status: connected">
+      <span class="conn-dot"></span>
+      <span class="conn-text">Connected</span>
+    </div>
+    <div id="notifBadge" class="notif-badge" aria-label="3 unread notifications" onclick="toggleNotifPanel()">
+      <span>🔔</span>
+      <span id="notifCount" class="notif-count">3</span>
+    </div>
+    <div class="user-menu" aria-label="User menu">S</div>
+  </header>
+
+  <div class="controls">
+    <span style="font-size:12px;color:var(--color-text-secondary);margin-right:8px;">Connection State:</span>
+    <button class="active" onclick="setConn('connected')">Connected</button>
+    <button onclick="setConn('connecting')">Connecting</button>
+    <button onclick="setConn('reconnecting')">Reconnecting</button>
+    <button onclick="setConn('disconnected')">Disconnected</button>
+    <span style="font-size:12px;color:var(--color-text-secondary);margin:0 8px 0 24px;">Notifications:</span>
+    <button class="active" onclick="setNotif(3)">3 unread</button>
+    <button onclick="setNotif(0)">Empty</button>
+    <button onclick="setNotif(99)">99+</button>
+  </div>
+
+  <div class="main">
+    <p>Use the buttons above to toggle the connection indicator and notification badge states.</p>
+    <p style="margin-top:8px;">Navigate to other screens via the header nav.</p>
+  </div>
+
+  <script>
+    const states = {
+      connected: { cls: 'conn-connected', text: 'Connected', label: 'Connection status: connected' },
+      connecting: { cls: 'conn-connecting', text: 'Connecting...', label: 'Connection status: connecting' },
+      reconnecting: { cls: 'conn-reconnecting', text: 'Reconnecting...', label: 'Connection status: reconnecting' },
+      disconnected: { cls: 'conn-disconnected', text: 'Disconnected', label: 'Connection status: disconnected' }
+    };
+
+    function setConn(state) {
+      const el = document.getElementById('connIndicator');
+      const s = states[state];
+      el.className = 'conn-indicator ' + s.cls;
+      el.setAttribute('aria-label', s.label);
+      el.querySelector('.conn-text').textContent = s.text;
+      document.querySelectorAll('.controls button').forEach((b, i) => {
+        if (i < 4) b.classList.toggle('active', b.textContent.toLowerCase().includes(state));
+      });
+    }
+
+    function setNotif(count) {
+      const countEl = document.getElementById('notifCount');
+      const badgeEl = document.getElementById('notifBadge');
+      if (count === 0) {
+        countEl.classList.add('hidden');
+        badgeEl.setAttribute('aria-label', '0 unread notifications');
+      } else {
+        countEl.classList.remove('hidden');
+        countEl.textContent = count >= 99 ? '99+' : count;
+        badgeEl.setAttribute('aria-label', count + ' unread notifications');
+      }
+      document.querySelectorAll('.controls button').forEach((b, i) => {
+        if (i >= 5) {
+          if (i === 5) b.classList.toggle('active', count === 3);
+          if (i === 6) b.classList.toggle('active', count === 0);
+          if (i === 7) b.classList.toggle('active', count === 99);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

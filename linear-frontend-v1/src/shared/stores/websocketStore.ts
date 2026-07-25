@@ -18,6 +18,7 @@ interface WebSocketState {
   reconnectAttempts: number
   notifications: Notification[]
   lastEvent: string | null
+  lastHeartbeat: string | null
 
   setConnecting: () => void
   setConnected: () => void
@@ -25,6 +26,7 @@ interface WebSocketState {
   setDisconnected: () => void
   addNotification: (notification: Notification) => void
   markAsRead: (notificationId: string) => void
+  setLastHeartbeat: (timestamp: string) => void
 }
 
 export const initialWebSocketState = {
@@ -32,6 +34,7 @@ export const initialWebSocketState = {
   reconnectAttempts: 0,
   notifications: [] as Notification[],
   lastEvent: null as string | null,
+  lastHeartbeat: null as string | null,
 }
 
 export const useWebSocketStore = create<WebSocketState>()(
@@ -66,6 +69,9 @@ export const useWebSocketStore = create<WebSocketState>()(
             n.id === notificationId ? { ...n, read: true } : n,
           ),
         })),
+
+      setLastHeartbeat: (timestamp: string) =>
+        set({ lastHeartbeat: timestamp }),
     }),
     { name: 'websocket-store' },
   ),

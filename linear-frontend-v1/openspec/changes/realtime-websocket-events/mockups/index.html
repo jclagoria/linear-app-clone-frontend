@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Realtime WebSocket Events — Mockup Index</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F7F8FC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E6E8EC;
+      --color-text-primary: #1A1D26;
+      --color-text-secondary: #6B7280;
+      --color-success: #2DA44E;
+      --color-warning: #E3B341;
+      --color-danger: #CF222E;
+      --color-muted: #9CA3AF;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); padding: 48px 24px; }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { font-size: 24px; font-weight: 600; line-height: 32px; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 48px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 20px; text-decoration: none; color: inherit; transition: box-shadow 0.15s; }
+    .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .card p { font-size: 12px; color: var(--color-text-secondary); }
+    .card .badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-top: 8px; }
+    .badge-component { background: #EEF2FF; color: #4F46E5; }
+    .badge-screen { background: #ECFDF5; color: #059669; }
+    .badge-toast { background: #FEF3C7; color: #D97706; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Realtime WebSocket Events</h1>
+    <p class="subtitle">Interactive HTML mockups — one per screen, no build step required.</p>
+
+    <div class="grid">
+      <a href="header.html" class="card">
+        <h3>Header + Connection Status</h3>
+        <p>Connection indicator (connected/connecting/reconnecting/disconnected), notification badge, user menu. Flow 1.</p>
+        <span class="badge badge-screen">Screen</span>
+      </a>
+
+      <a href="issue-list.html" class="card">
+        <h3>Issue List</h3>
+        <p>List of issues with real-time insert/update/remove. Skeleton loading, empty, error states. Flow 2.</p>
+        <span class="badge badge-screen">Screen</span>
+      </a>
+
+      <a href="issue-detail.html" class="card">
+        <h3>Issue Detail</h3>
+        <p>Single issue view with description, comments, metadata sidebar. Real-time field highlights. Flow 2 + 4.</p>
+        <span class="badge badge-screen">Screen</span>
+      </a>
+
+      <a href="project-list.html" class="card">
+        <h3>Project List</h3>
+        <p>Grid of projects with real-time updates. Skeleton loading, empty state. Flow 5.</p>
+        <span class="badge badge-screen">Screen</span>
+      </a>
+
+      <a href="cycle-list.html" class="card">
+        <h3>Cycle List</h3>
+        <p>Active/Past/Upcoming cycle sections. Real-time activation and completion. Flow 5.</p>
+        <span class="badge badge-screen">Screen</span>
+      </a>
+
+      <a href="notification-panel.html" class="card">
+        <h3>Notification Panel</h3>
+        <p>Dropdown panel with unread indicators, real-time delivery. Flow 2 + 6.</p>
+        <span class="badge badge-screen">Screen</span>
+      </a>
+
+      <a href="reconnection-toast.html" class="card">
+        <h3>Reconnection Toast</h3>
+        <p>Toast overlay for connection lost, retry, network error. Flow 1.</p>
+        <span class="badge badge-toast">Toast</span>
+      </a>
+
+      <a href="connection-error-modal.html" class="card">
+        <h3>Connection Error Modal</h3>
+        <p>Modal after 10 failed retries. Reconnect or Logout. Fatal error variant. Flow 1.</p>
+        <span class="badge badge-toast">Modal</span>
+      </a>
+
+      <a href="revert-toast.html" class="card">
+        <h3>Revert Toast</h3>
+        <p>Toast for optimistic update failures — status, assignment, project save. Flow 3 + 4 + 5.</p>
+        <span class="badge badge-toast">Toast</span>
+      </a>
+
+      <a href="issue-card.html" class="card">
+        <h3>Issue Card</h3>
+        <p>Card component with optimistic/confirmed/reverted states. Pulse and flash animations. Flow 3 + 4.</p>
+        <span class="badge badge-component">Component</span>
+      </a>
+
+      <a href="project-card.html" class="card">
+        <h3>Project Card</h3>
+        <p>Card component with progress bar, member avatars. Optimistic update animations. Flow 5.</p>
+        <span class="badge badge-component">Component</span>
+      </a>
+
+      <a href="issue-assignee-selector.html" class="card">
+        <h3>Issue Assignee Selector</h3>
+        <p>Dropdown for assigning issues. Open/selecting/applied/reverted states. Flow 4.</p>
+        <span class="badge badge-component">Component</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

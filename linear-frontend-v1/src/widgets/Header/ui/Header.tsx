@@ -1,13 +1,17 @@
-import { type RefCallback } from 'react'
+import { type RefCallback, useState, useCallback } from 'react'
 import { UserAvatar } from '@/features/auth/ui/UserAvatar'
 import { SearchTrigger } from './SearchTrigger'
 import { ThemeToggle } from './ThemeToggle'
-import { NotificationBell } from './NotificationBell'
 import { HamburgerButton } from '@/widgets/Sidebar/ui/HamburgerButton'
+import { ConnectionStatusIndicator } from '@/features/realtime/ui/ConnectionStatusIndicator'
+import { NotificationPanel } from '@/features/realtime/ui/NotificationPanel'
+import { useWebSocketStore } from '@/shared/stores/websocketStore'
 import { cn } from '@/shared/lib/utils'
+import type { ConnectionStatus } from '@/shared/stores/websocketStore'
 
 interface HeaderProps {
-  unreadCount: number
+  connectionStatus?: ConnectionStatus
+  onReconnect?: () => void
   onSearchClick?: () => void
   onHamburgerClick?: () => void
   isMobileSidebarOpen?: boolean
@@ -16,13 +20,32 @@ interface HeaderProps {
 }
 
 export function Header({
-  unreadCount,
+  connectionStatus = 'disconnected',
+  onReconnect,
   onSearchClick,
   onHamburgerClick,
   isMobileSidebarOpen = false,
   showHamburger = false,
   hamburgerRef,
 }: HeaderProps) {
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const notifications = useWebSocketStore((s) => s.notifications)
+  const markAsRead = useWebSocketStore((s) => s.markAsRead)
+
+  const handleToggleNotifications = useCallback(() => {
+    setIsNotificationsOpen((prev) => !prev)
+  }, [])
+
+  const handleMarkAllRead = useCallback(() => {
+    for (const n of notifications) {
+      if (!n.read) markAsRead(n.id)
+    }
+  }, [notifications, markAsRead])
+
+  const handleNotificationClick = useCallback(() => {
+    setIsNotificationsOpen(false)
+  }, [])
+
   return (
     <header
       className="flex h-12 items-center justify-between border-b border-[var(--border-color)] px-3 sticky top-0 z-100 bg-[var(--bg-primary)]"
@@ -61,9 +84,21 @@ export function Header({
       </div>
 
       <div className="flex items-center gap-1">
+        <ConnectionStatusIndicator
+          status={connectionStatus}
+          onReconnect={onReconnect}
+        />
         <ThemeToggle />
         <SearchTrigger onClick={onSearchClick} />
-        <NotificationBell unreadCount={unreadCount} />
+        <NotificationPanel
+          isOpen={isNotificationsOpen}
+          notifications={notifications}
+          onToggle={handleToggleNotifications}
+          onMarkAsRead={markAsRead}
+          onMarkAllRead={handleMarkAllRead}
+          onClose={() => setIsNotificationsOpen(false)}
+          onItemClick={handleNotificationClick}
+        />
         <UserAvatar />
       </div>
     </header>

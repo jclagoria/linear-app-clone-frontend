@@ -31,6 +31,7 @@ interface IssuesState {
   updateCommentInStore: (issueId: string, commentId: string, body: string) => void
   setCommentsForIssue: (issueId: string, comments: Comment[]) => void
   deleteCommentFromStore: (issueId: string, commentId: string) => Promise<void>
+  applyEvent: (event: { type: string; payload: Record<string, unknown> }) => void
 }
 
 const initialFilters: IssueFilters = {
@@ -297,6 +298,42 @@ export const useIssuesStore = create<IssuesState>()(
             },
           }))
           throw err
+        }
+      },
+
+      applyEvent: (event) => {
+        const { type, payload } = event
+        const issueId = payload.issueId as string
+
+        switch (type) {
+          case 'issue.created':
+            useCacheStore.getState().invalidateByPrefix('issues:list')
+            set((state) => ({
+              issues: [payload as unknown as Issue, ...state.issues],
+            }))
+            break
+          case 'issue.updated':
+          case 'issue.statusChanged':
+          case 'issue.assigned':
+          case 'issue.unassigned':
+            if (issueId) {
+              useCacheStore.getState().invalidateByPrefix('issues:list')
+              set((state) => ({
+                issues: state.issues.map((issue) =>
+                  issue.id === issueId ? { ...issue, ...payload } : issue,
+                ),
+              }))
+            }
+            break
+          case 'issue.deleted':
+            if (issueId) {
+              useCacheStore.getState().invalidateByPrefix('issues:list')
+              set((state) => ({
+                issues: state.issues.filter((issue) => issue.id !== issueId),
+                selectedIssueId: state.selectedIssueId === issueId ? null : state.selectedIssueId,
+              }))
+            }
+            break
         }
       },
     }),

@@ -1,0 +1,152 @@
+# Wireframe: Project Card
+
+## Purpose & Flow Context
+
+The Project Card displays project summary with real-time update support via optimistic updates. Entry: user views project list. Exit: user clicks card to navigate to project detail.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Project card is part of project list or grid layout.
+
+**App-shell**: Project card is within main content area.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Project Card | Icon, name, progress bar, member avatars | Clickable card, hover state |
+
+```
++------------------------------------------------------------------+
+|  🚀  Frontend Redesign                                         |
+|  [============================----] 75%                          |
+|  [👤][👤][👤]                                                    |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Project Icon | Icon | Shows project icon or emoji | None |
+| Project Name | Text | Click navigates to project detail | Truncates with ellipsis if too long |
+| Progress Bar | Progress | Shows project completion percentage | None |
+| Member Avatars | Avatar stack | Shows project members | Shows +N if more than 3 |
+
+## Data Display
+
+Project cards are displayed in a list or grid layout. Each card shows:
+- Project icon
+- Project name
+- Progress bar with percentage
+- Member avatars (stacked)
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Project Icon | Identifies the project | 🚀 Rocket, 🎯 Target, 📊 Chart, etc. |
+| Project Name | Describes the project | User-friendly name |
+| Progress Bar | Shows completion status | "75%" or visual bar |
+| Member Avatars | Shows team members | User avatars or initials |
+
+## States
+
+### Idle (Default)
+
+Card shows project with normal styling.
+
+```
++------------------------------------------------------------------+
+|  🚀  Frontend Redesign                                         |
+|  [============================----] 75%                          |
+|  [👤][👤][👤]                                                    |
++------------------------------------------------------------------+
+```
+
+### Optimistic (Project Update)
+
+Card shows pulse animation on changed field, new value displayed immediately.
+
+```
++------------------------------------------------------------------+
+|  🚀  Frontend Redesign v2                                       |
+|  [============================----] 75%                          |
+|  [👤][👤][👤]                                                    |
++------------------------------------------------------------------+
+  (project name has pulse animation)
+```
+
+### Confirmed (Update Complete)
+
+Card shows brief green flash on updated field, then returns to normal.
+
+```
++------------------------------------------------------------------+
+|  🚀  Frontend Redesign v2                                       |
+|  [============================----] 75%                          |
+|  [👤][👤][👤]                                                    |
++------------------------------------------------------------------+
+  (project name had brief green flash)
+```
+
+### Reverted (Update Failed)
+
+Card shows flash red on reverted field, returns to original value.
+
+```
++------------------------------------------------------------------+
+|  🚀  Frontend Redesign                                         |
+|  [============================----] 75%                          |
+|  [👤][👤][👤]                                                    |
++------------------------------------------------------------------+
+  (project name had brief red flash, reverted to original)
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full card layout with all elements |
+| Tablet (768-1024px) | Compact layout, progress bar may hide |
+| Mobile (<768px) | Minimal layout, member avatars may hide |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Card is within main landmark |
+| Heading order | Card title is h3 within article |
+| Reading / Focus order | Tab to card, Enter/Space navigates to project |
+| Accessible names | Card: aria-label="Project: {name}, Progress: {percentage}%" |
+| Keyboard operability | Tab to card, Enter/Space navigates |
+| Target size | ≥24×24 CSS px on entire card |
+| Focus not obscured | Card focus ring visible |
+| Non-color intent | Progress bar + percentage text, not just color |

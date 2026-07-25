@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cycle List — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-surface: #F7F8FC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E6E8EC;
+      --color-text-primary: #1A1D26;
+      --color-text-secondary: #6B7280;
+      --color-success: #2DA44E;
+      --color-warning: #E3B341;
+      --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+    .header { display: flex; align-items: center; height: 56px; padding: 0 var(--space-6); background: var(--color-surface-elevated); border-bottom: 1px solid var(--color-border); }
+    .header-logo { font-size: 18px; font-weight: 700; color: var(--color-primary); margin-right: var(--space-6); text-decoration: none; }
+    .header-nav { display: flex; gap: var(--space-4); margin-right: auto; }
+    .header-nav a { font-size: 14px; color: var(--color-text-secondary); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+    .header-nav a.active { color: var(--color-text-primary); font-weight: 500; }
+    .conn-indicator { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); font-size: 12px; margin-right: var(--space-4); }
+    .conn-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); }
+
+    .toolbar { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-6); border-bottom: 1px solid var(--color-border); background: var(--color-surface-elevated); }
+    .toolbar input { padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 13px; width: 200px; }
+    .toolbar .spacer { flex: 1; }
+    .btn-primary { padding: var(--space-2) var(--space-4); background: var(--color-primary); color: #fff; border: none; border-radius: var(--radius-md); font-size: 13px; font-weight: 500; cursor: pointer; }
+
+    .controls { padding: var(--space-3) var(--space-6); display: flex; gap: var(--space-2); }
+    .controls button { padding: 6px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface-elevated); cursor: pointer; font-size: 12px; }
+    .controls button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+
+    .cycle-list { max-width: 900px; margin: 0 auto; padding: var(--space-6); }
+    .section-header { font-size: 12px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px; margin: var(--space-4) 0 var(--space-2); }
+    .cycle-card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); margin-bottom: var(--space-3); cursor: pointer; transition: box-shadow 0.15s; }
+    .cycle-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .cycle-card.active-cycle { border-color: var(--color-primary); border-width: 2px; }
+    .cycle-header { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .cycle-icon { font-size: 16px; }
+    .cycle-name { font-size: 16px; font-weight: 600; }
+    .cycle-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; background: #EEF2FF; color: var(--color-primary); }
+    .cycle-dates { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
+    .progress-bar { height: 6px; background: #E5E7EB; border-radius: 3px; overflow: hidden; margin: var(--space-2) 0; }
+    .progress-fill { height: 100%; background: var(--color-primary); border-radius: 3px; }
+    .cycle-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-text-secondary); }
+    .cycle-members { display: flex; margin-top: var(--space-2); }
+    .avatar { width: 20px; height: 20px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; margin-left: -4px; border: 2px solid var(--color-surface-elevated); }
+    .avatar:first-child { margin-left: 0; }
+
+    .highlight { animation: highlightFade 1.5s ease-out; }
+    @keyframes highlightFade { 0% { background: #DBEAFE; } 100% { background: var(--color-surface-elevated); } }
+    .skeleton { background: #E5E7EB; border-radius: 4px; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="header-logo">Linear</a>
+    <nav class="header-nav">
+      <a href="issue-list.html">Issues</a>
+      <a href="project-list.html">Projects</a>
+      <a href="cycle-list.html" class="active">Cycles</a>
+    </nav>
+    <div class="conn-indicator"><span class="conn-dot"></span><span>Connected</span></div>
+  </header>
+
+  <div class="controls">
+    <span style="font-size:12px;color:var(--color-text-secondary);margin-right:8px;">State:</span>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('empty')">Empty</button>
+    <button onclick="simulateActivate()">Simulate Activate</button>
+  </div>
+
+  <div class="toolbar">
+    <input type="text" placeholder="Search cycles..." aria-label="Search cycles" />
+    <span class="spacer"></span>
+    <button class="btn-primary">+ New Cycle</button>
+  </div>
+
+  <div id="content" class="cycle-list"></div>
+
+  <script>
+    const activeCycle = { name: 'Sprint 14', dates: 'Jan 15 – Jan 29', progress: 75, done: 9, total: 12, members: ['S','M','E'] };
+    const pastCycles = [
+      { name: 'Sprint 13', dates: 'Jan 1 – Jan 14', progress: 90, done: 11, total: 12, completed: 'Jan 14' },
+      { name: 'Sprint 12', dates: 'Dec 18 – Dec 31', progress: 100, done: 10, total: 10, completed: 'Dec 31' },
+    ];
+    const upcomingCycles = [{ name: 'Sprint 15', dates: 'Jan 30 – Feb 12' }];
+
+    function renderCycles() {
+      const el = document.getElementById('content');
+      el.innerHTML = `
+        <div class="cycle-card active-cycle">
+          <div class="cycle-header"><span class="cycle-icon">▶</span><span class="cycle-name">${activeCycle.name}</span><span class="cycle-badge">Active</span><span class="cycle-dates">${activeCycle.dates}</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${activeCycle.progress}%"></div></div>
+          <div class="cycle-meta"><span>${activeCycle.done}/${activeCycle.total} issues done</span><span>${activeCycle.progress}%</span></div>
+          <div class="cycle-members">${activeCycle.members.map(m => `<div class="avatar">${m}</div>`).join('')}</div>
+        </div>
+        <div class="section-header">Past Cycles</div>
+        ${pastCycles.map(c => `
+          <div class="cycle-card">
+            <div class="cycle-header"><span class="cycle-icon">✓</span><span class="cycle-name">${c.name}</span><span class="cycle-dates">${c.dates}</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${c.progress}%"></div></div>
+            <div class="cycle-meta"><span>${c.done}/${c.total} issues done</span><span>Completed ${c.completed}</span></div>
+          </div>
+        `).join('')}
+        <div class="section-header">Upcoming Cycles</div>
+        ${upcomingCycles.map(c => `
+          <div class="cycle-card">
+            <div class="cycle-header"><span class="cycle-icon">○</span><span class="cycle-name">${c.name}</span><span class="cycle-dates">${c.dates}</span></div>
+            <div class="cycle-meta"><span>Not started</span></div>
+          </div>
+        `).join('')}`;
+    }
+
+    function renderSkeletons() {
+      document.getElementById('content').innerHTML = Array(2).fill('').map(() => `
+        <div class="cycle-card"><div class="skeleton" style="width:50%;height:16px;margin-bottom:8px;"></div><div class="skeleton" style="width:100%;height:6px;border-radius:3px;margin-bottom:8px;"></div><div class="skeleton" style="width:30%;height:12px;"></div></div>
+      `).join('');
+    }
+
+    function renderEmpty() {
+      document.getElementById('content').innerHTML = `<div style="text-align:center;padding:80px 24px;color:var(--color-text-secondary);"><div style="font-size:48px;margin-bottom:16px;">🔄</div><h3 style="font-size:16px;font-weight:600;margin-bottom:8px;color:var(--color-text-primary);">No cycles yet</h3><p>Create your first cycle to start planning sprints.</p><button class="btn-primary" style="padding:10px 20px;">+ Create Cycle</button></div>`;
+    }
+
+    function setState(state) {
+      document.querySelectorAll('.controls button').forEach((b, i) => {
+        if (i < 3) b.classList.toggle('active', b.textContent.toLowerCase() === state);
+      });
+      if (state === 'populated') renderCycles();
+      else if (state === 'loading') renderSkeletons();
+      else if (state === 'empty') renderEmpty();
+    }
+
+    function simulateActivate() {
+      renderCycles();
+      const card = document.querySelector('.cycle-card');
+      if (card) { card.classList.add('highlight'); setTimeout(() => card.classList.remove('highlight'), 1500); }
+    }
+
+    renderCycles();
+  </script>
+</body>
+</html>

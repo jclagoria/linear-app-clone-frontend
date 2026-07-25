@@ -1,0 +1,219 @@
+# Wireframe: Issue Detail
+
+## Purpose & Flow Context
+
+The Issue Detail view shows a single issue with its full description, status, assignee, comments, and metadata — updating in real-time as other team members modify the issue or add comments via WebSocket events. Entry: user clicks an IssueCard from the IssueList. Exit: user navigates back to list, or to another issue. This wireframe covers the detail-level layout and how real-time events (status changes, comment additions, field updates from other users) manifest on this screen.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Content area spans 8 columns, metadata sidebar spans 4.
+
+**App-shell**: Shared header + nav + container. Issue Detail sits in the main content area.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Shared app-shell header | See header-connection-status.wireframes |
+| Breadcrumb | "Issues > Issue Title" | Navigation back to list |
+| Issue Header | StatusCycleIndicator, Title, Priority | Top of content area |
+| Issue Description | Full description text | Main content, scrollable |
+| Comment Thread | List of comments with avatars and timestamps | Below description |
+| Comment Input | Text input + Submit button | Bottom of comment thread |
+| Metadata Sidebar | Status, Assignee, Priority, Labels, Created, Updated | Right side, 4 columns |
+
+```
++------------------------------------------------------------------+
+|  [Logo]   [Issues]  [Projects]  [Cycles]  [● Connected] [🔔] [👤] |
++------------------------------------------------------------------+
+|  Issues > Fix login timeout issue                                 |
++------------------------------------------------------------------+
+|                                          |                        |
+|  ○ Fix login timeout issue               |  Status  [>Todo ▼]    |
+|                                          |  Assignee [👤 Sarah ▼] |
+|  Users are experiencing a 30-second      |  Priority [>Urgent ▼]  |
+|  timeout when attempting to login with    |  Labels   [BUG]        |
+|  SSO credentials. This affects all        |                        |
+|  enterprise customers using Okta.         |  Created  Jan 15       |
+|                                          |  Updated  2m ago       |
+|  Steps to reproduce:                     |                        |
+|  1. Navigate to login page               |                        |
+|  2. Click "Sign in with SSO"             |                        |
+|  3. Enter Okta credentials               |                        |
+|  4. Observe 30s timeout                  |                        |
+|                                          |                        |
+|  --- Comments (3) ---                    |                        |
+|                                          |                        |
+|  👤 Mike Johnson  2h ago                 |                        |
+|  I can reproduce this on Chrome and      |                        |
+|  Firefox. Looking into the auth module.  |                        |
+|                                          |                        |
+|  👤 Sarah Chen  1h ago                   |                        |
+|  Found the issue — token refresh is      |                        |
+|  blocking the main thread.               |                        |
+|                                          |                        |
+|  👤 Emily Park  30m ago                  |                        |
+|  PR ready for review: #421               |                        |
+|                                          |                        |
+|  [💬 Add a comment...____________] [Send] |                        |
+|                                          |                        |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Breadcrumb | Link | Click navigates back to issue list | None |
+| StatusCycleIndicator | StatusCycleIndicator | Shows issue status, cycles on 'S' key | Real-time update flash |
+| Issue Title | Heading (h1) | Displays issue title | Truncates if extremely long |
+| Description | Text | Shows full issue description | Markdown rendering, code blocks |
+| Comment Thread | List | Shows comments in chronological order | New comments insert at bottom with highlight |
+| Comment Input | Input + Button | Submits new comment | Disabled while submitting |
+| Status Picker | IssueAssigneeSelector-like dropdown | Changes issue status | Optimistic update |
+| Assignee Picker | IssueAssigneeSelector | Changes issue assignee | Optimistic update |
+| Priority Picker | Dropdown | Changes issue priority | Optimistic update |
+| Labels | Label chips | Shows issue labels | Click to add/remove |
+
+## Data Display
+
+This is a detail view, not a data-dense screen. Content hierarchy:
+1. **Issue header** (status + title) — primary, top of scan path
+2. **Description** — full context
+3. **Comments** — chronological thread
+4. **Metadata sidebar** — reference info, right side
+
+**Real-time detail-level behaviour:**
+- `issue.statusChanged`: StatusCycleIndicator updates with card-level animation
+- `issue.assigned`: Assignee avatar/name updates in sidebar
+- `issue.updated`: Description or title may update (highlight changed field)
+- `comment.created`: New comment inserts at bottom of thread with brief highlight
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Breadcrumb | Navigation context | "Issues > {Issue Title}" |
+| Status Label | Current issue state | "Todo", "In Progress", "Done" |
+| Assignee Label | Who is responsible | "Sarah Chen" or "Unassigned" |
+| Priority Label | Urgency level | "Urgent", "High", "Medium", "Low" |
+| Comment Count | Number of comments | "Comments (3)" |
+| Comment Input Placeholder | Suggests action | "Add a comment..." |
+| Timestamp | When updated | "2m ago", "1h ago", "Yesterday" |
+
+## States
+
+### Populated (Default)
+
+Full issue detail with description, comments, and metadata.
+
+```
+(see Layout Regions sketch above)
+```
+
+### Updated (Real-time Event Received)
+
+A real-time event modifies the issue. Changed field highlights briefly; new comments insert at bottom.
+
+```
++------------------------------------------------------------------+
+|                                          |                        |
+|  ● Fix login timeout issue               |  Status  [>In Progress ▼] | ← STATUS CHANGED (highlighted)
+|                                          |  Assignee [👤 Sarah ▼] |
+|  Users are experiencing a 30-second      |  Priority [>Urgent ▼]  |
+|  timeout when attempting to login with    |  Labels   [BUG]        |
+|  SSO credentials.                        |                        |
+|                                          |  Created  Jan 15       |
+|  --- Comments (4) ---                    |  Updated  just now     | ← UPDATED timestamp
+|                                          |                        |
+|  👤 Mike Johnson  2h ago                 |                        |
+|  ...                                     |                        |
+|                                          |                        |
+|  👤 Emily Park  30m ago                  |                        |
+|  PR ready for review: #421               |                        |
+|                                          |                        |
+|  👤 Alex Rivera  just now                |  ← NEW COMMENT (highlighted)
+|  Merged the fix. Deploying to staging.   |
+|                                          |                        |
+|  [💬 Add a comment...____________] [Send] |                        |
++------------------------------------------------------------------+
+  (real-time event: issue.statusChanged + comment.created —
+   status field highlights, new comment inserts with highlight)
+```
+
+### Loading (Initial Load)
+
+Skeleton mirrors the populated layout — placeholder bars for title, description, comments, sidebar fields.
+
+```
++------------------------------------------------------------------+
+|                                          |                        |
+|  [○]  [==== skeleton bar ====]           |  Status  [=======]    |
+|                                          |  Assignee [=======]   |
+|  [======== skeleton bar ============]   |  Priority [=======]   |
+|  [======== skeleton bar ============]   |  Labels   [=======]   |
+|  [==== skeleton bar ====]               |                        |
+|                                          |  Created  [====]      |
+|  --- Comments ---                        |  Updated  [====]      |
+|                                          |                        |
+|  [👤 skeleton  ====]                     |                        |
+|  [======== skeleton bar ============]   |                        |
+|  [======== skeleton bar ====]           |                        |
+|                                          |                        |
+|  [💬 skeleton________________] [Send]    |                        |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Two-column layout: content (8 col) + metadata sidebar (4 col) |
+| Tablet (768-1024px) | Metadata sidebar collapses below description |
+| Mobile (<768px) | Single column, metadata collapses to compact row, comment input full width |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `main` landmark contains detail; sidebar is `aside` |
+| Heading order | h1: Issue title, h2: "Comments" section |
+| Reading / Focus order | Top to bottom: Breadcrumb → Title → Description → Comments → Comment input; sidebar is complementary |
+| Accessible names | Status picker: aria-label="Change issue status", Assignee picker: aria-label="Change issue assignee", Comment input: aria-label="Add a comment" |
+| Keyboard operability | Tab through interactive elements; Enter/Space on status/assignee opens picker |
+| Target size | ≥24×24 CSS px on all pickers, comment input, send button |
+| Focus not Obscured | Sidebar is not sticky; scrolls with content |
+| Non-color intent | Status dot + label text, priority icon + label |
+
+## Assumptions
+
+- **Existing screen**: This is an existing detail view receiving real-time updates. The wireframe focuses on real-time-specific behaviour (field highlight on update, new comment insertion).
+- **Component reuse**: StatusCycleIndicator and IssueAssigneeSelector are reused from existing wireframes. Their optimistic update behaviour is defined in their respective wireframes.
+- **Real-time scope**: Only events affecting the currently-viewed issue are relevant. Events for other issues are handled at the list level (see issue-list.wireframes).

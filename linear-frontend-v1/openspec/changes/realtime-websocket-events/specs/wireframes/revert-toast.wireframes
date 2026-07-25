@@ -1,0 +1,157 @@
+# Wireframe: Revert Toast
+
+## Purpose & Flow Context
+
+The Revert Toast appears when an optimistic update fails — the user changed an issue's status, assigned an issue, or updated a project, the UI reflected the change immediately, but the API call failed and the state reverted. The toast informs the user of the failure and offers retry. Entry: optimistic update failure (API error or network loss). Exit: user dismisses toast, retries, or toast auto-dismisses after 5 seconds.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: Toast is positioned fixed, not part of grid layout.
+
+**App-shell**: Toast overlays content, positioned bottom-right (same placement as ReconnectionToast).
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Toast Container | Error icon, message text, retry button, dismiss button | Fixed position, bottom-right, z-index high |
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|                                                                    |
+|  +------------------------------------------------------------+  |
+|  |  ✗  Status update failed.  [Retry]  [X]                   |  |
+|  +------------------------------------------------------------+  |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Error Icon | Icon | Visual indicator of failure state | None |
+| Message Text | Text | Describes what failed | Truncates if too long; varies by action type |
+| Retry Button | Button | Click re-initiates the failed action | Disabled during retry attempt |
+| Dismiss Button | Button | Click closes toast | Keyboard accessible via Escape |
+
+## Data Display
+
+This is a notification toast, not a data display screen. It communicates optimistic update failure and offers recovery.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Error Icon | Visual failure indicator | ✗ circle icon (distinct from ⚠ warning on ReconnectionToast) |
+| Message Text | Communicates what failed and why | "{Action} failed. Your change has been reverted.", "Unable to save. Check your connection." |
+| Retry Button | Offers action recovery | "Retry", "Try again" |
+| Dismiss Button | Allows user to dismiss | [X] icon |
+
+### Message Variants by Action Type
+
+| Action | Message |
+|--------|---------|
+| Issue status change | "Status update failed. Your change has been reverted." |
+| Issue assignment | "Assignment failed. Issue returned to previous assignee." |
+| Project update | "Project save failed. Your changes have been reverted." |
+| Network failure | "Network error. Your change could not be saved." |
+
+## States
+
+### Visible (Optimistic Update Failed)
+
+Toast appears with error icon, failure message, and retry button.
+
+```
++------------------------------------------------------------+
+|  ✗  Status update failed.  [Retry]  [X]                   |
++------------------------------------------------------------+
+```
+
+### Visible (Network Failure)
+
+Toast appears with network-specific message.
+
+```
++------------------------------------------------------------+
+|  ✗  Network error. Your change could not be saved.  [Retry]  [X] |
++------------------------------------------------------------+
+```
+
+### Loading (Retry in Progress)
+
+Retry button shows loading spinner, disabled.
+
+```
++------------------------------------------------------------+
+|  ✗  Retrying...  [⟳ Retry]  [X]                            |
++------------------------------------------------------------+
+```
+
+### Dismissed
+
+Toast slides out to right and is removed from DOM.
+
+```
++------------------------------------------------------------+
+|  (empty - toast has slid out)                               |
++------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full toast with all elements, bottom-right position |
+| Tablet (768-1024px) | Same as desktop |
+| Mobile (<768px) | Toast spans full width at bottom, larger touch targets |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | No landmarks (toast is overlay) |
+| Heading order | No headings in toast |
+| Reading / Focus order | Focus moves to toast when it appears |
+| Accessible names | Retry button: aria-label="Retry {action}", Dismiss button: aria-label="Dismiss notification" |
+| Keyboard operability | Tab to buttons, Enter/Space activates, Escape dismisses toast |
+| Target size | ≥24×24 CSS px on Retry and Dismiss buttons |
+| Focus not obscured | Toast doesn't obscure focused element (positioned bottom-right) |
+| Non-color intent | Error icon + text, not just red color |
+
+## Assumptions
+
+- **Component reuse**: RevertToast follows the same visual pattern as ReconnectionToast (fixed-position toast, bottom-right) but is a separate component with distinct semantics: ReconnectionToast handles WebSocket connection failures; RevertToast handles optimistic update failures. Both share the toast anatomy but are triggered by different flows and display different message variants.
+- **DS entry**: RevertToast is added to the design-system catalog as a distinct component (see design-system.md).
+- **Single toast at a time**: Only one toast (RevertToast or ReconnectionToast) is visible at a time. If both triggers fire simultaneously, the most recent toast takes precedence.
