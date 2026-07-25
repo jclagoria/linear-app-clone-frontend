@@ -112,7 +112,7 @@ describe('Router Config', () => {
         </Routes>
       </MemoryRouter>,
     )
-    expect(screen.getByText(/projects/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: /projects/i })).toBeInTheDocument()
   })
 
   it('renders ProjectDetailPage at /projects/:id', () => {
@@ -134,7 +134,7 @@ describe('Router Config', () => {
         </Routes>
       </MemoryRouter>,
     )
-    expect(screen.getByText(/cycles/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1, name: /cycles/i })).toBeInTheDocument()
   })
 
   it('renders SettingsPage at /settings', () => {
