@@ -1,0 +1,818 @@
+# Wireframe: Shortcut Help Modal
+
+## Purpose & Flow Context
+
+Displays all available keyboard shortcuts organized by category. Entry: user presses "?" on any page. Exit: user presses Escape or clicks close button.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Overlay | Semi-transparent backdrop | Click to close |
+| Modal Container | Centered modal, max-width 640px | Focus trap |
+| Header | Title "Keyboard Shortcuts" + [X] Close | Sticky |
+| Content | Scrollable list of shortcuts | Category filters |
+| Footer | (none - header only) | — |
+
+**Content hierarchy** (by visual priority):
+1. Category filters (Global, List, Issue)
+2. Shortcut table (key + action pairs)
+
+```
++------------------------------------------------------------------+
+|                          [Overlay]                                |
+|  +--------------------------------------------------------------+|
+|  |  Keyboard Shortcuts                            [X]          ||
+|  +--------------------------------------------------------------+|
+|  |  [All] [Global] [List] [Issue]                              ||
+|  +--------------------------------------------------------------+|
+|  |                                                              ||
+|  |  Global                                                     ||
+|  |  +----------------------------------------------------------+|
+|  |  |  [C]        Create new issue                             ||
+|  |  |  [G][I]     Go to Issues                                 ||
+|  |  |  [G][P]     Go to Projects                               ||
+|  |  |  [G][C]     Go to Cycles                                 ||
+|  |  |  [/]        Search                                       ||
+|  |  |  [?]        Show keyboard shortcuts                      ||
+|  |  |  [Esc]      Close / Deselect                             ||
+|  |  +----------------------------------------------------------+|
+|  |                                                              ||
+|  |  List                                                       ||
+|  |  +----------------------------------------------------------+|
+|  |  |  [J]        Move selection down                          ||
+|  |  |  [K]        Move selection up                            ||
+|  |  |  [Enter]    Open selected item                           ||
+|  |  +----------------------------------------------------------+|
+|  |                                                              ||
+|  |  Issue                                                      ||
+|  |  +----------------------------------------------------------+|
+|  |  |  [S]        Cycle status                                 ||
+|  |  |  [A]        Assign issue                                 ||
+|  |  |  [L]        Add label                                    ||
+|  |  |  [E]        Edit title                                   ||
+|  |  |  [Del]      Delete issue                                 ||
+|  |  +----------------------------------------------------------+|
+|  |                                                              ||
+|  +--------------------------------------------------------------+|
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Overlay | div (backdrop) | Click to close | — |
+| [X] Close | Button | Click/Esc to close | Returns focus to trigger |
+| Category Tabs | Button group | Click to filter | Default: "All" selected |
+| Category Header | h3 | Static text | — |
+| Shortcut Row | Table row | Static display | — |
+| [Kbd] | Kbd component | Displays key | — |
+
+## Data Display
+
+Table layout with two columns: shortcut keys and action description. No sort, filter, or pagination. Static reference display.
+
+| Column | Content | Width |
+|--------|---------|-------|
+| Shortcut | Kbd component(s) | 120px fixed |
+| Action | Description text | Fluid |
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Modal Title | "Keyboard Shortcuts" | Clear, user-friendly |
+| Category: All | Show all shortcuts | Default filter |
+| Category: Global | Shortcuts available everywhere | — |
+| Category: List | Shortcuts for list views | — |
+| Category: Issue | Shortcuts for issue actions | — |
+| Action: "Create new issue" | Opens new issue modal | User language |
+| Action: "Go to Issues" | Navigates to issues list | — |
+
+## States
+
+### Populated (Default)
+
+All shortcuts displayed, grouped by category. "All" filter selected.
+
+```
++------------------------------------------------------------------+
+|  Keyboard Shortcuts                            [X]              |
+|  [All] [Global] [List] [Issue]                                  |
+|  Global                                                         |
+|  [C]        Create new issue                                    |
+|  [G][I]     Go to Issues                                        |
+|  ...                                                            |
++------------------------------------------------------------------+
+```
+
+### Empty
+
+Not applicable — shortcuts are always available.
+
+### Loading
+
+Not applicable — shortcuts load synchronously.
+
+### Error
+
+Not applicable — no error state.
+
+### Success / Confirmation
+
+Not applicable — no state change.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full modal centered, max-width 640px |
+| Tablet (768-1024px) | Same layout, reduced padding |
+| Mobile (<768px) | Full-width modal, scrollable content |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | role="dialog" on modal container |
+| Heading order | h1 in page behind modal, h3 for categories |
+| Reading / Focus order | Title → Close button → Category tabs → Shortcut list |
+| Accessible names | Close button: aria-label="Close keyboard shortcuts" |
+| Keyboard operability | Tab cycles within modal, Esc closes |
+| Target size | ≥24×24 CSS px on all interactive targets |
+| Focus not obscured | Focus trap within modal |
+| Non-color intent | Category tabs use text labels, not color alone |
+
+---
+
+# Wireframe: Keyboard Settings
+
+## Purpose & Flow Context
+
+Allows users to view and customize keyboard shortcuts. Entry: user navigates to Settings > Keyboard. Exit: user navigates away or saves changes.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Page Header | "Keyboard Settings" title | Sticky |
+| Action Bar | [Reset to defaults] button | Top-right |
+| Settings List | Scrollable list of shortcuts | Grouped by category |
+
+**Content hierarchy** (by visual priority):
+1. Page title
+2. Reset to defaults button
+3. Shortcut settings list
+
+```
++------------------------------------------------------------------+
+|  Keyboard Settings                          [Reset to defaults]  |
++------------------------------------------------------------------+
+|                                                                  |
+|  Global                                                         |
+|  +--------------------------------------------------------------+|
+|  |  Create new issue      [C]                    [Edit]        ||
+|  |  Go to Issues          [G][I]                 [Edit]        ||
+|  |  Go to Projects        [G][P]                 [Edit]        ||
+|  |  Go to Cycles          [G][C]                 [Edit]        ||
+|  |  Search                [/]                    [Edit]        ||
+|  |  Show shortcuts        [?]                    [Edit]        ||
+|  |  Close / Deselect      [Esc]                  [Edit]        ||
+|  +--------------------------------------------------------------+|
+|                                                                  |
+|  List                                                           |
+|  +--------------------------------------------------------------+|
+|  |  Move selection down  [J]                    [Edit]        ||
+|  |  Move selection up    [K]                    [Edit]        ||
+|  |  Open selected item   [Enter]                [Edit]        ||
+|  +--------------------------------------------------------------+|
+|                                                                  |
+|  Issue                                                          |
+|  +--------------------------------------------------------------+|
+|  |  Cycle status         [S]                    [Edit]        ||
+|  |  Assign issue         [A]                    [Edit]        ||
+|  |  Add label            [L]                    [Edit]        ||
+|  |  Edit title           [E]                    [Edit]        ||
+|  |  Delete issue         [Del]                  [Edit]        ||
+|  +--------------------------------------------------------------+|
+|                                                                  |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| [Reset to defaults] | Button | Click to reset (with confirmation) | Shows confirmation dialog |
+| Category Header | h3 | Static text | — |
+| Shortcut Name | span | Displays action description | — |
+| [Kbd] | Kbd component | Displays current key | — |
+| [Edit] | Button | Click to enter edit mode | Shows input field |
+
+## Data Display
+
+List layout with three columns: action name, current shortcut, edit button. Grouped by category.
+
+| Column | Content | Width |
+|--------|---------|-------|
+| Action | Description text | Fluid |
+| Shortcut | Kbd component(s) | 100px fixed |
+| Edit | Button | 60px fixed |
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Page Title | "Keyboard Settings" | Clear, user-friendly |
+| [Reset to defaults] | "Reset to defaults" | Destructive action, shows confirmation |
+| Category: Global | Shortcuts available everywhere | — |
+| Category: List | Shortcuts for list views | — |
+| Category: Issue | Shortcuts for issue actions | — |
+| [Edit] | "Edit" | Enters edit mode for shortcut |
+
+## States
+
+### Populated (Default)
+
+All shortcuts displayed with current key combinations. Read-only mode.
+
+```
++------------------------------------------------------------------+
+|  Keyboard Settings                          [Reset to defaults]  |
++------------------------------------------------------------------+
+|  Global                                                         |
+|  Create new issue      [C]                    [Edit]            |
+|  Go to Issues          [G][I]                 [Edit]            |
+|  ...                                                            |
++------------------------------------------------------------------+
+```
+
+### Empty
+
+Not applicable — shortcuts always have defaults.
+
+### Loading
+
+Not applicable — settings load synchronously.
+
+### Error
+
+```
++------------------------------------------------------------------+
+|  Keyboard Settings                          [Reset to defaults]  |
++------------------------------------------------------------------+
+|  ⚠  Failed to load keyboard settings                           |
+|     [Retry]                                                     |
++------------------------------------------------------------------+
+```
+
+### Success / Confirmation
+
+```
++------------------------------------------------------------------+
+|  ✓  Keyboard shortcuts reset to defaults                        |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full-width layout with columns |
+| Tablet (768-1024px) | Same layout, reduced padding |
+| Mobile (<768px) | Stacked layout, full-width rows |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | header, main |
+| Heading order | h1 "Keyboard Settings", h3 for categories |
+| Reading / Focus order | Page title → Reset button → Category list → Shortcut rows |
+| Accessible names | Reset button: aria-label="Reset all keyboard shortcuts to defaults" |
+| Keyboard operability | Tab to navigate, Enter to activate edit |
+| Target size | ≥24×24 CSS px on all interactive targets |
+| Focus not obscured | Scrollable content doesn't hide focus |
+| Non-color intent | Edit button uses text, not color alone |
+
+---
+
+# Wireframe: Edit Shortcut Inline
+
+## Purpose & Flow Context
+
+Allows users to input a new key combination for a shortcut. Entry: user clicks [Edit] on a shortcut row. Exit: user saves or cancels the edit.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Shortcut Name | Action description | Static |
+| Edit Input | Active input field | Captures key press |
+| Action Buttons | [Save] [Cancel] | Appears during edit |
+
+**Content hierarchy** (by visual priority):
+1. Edit input field
+2. Action description
+3. Save/Cancel buttons
+
+```
++------------------------------------------------------------------+
+|  Create new issue      _______ [Save] [Cancel]                  |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Shortcut Name | span | Static text | — |
+| Edit Input | Input | Captures key press | Shows current key |
+| [Save] | Button | Saves new key combination | Validates conflicts |
+| [Cancel] | Button | Cancels edit, reverts | — |
+| Conflict Warning | Toast | Shows if key is taken | Error state |
+
+## Data Display
+
+Inline edit within the settings row. No separate data display.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Input Placeholder | Current key combination | Shows existing key |
+| [Save] | "Save" | Confirms new key |
+| [Cancel] | "Cancel" | Discards changes |
+| Conflict Message | "This key combination is already in use" | Error feedback |
+
+## States
+
+### Populated (Default)
+
+Input field active, showing current key combination.
+
+```
++------------------------------------------------------------------+
+|  Create new issue      [C] [Save] [Cancel]                      |
++------------------------------------------------------------------+
+```
+
+### Empty
+
+Not applicable — shortcut always has a key.
+
+### Loading
+
+Not applicable — edit is instant.
+
+### Error
+
+```
++------------------------------------------------------------------+
+|  Create new issue      [X] [Save] [Cancel]                      |
+|  ⚠ This key combination is already in use                       |
++------------------------------------------------------------------+
+```
+
+### Success / Confirmation
+
+```
++------------------------------------------------------------------+
+|  Create new issue      [Y]                    [Edit]            |
+|  ✓ Shortcut updated                                              |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Inline edit within row |
+| Tablet (768-1024px) | Same layout |
+| Mobile (<768px) | Full-width edit area |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | (inherits from settings page) |
+| Heading order | (inherits from settings page) |
+| Reading / Focus order | Input → Save → Cancel |
+| Accessible names | Input: aria-label="New keyboard shortcut for Create new issue" |
+| Keyboard operability | Esc to cancel, Enter to save |
+| Target size | ≥24×24 CSS px on Save/Cancel buttons |
+| Focus not obscured | Focus stays within edit row |
+| Non-color intent | Conflict message uses text + icon |
+
+---
+
+# Wireframe: Delete Confirmation Modal
+
+## Purpose & Flow Context
+
+Confirms destructive issue deletion via keyboard shortcut. Entry: user presses Delete on selected issue. Exit: user confirms (Y) or cancels (N/Esc).
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Overlay | Semi-transparent backdrop | Click to cancel |
+| Modal Container | Centered modal, max-width 400px | Focus trap |
+| Header | "Delete Issue" title | — |
+| Content | Confirmation message | — |
+| Footer | [Delete] [Cancel] buttons | — |
+
+**Content hierarchy** (by visual priority):
+1. Confirmation message
+2. Delete button (danger)
+3. Cancel button
+
+```
++------------------------------------------------------------------+
+|                          [Overlay]                                |
+|  +--------------------------------------------------------------+|
+|  |  Delete Issue                                               ||
+|  +--------------------------------------------------------------+|
+|  |                                                              ||
+|  |  Are you sure you want to delete this issue?                ||
+|  |  This action cannot be undone.                               ||
+|  |                                                              ||
+|  +--------------------------------------------------------------+|
+|  |  [Delete]                              [Cancel]              ||
+|  +--------------------------------------------------------------+|
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Overlay | div (backdrop) | Click to cancel | — |
+| Header | h2 | Static text | — |
+| Content | p | Static text | — |
+| [Delete] | Button (danger) | Confirms deletion | Focus trap |
+| [Cancel] | Button | Cancels deletion | — |
+
+## Data Display
+
+No data display — confirmation dialog only.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Title | "Delete Issue" | Clear action |
+| Message | "Are you sure you want to delete this issue?" | Confirmation |
+| Warning | "This action cannot be undone." | Reversibility notice |
+| [Delete] | "Delete" | Destructive action, danger styling |
+| [Cancel] | "Cancel" | Safe exit |
+
+## States
+
+### Populated (Default)
+
+Modal visible with confirmation message.
+
+```
++------------------------------------------------------------------+
+|  Delete Issue                                                   |
+|  Are you sure you want to delete this issue?                    |
+|  This action cannot be undone.                                   |
+|  [Delete]                              [Cancel]                  |
++------------------------------------------------------------------+
+```
+
+### Empty
+
+Not applicable — always has content.
+
+### Loading
+
+Not applicable — deletion is instant.
+
+### Error
+
+```
++------------------------------------------------------------------+
+|  Delete Issue                                                   |
+|  Are you sure you want to delete this issue?                    |
+|  This action cannot be undone.                                   |
+|  ⚠ Failed to delete issue. Please try again.                    |
+|  [Delete]                              [Cancel]                  |
++------------------------------------------------------------------+
+```
+
+### Success / Confirmation
+
+```
++------------------------------------------------------------------+
+|  ✓ Issue deleted                                                |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Centered modal, max-width 400px |
+| Tablet (768-1024px) | Same layout |
+| Mobile (<768px) | Full-width modal |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | role="dialog" on modal container |
+| Heading order | h2 "Delete Issue" |
+| Reading / Focus order | Title → Message → Delete → Cancel |
+| Accessible names | Delete button: aria-label="Confirm delete issue" |
+| Keyboard operability | Y to confirm, N/Esc to cancel |
+| Target size | ≥24×24 CSS px on Delete/Cancel buttons |
+| Focus not obscured | Focus trap within modal |
+| Non-color intent | Warning text + icon, not color alone |
+
+---
+
+# Wireframe: Toast Notification
+
+## Purpose & Flow Context
+
+Provides feedback on shortcut actions. Entry: shortcut action completes. Exit: auto-dismiss or user dismisses.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Toast Container | Fixed position (bottom-right) | Stack of toasts |
+| Toast | Icon + Message (+ [Close] on error) | Auto-dismiss or manual |
+
+**Content hierarchy** (by visual priority):
+1. Icon (status indicator)
+2. Message text
+3. Close button (for error toasts)
+
+```
++------------------------------------------------------------------+
+|                                                +--------------+  |
+|                                                | ✓  Message  |  |
+|                                                |    [X]      |  |
+|                                                +--------------+  |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [Link] [#Heading] [>Dropdown] [Avatar] [Icon]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Toast Container | div | Fixed position, stacks toasts | — |
+| Icon | svg | Status indicator | — |
+| Message | span | Action feedback text | — |
+| [Close] | Button | Dismisses toast | **Error toasts only** — success/info auto-dismiss; not rendered for non-error variants |
+
+## Data Display
+
+No data display — feedback only.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Success Message | "Shortcut updated" | Positive feedback |
+| Error Message | "This key combination is already in use" | Error feedback |
+| Info Message | "Shortcut disabled" | Neutral feedback |
+| [Close] | "Dismiss notification" | Error toasts only; success/info rely on auto-dismiss |
+
+## States
+
+### Populated (Default)
+
+Toast visible with message and auto-dismiss timer.
+
+```
++------------------------------------------------------------------+
+|  ✓ Shortcut updated                                             |
++------------------------------------------------------------------+
+```
+
+### Empty
+
+No toasts displayed.
+
+### Loading
+
+Not applicable — toasts don't load.
+
+### Error
+
+```
++------------------------------------------------------------------+
+|  ⚠ This key combination is already in use         [X]           |
++------------------------------------------------------------------+
+```
+
+### Success / Confirmation
+
+```
++------------------------------------------------------------------+
+|  ✓ Shortcut updated                                             |
++------------------------------------------------------------------+
+```
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Fixed bottom-right position |
+| Tablet (768-1024px) | Same position |
+| Mobile (<768px) | Full-width at bottom |
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | (not part of main landmarks) |
+| Heading order | N/A |
+| Reading / Focus order | Icon → Message → Close |
+| Accessible names | Close button: aria-label="Dismiss notification" |
+| Keyboard operability | Esc to dismiss |
+| Target size | ≥24×24 CSS px on Close button |
+| Focus not obscured | Toast doesn't obscure focus |
+| Non-color intent | Icon + text + color |
+
+---
+
+## Assumptions & Open Questions
+
+| # | Assumption / Gap | Rationale | Action Required |
+|---|-----------------|-----------|-----------------|
+| 1 | **Create Issue Modal** — referenced by user-flows as destination of "C" shortcut; not wireframed here | Owned by the Issue Creation module, not the Keyboard module. The keyboard module triggers it; the Issue module defines its UI. | Issue Creation module must provide its own wireframes. |
+| 2 | **Status Change Modal** — referenced by user-flows as destination of "S" shortcut; not wireframed here | Owned by the Issue Actions module. The keyboard module triggers the status cycle; the Issue module defines the modal. | Issue Actions module must provide its own wireframes. |
+| 3 | **Assign Modal** — referenced by user-flows as destination of "A" shortcut; not wireframed here | Owned by the Issue Actions module (assignee picker). | Issue Actions module must provide its own wireframes. |
+| 4 | **Label Modal** — referenced by user-flows as destination of "L" shortcut; not wireframed here | Owned by the Issue Actions module (label picker). | Issue Actions module must provide its own wireframes. |
+| 5 | **Component-contract a11y** (pixel contrast, focus-appearance) deferred to design-system | Per the authoring-wireframes bar: the wireframe owns screen-composition a11y; the DS owns per-component contrast/focus. No DS hi-fi pass exists yet. | Design-system must define per-component contrast + focus-appearance contracts before hi-fi pass. |

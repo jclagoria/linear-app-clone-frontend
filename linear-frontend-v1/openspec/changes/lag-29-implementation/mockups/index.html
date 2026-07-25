@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keyboard Module — Mockups Index</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); padding: var(--space-8); }
+    h1 { font-size: 24px; font-weight: 600; margin-bottom: var(--space-4); }
+    p.subtitle { color: var(--color-text-secondary); margin-bottom: var(--space-6); font-size: 14px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4); }
+    .card { background: var(--color-surface-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-6); text-decoration: none; color: inherit; transition: box-shadow 0.15s; }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .card h2 { font-size: 14px; font-weight: 600; margin-bottom: var(--space-4); }
+    .card .desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+    .card .states { margin-top: var(--space-4); display: flex; gap: 6px; flex-wrap: wrap; }
+    .card .states span { font-size: 11px; padding: 2px 8px; border-radius: 9999px; background: #F1F5F9; color: var(--color-text-secondary); }
+  </style>
+</head>
+<body>
+  <h1>Keyboard Module — Mockups</h1>
+  <p class="subtitle">LAG-29: Interactive HTML mockups. One file per wireframe screen, no build step.</p>
+  <div class="grid">
+    <a href="shortcut-help.html" class="card">
+      <h2>Shortcut Help Modal</h2>
+      <p class="desc">Displays all keyboard shortcuts organized by category. Triggered by "?" on any page.</p>
+      <div class="states"><span>populated</span><span>filtered</span></div>
+    </a>
+    <a href="keyboard-settings.html" class="card">
+      <h2>Keyboard Settings</h2>
+      <p class="desc">View and customize keyboard shortcuts. Settings > Keyboard.</p>
+      <div class="states"><span>populated</span><span>editing</span><span>error</span><span>success</span></div>
+    </a>
+    <a href="delete-confirmation.html" class="card">
+      <h2>Delete Confirmation Modal</h2>
+      <p class="desc">Confirms destructive issue deletion via keyboard shortcut.</p>
+      <div class="states"><span>populated</span><span>error</span><span>success</span></div>
+    </a>
+    <a href="toast-notification.html" class="card">
+      <h2>Toast Notification</h2>
+      <p class="desc">Feedback on shortcut actions. Auto-dismiss or manual dismiss.</p>
+      <div class="states"><span>success</span><span>error</span><span>info</span></div>
+    </a>
+  </div>
+</body>
+</html>

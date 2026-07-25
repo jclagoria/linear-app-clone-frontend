@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keyboard Settings — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-danger: #DC2626;
+      --color-success: #16A34A;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-shortcut-bg: #F1F5F9;
+      --color-shortcut-border: #CBD5E1;
+      --color-highlight-subtle: #EFF6FF;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+
+    .page { max-width: 800px; margin: 0 auto; padding: var(--space-6); }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-6); }
+    .page-header h1 { font-size: 24px; font-weight: 600; }
+    .btn-reset { font-size: 13px; padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: var(--color-surface-elevated); cursor: pointer; color: var(--color-text-secondary); font-family: inherit; }
+    .btn-reset:hover { background: var(--color-shortcut-bg); }
+
+    .category { margin-bottom: var(--space-6); }
+    .category h3 { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-2); }
+
+    .settings-row { display: flex; align-items: center; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface-elevated); margin-bottom: 4px; transition: background 0.1s; }
+    .settings-row:hover { background: var(--color-highlight-subtle); }
+    .settings-row.editing { background: var(--color-highlight-subtle); border-color: var(--color-primary); }
+    .settings-row.conflict { border-color: var(--color-danger); }
+
+    .row-name { flex: 1; font-size: 14px; }
+    .row-keys { display: flex; gap: 4px; min-width: 100px; justify-content: flex-end; margin-right: var(--space-4); }
+    kbd { display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px; font-family: var(--font-family); font-size: 13px; font-weight: 500; background: var(--color-shortcut-bg); border: 1px solid var(--color-shortcut-border); border-radius: var(--radius-sm); color: var(--color-text-primary); }
+    .btn-edit { font-size: 13px; padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: none; cursor: pointer; color: var(--color-text-secondary); font-family: inherit; min-width: 24px; min-height: 24px; }
+    .btn-edit:hover { background: var(--color-shortcut-bg); }
+
+    .edit-inline { display: flex; align-items: center; gap: var(--space-2); flex: 1; }
+    .edit-inline input { flex: 1; height: 28px; padding: 0 8px; border: 1px solid var(--color-primary); border-radius: var(--radius-sm); font-family: var(--font-family); font-size: 13px; outline: none; }
+    .btn-save { font-size: 13px; padding: 4px 10px; border-radius: var(--radius-sm); border: none; background: var(--color-primary); color: #fff; cursor: pointer; font-family: inherit; min-height: 28px; }
+    .btn-save:hover { opacity: 0.9; }
+    .btn-cancel { font-size: 13px; padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); background: none; cursor: pointer; color: var(--color-text-secondary); font-family: inherit; min-height: 28px; }
+
+    .conflict-msg { font-size: 12px; color: var(--color-danger); margin-top: 4px; padding-left: 12px; }
+
+    .toast { position: fixed; bottom: 24px; right: 24px; display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: var(--radius-md); font-size: 13px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); z-index: 200; }
+    .toast.success { background: #F0FDF4; border: 1px solid #BBF7D0; color: var(--color-success); }
+    .toast.error { background: #FEF2F2; border: 1px solid #FECACA; color: var(--color-danger); }
+
+    .error-banner { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) var(--space-4); background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius-md); margin-bottom: var(--space-4); font-size: 14px; color: var(--color-danger); }
+    .error-banner button { font-size: 13px; padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--color-danger); background: none; color: var(--color-danger); cursor: pointer; font-family: inherit; margin-left: auto; }
+
+    @media (max-width: 768px) {
+      .settings-row { flex-wrap: wrap; }
+      .row-keys { min-width: auto; margin-right: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-header">
+      <h1>Keyboard Settings</h1>
+      <button class="btn-reset" onclick="resetToDefaults()">Reset to defaults</button>
+    </div>
+
+    <!-- State: error -->
+    <div class="error-banner" id="error-banner" style="display: none;">
+      <span>Failed to load keyboard settings</span>
+      <button onclick="hideError()">Retry</button>
+    </div>
+
+    <div id="settings-content"></div>
+  </div>
+
+  <!-- State: success toast -->
+  <div class="toast success" id="toast-success" style="display: none;">
+    <span>Keyboard shortcuts reset to defaults</span>
+  </div>
+
+  <!-- State: conflict toast -->
+  <div class="toast error" id="toast-conflict" style="display: none;">
+    <span>This key combination is already in use</span>
+  </div>
+
+  <script>
+    const shortcutData = [
+      { category: 'global', items: [
+        { id: 'create', name: 'Create new issue', key: ['C'] },
+        { id: 'go-issues', name: 'Go to Issues', key: ['G', 'I'] },
+        { id: 'go-projects', name: 'Go to Projects', key: ['G', 'P'] },
+        { id: 'go-cycles', name: 'Go to Cycles', key: ['G', 'C'] },
+        { id: 'search', name: 'Search', key: ['/'] },
+        { id: 'show-help', name: 'Show shortcuts', key: ['?'] },
+        { id: 'close', name: 'Close / Deselect', key: ['Esc'] },
+      ]},
+      { category: 'list', items: [
+        { id: 'nav-down', name: 'Move selection down', key: ['J'] },
+        { id: 'nav-up', name: 'Move selection up', key: ['K'] },
+        { id: 'open-item', name: 'Open selected item', key: ['Enter'] },
+      ]},
+      { category: 'issue', items: [
+        { id: 'cycle-status', name: 'Cycle status', key: ['S'] },
+        { id: 'assign', name: 'Assign issue', key: ['A'] },
+        { id: 'label', name: 'Add label', key: ['L'] },
+        { id: 'edit-title', name: 'Edit title', key: ['E'] },
+        { id: 'delete', name: 'Delete issue', key: ['Del'] },
+      ]},
+    ];
+
+    const categoryLabels = { global: 'Global', list: 'List', issue: 'Issue' };
+    let editingId = null;
+
+    function render() {
+      const container = document.getElementById('settings-content');
+      let html = '';
+      shortcutData.forEach(group => {
+        html += `<div class="category"><h3>${categoryLabels[group.category]}</h3>`;
+        group.items.forEach(item => {
+          const isEditing = editingId === item.id;
+          const rowClass = isEditing ? 'settings-row editing' : 'settings-row';
+          if (isEditing) {
+            html += `<div class="${rowClass}">
+              <span class="row-name">${item.name}</span>
+              <div class="edit-inline">
+                <input type="text" value="${item.key.join('+')}" aria-label="New keyboard shortcut for ${item.name}" id="input-${item.id}" />
+                <button class="btn-save" onclick="saveEdit('${item.id}')">Save</button>
+                <button class="btn-cancel" onclick="cancelEdit()">Cancel</button>
+              </div>
+            </div>`;
+          } else {
+            html += `<div class="${rowClass}">
+              <span class="row-name">${item.name}</span>
+              <div class="row-keys">${item.key.map(k => `<kbd>${k}</kbd>`).join('')}</div>
+              <button class="btn-edit" onclick="startEdit('${item.id}')" aria-label="Edit ${item.name}">Edit</button>
+            </div>`;
+          }
+        });
+        html += '</div>';
+      });
+      container.innerHTML = html;
+    }
+
+    function startEdit(id) {
+      editingId = id;
+      render();
+      const input = document.getElementById('input-' + id);
+      if (input) { input.focus(); input.select(); }
+    }
+
+    function cancelEdit() {
+      editingId = null;
+      render();
+    }
+
+    function saveEdit(id) {
+      editingId = null;
+      render();
+      showToast('toast-success', 'Shortcut updated');
+    }
+
+    function resetToDefaults() {
+      showToast('toast-success', 'Keyboard shortcuts reset to defaults');
+    }
+
+    function showToast(id, msg) {
+      const toast = document.getElementById(id);
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    }
+
+    function hideError() {
+      document.getElementById('error-banner').style.display = 'none';
+    }
+
+    render();
+  </script>
+</body>
+</html>

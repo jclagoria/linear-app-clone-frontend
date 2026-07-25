@@ -10,6 +10,7 @@ import { ProjectDetailPage } from '@/pages/ProjectDetailPage'
 import { ProjectSettingsPage } from '@/pages/ProjectSettingsPage'
 import { CyclesPage } from '@/pages/CyclesPage'
 import { SettingsPage } from '@/pages/SettingsPage'
+import { KeyboardSettingsPage } from '@/pages/KeyboardSettingsPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { AuthGuard } from '@/features/auth/ui/AuthGuard'
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
           { path: 'projects/:id/settings', element: <ProjectSettingsPage /> },
           { path: 'cycles', element: <CyclesPage /> },
           { path: 'settings', element: <SettingsPage /> },
+          { path: 'settings/keyboard', element: <KeyboardSettingsPage /> },
           { path: 'profile', element: <ProfilePage /> },
         ],
       },
