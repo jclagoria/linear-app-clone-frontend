@@ -1,4 +1,5 @@
 import { cn } from '@/shared/lib/utils'
+import { useOptimisticStore } from '../lib/optimistic-store'
 
 interface ProjectCardProps {
   projectId: string
@@ -27,12 +28,13 @@ export function ProjectCard({
 }: ProjectCardProps) {
   const isGrid = variant === 'grid'
   const isCompact = variant === 'compact'
+  const isStoreBusy = useOptimisticStore((s) => s.isPending(`projects:${projectId}`))
 
   return (
     <article
       role="article"
       aria-label={`Project: ${name}`}
-      aria-busy={isOptimistic}
+      aria-busy={isStoreBusy || isOptimistic}
       className={cn(
         'group rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)]',
         'hover:border-[var(--border-hover)] hover:shadow-sm',

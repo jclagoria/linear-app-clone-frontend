@@ -1,6 +1,22 @@
 import type { WSEvent, WSEventType, WSEventPayload } from '../lib/event-schema'
 import { isValidEventType } from '../lib/event-schema'
 
+const EVENT_TTL_MS = 5 * 60 * 1000
+const seenEvents = new Map<string, number>()
+
+function cleanupSeenEvents(): void {
+  const now = Date.now()
+  for (const [id, timestamp] of seenEvents) {
+    if (now - timestamp > EVENT_TTL_MS) {
+      seenEvents.delete(id)
+    }
+  }
+}
+
+export function clearDedupStore(): void {
+  seenEvents.clear()
+}
+
 const eventHandlers = new Map<WSEventType, (event: WSEvent) => void>()
 
 export function registerEventHandler(
@@ -28,6 +44,10 @@ export function processEvent(data: unknown): WSEvent | null {
 
   if (!event.eventId) return null
   if (!isValidEventType(event.type)) return null
+
+  if (seenEvents.has(event.eventId)) return null
+  seenEvents.set(event.eventId, Date.now())
+  cleanupSeenEvents()
 
   return event
 }

@@ -43,8 +43,17 @@ export function checkStaleUpdates(maxAgeMs = 30000): void {
   }
 }
 
+// Revert event pub/sub for triggering RevertToast
+type RevertListener = (update: OptimisticUpdate) => void
+const revertListeners = new Set<RevertListener>()
+
+export function onRevertEvent(listener: RevertListener): () => void {
+  revertListeners.add(listener)
+  return () => revertListeners.delete(listener)
+}
+
 function onStaleRevert(update: OptimisticUpdate): void {
-  console.warn(`Reverting stale optimistic update: ${update.id} (${update.target})`)
+  revertListeners.forEach((listener) => listener(update))
 }
 
 export function createOptimisticUpdate(

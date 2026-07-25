@@ -1,4 +1,5 @@
 import { cn } from '@/shared/lib/utils'
+import { useOptimisticStore } from '../lib/optimistic-store'
 
 interface IssueCardProps {
   issueId: string
@@ -41,12 +42,13 @@ export function IssueCard({
 }: IssueCardProps) {
   const isCompact = variant === 'compact'
   const isDetail = variant === 'detail-header'
+  const isStoreBusy = useOptimisticStore((s) => s.isPending(`issues:${issueId}`))
 
   return (
     <article
       role="article"
       aria-label={`Issue: ${title}, Status: ${statusLabel || statusId}`}
-      aria-busy={isOptimistic}
+      aria-busy={isStoreBusy || isOptimistic}
       className={cn(
         'group flex items-center gap-3 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] p-3',
         'hover:border-[var(--border-hover)] hover:shadow-sm',

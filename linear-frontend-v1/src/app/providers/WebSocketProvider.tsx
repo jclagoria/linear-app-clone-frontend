@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react'
 import { useAuthStore } from '@/entities/session/model/store'
+import { useTeamStore } from '@/entities/team/model/store'
 import { createWSClient } from '@/features/realtime/lib/ws-client'
+import { useWebSocketStore } from '@/shared/stores/websocketStore'
 
 const WS_URL = import.meta.env.VITE_WS_URL ?? 'ws://localhost:3001/ws'
 
@@ -27,23 +29,36 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const clientRef = useRef<ReturnType<typeof createWSClient> | null>(null)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
   const accessToken = useAuthStore((s) => s.accessToken)
-  const connectionStatus = useAuthStore((s) => s.isAuthenticated ? 'disconnected' as const : 'disconnected' as const)
+  const currentTeamId = useTeamStore((s) => s.currentTeamId)
+  const connectionStatus = useWebSocketStore((s) => s.connectionStatus)
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) return
 
+    const teamId = useTeamStore.getState().currentTeamId ?? undefined
     const client = createWSClient({
       url: WS_URL,
       token: accessToken,
+      teamId,
     })
     clientRef.current = client
     client.connect()
 
+    const handleBeforeUnload = () => client.disconnect()
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
       client.disconnect()
       clientRef.current = null
     }
   }, [isAuthenticated, accessToken])
+
+  useEffect(() => {
+    if (connectionStatus === 'connected' && currentTeamId && clientRef.current) {
+      clientRef.current.subscribeToTeam(currentTeamId)
+    }
+  }, [currentTeamId, connectionStatus])
 
   const reconnect = () => {
     clientRef.current?.reconnect()
@@ -54,7 +69,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   }
 
   const value: WebSocketContextValue = {
-    isConnected: false,
+    isConnected: connectionStatus === 'connected',
     connectionStatus,
     reconnect,
     disconnect,

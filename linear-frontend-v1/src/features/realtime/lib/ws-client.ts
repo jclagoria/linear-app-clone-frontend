@@ -7,6 +7,7 @@ import { setupEventRouter } from '../model/event-router'
 export interface WSClientConfig {
   url: string
   token: string
+  teamId?: string
   onOpen?: () => void
   onClose?: () => void
   onError?: (error: Event) => void
@@ -39,16 +40,47 @@ export function createWSClient(config: WSClientConfig) {
 
     ws = new WebSocket(config.url)
 
+    const connectTimeout = setTimeout(() => {
+      if (ws?.readyState === WebSocket.CONNECTING) {
+        ws.close()
+        store.setDisconnected()
+        config.onClose?.()
+      }
+    }, 5000)
+
     ws.onopen = () => {
+      clearTimeout(connectTimeout)
       reconnectAttempts = 0
-      store.setConnected()
-      heartbeat.start()
-
-      ws?.send(JSON.stringify({ type: 'auth', token: config.token }))
-
+      store.setConnecting()
       setupEventRouter()
-
       config.onOpen?.()
+
+      const ackTimeout = setTimeout(() => {
+        if (store.connectionStatus === 'connecting') {
+          ws?.close()
+          store.setDisconnected()
+          config.onClose?.()
+        }
+      }, 5000)
+
+      const defaultHandler = ws.onmessage
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          if (data.type === 'connection_ack') {
+            clearTimeout(ackTimeout)
+            store.setConnected()
+            heartbeat.start()
+            ws?.send(JSON.stringify({ type: 'auth', token: config.token }))
+            if (config.teamId) {
+              ws?.send(JSON.stringify({ type: 'subscribe', teamId: config.teamId }))
+            }
+            ws.onmessage = defaultHandler
+            return
+          }
+        } catch {}
+        defaultHandler?.call(ws, event)
+      }
     }
 
     ws.onmessage = (event) => {
@@ -57,14 +89,6 @@ export function createWSClient(config: WSClientConfig) {
         const processed = processEvent(data)
         if (processed) {
           routeEvent(processed)
-          useWebSocketStore.getState().addNotification({
-            id: processed.eventId,
-            type: processed.type,
-            title: processed.type,
-            message: JSON.stringify(processed.payload),
-            read: false,
-            createdAt: processed.timestamp,
-          })
         }
       } catch {
         // Ignore non-JSON messages (ping/pong frames)
@@ -72,6 +96,7 @@ export function createWSClient(config: WSClientConfig) {
     }
 
     ws.onclose = () => {
+      clearTimeout(connectTimeout)
       heartbeat.stop()
       if (isManualClose) {
         store.setDisconnected()
@@ -114,5 +139,11 @@ export function createWSClient(config: WSClientConfig) {
     connect()
   }
 
-  return { connect, disconnect, reconnect }
+  const subscribeToTeam = (teamId: string) => {
+    if (ws?.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'subscribe', teamId }))
+    }
+  }
+
+  return { connect, disconnect, reconnect, subscribeToTeam }
 }

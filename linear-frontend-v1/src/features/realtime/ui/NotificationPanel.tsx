@@ -60,7 +60,7 @@ export function NotificationPanel({
               No notifications
             </div>
           ) : (
-            <ul className="divide-y divide-[var(--border-color)]">
+            <ul role="list" className="divide-y divide-[var(--border-color)]">
               {notifications.map((n) => (
                 <li key={n.id}>
                   <button

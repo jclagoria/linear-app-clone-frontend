@@ -1,32 +1,26 @@
 import { useEffect, useState } from 'react'
 import { X, RotateCcw } from 'lucide-react'
 import { cn } from '@/shared/lib/utils'
+import { onRevertEvent } from '../lib/optimistic-manager'
 
-interface RevertToastProps {
-  message?: string
-  onRetry?: () => void
-  onDismiss?: () => void
-  autoDismissMs?: number
-}
-
-export function RevertToast({
-  message = 'Update failed. Change reverted.',
-  onRetry,
-  onDismiss,
-  autoDismissMs = 5000,
-}: RevertToastProps) {
-  const [visible, setVisible] = useState(true)
+export function RevertToast() {
+  const [message, setMessage] = useState<string | null>(null)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    if (autoDismissMs <= 0) return
-    const timer = setTimeout(() => {
-      setVisible(false)
-      onDismiss?.()
-    }, autoDismissMs)
-    return () => clearTimeout(timer)
-  }, [autoDismissMs, onDismiss])
+    return onRevertEvent((update) => {
+      setMessage(`Reverted: ${update.target}`)
+      setVisible(true)
+    })
+  }, [])
 
-  if (!visible) return null
+  useEffect(() => {
+    if (!visible) return
+    const timer = setTimeout(() => setVisible(false), 5000)
+    return () => clearTimeout(timer)
+  }, [visible])
+
+  if (!visible || !message) return null
 
   return (
     <div
@@ -40,20 +34,8 @@ export function RevertToast({
     >
       <X className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
       <p className="flex-1 text-sm text-[var(--text-primary)]">{message}</p>
-      {onRetry && (
-        <button
-          onClick={onRetry}
-          className="flex shrink-0 items-center gap-1 rounded px-2 py-1 text-xs font-medium text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-        >
-          <RotateCcw className="h-3 w-3" />
-          Retry
-        </button>
-      )}
       <button
-        onClick={() => {
-          setVisible(false)
-          onDismiss?.()
-        }}
+        onClick={() => setVisible(false)}
         className="shrink-0 rounded p-0.5 text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         aria-label="Dismiss"
       >
