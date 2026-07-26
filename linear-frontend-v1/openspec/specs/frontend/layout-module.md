@@ -120,8 +120,9 @@ The layout SHALL adapt to screen width using defined breakpoints: desktop (>1024
 
 - **GIVEN** the viewport width is greater than 1024px
 - **WHEN** the layout renders
-- **THEN** the sidebar is displayed side-by-side with the content area
+- **THEN** the sidebar is always visible and accessible, displayed side-by-side with the content area
 - **AND** the sidebar is in its default (expanded) state
+- **AND** the sidebar maintains consistent positioning and width
 
 #### Scenario: TabletLayout
 
@@ -212,10 +213,10 @@ The application SHALL support three theme modes: light, dark, and system (follow
 
 ### Sidebar
 
-- **Purpose**: Main navigation sidebar with collapsible state
-- **Props**: `collapsed` (boolean), `onToggle` (callback), `currentRoute` (string)
+- **Purpose**: Main navigation sidebar with collapsible state and responsive behavior
+- **Props**: `collapsed` (boolean), `onToggle` (callback), `currentRoute` (string), `deviceType` (desktop | tablet | mobile)
 - **States**: expanded, collapsed, mobile-overlay (visible), mobile-hidden
-- **Events**: `onToggle`, `onNavigate`
+- **Events**: `onToggle`, `onNavigate`, `onCloseRequest`
 
 ### Header
 
@@ -256,3 +257,4 @@ The Layout Module does not define routes; it wraps any authenticated page render
 - **Focus management**: When mobile sidebar opens, focus SHALL move to the first nav link. When it closes, focus SHALL return to the hamburger button.
 - **Color contrast**: Both light and dark themes SHALL meet WCAG 2.1 AA contrast ratios for all text and interactive elements.
 - **Reduced motion**: Theme transitions and sidebar animations SHOULD respect `prefers-reduced-motion`.
+- **High contrast**: Theme switching SHALL include high contrast mode options for users who need enhanced visibility.
