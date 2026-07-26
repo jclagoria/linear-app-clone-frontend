@@ -1,0 +1,1007 @@
+# Wireframes — Real-time Issue Updates
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+| `⟳` | Loading spinner | `●●●` | Skeleton placeholder |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+| Live regions | ARIA live regions announce real-time updates |
+
+---
+
+## Screen Inventory
+
+| Flow | Screen | States | Wireframe Section |
+|------|--------|--------|-------------------|
+| Issue List Updates | IssueListView | loading, populated, error | § Issue List View |
+| Issue List Updates | IssueCard | populated, updated | § Issue Card |
+| Issue Detail Updates | IssueDetailView | loading, populated, error, not-found | § Issue Detail View |
+| Issue Detail Updates | CommentThread | loading, populated, empty | § Comment Thread |
+| Issue Detail Updates | CommentCard | populated, edited | § Comment Card |
+| Project List Updates | ProjectListView | loading, populated, error | § Project List View |
+| Project List Updates | ProjectCard | populated, updated | § Project Card |
+| Cycle List Updates | CycleListView | loading, populated, error | § Cycle List View |
+| Cycle List Updates | CycleCard | populated, upcoming, active, completed | § Cycle Card |
+| Notification Updates | NotificationBadge | loading, populated | § Notification Badge |
+| Notification Updates | NotificationDropdown | loading, populated, empty | § Notification Dropdown |
+
+---
+
+## App Shell (Shared)
+
+All screens sit within this shared frame.
+
+**Grid**: 12-column / 8px spacing cadence. Max content width: 1280px.
+
+```
++------------------------------------------------------------------+
+|  Header — [Logo]  [Nav: Issues | Projects | Cycles]  [🔔N] [👤] |
++------------------------------------------------------------------+
+|  Sidebar (optional)  |  Main Content Area                        |
+|  +-----------------+ |  +--------------------------------------+ |
+|  | Team Selector   | |  |  [h1] Screen Title                  | |
+|  | Filter          | |  |                                      | |
+|  | Views           | |  |  Content                             | |
+|  +-----------------+ |  |                                      | |
+|                      |  +--------------------------------------+ |
++------------------------------------------------------------------+
+```
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo, primary nav, notification badge, user avatar | Sticky top, full width |
+| Sidebar | Team selector, filters, saved views | Collapsible, 240px default |
+| Main | Screen-specific content | Scrollable, padded 8px cadence |
+
+---
+
+## Issue List View
+
+**Purpose & Flow Context**
+
+Displays all issues for the team with real-time updates. Entry: navigate to /teams/:teamId/issues. Exit: click issue card or navigate away.
+
+### Layout Regions
+
+```
++------------------------------------------------------------------+
+|  Header — [Logo]  [Issues✓ | Projects | Cycles]  [🔔N] [👤]    |
++------------------------------------------------------------------+
+|  Sidebar       |  Main Content Area                              |
+|  +-----------+ |  +--------------------------------------------+ |
+|  | Team: ▼   | |  |  Issues                          [+ New]  | |
+|  | Filters   | |  |  [ Search ________ ] [ Filter ▼ ] [ Sort ▼]| |
+|  | > All     | |  +--------------------------------------------+ |
+|  | > My      | |  |  ○ Backlog   ● Todo   ◐ In Progress   ✓ Done| |
+|  | > Active  | |  |  +----------+ +----------+ +----------+ +--+| |
+|  |           | |  |  | Issue    | | Issue    | | Issue    | |  || |
+|  | Views     | |  |  | Card     | | Card     | | Card     | |  || |
+|  | > Recent  | |  |  +----------+ +----------+ +----------+ +--+| |
+|  +-----------+ |  +--------------------------------------------+ |
++------------------------------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Team Selector | Dropdown | Switches team context, refreshes list | — |
+| Search | Input (search) | Filters issues by title/description | Debounced 300ms |
+| Filter | Dropdown | Filter by assignee, label, priority | Multi-select |
+| Sort | Dropdown | Sort by created, updated, priority | — |
+| New Issue | Button (primary) | Opens new issue modal | — |
+| Status Columns | Card groups | Issues grouped by status | Drag to reorder |
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Issues" | Page heading | Team-scoped |
+| "Search" | Placeholder | "Search issues..." |
+| "+ New" | CTA | Create new issue |
+| Status labels | Column headers | Backlog, Todo, In Progress, Done |
+
+### States
+
+#### Populated (Default)
+
+Shows issues grouped by status in columns. Each column contains IssueCards.
+
+#### Empty (No Issues)
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon: Empty Box]                              |
+|                     No issues yet                                  |
+|                     Create your first issue to get started          |
+|                     [+ Create Issue]                               |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+#### Empty (Filtered to Zero)
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon: Search]                                 |
+|                     No issues match your filters                   |
+|                     Try adjusting your search or filters           |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+#### Loading
+
+```
++------------------------------------------------------------------+
+|  [===== skeleton bar =====]   [==== skeleton ===]                |
+|  +----------+ +----------+ +----------+ +----------+             |
+|  | ●●●●●●●● | | ●●●●●●●● | | ●●●●●●●● | | ●●●●●●●● |             |
+|  | ●●●●●●   | | ●●●●●●   | | ●●●●●●   | | ●●●●●●   |             |
+|  | ●●●      | | ●●●      | | ●●●      | | ●●●      |             |
+|  +----------+ +----------+ +----------+ +----------+             |
++------------------------------------------------------------------+
+```
+
+Skeleton mirrors populated layout: 4 columns with 2-3 card placeholders each.
+
+#### Error
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon: Alert]                                  |
+|                     Unable to load issues                          |
+|                     Something went wrong loading your issues.      |
+|                     [Retry]                                        |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout with sidebar and columns |
+| Tablet (768-1024px) | Sidebar collapses to icons, columns stack |
+| Mobile (<768px) | Sidebar hidden, hamburger menu, single column list |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | header, nav (sidebar), main |
+| Heading order | h1 "Issues", h2 for status columns |
+| Reading order | Sidebar → Search/filter bar → Status columns left to right |
+| Keyboard | Tab through cards, Enter to open, Arrow keys between columns |
+| Live region | Status announcements for real-time updates |
+
+---
+
+## Issue Card
+
+**Purpose & Flow Context**
+
+Individual issue card showing live status and assignee changes. Rendered within IssueListView columns.
+
+### Anatomy
+
+```
++------------------------------------------+
+|  [Status Badge]  Issue Title              |
+|  #123                                    |
+|  +--------------------------------------+ |
+|  | [Label] [Label]            [Avatar]  | |
+|  +--------------------------------------+ |
+|  Priority: [Icon]  Due: [Date]           |
++------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Status Badge | StatusBadge | Shows current status | Animated on change |
+| Title | heading-3 | Click to open detail | Truncate at 2 lines |
+| Identifier | caption | Issue number | — |
+| Labels | Badge | Categorical labels | Max 3, overflow +N |
+| Avatar | Avatar (small) | Assignee | Unassigned = empty |
+| Priority | Icon | Priority level | — |
+| Due Date | caption | Due date | Overdue = warning color |
+
+### States
+
+#### Populated (Default)
+
+Card displays all fields as shown in anatomy.
+
+#### Updated (Real-time)
+
+Card briefly highlights with subtle flash when fields update in real-time. No layout jump.
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Issue title | Human-readable summary | Not a data model ID |
+| #123 | Issue identifier | Prefixed with # |
+| Labels | Categorical tags | User-defined |
+| "Unassigned" | No assignee state | — |
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Full card layout |
+| Tablet | Compact layout, hide priority |
+| Mobile | Minimal card, tap to expand |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | article role |
+| Heading | h3 for card title |
+| Keyboard | Tab to focus, Enter to open |
+| Screen reader | "Issue #123: Title, Status, Assignee" |
+| Live region | Announces field updates |
+
+---
+
+## Issue Detail View
+
+**Purpose & Flow Context**
+
+Displays full issue details with live comment updates. Entry: click issue card. Exit: navigate back to list.
+
+### Layout Regions
+
+```
++------------------------------------------------------------------+
+|  Header — [Logo]  [Issues✓ | Projects | Cycles]  [🔔N] [👤]    |
++------------------------------------------------------------------+
+|  [← Back to Issues]                                              |
++------------------------------------------------------------------+
+|  Main Content Area                                               |
+|  +--------------------------------------------+ +--------------+ |
+|  |  Issue Title                     [Edit]    | | Details      | |
+|  |  #123 — Status Badge             [Delete]  | | Status: ▼    | |
+|  |                                            | | Assignee: ▼  | |
+|  |  Description                                | | Priority: ▼  | |
+|  |  Lorem ipsum dolor sit amet...              | | Labels: +    | |
+|  |                                            | | Sprint: ▼    | |
+|  |  +--------------------------------------+ | | Created:     | |
+|  |  | 💬 Comments (3)                     | | | Updated:     | |
+|  |  +--------------------------------------+ | +--------------+ |
+|  |  | [Avatar] User Name     2 hours ago  | |                  |
+|  |  | Comment body text...                | |                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | [Avatar] User Name     1 hour ago   | |                  |
+|  |  | Another comment...                  | |                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | Add comment...                      | |                  |
+|  |  | ________________________________    | |                  |
+|  |  | [Submit]                            | |                  |
+|  +--------------------------------------------+ +--------------+ |
++------------------------------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Back link | Button (ghost) | Navigate to list | — |
+| Title | heading-1 | Editable on click | — |
+| Edit | Button (ghost) | Opens edit form | — |
+| Delete | Button (danger) | Confirmation modal | — |
+| Description | Body text | Markdown rendered | Expand if long |
+| Comments | CommentThread | Real-time additions | — |
+| Details sidebar | Card | Issue metadata | Collapsible |
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Back to Issues" | Navigation | Return to list |
+| "Comments (N)" | Section heading with count | — |
+| "Add comment..." | Placeholder | Input prompt |
+| "Submit" | CTA | Post comment |
+
+### States
+
+#### Populated (Default)
+
+Full issue details with comments displayed.
+
+#### Empty (No Comments)
+
+```
+|  +--------------------------------------+ |
+|  | 💬 Comments (0)                      | |
+|  +--------------------------------------+ |
+|  | No comments yet                       | |
+|  | Be the first to comment                | |
+|  |                                        | |
+|  | Add comment...                        | |
+|  | ________________________________      | |
+|  | [Submit]                              | |
+|  +--------------------------------------+ |
+```
+
+#### Loading
+
+```
+|  ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● |
+|  ●●●●●●●●●●●●●                            |
+|                                            |
+|  ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● |
+|  ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●   |
+|  ●●●●●●●●●●●●●●●●●●●●●●●●●●              |
+```
+
+#### Error
+
+```
+|                                            |
+|  [Icon: Alert]                             |
+|  Unable to load issue                      |
+|  This issue may have been deleted or you   |
+|  don't have permission to view it.         |
+|  [← Back to Issues]                        |
+|                                            |
+```
+
+#### Not Found
+
+```
+|                                            |
+|  [Icon: Question]                          |
+|  Issue not found                           |
+|  This issue doesn't exist or has been      |
+|  removed.                                  |
+|  [← Back to Issues]                        |
+|                                            |
+```
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Two-column: main + sidebar |
+| Tablet (768-1024px) | Sidebar collapses below main |
+| Mobile (<768px) | Single column, sidebar as drawer |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | main, aside (sidebar) |
+| Heading | h1 for issue title, h2 for sections |
+| Keyboard | Tab through fields, Enter to edit |
+| Screen reader | "Issue #123: Title, Status: Todo, Assignee: John" |
+| Live region | Announces new comments and field updates |
+
+---
+
+## Comment Thread
+
+**Purpose & Flow Context**
+
+Chronological list of comments on an issue. Rendered within IssueDetailView.
+
+### Anatomy
+
+```
++------------------------------------------+
+|  💬 Comments (3)                         |
++------------------------------------------+
+|  [CommentCard]                           |
+|  [CommentCard]                           |
+|  [CommentCard]                           |
+|  +--------------------------------------+ |
+|  | Add comment...                       | |
+|  | ________________________________     | |
+|  | [Submit]                             | |
+|  +--------------------------------------+ |
++------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Header | heading-2 | Comment count | — |
+| CommentCard | Article | Individual comment | — |
+| Input | Input (text) | New comment entry | Expand on focus |
+| Submit | Button (primary) | Post comment | Disabled if empty |
+
+### States
+
+#### Empty
+
+```
++------------------------------------------+
+|  💬 Comments (0)                         |
++------------------------------------------+
+|                                          |
+|  No comments yet                         |
+|  Start the discussion                    |
+|                                          |
+|  Add comment...                          |
+|  ________________________________        |
+|  [Submit]                                |
++------------------------------------------+
+```
+
+#### Loading
+
+```
++------------------------------------------+
+|  ●●●●●●●●●●●● (●)                        |
++------------------------------------------+
+|  ●●●  ●●●●●●●●●●●●●●●●●●●●●●●          |
+|  ●●●●●●●●●●●●●●●●●●●●                   |
+|                                          |
+|  ●●●  ●●●●●●●●●●●●●●●●●●●●●●●          |
+|  ●●●●●●●●●●●●●●●●●●                     |
++------------------------------------------+
+```
+
+#### Populated
+
+Default state with comments listed chronologically.
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Full width thread |
+| Mobile | Full width, compact cards |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | section with aria-label "Comments" |
+| Heading | h2 "Comments (N)" |
+| Keyboard | Tab through comments and input |
+| Live region | Announces new comments |
+
+---
+
+## Comment Card
+
+**Purpose & Flow Context**
+
+Individual comment showing author, timestamp, and content.
+
+### Anatomy
+
+```
++------------------------------------------+
+|  [Avatar]  User Name      2 hours ago    |
+|            (edited)                      |
+|  +--------------------------------------+ |
+|  | Comment body text here...            | |
+|  +--------------------------------------+ |
+|  [Reply] [Edit] [Delete]                 |
++------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Avatar | Avatar (small) | Comment author | — |
+| Author | body | User name | — |
+| Timestamp | caption | Relative time | — |
+| Edited | caption | Edit indicator | Only if edited |
+| Content | Body text | Comment text | Markdown support |
+| Actions | Button (ghost) | Reply, Edit, Delete | Only own comments |
+
+### States
+
+#### Populated (Default)
+
+Standard comment display.
+
+#### Edited
+
+Same as default with "(edited)" indicator next to timestamp.
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Full layout |
+| Mobile | Compact, actions as icon menu |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | article |
+| Keyboard | Tab to focus, Enter for actions |
+| Screen reader | "Comment by User Name, 2 hours ago" |
+
+---
+
+## Project List View
+
+**Purpose & Flow Context**
+
+Displays all projects for the team with real-time updates. Entry: navigate to /teams/:teamId/projects.
+
+### Layout Regions
+
+```
++------------------------------------------------------------------+
+|  Header — [Logo]  [Issues | Projects✓ | Cycles]  [🔔N] [👤]   |
++------------------------------------------------------------------+
+|  Main Content Area                                               |
+|  +--------------------------------------------+                  |
+|  |  Projects                       [+ New]    |                  |
+|  |  [ Search ________ ]                        |                  |
+|  +--------------------------------------------+                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | [ProjectCard]                       | |                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | [ProjectCard]                       | |                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | [ProjectCard]                       | |                  |
+|  |  +--------------------------------------+ |                  |
+|  +--------------------------------------------+                  |
++------------------------------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Search | Input (search) | Filter by name | Debounced |
+| New Project | Button (primary) | Opens new project modal | — |
+| Project Cards | Card (interactive) | Click to view | — |
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Projects" | Page heading | Team-scoped |
+| "+ New" | CTA | Create new project |
+
+### States
+
+#### Populated (Default)
+
+List of project cards.
+
+#### Empty
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon: Folder]                                 |
+|                     No projects yet                                |
+|                     Create your first project to organize work     |
+|                     [+ Create Project]                             |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+#### Loading
+
+```
++------------------------------------------------------------------+
+|  [===== skeleton bar =====]   [==== skeleton ===]                |
+|  +--------------------------------------+                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● |                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●       |                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●              |                        |
+|  +--------------------------------------+                        |
+|  +--------------------------------------+                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● |                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●       |                        |
+|  +--------------------------------------+                        |
++------------------------------------------------------------------+
+```
+
+#### Error
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon: Alert]                                  |
+|                     Unable to load projects                        |
+|                     [Retry]                                        |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Full layout |
+| Tablet | Grid 2 columns |
+| Mobile | Single column, list view |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | main |
+| Heading | h1 "Projects" |
+| Keyboard | Tab through cards, Enter to open |
+| Live region | Announces new projects |
+
+---
+
+## Project Card
+
+**Purpose & Flow Context**
+
+Individual project card showing project summary and progress.
+
+### Anatomy
+
+```
++------------------------------------------+
+|  [Icon] Project Title                     |
+|  Description text that may wrap...        |
+|  +--------------------------------------+ |
+|  | [=========----------] 60%            | |
+|  +--------------------------------------+ |
+|  | Issues: 12  Members: 5  Due: Jan 15  | |
++------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Icon | Icon | Project icon | Default if none |
+| Title | heading-3 | Project name | Truncate |
+| Description | caption | Brief summary | 2 lines max |
+| Progress | Progress bar | Completion % | — |
+| Stats | caption | Issue count, members, due date | — |
+
+### States
+
+#### Populated (Default)
+
+Standard project display.
+
+#### Updated (Real-time)
+
+Brief highlight when project fields update.
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Full card |
+| Mobile | Compact, hide description |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | article |
+| Heading | h3 for project name |
+| Keyboard | Tab to focus, Enter to open |
+| Screen reader | "Project: Title, 60% complete" |
+
+---
+
+## Cycle List View
+
+**Purpose & Flow Context**
+
+Displays all cycles for the team with real-time updates. Entry: navigate to /teams/:teamId/cycles.
+
+### Layout Regions
+
+```
++------------------------------------------------------------------+
+|  Header — [Logo]  [Issues | Projects | Cycles✓]  [🔔N] [👤]   |
++------------------------------------------------------------------+
+|  Main Content Area                                               |
+|  +--------------------------------------------+                  |
+|  |  Cycles                         [+ New]    |                  |
+|  +--------------------------------------------+                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | [CycleCard: Active]                  | |                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | [CycleCard: Upcoming]                | |                  |
+|  |  +--------------------------------------+ |                  |
+|  |  | [CycleCard: Completed]               | |                  |
+|  |  +--------------------------------------+ |                  |
+|  +--------------------------------------------+                  |
++------------------------------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| New Cycle | Button (primary) | Opens new cycle modal | Team Lead only |
+| Cycle Cards | Card (interactive) | Click to view | — |
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Cycles" | Page heading | Team-scoped |
+| "+ New" | CTA | Create new cycle |
+| Status badges | Cycle state | Active, Upcoming, Completed |
+
+### States
+
+#### Populated (Default)
+
+List of cycle cards grouped by status.
+
+#### Empty
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon: Calendar]                               |
+|                     No cycles yet                                  |
+|                     Create your first cycle to timebox work         |
+|                     [+ Create Cycle]                               |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+#### Loading
+
+```
++------------------------------------------------------------------+
+|  [===== skeleton bar =====]                                      |
+|  +--------------------------------------+                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●● |                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●●●●●          |                        |
+|  | ●●●●●●●●●●●●●●●●●●●●●●              |                        |
+|  +--------------------------------------+                        |
++------------------------------------------------------------------+
+```
+
+#### Error
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                     [Icon: Alert]                                  |
+|                     Unable to load cycles                          |
+|                     [Retry]                                        |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Full layout |
+| Mobile | Single column |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | main |
+| Heading | h1 "Cycles" |
+| Keyboard | Tab through cards, Enter to open |
+| Live region | Announces status changes |
+
+---
+
+## Cycle Card
+
+**Purpose & Flow Context**
+
+Individual cycle card showing cycle status, date range, and progress.
+
+### Anatomy
+
+```
++------------------------------------------+
+|  [Status Badge] Cycle Title               |
+|  Jan 1 – Jan 15, 2025                    |
+|  +--------------------------------------+ |
+|  | Issues: 8  Completed: 5  [====] 63%  | |
+|  +--------------------------------------+ |
++------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Status Badge | StatusBadge | Cycle state | Animated on change |
+| Title | heading-3 | Cycle name | — |
+| Date Range | caption | Start – End | — |
+| Stats | caption | Issue count, completed, progress | — |
+| Progress | Progress bar | Completion % | — |
+
+### States
+
+#### Populated (Default)
+
+Standard cycle display with appropriate status badge.
+
+#### Upcoming
+
+Status badge shows "Upcoming". No progress bar.
+
+#### Active
+
+Status badge shows "Active" with animation. Progress bar shows current %.
+
+#### Completed
+
+Status badge shows "Completed". Progress bar at 100%.
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Full card |
+| Mobile | Compact, hide progress |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | article |
+| Heading | h3 for cycle name |
+| Keyboard | Tab to focus, Enter to open |
+| Screen reader | "Cycle: Title, Active, 63% complete" |
+
+---
+
+## Notification Badge
+
+**Purpose & Flow Context**
+
+Header badge showing unread notification count. Rendered in App Shell header.
+
+### Anatomy
+
+```
++-----------+
+|  Count    |
++-----------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Container | Badge (count) | Positioned on bell icon | — |
+| Count | span | Numeric count | 99+ for overflow |
+
+### States
+
+#### Loading
+
+Hidden or shows spinner.
+
+#### Populated (Zero)
+
+Hidden — no badge visible.
+
+#### Populated (Positive)
+
+Red background with white count text. Increments on new event.
+
+#### Overflow
+
+Shows "99+" for counts above 99.
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| All | Consistent 16px badge |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Screen reader | "N unread notifications" on bell icon |
+| Live region | Announces count changes |
+
+---
+
+## Notification Dropdown
+
+**Purpose & Flow Context**
+
+Dropdown list of recent notifications. Entry: click notification badge. Exit: click outside or press Escape.
+
+### Layout Regions
+
+```
++------------------------------------------+
+|  Notifications                    [Mark all read] |
++------------------------------------------+
+|  +--------------------------------------+ |
+|  | [Avatar] New comment on #123         | |
+|  |           2 minutes ago              | |
+|  +--------------------------------------+ |
+|  | [Avatar] Issue #456 assigned to you  | |
+|  |           1 hour ago                 | |
+|  +--------------------------------------+ |
+|  | [Avatar] Cycle "Sprint 5" activated | |
+|  |           3 hours ago                | |
+|  +--------------------------------------+ |
++------------------------------------------+
+```
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Header | heading-3 | "Notifications" | — |
+| Mark all read | Button (ghost) | Marks all as read | — |
+| Notification items | Card (compact) | Click to navigate | Unread = highlighted |
+| Avatar | Avatar (small) | Notification actor | — |
+| Content | body | Notification text | — |
+| Timestamp | caption | Relative time | — |
+
+### States
+
+#### Loading
+
+```
++------------------------------------------+
+|  ●●●●●●●●●●●●●●●●●●●●●●●●●●●          |
++------------------------------------------+
+|  ●●●  ●●●●●●●●●●●●●●●●●●●●●●●          |
+|  ●●●●●●●●●●●●●●●                       |
+|  +--------------------------------------+ |
+|  ●●●  ●●●●●●●●●●●●●●●●●●●●●●●          |
+|  ●●●●●●●●●●●●●●●                       |
++------------------------------------------+
+```
+
+#### Populated (With Notifications)
+
+Default state with notification list.
+
+#### Empty
+
+```
++------------------------------------------+
+|  Notifications                           |
++------------------------------------------+
+|                                          |
+|  No new notifications                    |
+|  You're all caught up!                   |
+|                                          |
++------------------------------------------+
+```
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop | Dropdown aligned to right |
+| Mobile | Full-width dropdown |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | region with aria-label "Notifications" |
+| Heading | h3 "Notifications" |
+| Keyboard | Arrow keys navigate, Enter to select, Escape to close |
+| Focus management | Focus returns to trigger on close |
+| Live region | Announces new notifications |
+
+---
+
+## Open Questions / Assumptions
+
+| # | Item | Status | Notes |
+|---|------|--------|-------|
+| 1 | Progress bar component | Assumption — flagged for DS owner | ProjectCard and CycleCard reference a progress bar (percentage fill + label). This is a common UI pattern but not defined in the current design-system. If the DS owner wants to formalize it, it should be added to the component catalog with its own a11y contract. The wireframe treats it as a resolved element; the DS can adopt or redefine it. |
+| 2 | "Updated" transient state on IssueCard/ProjectCard | Resolved — proportional | The real-time "updated" state (subtle flash/highlight) is described behaviorally without a dedicated sketch. This is proportional: the state is a transient visual effect (200–500ms highlight), not a structural layout change. The populated-state sketch + the annotation table's behavior column are sufficient for an engineer to build it. A dedicated sketch would add coverage without buildability value. |
