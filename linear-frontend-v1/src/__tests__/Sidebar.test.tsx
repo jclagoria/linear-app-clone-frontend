@@ -38,10 +38,10 @@ describe('Sidebar', () => {
     expect(navElements.length).toBeGreaterThanOrEqual(1)
   })
 
-  it('is hidden on mobile (hidden md:flex classes)', () => {
+  it('is hidden on mobile (hidden lg:flex classes)', () => {
     const { container } = renderSidebar()
     const aside = container.querySelector('aside')
     expect(aside?.className).toContain('hidden')
-    expect(aside?.className).toContain('md:flex')
+    expect(aside?.className).toContain('lg:flex')
   })
 })

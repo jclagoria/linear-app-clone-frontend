@@ -37,7 +37,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'hidden md:flex flex-col border-r border-[var(--border-color)] bg-[var(--bg-secondary)] transition-all duration-200',
+        'hidden lg:flex flex-col border-r border-[var(--border-color)] bg-[var(--bg-secondary)] transition-all duration-200',
         collapsed ? 'w-14' : 'w-60',
       )}
       aria-label="Main navigation"

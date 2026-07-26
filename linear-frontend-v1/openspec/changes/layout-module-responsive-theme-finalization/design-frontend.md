@@ -13,15 +13,17 @@
 
 ```
 App
-├── LayoutProvider (context)
+├── AppLayout (Zustand-backed)
+│   ├── Sidebar
+│   │   ├── TeamSelector
+│   │   ├── SidebarToggle
+│   │   ├── NavItems
+│   │   └── SidebarFooter
+│   ├── MobileSidebarOverlay (mobile)
 │   ├── Header
 │   │   ├── Logo
 │   │   ├── ThemeToggle
 │   │   └── UserMenu
-│   ├── Sidebar
-│   │   ├── SidebarToggle
-│   │   ├── NavItems
-│   │   └── SidebarFooter
 │   └── MainContent
 │       └── {PageContent}
 └── Backdrop (mobile)
@@ -29,9 +31,10 @@ App
 
 | Component | Responsibility | Props | State |
 |-----------|---------------|-------|-------|
-| LayoutProvider | Manages layout state, theme context | initialTheme, breakpoints | isSidebarOpen, currentTheme, deviceType |
+| AppLayout | Manages layout state via Zustand useUIStore | — | sidebarCollapsed, theme |
+| Sidebar | Navigation panel (desktop/tablet) | collapsed, onToggle | — |
+| MobileSidebarOverlay | Mobile sidebar overlay | isOpen, onClose | — |
 | Header | Top navigation bar | — | — |
-| Sidebar | Navigation panel | isOpen, onClose, onToggle, deviceType | collapsed, expanded, overlay |
 | ThemeToggle | Theme selection control | currentTheme, availableThemes, onThemeChange | light, dark, system |
 | Backdrop | Mobile sidebar overlay | isVisible, onClick | — |
 
@@ -46,7 +49,7 @@ App
 
 ## State Management
 
-- **Global state**: LayoutProvider context for sidebar and theme state
+- **Global state**: Zustand store (useUIStore) for sidebar and theme state, persisted to localStorage
 - **Local state**: Component-level UI state (dropdowns, modals)
 - **Server state**: Zustand stores for data fetching (projects, tasks)
 
