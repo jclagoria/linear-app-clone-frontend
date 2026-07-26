@@ -29,13 +29,14 @@ export function ProjectsPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-text mb-6">Projects</h1>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-live="polite">
         {projects.map((project) => (
           <ProjectCard
             key={project.id}
             projectId={project.id}
             name={project.name}
             icon={project.icon}
+            status={project.status}
             variant="grid"
           />
         ))}

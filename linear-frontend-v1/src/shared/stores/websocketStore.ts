@@ -19,6 +19,7 @@ interface WebSocketState {
   notifications: Notification[]
   lastEvent: string | null
   lastHeartbeat: string | null
+  autoUpdateEnabled: boolean
 
   setConnecting: () => void
   setConnected: () => void
@@ -27,6 +28,7 @@ interface WebSocketState {
   addNotification: (notification: Notification) => void
   markAsRead: (notificationId: string) => void
   setLastHeartbeat: (timestamp: string) => void
+  setAutoUpdateEnabled: (enabled: boolean) => void
 }
 
 export const initialWebSocketState = {
@@ -35,6 +37,7 @@ export const initialWebSocketState = {
   notifications: [] as Notification[],
   lastEvent: null as string | null,
   lastHeartbeat: null as string | null,
+  autoUpdateEnabled: true,
 }
 
 export const useWebSocketStore = create<WebSocketState>()(
@@ -72,6 +75,9 @@ export const useWebSocketStore = create<WebSocketState>()(
 
       setLastHeartbeat: (timestamp: string) =>
         set({ lastHeartbeat: timestamp }),
+
+      setAutoUpdateEnabled: (enabled: boolean) =>
+        set({ autoUpdateEnabled: enabled }),
     }),
     { name: 'websocket-store' },
   ),

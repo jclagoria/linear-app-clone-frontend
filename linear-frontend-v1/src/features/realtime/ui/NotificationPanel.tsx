@@ -1,25 +1,23 @@
 import { useCallback } from 'react'
 import { Bell } from 'lucide-react'
-import type { Notification } from '@/shared/stores/websocketStore'
+import { useNotificationsStore, type NotificationItem } from '@/shared/stores/notificationsStore'
 
 interface NotificationPanelProps {
   isOpen: boolean
-  notifications: Notification[]
   onToggle: () => void
-  onMarkAsRead: (id: string) => void
-  onMarkAllRead: () => void
   onClose: () => void
-  onItemClick: (notification: Notification) => void
+  onItemClick: (notification: NotificationItem) => void
 }
 
 export function NotificationPanel({
   isOpen,
-  notifications,
   onToggle,
-  onMarkAllRead,
   onClose,
   onItemClick,
 }: NotificationPanelProps) {
+  const notifications = useNotificationsStore((s) => s.items)
+  const markAllRead = useNotificationsStore((s) => s.markAllRead)
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -48,7 +46,7 @@ export function NotificationPanel({
           <div className="flex items-center justify-between border-b border-[var(--border-color)] px-4 py-3">
             <h3 className="text-sm font-semibold text-[var(--text-primary)]">Notifications</h3>
             <button
-              onClick={onMarkAllRead}
+              onClick={markAllRead}
               className="text-xs text-primary hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
             >
               Mark all read
@@ -60,7 +58,7 @@ export function NotificationPanel({
               No notifications
             </div>
           ) : (
-            <ul role="list" className="divide-y divide-[var(--border-color)]">
+            <ul role="list" className="divide-y divide-[var(--border-color)]" aria-live="polite">
               {notifications.map((n) => (
                 <li key={n.id}>
                   <button

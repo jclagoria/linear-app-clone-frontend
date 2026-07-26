@@ -5,7 +5,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { HamburgerButton } from '@/widgets/Sidebar/ui/HamburgerButton'
 import { ConnectionStatusIndicator } from '@/features/realtime/ui/ConnectionStatusIndicator'
 import { NotificationPanel } from '@/features/realtime/ui/NotificationPanel'
-import { useWebSocketStore } from '@/shared/stores/websocketStore'
+import { useNotificationsStore } from '@/shared/stores/notificationsStore'
 import { cn } from '@/shared/lib/utils'
 import type { ConnectionStatus } from '@/shared/stores/websocketStore'
 
@@ -29,18 +29,10 @@ export function Header({
   hamburgerRef,
 }: HeaderProps) {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
-  const notifications = useWebSocketStore((s) => s.notifications)
-  const markAsRead = useWebSocketStore((s) => s.markAsRead)
 
   const handleToggleNotifications = useCallback(() => {
     setIsNotificationsOpen((prev) => !prev)
   }, [])
-
-  const handleMarkAllRead = useCallback(() => {
-    for (const n of notifications) {
-      if (!n.read) markAsRead(n.id)
-    }
-  }, [notifications, markAsRead])
 
   const handleNotificationClick = useCallback(() => {
     setIsNotificationsOpen(false)
@@ -92,10 +84,7 @@ export function Header({
         <SearchTrigger onClick={onSearchClick} />
         <NotificationPanel
           isOpen={isNotificationsOpen}
-          notifications={notifications}
           onToggle={handleToggleNotifications}
-          onMarkAsRead={markAsRead}
-          onMarkAllRead={handleMarkAllRead}
           onClose={() => setIsNotificationsOpen(false)}
           onItemClick={handleNotificationClick}
         />

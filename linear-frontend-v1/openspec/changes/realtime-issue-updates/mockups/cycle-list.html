@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cycle List View — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-primary-hover: #4C52B8;
+      --color-danger: #E5484D;
+      --color-success: #46A758;
+      --color-warning: #F5A623;
+      --color-neutral-50: #F8FAFC;
+      --color-neutral-100: #F1F5F9;
+      --color-neutral-200: #E2E8F0;
+      --color-neutral-300: #CBD5E1;
+      --color-neutral-400: #94A3B8;
+      --color-neutral-500: #64748B;
+      --color-neutral-600: #475569;
+      --color-neutral-700: #334155;
+      --color-neutral-800: #1E293B;
+      --color-neutral-900: #0F172A;
+      --color-surface: #FFFFFF;
+      --font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px;
+      --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-neutral-50); color: var(--color-neutral-900); }
+
+    /* App Shell */
+    .app-header { display: flex; align-items: center; height: 56px; padding: 0 var(--space-4); background: var(--color-surface); border-bottom: 1px solid var(--color-neutral-200); position: sticky; top: 0; z-index: 100; }
+    .app-header .logo { font-weight: 700; font-size: 16px; color: var(--color-primary); margin-right: var(--space-6); }
+    .app-header nav { display: flex; gap: var(--space-4); }
+    .app-header nav a { font-size: 14px; color: var(--color-neutral-500); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+    .app-header nav a.active { color: var(--color-neutral-900); background: var(--color-neutral-100); font-weight: 500; }
+    .app-header nav a:hover { color: var(--color-neutral-700); }
+    .app-header .header-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); }
+    .notification-bell { position: relative; cursor: pointer; font-size: 18px; padding: var(--space-2); text-decoration: none; color: inherit; }
+    .notification-count { position: absolute; top: 0; right: 0; background: var(--color-danger); color: #fff; font-size: 10px; font-weight: 600; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+    /* Main */
+    .main { padding: var(--space-6); max-width: 1280px; margin: 0 auto; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-5); }
+    .page-header h1 { font-size: 24px; font-weight: 600; line-height: 32px; }
+    .btn { font-size: 14px; font-weight: 500; padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); border: none; cursor: pointer; font-family: inherit; }
+    .btn-primary { background: var(--color-primary); color: #fff; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-ghost { background: transparent; color: var(--color-neutral-600); border: 1px solid var(--color-neutral-200); }
+    .btn-ghost:hover { background: var(--color-neutral-100); }
+
+    /* Cycle Cards */
+    .cycle-list { display: flex; flex-direction: column; gap: var(--space-4); }
+    .cycle-card { background: var(--color-surface); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); padding: var(--space-5); cursor: pointer; transition: box-shadow 0.15s; display: flex; flex-direction: column; gap: var(--space-3); }
+    .cycle-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .cycle-card.updated { animation: flash 0.4s ease-out; }
+    @keyframes flash { 0% { background: #FEF3C7; } 100% { background: var(--color-surface); } }
+    .cycle-card .card-top { display: flex; align-items: center; gap: var(--space-3); }
+    .status-badge { display: inline-flex; align-items: center; gap: var(--space-1); font-size: 12px; font-weight: 500; padding: 2px 8px; border-radius: 12px; }
+    .status-badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+    .status-badge.active { background: rgba(94,106,210,0.1); color: var(--color-primary); }
+    .status-badge.active .dot { background: var(--color-primary); animation: pulse-dot 2s infinite; }
+    .status-badge.upcoming { background: var(--color-neutral-100); color: var(--color-neutral-500); }
+    .status-badge.upcoming .dot { background: var(--color-neutral-400); }
+    .status-badge.completed { background: rgba(70,167,88,0.1); color: var(--color-success); }
+    .status-badge.completed .dot { background: var(--color-success); }
+    @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .cycle-card h3 { font-size: 16px; font-weight: 600; line-height: 24px; }
+    .cycle-card .date-range { font-size: 13px; color: var(--color-neutral-500); }
+    .cycle-card .stats { display: flex; align-items: center; gap: var(--space-4); font-size: 13px; color: var(--color-neutral-500); }
+    .cycle-card .progress-bar { height: 6px; background: var(--color-neutral-100); border-radius: 3px; overflow: hidden; width: 120px; }
+    .cycle-card .progress-fill { height: 100%; background: var(--color-primary); border-radius: 3px; }
+
+    /* States */
+    .empty-state { text-align: center; padding: var(--space-10); color: var(--color-neutral-500); }
+    .empty-state .icon { font-size: 48px; margin-bottom: var(--space-4); }
+    .empty-state h2 { font-size: 16px; font-weight: 600; color: var(--color-neutral-700); margin-bottom: var(--space-2); }
+    .empty-state p { font-size: 14px; margin-bottom: var(--space-4); }
+    .error-state { text-align: center; padding: var(--space-10); color: var(--color-neutral-500); }
+    .error-state .icon { font-size: 48px; margin-bottom: var(--space-4); }
+    .error-state h2 { font-size: 16px; font-weight: 600; color: var(--color-danger); margin-bottom: var(--space-2); }
+
+    /* Skeleton */
+    .skeleton { background: var(--color-neutral-100); border-radius: var(--radius-md); animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .skeleton-line { height: 12px; margin-bottom: var(--space-2); border-radius: var(--radius-sm); }
+    .skeleton-card { background: var(--color-surface); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); padding: var(--space-5); }
+
+    /* State bar */
+    .state-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--color-neutral-800); color: #fff; display: flex; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-3); z-index: 200; }
+    .state-bar button { font-size: 13px; padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--color-neutral-600); background: transparent; color: #fff; cursor: pointer; font-family: inherit; }
+    .state-bar button.active { background: var(--color-primary); border-color: var(--color-primary); }
+    .state-bar button:hover { border-color: var(--color-neutral-400); }
+
+    /* Responsive */
+    @media (max-width: 768px) { .cycle-card .stats { flex-wrap: wrap; } }
+  </style>
+</head>
+<body>
+
+  <header class="app-header" role="banner">
+    <div class="logo">Linear</div>
+    <nav aria-label="Primary">
+      <a href="issue-list.html">Issues</a>
+      <a href="project-list.html">Projects</a>
+      <a href="cycle-list.html" class="active">Cycles</a>
+    </nav>
+    <div class="header-right">
+      <a href="notification-dropdown.html" class="notification-bell" aria-label="Notifications">
+        🔔
+        <span class="notification-count">3</span>
+      </a>
+      <div class="avatar" aria-label="User menu">JD</div>
+    </div>
+  </header>
+
+  <main class="main" role="main">
+    <!-- Populated state -->
+    <div id="state-populated">
+      <div class="page-header">
+        <h1>Cycles</h1>
+        <button class="btn btn-primary">+ New</button>
+      </div>
+      <div class="cycle-list">
+        <div class="cycle-card" tabindex="0" role="article" aria-label="Cycle: Sprint 5, Active, 63% complete">
+          <div class="card-top">
+            <span class="status-badge active"><span class="dot"></span> Active</span>
+          </div>
+          <h3>Sprint 5</h3>
+          <div class="date-range">Dec 1 – Dec 15, 2025</div>
+          <div class="stats">
+            <span>Issues: 13</span>
+            <span>Completed: 8</span>
+            <div class="progress-bar"><div class="progress-fill" style="width:63%"></div></div>
+            <span>63%</span>
+          </div>
+        </div>
+        <div class="cycle-card" tabindex="0" role="article" aria-label="Cycle: Sprint 6, Upcoming">
+          <div class="card-top">
+            <span class="status-badge upcoming"><span class="dot"></span> Upcoming</span>
+          </div>
+          <h3>Sprint 6</h3>
+          <div class="date-range">Dec 16 – Dec 30, 2025</div>
+          <div class="stats">
+            <span>Issues: 0</span>
+            <span>Not started</span>
+          </div>
+        </div>
+        <div class="cycle-card" tabindex="0" role="article" aria-label="Cycle: Sprint 4, Completed, 100% complete">
+          <div class="card-top">
+            <span class="status-badge completed"><span class="dot"></span> Completed</span>
+          </div>
+          <h3>Sprint 4</h3>
+          <div class="date-range">Nov 15 – Nov 30, 2025</div>
+          <div class="stats">
+            <span>Issues: 20</span>
+            <span>Completed: 20</span>
+            <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+            <span>100%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="state-empty" style="display:none;">
+      <div class="page-header">
+        <h1>Cycles</h1>
+        <button class="btn btn-primary">+ New</button>
+      </div>
+      <div class="empty-state">
+        <div class="icon">📅</div>
+        <h2>No cycles yet</h2>
+        <p>Create your first cycle to timebox work</p>
+        <button class="btn btn-primary">+ Create Cycle</button>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div id="state-loading" style="display:none;">
+      <div class="page-header">
+        <h1>Cycles</h1>
+        <button class="btn btn-primary" disabled>+ New</button>
+      </div>
+      <div class="cycle-list">
+        <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:80px;height:20px;border-radius:10px;margin-bottom:var(--space-3);"></div><div class="skeleton skeleton-line" style="width:120px;height:16px;"></div><div class="skeleton skeleton-line" style="width:200px;height:13px;margin-bottom:var(--space-3);"></div><div class="skeleton skeleton-line" style="width:100%;height:6px;border-radius:3px;"></div></div>
+        <div class="skeleton-card"><div class="skeleton skeleton-line" style="width:90px;height:20px;border-radius:10px;margin-bottom:var(--space-3);"></div><div class="skeleton skeleton-line" style="width:100px;height:16px;"></div><div class="skeleton skeleton-line" style="width:180px;height:13px;"></div></div>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="state-error" style="display:none;">
+      <div class="page-header">
+        <h1>Cycles</h1>
+        <button class="btn btn-primary" disabled>+ New</button>
+      </div>
+      <div class="error-state">
+        <div class="icon">⚠️</div>
+        <h2>Unable to load cycles</h2>
+        <p>Something went wrong loading your cycles.</p>
+        <button class="btn btn-ghost" onclick="setState('populated')">Retry</button>
+      </div>
+    </div>
+  </main>
+
+  <div class="state-bar" role="toolbar" aria-label="State controls">
+    <span style="font-size:12px;color:var(--color-neutral-400);">State:</span>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('empty')">Empty</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('error')">Error</button>
+    <button onclick="simulateUpdate()">Simulate Update</button>
+  </div>
+
+  <script>
+    const states = ['populated', 'empty', 'loading', 'error'];
+    function setState(state) {
+      states.forEach(s => { document.getElementById('state-' + s).style.display = 'none'; });
+      document.getElementById('state-' + state).style.display = '';
+      document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      if (state === 'loading') {
+        setTimeout(() => { setState('populated'); document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active')); document.querySelector('.state-bar button').classList.add('active'); }, 2000);
+      }
+    }
+    function simulateUpdate() {
+      const cards = document.querySelectorAll('.cycle-card');
+      if (cards.length > 0) {
+        const card = cards[Math.floor(Math.random() * cards.length)];
+        card.classList.add('updated');
+        setTimeout(() => card.classList.remove('updated'), 500);
+      }
+    }
+  </script>
+</body>
+</html>

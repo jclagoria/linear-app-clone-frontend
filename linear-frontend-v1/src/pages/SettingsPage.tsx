@@ -1,7 +1,12 @@
+import { AutoUpdateToggle } from '@/features/realtime/ui/AutoUpdateToggle'
+
 export function SettingsPage() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh] text-text-muted">
-      <p>Settings — coming soon</p>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-6">Settings</h1>
+      <div className="max-w-2xl space-y-6">
+        <AutoUpdateToggle />
+      </div>
     </div>
   )
 }

@@ -135,8 +135,8 @@ export function validateWSEvent(data: unknown): data is WSEvent {
   const obj = data as Record<string, unknown>
   if (typeof obj.eventId !== 'string' || obj.eventId.length === 0) return false
   if (typeof obj.type !== 'string' || !isValidEventType(obj.type)) return false
-  if (typeof obj.timestamp !== 'string') return false
-  if (typeof obj.teamId !== 'string') return false
+  if (typeof obj.timestamp !== 'string' || obj.timestamp.length === 0) return false
+  if (typeof obj.teamId !== 'string' || obj.teamId.length === 0) return false
   if (typeof obj.payload !== 'object' || obj.payload === null) return false
   return true
 }

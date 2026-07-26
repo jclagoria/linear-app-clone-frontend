@@ -2,10 +2,16 @@ import type { WSEvent, WSEventType } from '../lib/event-schema'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useProjectsStore } from '../lib/project-store'
 import { useCyclesStore } from '../lib/cycle-store'
+import { useNotificationsStore } from '@/shared/stores/notificationsStore'
 import { useWebSocketStore } from '@/shared/stores/websocketStore'
 import { registerEventHandler } from './event-processor'
 
+function isAutoUpdateEnabled(): boolean {
+  return useWebSocketStore.getState().autoUpdateEnabled
+}
+
 function handleIssueEvent(event: WSEvent): void {
+  if (!isAutoUpdateEnabled()) return
   const store = useIssuesStore.getState()
   const { type, payload } = event
   const issueId = (payload as Record<string, unknown>).issueId as string
@@ -31,6 +37,7 @@ function handleIssueEvent(event: WSEvent): void {
 }
 
 function handleCommentEvent(event: WSEvent): void {
+  if (!isAutoUpdateEnabled()) return
   const store = useIssuesStore.getState()
   const payload = event.payload as Record<string, unknown>
   const issueId = payload.issueId as string
@@ -61,16 +68,19 @@ function handleCommentEvent(event: WSEvent): void {
 }
 
 function handleProjectEvent(event: WSEvent): void {
+  if (!isAutoUpdateEnabled()) return
   useProjectsStore.getState().applyEvent(event)
 }
 
 function handleCycleEvent(event: WSEvent): void {
+  if (!isAutoUpdateEnabled()) return
   useCyclesStore.getState().applyEvent(event)
 }
 
 function handleNotificationEvent(event: WSEvent): void {
+  if (!isAutoUpdateEnabled()) return
   const payload = event.payload as Record<string, unknown>
-  useWebSocketStore.getState().addNotification({
+  useNotificationsStore.getState().addNotification({
     id: (payload.notificationId as string) || event.eventId,
     type: (payload.type as string) || 'info',
     title: (payload.title as string) || 'New notification',

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real-time Issue Updates — Mockups</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-primary-hover: #4C52B8;
+      --color-danger: #E5484D;
+      --color-success: #46A758;
+      --color-warning: #F5A623;
+      --color-neutral-50: #F8FAFC;
+      --color-neutral-100: #F1F5F9;
+      --color-neutral-200: #E2E8F0;
+      --color-neutral-300: #CBD5E1;
+      --color-neutral-400: #94A3B8;
+      --color-neutral-500: #64748B;
+      --color-neutral-600: #475569;
+      --color-neutral-700: #334155;
+      --color-neutral-800: #1E293B;
+      --color-neutral-900: #0F172A;
+      --color-surface: #FFFFFF;
+      --color-surface-elevated: #FFFFFF;
+      --font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-neutral-50); color: var(--color-neutral-900); padding: var(--space-8); }
+    h1 { font-size: 24px; font-weight: 600; line-height: 32px; margin-bottom: var(--space-6); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-6); max-width: 1280px; }
+    .card { background: var(--color-surface); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); padding: var(--space-6); text-decoration: none; color: inherit; transition: box-shadow 0.15s; }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .card h2 { font-size: 16px; font-weight: 600; line-height: 24px; margin-bottom: var(--space-2); }
+    .card p { font-size: 14px; color: var(--color-neutral-500); line-height: 20px; margin-bottom: var(--space-3); }
+    .badge { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 12px; background: var(--color-neutral-100); color: var(--color-neutral-600); }
+  </style>
+</head>
+<body>
+  <h1>Real-time Issue Updates — Mockups</h1>
+  <p style="font-size:14px; color:var(--color-neutral-500); margin-bottom:var(--space-8); max-width:640px;">
+    Interactive HTML/CSS mockups with mock data. No build step required. Open any screen to explore states and interactions.
+  </p>
+  <div class="grid">
+    <a href="issue-list.html" class="card">
+      <h2>Issue List View</h2>
+      <p>Team issues with real-time updates, status columns, search, and filters.</p>
+      <span class="badge">4 states</span>
+    </a>
+    <a href="issue-detail.html" class="card">
+      <h2>Issue Detail View</h2>
+      <p>Full issue details with live comment thread and sidebar metadata.</p>
+      <span class="badge">4 states</span>
+    </a>
+    <a href="project-list.html" class="card">
+      <h2>Project List View</h2>
+      <p>Team projects with progress bars and real-time updates.</p>
+      <span class="badge">4 states</span>
+    </a>
+    <a href="cycle-list.html" class="card">
+      <h2>Cycle List View</h2>
+      <p>Team cycles with status badges and date ranges.</p>
+      <span class="badge">4 states</span>
+    </a>
+    <a href="notification-dropdown.html" class="card">
+      <h2>Notification Dropdown</h2>
+      <p>Dropdown panel with real-time notifications from the header bell icon.</p>
+      <span class="badge">3 states</span>
+    </a>
+  </div>
+</body>
+</html>

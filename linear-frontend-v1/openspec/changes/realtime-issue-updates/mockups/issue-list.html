@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue List View — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-primary-hover: #4C52B8;
+      --color-danger: #E5484D;
+      --color-success: #46A758;
+      --color-warning: #F5A623;
+      --color-neutral-50: #F8FAFC;
+      --color-neutral-100: #F1F5F9;
+      --color-neutral-200: #E2E8F0;
+      --color-neutral-300: #CBD5E1;
+      --color-neutral-400: #94A3B8;
+      --color-neutral-500: #64748B;
+      --color-neutral-600: #475569;
+      --color-neutral-700: #334155;
+      --color-neutral-800: #1E293B;
+      --color-neutral-900: #0F172A;
+      --color-surface: #FFFFFF;
+      --font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px;
+      --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-neutral-50); color: var(--color-neutral-900); }
+
+    /* App Shell */
+    .app-header { display: flex; align-items: center; height: 56px; padding: 0 var(--space-4); background: var(--color-surface); border-bottom: 1px solid var(--color-neutral-200); position: sticky; top: 0; z-index: 100; }
+    .app-header .logo { font-weight: 700; font-size: 16px; color: var(--color-primary); margin-right: var(--space-6); }
+    .app-header nav { display: flex; gap: var(--space-4); }
+    .app-header nav a { font-size: 14px; color: var(--color-neutral-500); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+    .app-header nav a.active { color: var(--color-neutral-900); background: var(--color-neutral-100); font-weight: 500; }
+    .app-header nav a:hover { color: var(--color-neutral-700); }
+    .app-header .header-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); }
+    .notification-bell { position: relative; cursor: pointer; font-size: 18px; padding: var(--space-2); }
+    .notification-count { position: absolute; top: 0; right: 0; background: var(--color-danger); color: #fff; font-size: 10px; font-weight: 600; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+    /* Sidebar */
+    .layout { display: flex; min-height: calc(100vh - 56px); }
+    .sidebar { width: 240px; background: var(--color-surface); border-right: 1px solid var(--color-neutral-200); padding: var(--space-4); flex-shrink: 0; }
+    .sidebar-section { margin-bottom: var(--space-5); }
+    .sidebar-section h3 { font-size: 12px; font-weight: 600; color: var(--color-neutral-400); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-2); }
+    .sidebar-item { font-size: 14px; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); cursor: pointer; color: var(--color-neutral-600); }
+    .sidebar-item:hover { background: var(--color-neutral-100); }
+    .sidebar-item.active { background: var(--color-neutral-100); color: var(--color-neutral-900); font-weight: 500; }
+
+    /* Main */
+    .main { flex: 1; padding: var(--space-6); max-width: 1280px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
+    .page-header h1 { font-size: 24px; font-weight: 600; line-height: 32px; }
+    .btn { font-size: 14px; font-weight: 500; padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); border: none; cursor: pointer; font-family: inherit; }
+    .btn-primary { background: var(--color-primary); color: #fff; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-ghost { background: transparent; color: var(--color-neutral-600); border: 1px solid var(--color-neutral-200); }
+    .btn-ghost:hover { background: var(--color-neutral-100); }
+
+    /* Toolbar */
+    .toolbar { display: flex; gap: var(--space-3); margin-bottom: var(--space-4); align-items: center; }
+    .search-input { font-size: 14px; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); width: 240px; font-family: inherit; }
+    .search-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(94,106,210,0.15); }
+    .filter-btn { font-size: 13px; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-md); background: var(--color-surface); cursor: pointer; font-family: inherit; color: var(--color-neutral-600); }
+
+    /* Status Columns */
+    .columns { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); }
+    .column h2 { font-size: 13px; font-weight: 600; color: var(--color-neutral-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3); display: flex; align-items: center; gap: var(--space-2); }
+    .column .count { font-size: 12px; color: var(--color-neutral-400); font-weight: 400; }
+
+    /* Issue Card */
+    .issue-card { background: var(--color-surface); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-3); cursor: pointer; transition: box-shadow 0.15s; }
+    .issue-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .issue-card.updated { animation: flash 0.4s ease-out; }
+    @keyframes flash { 0% { background: #FEF3C7; } 100% { background: var(--color-surface); } }
+    .issue-card .card-top { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-dot.backlog { background: var(--color-neutral-400); }
+    .status-dot.todo { background: var(--color-primary); }
+    .status-dot.in-progress { background: var(--color-warning); }
+    .status-dot.done { background: var(--color-success); }
+    .issue-card .title { font-size: 14px; font-weight: 500; line-height: 20px; margin-bottom: var(--space-1); }
+    .issue-card .identifier { font-size: 12px; color: var(--color-neutral-400); margin-bottom: var(--space-2); }
+    .issue-card .card-bottom { display: flex; align-items: center; justify-content: space-between; }
+    .labels { display: flex; gap: var(--space-1); }
+    .label { font-size: 11px; padding: 2px 6px; border-radius: 10px; background: var(--color-neutral-100); color: var(--color-neutral-600); }
+    .issue-card .meta { font-size: 12px; color: var(--color-neutral-400); display: flex; align-items: center; gap: var(--space-2); }
+    .issue-card .avatar-sm { width: 20px; height: 20px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; }
+
+    /* States */
+    .empty-state { text-align: center; padding: var(--space-10) var(--space-4); color: var(--color-neutral-500); }
+    .empty-state .icon { font-size: 48px; margin-bottom: var(--space-4); }
+    .empty-state h2 { font-size: 16px; font-weight: 600; color: var(--color-neutral-700); margin-bottom: var(--space-2); }
+    .empty-state p { font-size: 14px; margin-bottom: var(--space-4); }
+    .error-state { text-align: center; padding: var(--space-10) var(--space-4); color: var(--color-neutral-500); }
+    .error-state .icon { font-size: 48px; margin-bottom: var(--space-4); }
+    .error-state h2 { font-size: 16px; font-weight: 600; color: var(--color-danger); margin-bottom: var(--space-2); }
+
+    /* Skeleton */
+    .skeleton { background: var(--color-neutral-100); border-radius: var(--radius-md); animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .skeleton-card { background: var(--color-surface); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-3); }
+    .skeleton-line { height: 12px; margin-bottom: var(--space-2); border-radius: var(--radius-sm); }
+    .skeleton-line.w60 { width: 60%; }
+    .skeleton-line.w80 { width: 80%; }
+    .skeleton-line.w40 { width: 40%; }
+
+    /* State toggle */
+    .state-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--color-neutral-800); color: #fff; display: flex; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-3); z-index: 200; }
+    .state-bar button { font-size: 13px; padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--color-neutral-600); background: transparent; color: #fff; cursor: pointer; font-family: inherit; }
+    .state-bar button.active { background: var(--color-primary); border-color: var(--color-primary); }
+    .state-bar button:hover { border-color: var(--color-neutral-400); }
+
+    /* Responsive */
+    @media (max-width: 1024px) { .sidebar { width: 56px; padding: var(--space-3); } .sidebar-item span { display: none; } .sidebar-section h3 { display: none; } .columns { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .sidebar { display: none; } .columns { grid-template-columns: 1fr; } .toolbar { flex-wrap: wrap; } .search-input { width: 100%; } }
+  </style>
+</head>
+<body>
+
+  <header class="app-header" role="banner">
+    <div class="logo">Linear</div>
+    <nav aria-label="Primary">
+      <a href="issue-list.html" class="active">Issues</a>
+      <a href="project-list.html">Projects</a>
+      <a href="cycle-list.html">Cycles</a>
+    </nav>
+    <div class="header-right">
+      <a href="notification-dropdown.html" class="notification-bell" aria-label="Notifications">
+        🔔
+        <span class="notification-count" id="notifCount">3</span>
+      </a>
+      <div class="avatar" aria-label="User menu">JD</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" role="navigation" aria-label="Sidebar">
+      <div class="sidebar-section">
+        <h3>Team</h3>
+        <div class="sidebar-item active"><span>Engineering</span></div>
+      </div>
+      <div class="sidebar-section">
+        <h3>Views</h3>
+        <div class="sidebar-item active"><span>All Issues</span></div>
+        <div class="sidebar-item"><span>My Issues</span></div>
+        <div class="sidebar-item"><span>Active</span></div>
+      </div>
+      <div class="sidebar-section">
+        <h3>Filters</h3>
+        <div class="sidebar-item"><span>By Assignee</span></div>
+        <div class="sidebar-item"><span>By Label</span></div>
+        <div class="sidebar-item"><span>By Priority</span></div>
+      </div>
+    </aside>
+
+    <main class="main" id="mainContent" role="main">
+      <!-- Populated state (default) -->
+      <div id="state-populated">
+        <div class="page-header">
+          <h1>Issues</h1>
+          <button class="btn btn-primary">+ New</button>
+        </div>
+        <div class="toolbar">
+          <input type="search" class="search-input" placeholder="Search issues..." aria-label="Search issues" />
+          <button class="filter-btn">Filter ▾</button>
+          <button class="filter-btn">Sort ▾</button>
+        </div>
+        <div class="columns" id="columns">
+          <div class="column">
+            <h2>Backlog <span class="count">2</span></h2>
+            <div class="issue-card" tabindex="0" role="article" aria-label="Issue #101: Refactor auth module, Backlog">
+              <div class="card-top"><span class="status-dot backlog"></span></div>
+              <div class="title">Refactor auth module</div>
+              <div class="identifier">#101</div>
+              <div class="card-bottom">
+                <div class="labels"><span class="label">Backend</span></div>
+                <div class="meta"><span>⚠ Dec 20</span></div>
+              </div>
+            </div>
+            <div class="issue-card" tabindex="0" role="article" aria-label="Issue #102: Update README, Backlog">
+              <div class="card-top"><span class="status-dot backlog"></span></div>
+              <div class="title">Update README with setup instructions</div>
+              <div class="identifier">#102</div>
+              <div class="card-bottom">
+                <div class="labels"><span class="label">Docs</span></div>
+                <div class="meta"><span>⚠ Jan 5</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <h2>Todo <span class="count">2</span></h2>
+            <div class="issue-card" tabindex="0" role="article" aria-label="Issue #103: Fix login redirect, Todo">
+              <div class="card-top"><span class="status-dot todo"></span></div>
+              <div class="title">Fix login redirect loop</div>
+              <div class="identifier">#103</div>
+              <div class="card-bottom">
+                <div class="labels"><span class="label">Bug</span><span class="label">Urgent</span></div>
+                <div class="meta"><div class="avatar-sm">JD</div></div>
+              </div>
+            </div>
+            <div class="issue-card" tabindex="0" role="article" aria-label="Issue #104: Design settings page, Todo">
+              <div class="card-top"><span class="status-dot todo"></span></div>
+              <div class="title">Design settings page mockups</div>
+              <div class="identifier">#104</div>
+              <div class="card-bottom">
+                <div class="labels"><span class="label">Design</span></div>
+                <div class="meta"><div class="avatar-sm">AK</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <h2>In Progress <span class="count">2</span></h2>
+            <div class="issue-card" tabindex="0" role="article" aria-label="Issue #105: Implement WebSocket, In Progress">
+              <div class="card-top"><span class="status-dot in-progress"></span></div>
+              <div class="title">Implement WebSocket connection</div>
+              <div class="identifier">#105</div>
+              <div class="card-bottom">
+                <div class="labels"><span class="label">Feature</span></div>
+                <div class="meta"><div class="avatar-sm">JD</div><span>⚠ Dec 18</span></div>
+              </div>
+            </div>
+            <div class="issue-card" tabindex="0" role="article" aria-label="Issue #106: Add notification system, In Progress">
+              <div class="card-top"><span class="status-dot in-progress"></span></div>
+              <div class="title">Add notification system</div>
+              <div class="identifier">#106</div>
+              <div class="card-bottom">
+                <div class="labels"><span class="label">Feature</span></div>
+                <div class="meta"><div class="avatar-sm">MK</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="column">
+            <h2>Done <span class="count">1</span></h2>
+            <div class="issue-card" tabindex="0" role="article" aria-label="Issue #100: Setup CI/CD, Done">
+              <div class="card-top"><span class="status-dot done"></span></div>
+              <div class="title">Setup CI/CD pipeline</div>
+              <div class="identifier">#100</div>
+              <div class="card-bottom">
+                <div class="labels"><span class="label">DevOps</span></div>
+                <div class="meta"><div class="avatar-sm">JD</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty state (no issues) -->
+      <div id="state-empty" style="display:none;">
+        <div class="page-header">
+          <h1>Issues</h1>
+          <button class="btn btn-primary">+ New</button>
+        </div>
+        <div class="empty-state">
+          <div class="icon">📦</div>
+          <h2>No issues yet</h2>
+          <p>Create your first issue to get started</p>
+          <button class="btn btn-primary">+ Create Issue</button>
+        </div>
+      </div>
+
+      <!-- Empty filtered state -->
+      <div id="state-empty-filtered" style="display:none;">
+        <div class="page-header">
+          <h1>Issues</h1>
+          <button class="btn btn-primary">+ New</button>
+        </div>
+        <div class="toolbar">
+          <input type="search" class="search-input" placeholder="Search issues..." value="nonexistent" aria-label="Search issues" />
+          <button class="filter-btn">Filter ▾</button>
+          <button class="filter-btn">Sort ▾</button>
+        </div>
+        <div class="empty-state">
+          <div class="icon">🔍</div>
+          <h2>No issues match your filters</h2>
+          <p>Try adjusting your search or filters</p>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="state-loading" style="display:none;">
+        <div class="page-header">
+          <h1>Issues</h1>
+          <button class="btn btn-primary" disabled>+ New</button>
+        </div>
+        <div class="toolbar">
+          <div class="skeleton skeleton-line" style="width:240px;height:36px;"></div>
+          <div class="skeleton skeleton-line" style="width:80px;height:36px;"></div>
+          <div class="skeleton skeleton-line" style="width:80px;height:36px;"></div>
+        </div>
+        <div class="columns">
+          <div class="column"><h2>Backlog</h2>
+            <div class="skeleton-card"><div class="skeleton skeleton-line w80"></div><div class="skeleton skeleton-line w60"></div><div class="skeleton skeleton-line w40"></div></div>
+            <div class="skeleton-card"><div class="skeleton skeleton-line w80"></div><div class="skeleton skeleton-line w60"></div></div>
+          </div>
+          <div class="column"><h2>Todo</h2>
+            <div class="skeleton-card"><div class="skeleton skeleton-line w80"></div><div class="skeleton skeleton-line w60"></div><div class="skeleton skeleton-line w40"></div></div>
+          </div>
+          <div class="column"><h2>In Progress</h2>
+            <div class="skeleton-card"><div class="skeleton skeleton-line w80"></div><div class="skeleton skeleton-line w60"></div></div>
+            <div class="skeleton-card"><div class="skeleton skeleton-line w80"></div><div class="skeleton skeleton-line w40"></div></div>
+          </div>
+          <div class="column"><h2>Done</h2>
+            <div class="skeleton-card"><div class="skeleton skeleton-line w80"></div><div class="skeleton skeleton-line w60"></div><div class="skeleton skeleton-line w40"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div id="state-error" style="display:none;">
+        <div class="page-header">
+          <h1>Issues</h1>
+          <button class="btn btn-primary" disabled>+ New</button>
+        </div>
+        <div class="error-state">
+          <div class="icon">⚠️</div>
+          <h2>Unable to load issues</h2>
+          <p>Something went wrong loading your issues.</p>
+          <button class="btn btn-ghost" onclick="setState('populated')">Retry</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="state-bar" role="toolbar" aria-label="State controls">
+    <span style="font-size:12px;color:var(--color-neutral-400);">State:</span>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('empty')">Empty</button>
+    <button onclick="setState('empty-filtered')">Empty (Filtered)</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('error')">Error</button>
+    <button onclick="simulateUpdate()">Simulate Update</button>
+  </div>
+
+  <script>
+    const states = ['populated', 'empty', 'empty-filtered', 'loading', 'error'];
+    function setState(state) {
+      states.forEach(s => { document.getElementById('state-' + s).style.display = 'none'; });
+      document.getElementById('state-' + state).style.display = '';
+      document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      if (state === 'loading') {
+        setTimeout(() => setState('populated'), 2000);
+        document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+        document.querySelector('.state-bar button').classList.add('active');
+      }
+    }
+    function simulateUpdate() {
+      const cards = document.querySelectorAll('.issue-card');
+      if (cards.length > 0) {
+        const card = cards[Math.floor(Math.random() * cards.length)];
+        card.classList.add('updated');
+        setTimeout(() => card.classList.remove('updated'), 500);
+      }
+    }
+  </script>
+</body>
+</html>

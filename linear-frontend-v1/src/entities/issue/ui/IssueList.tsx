@@ -69,7 +69,7 @@ export function IssueList({
 
   return (
     <div>
-      <ul className="space-y-2" role="list" aria-label="Issues list">
+      <ul className="space-y-2" role="list" aria-label="Issues list" aria-live="polite">
         {issues.map((issue) => (
           <li key={issue.id}>
             <IssueCard
