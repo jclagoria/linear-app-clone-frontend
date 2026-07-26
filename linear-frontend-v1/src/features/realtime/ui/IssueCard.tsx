@@ -29,6 +29,7 @@ const PRIORITY_ICONS: Record<number, string> = {
 export function IssueCard({
   issueId,
   title,
+  statusId,
   statusLabel,
   statusColor = '#6b7280',
   priority = 0,

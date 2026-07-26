@@ -62,10 +62,10 @@ export const selectActiveCycle = createMemoizedSelector(
   },
 )
 
-import type { Notification } from '@/shared/stores/websocketStore'
+import type { NotificationItem } from '@/shared/stores/notificationsStore'
 
 export const selectUnreadCount = createMemoizedSelector(
-  (notifications: Notification[]): number =>
+  (notifications: NotificationItem[]): number =>
     notifications.filter((n) => !n.read).length,
 )
 

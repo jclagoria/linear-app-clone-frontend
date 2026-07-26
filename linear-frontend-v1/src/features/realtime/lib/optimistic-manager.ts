@@ -30,6 +30,7 @@ export function applyOptimistic({ update, onConfirm, onRevert }: ApplyOptimistic
       const reverted = useOptimisticStore.getState().revertPending(update.id)
       if (reverted) {
         onRevert?.(update.id, error instanceof Error ? error : new Error(String(error)))
+        revertListeners.forEach((listener) => listener(update))
       }
     })
 }

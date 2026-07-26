@@ -25,6 +25,7 @@ dist-ssr
 
 .env
 temp-docs/
+test-results/
 
 ## Graphify -- ignore temporal/local files
 graphify-out/cache/

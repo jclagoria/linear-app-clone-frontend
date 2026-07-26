@@ -1,11 +1,13 @@
+import { useNotificationsStore } from '@/shared/stores/notificationsStore'
 import { cn } from '@/shared/lib/utils'
 
 interface NotificationBadgeProps {
-  count: number
   className?: string
 }
 
-export function NotificationBadge({ count, className }: NotificationBadgeProps) {
+export function NotificationBadge({ className }: NotificationBadgeProps) {
+  const count = useNotificationsStore((s) => s.items.filter((n) => !n.read).length)
+
   if (count <= 0) return null
 
   const display = count > 99 ? '99+' : String(count)
@@ -17,6 +19,7 @@ export function NotificationBadge({ count, className }: NotificationBadgeProps) 
         className,
       )}
       aria-label={`${count} unread notifications`}
+      aria-live="polite"
     >
       {display}
     </span>

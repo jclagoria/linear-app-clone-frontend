@@ -28,7 +28,7 @@ export function CyclesPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-text mb-6">Cycles</h1>
-      <div className="space-y-3">
+      <div className="space-y-3" aria-live="polite">
         {cycles.map((cycle) => (
           <div
             key={cycle.id}
