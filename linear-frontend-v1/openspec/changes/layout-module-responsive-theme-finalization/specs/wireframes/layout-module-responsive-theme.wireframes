@@ -1,0 +1,284 @@
+# Wireframe: Layout Module — Responsive Sidebar & Theme Control
+
+## Purpose & Flow Context
+
+This wireframe defines the responsive layout structure for the Linear App Clone, supporting desktop, tablet, and mobile experiences with theme switching capability. The layout module serves as the primary navigation framework across all screens, enabling users to access projects, tasks, and settings while maintaining consistent sidebar and theme states.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+| `[☰]` | Hamburger menu (mobile) | `[←]` | Back button |
+| `[...]` | Theme toggle control | `[...]` | Sidebar toggle |
+
+## Accessibility — Shared Conventions
+
+All interactive screens inherit these. Per-screen specifics noted where they diverge.
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm intent.
+
+**App-shell**: Shared header + nav + container. Regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo, app title, user menu, theme toggle | Fixed top, 64px height |
+| Sidebar | Navigation links, logo, user settings | Left side, 240px expanded, 64px collapsed |
+| Main Content | Primary content area | Flexible width, max 1440px |
+| Footer | App info, version | Optional, bottom |
+
+**Content hierarchy** (by visual priority):
+1. Primary content area (main tasks/data)
+2. Sidebar navigation (access to sections)
+3. Header controls (theme, user settings)
+
+### Desktop Layout (>1024px)
+
+```
++------------------------------------------------------------------+
+|  Header: [Logo] Linear App Clone          [Theme Toggle] [User] |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-----------------------------+  +-----------------------------+  |
+|  |  Sidebar (Expanded)         |  |  Main Content Area          |  |
+|  |                             |  |                             |  |
+|  |  [Dashboard]                |  |  [Page Title]               |  |
+|  |  [Projects]                 |  |                             |  |
+|  |  [Tasks]                    |  |  [Content...]               |  |
+|  |  [Settings]                 |  |                             |  |
+|  |                             |  |                             |  |
+|  +-----------------------------+  +-----------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Tablet Layout (768-1024px)
+
+```
++------------------------------------------------------------------+
+|  Header: [☰] Linear App Clone          [Theme Toggle] [User]    |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-----------------------------+  +-----------------------------+  |
+|  |  Sidebar (Collapsed)        |  |  Main Content Area          |  |
+|  |                             |  |                             |  |
+|  |  [≡] (toggle)               |  |  [Page Title]               |  |
+|  |  [🏠]                       |  |                             |  |
+|  |  [📁]                       |  |  [Content...]               |  |
+|  |  [📋]                       |  |                             |  |
+|  |  [⚙️]                       |  |                             |  |
+|  |                             |  |                             |  |
+|  +-----------------------------+  +-----------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Mobile Layout (<768px)
+
+```
++------------------------------------------------------------------+
+|  Header: [☰] Linear App Clone          [Theme Toggle] [User]    |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-----------------------------+                                 |
+|  |  Main Content Area          |                                 |
+|  |                             |                                 |
+|  |  [Page Title]               |                                 |
+|  |                             |                                 |
+|  |  [Content...]               |                                 |
+|  |                             |                                 |
+|  |                             |                                 |
+|  +-----------------------------+                                 |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Mobile Sidebar Overlay
+
+```
++------------------------------------------------------------------+
+|  Header: [☰] Linear App Clone          [Theme Toggle] [User]    |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-----------------------------+  +-----------------------------+  |
+|  |  Sidebar (Overlay)          |  |  Main Content (Dimmed)      |  |
+|  |                             |  |                             |  |
+|  |  [X] (close)                |  |  [Content blurred/dimmed]   |  |
+|  |  [Dashboard]                |  |                             |  |
+|  |  [Projects]                 |  |                             |  |
+|  |  [Tasks]                    |  |                             |  |
+|  |  [Settings]                 |  |                             |  |
+|  |                             |  |                             |  |
+|  +-----------------------------+  +-----------------------------+  |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+---
+
+## Components & Affordances
+
+### Header Components
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Logo | Image/Text | Click → Dashboard | Fallback to text if image fails |
+| App Title | Text (heading-3) | Click → Dashboard | — |
+| Theme Toggle | ThemeToggle | Click → Cycle themes (light/dark/system) | Shows current state |
+| User Menu | Button + Dropdown | Click → User settings dropdown | — |
+| Hamburger Menu (mobile) | Button | Click → Open sidebar overlay | Only on mobile/tablet |
+
+### Sidebar Components
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Sidebar Container | Sidebar | Desktop: expanded/collapsed, Mobile: overlay | Responsive breakpoints |
+| Navigation Items | Button/Link | Click → Navigate to section | Active state highlighting |
+| Toggle Button | Button | Click → Expand/collapse sidebar | Desktop/tablet only |
+| Close Button (mobile) | Button | Click → Close sidebar overlay | Only on mobile |
+| Backdrop (mobile) | Overlay | Click → Close sidebar overlay | Only on mobile |
+
+### Main Content Components
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Page Title | Text (heading-1) | Display current section title | — |
+| Content Area | Container | Flexible layout based on section | Loading/skeleton states |
+
+---
+
+## Data Display
+
+The layout module itself doesn't display data—it provides the navigation framework. Data display patterns are defined per-section (Projects, Tasks, Settings).
+
+**Navigation State Management**:
+- Sidebar state persists across page refreshes (expanded/collapsed)
+- Active navigation item highlights current section
+- Theme preference persists in local storage
+
+---
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| App Title | "Linear App Clone" - brand identifier | Consistent across all screens |
+| Navigation Items | Section names: Dashboard, Projects, Tasks, Settings | Clear, action-oriented labels |
+| Theme Toggle | "Theme" - user preference control | Shows current state (Light/Dark/System) |
+| Hamburger Menu | "Menu" - navigation access on mobile | Icon-only with aria-label |
+| Close Button | "Close" - dismiss sidebar overlay | Icon-only with aria-label |
+
+---
+
+## States
+
+### Populated (Default)
+
+The layout displays with:
+- Header with logo, title, theme toggle, and user menu
+- Sidebar with navigation items (expanded on desktop, collapsed on tablet, hidden on mobile)
+- Main content area displaying current section content
+- Active navigation item highlighted
+
+### Empty
+
+Not applicable—layout module is always populated with navigation structure.
+
+### Loading
+
+Skeleton layout mirrors the populated structure:
+
+```
++------------------------------------------------------------------+
+|  [===== skeleton bar =====]   [==== skeleton ===]               |
++------------------------------------------------------------------+
+|  [==== skeleton bar =====]                                       |
+|  [==== skeleton bar =====]                                       |
+|  [==== skeleton bar =====]                                       |
++------------------------------------------------------------------+
+```
+
+### Error
+
+Not applicable—layout module doesn't load data. If navigation fails, display error message in main content area.
+
+### Success / Confirmation
+
+Not applicable—layout module is structural, not transactional.
+
+---
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Sidebar always visible (expanded), full header controls |
+| Tablet (768-1024px) | Sidebar collapsible (toggle button), header controls stack |
+| Mobile (<768px) | Sidebar hidden (hamburger menu), header controls minimal |
+
+**Responsive Behaviors**:
+- Sidebar collapses automatically when viewport shrinks below 1024px
+- Sidebar expands automatically when viewport grows above 1024px
+- Mobile sidebar opens as overlay with backdrop
+- Theme toggle remains accessible at all breakpoints
+- Touch targets ≥24×24 CSS px on mobile
+
+---
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | header, nav (sidebar), main, complementary |
+| Heading order | h1 → h2 → h3 — one h1 per screen |
+| Reading / Focus order | Header → Sidebar → Main content (top→bottom, left→right) |
+| Accessible names | Hamburger menu: "Open navigation menu", Close button: "Close navigation menu" |
+| Keyboard operability | Tab through header → sidebar → main, Enter/Space for selections, Escape closes mobile sidebar |
+| Target size | ≥24×24 CSS px reservation on all interactive targets |
+| Focus not obscured | Sidebar toggle button always visible, header fixed but not obscuring focus |
+| Non-color intent | Active navigation: icon + text + background highlight, never color alone |
+
+**Screen Reader Support**:
+- Sidebar: "Navigation" landmark with accessible name "Main navigation"
+- Theme toggle: "Theme selector, current theme: [light/dark/system]"
+- Hamburger menu: "Open navigation menu"
+- Close button: "Close navigation menu"
+- Active item: "Current page: [section name]"
+
+---
+
+## Component Reference
+
+This wireframe uses the following design-system components:
+
+| Component | Usage | Variant |
+|-----------|-------|---------|
+| Button | Sidebar toggle, hamburger menu, close button | primary, secondary |
+| Sidebar | Navigation panel | desktop, tablet, mobile |
+| ThemeToggle | Theme selection control | button, dropdown |
+| Modal | Not used in layout module | — |
+
+**Deferred to Design System**:
+- Exact color contrast ratios
+- Focus appearance styling
+- Component-specific target sizes
+- Pixel-perfect spacing values

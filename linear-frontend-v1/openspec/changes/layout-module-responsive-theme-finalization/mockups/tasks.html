@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tasks — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-bg-sidebar: #1E293B;
+      --color-text-sidebar: #F8FAFC;
+      --color-text-sidebar-muted: #94A3B8;
+      --color-active-bg: #334155;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-danger: #EF4444;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+      --sidebar-width-expanded: 240px;
+      --sidebar-width-collapsed: 64px;
+      --header-height: 64px;
+    }
+
+    [data-theme="dark"] {
+      --color-surface: #0F172A;
+      --color-surface-elevated: #1E293B;
+      --color-border: #334155;
+      --color-text-primary: #F8FAFC;
+      --color-text-secondary: #94A3B8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-4);
+      z-index: 100;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .header-logo svg { width: 24px; height: 24px; }
+
+    .header-spacer { flex: 1; }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: var(--space-2);
+    }
+
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-1) var(--space-2);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+
+    .theme-toggle:hover { background: var(--color-border); }
+
+    .user-menu {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: var(--header-height);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-width-expanded);
+      background: var(--color-bg-sidebar);
+      color: var(--color-text-sidebar);
+      display: flex;
+      flex-direction: column;
+      transition: width 0.2s ease;
+      z-index: 90;
+    }
+
+    .sidebar.collapsed { width: var(--sidebar-width-collapsed); }
+    .sidebar.collapsed .nav-label,
+    .sidebar.collapsed .sidebar-footer span { display: none; }
+
+    .sidebar-toggle {
+      background: none;
+      border: none;
+      color: var(--color-text-sidebar);
+      padding: var(--space-4);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--color-active-bg);
+    }
+
+    .sidebar-toggle:hover { background: var(--color-active-bg); }
+
+    .nav-items { flex: 1; padding: var(--space-2); }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      color: var(--color-text-sidebar-muted);
+      text-decoration: none;
+      margin-bottom: var(--space-1);
+      cursor: pointer;
+    }
+
+    .nav-item:hover { background: var(--color-active-bg); color: var(--color-text-sidebar); }
+    .nav-item.active { background: var(--color-active-bg); color: var(--color-text-sidebar); }
+
+    .nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: var(--space-4);
+      border-top: 1px solid var(--color-active-bg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .main {
+      margin-left: var(--sidebar-width-expanded);
+      margin-top: var(--header-height);
+      padding: var(--space-6);
+      min-height: calc(100vh - var(--header-height));
+      transition: margin-left 0.2s ease;
+    }
+
+    .sidebar.collapsed ~ .main { margin-left: var(--sidebar-width-collapsed); }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover { background: var(--color-primary-hover); }
+
+    .task-list { display: flex; flex-direction: column; gap: var(--space-4); }
+
+    .task-card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      cursor: pointer;
+    }
+
+    .task-card:hover { border-color: var(--color-primary); }
+
+    .task-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-2);
+    }
+
+    .task-title { font-weight: 500; }
+
+    .task-priority {
+      font-size: 0.75rem;
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-md);
+    }
+
+    .task-priority.high { background: var(--color-danger); color: white; }
+    .task-priority.medium { background: var(--color-warning); color: white; }
+    .task-priority.low { background: var(--color-success); color: white; }
+
+    .task-meta {
+      display: flex;
+      gap: var(--space-4);
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+    }
+
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--color-border);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .task-checkbox:checked { background: var(--color-primary); border-color: var(--color-primary); }
+
+    .backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 80;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar { width: var(--sidebar-width-collapsed); }
+      .sidebar .nav-label, .sidebar .sidebar-footer span { display: none; }
+      .main { margin-left: var(--sidebar-width-collapsed); }
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: block; }
+      .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width-expanded);
+      }
+      .sidebar .nav-label, .sidebar .sidebar-footer span { display: inline; }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar.open ~ .backdrop { display: block; }
+      .main { margin-left: 0; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <button class="hamburger" onclick="toggleMobileSidebar()" aria-label="Open navigation menu">☰</button>
+    <div class="header-logo">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 3h18v18H3V3zm2 2v14h14V5H5zm3 3h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>
+      <a href="index.html" style="text-decoration: none; color: inherit;">Linear App Clone</a>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="header-controls">
+      <button class="theme-toggle" onclick="cycleTheme()" aria-label="Theme selector">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-label">Light</span>
+      </button>
+      <div class="user-menu" aria-label="User menu">JD</div>
+    </div>
+  </header>
+
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Main navigation">
+    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <nav class="nav-items">
+      <a href="dashboard.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span class="nav-label">Dashboard</span>
+      </a>
+      <a href="projects.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z"/></svg>
+        <span class="nav-label">Projects</span>
+      </a>
+      <a href="tasks.html" class="nav-item active" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span class="nav-label">Tasks</span>
+      </a>
+      <a href="settings.html" class="nav-item">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        <span class="nav-label">Settings</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-menu">JD</div>
+      <span>John Doe</span>
+    </div>
+  </aside>
+
+  <div class="backdrop" onclick="closeMobileSidebar()"></div>
+
+  <main class="main" id="main-content">
+    <div class="page-header">
+      <h1 class="page-title">Tasks</h1>
+      <button class="btn-primary">+ New Task</button>
+    </div>
+    <div class="task-list" id="task-list">
+      <div class="task-card">
+        <div class="task-header">
+          <div class="task-title">Implement sidebar toggle</div>
+          <div class="task-priority high">High</div>
+        </div>
+        <div class="task-meta">
+          <span>Due Dec 10</span>
+          <span>Frontend Redesign</span>
+          <span>John Doe</span>
+        </div>
+      </div>
+      <div class="task-card">
+        <div class="task-header">
+          <div class="task-title">Add theme switching</div>
+          <div class="task-priority medium">Medium</div>
+        </div>
+        <div class="task-meta">
+          <span>Due Dec 15</span>
+          <span>Frontend Redesign</span>
+          <span>Jane Smith</span>
+        </div>
+      </div>
+      <div class="task-card">
+        <div class="task-header">
+          <div class="task-title">Test responsive layouts</div>
+          <div class="task-priority low">Low</div>
+        </div>
+        <div class="task-meta">
+          <span>Due Dec 20</span>
+          <span>Frontend Redesign</span>
+          <span>John Doe</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const themes = ['light', 'dark', 'system'];
+    let currentTheme = localStorage.getItem('theme') || 'light';
+
+    function setTheme(theme) {
+      currentTheme = theme;
+      localStorage.setItem('theme', theme);
+      if (theme === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
+      } else {
+        document.documentElement.dataset.theme = theme;
+      }
+      updateThemeUI();
+    }
+
+    function cycleTheme() {
+      const nextIndex = (themes.indexOf(currentTheme) + 1) % themes.length;
+      setTheme(themes[nextIndex]);
+    }
+
+    function updateThemeUI() {
+      const icon = document.getElementById('theme-icon');
+      const label = document.getElementById('theme-label');
+      const effectiveTheme = document.documentElement.dataset.theme;
+      if (effectiveTheme === 'dark') {
+        icon.textContent = '🌙';
+        label.textContent = 'Dark';
+      } else {
+        icon.textContent = '☀️';
+        label.textContent = 'Light';
+      }
+      if (currentTheme === 'system') label.textContent = 'System';
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('collapsed');
+      localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+    }
+
+    function toggleMobileSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    function closeMobileSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+      if (sidebarCollapsed) document.getElementById('sidebar').classList.add('collapsed');
+      setTheme(currentTheme);
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if (currentTheme === 'system') setTheme('system');
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMobileSidebar();
+      });
+    });
+  </script>
+</body>
+</html>

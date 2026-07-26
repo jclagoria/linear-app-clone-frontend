@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Layout Module — Mockup Index</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      padding: var(--space-6);
+    }
+
+    h1 { margin-bottom: var(--space-4); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-4);
+    }
+    .card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    .card h2 { font-size: 1rem; margin-bottom: 0.5rem; }
+    .card p { font-size: 0.875rem; color: var(--color-text-secondary); }
+  </style>
+</head>
+<body>
+  <h1>Layout Module — Responsive & Theme Mockups</h1>
+  <p style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">
+    Interactive mockups for the layout module. Open each file to test responsive behavior and theme switching.
+  </p>
+  <div class="grid">
+    <a href="dashboard.html" class="card">
+      <h2>Dashboard</h2>
+      <p>Main application view with responsive sidebar and theme controls.</p>
+    </a>
+    <a href="projects.html" class="card">
+      <h2>Projects</h2>
+      <p>Project list with responsive sidebar navigation.</p>
+    </a>
+    <a href="tasks.html" class="card">
+      <h2>Tasks</h2>
+      <p>Task management with responsive sidebar.</p>
+    </a>
+    <a href="settings.html" class="card">
+      <h2>Settings</h2>
+      <p>User preferences including theme selection.</p>
+    </a>
+  </div>
+</body>
+</html>
