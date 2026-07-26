@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Detail View — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-primary-hover: #4C52B8;
+      --color-danger: #E5484D;
+      --color-success: #46A758;
+      --color-warning: #F5A623;
+      --color-neutral-50: #F8FAFC;
+      --color-neutral-100: #F1F5F9;
+      --color-neutral-200: #E2E8F0;
+      --color-neutral-300: #CBD5E1;
+      --color-neutral-400: #94A3B8;
+      --color-neutral-500: #64748B;
+      --color-neutral-600: #475569;
+      --color-neutral-700: #334155;
+      --color-neutral-800: #1E293B;
+      --color-neutral-900: #0F172A;
+      --color-surface: #FFFFFF;
+      --font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px;
+      --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-neutral-50); color: var(--color-neutral-900); }
+
+    /* App Shell */
+    .app-header { display: flex; align-items: center; height: 56px; padding: 0 var(--space-4); background: var(--color-surface); border-bottom: 1px solid var(--color-neutral-200); position: sticky; top: 0; z-index: 100; }
+    .app-header .logo { font-weight: 700; font-size: 16px; color: var(--color-primary); margin-right: var(--space-6); }
+    .app-header nav { display: flex; gap: var(--space-4); }
+    .app-header nav a { font-size: 14px; color: var(--color-neutral-500); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+    .app-header nav a.active { color: var(--color-neutral-900); background: var(--color-neutral-100); font-weight: 500; }
+    .app-header nav a:hover { color: var(--color-neutral-700); }
+    .app-header .header-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); }
+    .notification-bell { position: relative; cursor: pointer; font-size: 18px; padding: var(--space-2); text-decoration: none; color: inherit; }
+    .notification-count { position: absolute; top: 0; right: 0; background: var(--color-danger); color: #fff; font-size: 10px; font-weight: 600; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+    /* Layout */
+    .back-link { padding: var(--space-3) var(--space-6); border-bottom: 1px solid var(--color-neutral-200); background: var(--color-surface); }
+    .back-link a { font-size: 14px; color: var(--color-neutral-500); text-decoration: none; }
+    .back-link a:hover { color: var(--color-primary); }
+    .detail-layout { display: grid; grid-template-columns: 1fr 280px; gap: var(--space-6); padding: var(--space-6); max-width: 1280px; margin: 0 auto; }
+    .main-col { min-width: 0; }
+    .side-col { min-width: 0; }
+
+    /* Issue header */
+    .issue-header { margin-bottom: var(--space-6); }
+    .issue-header h1 { font-size: 24px; font-weight: 600; line-height: 32px; margin-bottom: var(--space-2); }
+    .issue-meta { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); }
+    .issue-id { font-size: 14px; color: var(--color-neutral-400); }
+    .status-badge { display: inline-flex; align-items: center; gap: var(--space-1); font-size: 13px; padding: 2px 8px; border-radius: 12px; }
+    .status-badge .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .status-badge.todo { background: rgba(94,106,210,0.1); color: var(--color-primary); }
+    .status-badge.todo .dot { background: var(--color-primary); }
+    .issue-actions { display: flex; gap: var(--space-2); }
+    .btn { font-size: 14px; font-weight: 500; padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); border: none; cursor: pointer; font-family: inherit; }
+    .btn-ghost { background: transparent; color: var(--color-neutral-600); border: 1px solid var(--color-neutral-200); }
+    .btn-ghost:hover { background: var(--color-neutral-100); }
+    .btn-danger { background: transparent; color: var(--color-danger); border: 1px solid var(--color-neutral-200); }
+    .btn-danger:hover { background: rgba(229,72,77,0.05); }
+
+    /* Description */
+    .description { font-size: 14px; line-height: 22px; color: var(--color-neutral-700); margin-bottom: var(--space-6); padding-bottom: var(--space-6); border-bottom: 1px solid var(--color-neutral-200); }
+
+    /* Comment Thread */
+    .comments-section { margin-bottom: var(--space-6); }
+    .comments-header { font-size: 16px; font-weight: 600; line-height: 24px; margin-bottom: var(--space-4); }
+    .comment { display: flex; gap: var(--space-3); padding: var(--space-4); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); margin-bottom: var(--space-3); background: var(--color-surface); }
+    .comment .avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+    .comment-body { flex: 1; min-width: 0; }
+    .comment-meta { font-size: 13px; color: var(--color-neutral-500); margin-bottom: var(--space-1); }
+    .comment-meta strong { color: var(--color-neutral-800); font-weight: 500; }
+    .comment-meta .edited { font-style: italic; color: var(--color-neutral-400); }
+    .comment-content { font-size: 14px; line-height: 20px; color: var(--color-neutral-700); }
+    .comment-actions { display: flex; gap: var(--space-2); margin-top: var(--space-2); }
+    .comment-actions button { font-size: 12px; color: var(--color-neutral-400); background: none; border: none; cursor: pointer; padding: 2px 4px; }
+    .comment-actions button:hover { color: var(--color-primary); }
+
+    /* Comment Input */
+    .comment-input { border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); padding: var(--space-4); background: var(--color-surface); }
+    .comment-input textarea { width: 100%; border: none; font-size: 14px; font-family: inherit; resize: vertical; min-height: 80px; outline: none; line-height: 20px; }
+    .comment-input textarea::placeholder { color: var(--color-neutral-400); }
+    .comment-input-footer { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
+    .btn-primary { background: var(--color-primary); color: #fff; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Sidebar */
+    .sidebar-card { background: var(--color-surface); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); padding: var(--space-4); margin-bottom: var(--space-4); }
+    .sidebar-card h3 { font-size: 13px; font-weight: 600; color: var(--color-neutral-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: var(--space-3); }
+    .sidebar-row { display: flex; justify-content: space-between; align-items: center; padding: var(--space-2) 0; font-size: 14px; }
+    .sidebar-row .label { color: var(--color-neutral-500); }
+    .sidebar-row .value { color: var(--color-neutral-800); font-weight: 500; }
+    .sidebar-row select { font-size: 13px; padding: 2px 6px; border: 1px solid var(--color-neutral-200); border-radius: var(--radius-sm); font-family: inherit; }
+
+    /* States */
+    .empty-comments { text-align: center; padding: var(--space-6); color: var(--color-neutral-500); }
+    .empty-comments h3 { font-size: 14px; font-weight: 500; color: var(--color-neutral-600); margin-bottom: var(--space-1); }
+    .empty-comments p { font-size: 13px; margin-bottom: var(--space-4); }
+    .error-state { text-align: center; padding: var(--space-10); color: var(--color-neutral-500); }
+    .error-state .icon { font-size: 48px; margin-bottom: var(--space-4); }
+    .error-state h2 { font-size: 16px; font-weight: 600; color: var(--color-danger); margin-bottom: var(--space-2); }
+    .not-found-state { text-align: center; padding: var(--space-10); color: var(--color-neutral-500); }
+    .not-found-state .icon { font-size: 48px; margin-bottom: var(--space-4); }
+    .not-found-state h2 { font-size: 16px; font-weight: 600; color: var(--color-neutral-700); margin-bottom: var(--space-2); }
+
+    /* Skeleton */
+    .skeleton { background: var(--color-neutral-100); border-radius: var(--radius-md); animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .skeleton-line { height: 12px; margin-bottom: var(--space-2); border-radius: var(--radius-sm); }
+
+    /* State bar */
+    .state-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--color-neutral-800); color: #fff; display: flex; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-3); z-index: 200; }
+    .state-bar button { font-size: 13px; padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--color-neutral-600); background: transparent; color: #fff; cursor: pointer; font-family: inherit; }
+    .state-bar button.active { background: var(--color-primary); border-color: var(--color-primary); }
+    .state-bar button:hover { border-color: var(--color-neutral-400); }
+
+    /* Responsive */
+    @media (max-width: 1024px) { .detail-layout { grid-template-columns: 1fr; } .side-col { order: -1; } }
+    @media (max-width: 768px) { .detail-layout { padding: var(--space-4); } .issue-actions { flex-wrap: wrap; } }
+  </style>
+</head>
+<body>
+
+  <header class="app-header" role="banner">
+    <div class="logo">Linear</div>
+    <nav aria-label="Primary">
+      <a href="issue-list.html">Issues</a>
+      <a href="project-list.html">Projects</a>
+      <a href="cycle-list.html">Cycles</a>
+    </nav>
+    <div class="header-right">
+      <a href="notification-dropdown.html" class="notification-bell" aria-label="Notifications">
+        🔔
+        <span class="notification-count">3</span>
+      </a>
+      <div class="avatar" aria-label="User menu">JD</div>
+    </div>
+  </header>
+
+  <div class="back-link">
+    <a href="issue-list.html">← Back to Issues</a>
+  </div>
+
+  <!-- Populated state -->
+  <div id="state-populated">
+    <div class="detail-layout">
+      <div class="main-col">
+        <div class="issue-header">
+          <h1>Implement WebSocket connection</h1>
+          <div class="issue-meta">
+            <span class="issue-id">#105</span>
+            <span class="status-badge todo"><span class="dot"></span> Todo</span>
+          </div>
+          <div class="issue-actions">
+            <button class="btn btn-ghost">Edit</button>
+            <button class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+        <div class="description">
+          Implement a WebSocket connection for real-time updates across the application. This includes:
+          <ul style="margin-top:var(--space-2);padding-left:var(--space-5);list-style:disc;">
+            <li>WebSocket server setup</li>
+            <li>Client connection management</li>
+            <li>Event subscription and dispatch</li>
+            <li>Reconnection logic</li>
+          </ul>
+        </div>
+        <div class="comments-section">
+          <h2 class="comments-header">💬 Comments (3)</h2>
+          <div id="commentsList">
+            <div class="comment" role="article" aria-label="Comment by Alice Kim, 2 hours ago">
+              <div class="avatar-sm">AK</div>
+              <div class="comment-body">
+                <div class="comment-meta"><strong>Alice Kim</strong> · 2 hours ago</div>
+                <div class="comment-content">I've started looking into Socket.io vs native WebSocket. Socket.io has built-in reconnection but adds bundle size. Thoughts?</div>
+                <div class="comment-actions"><button>Reply</button><button>Edit</button><button>Delete</button></div>
+              </div>
+            </div>
+            <div class="comment" role="article" aria-label="Comment by Marcus Lee, 1 hour ago">
+              <div class="avatar-sm" style="background:var(--color-success);">ML</div>
+              <div class="comment-body">
+                <div class="comment-meta"><strong>Marcus Lee</strong> · 1 hour ago <span class="edited">(edited)</span></div>
+                <div class="comment-content">Let's go with native WebSocket + custom reconnection. We don't need the overhead. I'll draft the architecture doc.</div>
+                <div class="comment-actions"><button>Reply</button><button>Edit</button><button>Delete</button></div>
+              </div>
+            </div>
+            <div class="comment" role="article" aria-label="Comment by Jane Doe, 30 minutes ago">
+              <div class="avatar-sm" style="background:var(--color-warning);">JD</div>
+              <div class="comment-body">
+                <div class="comment-meta"><strong>Jane Doe</strong> · 30 minutes ago</div>
+                <div class="comment-content">Agreed on native WebSocket. Let's also add exponential backoff for reconnection attempts.</div>
+                <div class="comment-actions"><button>Reply</button><button>Edit</button><button>Delete</button></div>
+              </div>
+            </div>
+          </div>
+          <div class="comment-input">
+            <textarea placeholder="Add comment..." aria-label="Add a comment"></textarea>
+            <div class="comment-input-footer">
+              <button class="btn btn-primary" disabled>Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side-col">
+        <div class="sidebar-card">
+          <h3>Details</h3>
+          <div class="sidebar-row"><span class="label">Status</span><span class="value"><select><option>Todo</option><option>Backlog</option><option>In Progress</option><option>Done</option></select></span></div>
+          <div class="sidebar-row"><span class="label">Assignee</span><span class="value"><select><option>Jane Doe</option><option>Alice Kim</option><option>Marcus Lee</option><option>Unassigned</option></select></span></div>
+          <div class="sidebar-row"><span class="label">Priority</span><span class="value"><select><option>High</option><option>Urgent</option><option>Medium</option><option>Low</option><option>None</option></select></span></div>
+          <div class="sidebar-row"><span class="label">Labels</span><span class="value"><button class="btn btn-ghost" style="font-size:12px;padding:2px 6px;">+ Add</button></span></div>
+        </div>
+        <div class="sidebar-card">
+          <h3>Timestamps</h3>
+          <div class="sidebar-row"><span class="label">Created</span><span class="value">Dec 15, 2025</span></div>
+          <div class="sidebar-row"><span class="label">Updated</span><span class="value">30 min ago</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty (no comments) state -->
+  <div id="state-empty" style="display:none;">
+    <div class="detail-layout">
+      <div class="main-col">
+        <div class="issue-header">
+          <h1>Implement WebSocket connection</h1>
+          <div class="issue-meta">
+            <span class="issue-id">#105</span>
+            <span class="status-badge todo"><span class="dot"></span> Todo</span>
+          </div>
+          <div class="issue-actions">
+            <button class="btn btn-ghost">Edit</button>
+            <button class="btn btn-danger">Delete</button>
+          </div>
+        </div>
+        <div class="description">Implement a WebSocket connection for real-time updates across the application.</div>
+        <div class="comments-section">
+          <h2 class="comments-header">💬 Comments (0)</h2>
+          <div class="empty-comments">
+            <h3>No comments yet</h3>
+            <p>Start the discussion</p>
+          </div>
+          <div class="comment-input">
+            <textarea placeholder="Add comment..." aria-label="Add a comment"></textarea>
+            <div class="comment-input-footer">
+              <button class="btn btn-primary" disabled>Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side-col">
+        <div class="sidebar-card">
+          <h3>Details</h3>
+          <div class="sidebar-row"><span class="label">Status</span><span class="value">Todo</span></div>
+          <div class="sidebar-row"><span class="label">Assignee</span><span class="value">Jane Doe</span></div>
+          <div class="sidebar-row"><span class="label">Priority</span><span class="value">High</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  <div id="state-loading" style="display:none;">
+    <div class="detail-layout">
+      <div class="main-col">
+        <div class="issue-header">
+          <div class="skeleton skeleton-line" style="width:300px;height:28px;margin-bottom:var(--space-2);"></div>
+          <div class="skeleton skeleton-line" style="width:120px;height:16px;margin-bottom:var(--space-4);"></div>
+          <div style="display:flex;gap:var(--space-2);"><div class="skeleton" style="width:60px;height:32px;border-radius:var(--radius-md);"></div><div class="skeleton" style="width:60px;height:32px;border-radius:var(--radius-md);"></div></div>
+        </div>
+        <div class="skeleton skeleton-line" style="width:100%;height:14px;"></div>
+        <div class="skeleton skeleton-line" style="width:90%;height:14px;"></div>
+        <div class="skeleton skeleton-line" style="width:70%;height:14px;margin-bottom:var(--space-6);"></div>
+        <div class="skeleton skeleton-line" style="width:140px;height:18px;margin-bottom:var(--space-4);"></div>
+        <div class="comment" style="opacity:0.5;"><div class="avatar-sm" style="background:var(--color-neutral-200);"></div><div class="comment-body"><div class="skeleton skeleton-line" style="width:160px;height:13px;"></div><div class="skeleton skeleton-line" style="width:100%;height:12px;"></div><div class="skeleton skeleton-line" style="width:80%;height:12px;"></div></div></div>
+        <div class="comment" style="opacity:0.5;"><div class="avatar-sm" style="background:var(--color-neutral-200);"></div><div class="comment-body"><div class="skeleton skeleton-line" style="width:140px;height:13px;"></div><div class="skeleton skeleton-line" style="width:95%;height:12px;"></div><div class="skeleton skeleton-line" style="width:60%;height:12px;"></div></div></div>
+      </div>
+      <div class="side-col">
+        <div class="sidebar-card"><div class="skeleton skeleton-line" style="width:80px;height:14px;margin-bottom:var(--space-3);"></div><div class="skeleton skeleton-line" style="width:100%;height:12px;"></div><div class="skeleton skeleton-line" style="width:100%;height:12px;"></div><div class="skeleton skeleton-line" style="width:100%;height:12px;"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error state -->
+  <div id="state-error" style="display:none;">
+    <div class="error-state">
+      <div class="icon">⚠️</div>
+      <h2>Unable to load issue</h2>
+      <p>This issue may have been deleted or you don't have permission to view it.</p>
+      <a href="issue-list.html" class="btn btn-ghost" style="text-decoration:none;">← Back to Issues</a>
+    </div>
+  </div>
+
+  <!-- Not Found state -->
+  <div id="state-not-found" style="display:none;">
+    <div class="not-found-state">
+      <div class="icon">❓</div>
+      <h2>Issue not found</h2>
+      <p>This issue doesn't exist or has been removed.</p>
+      <a href="issue-list.html" class="btn btn-ghost" style="text-decoration:none;">← Back to Issues</a>
+    </div>
+  </div>
+
+  <div class="state-bar" role="toolbar" aria-label="State controls">
+    <span style="font-size:12px;color:var(--color-neutral-400);">State:</span>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('empty')">Empty (No Comments)</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('error')">Error</button>
+    <button onclick="setState('not-found')">Not Found</button>
+  </div>
+
+  <script>
+    const states = ['populated', 'empty', 'loading', 'error', 'not-found'];
+    function setState(state) {
+      states.forEach(s => { document.getElementById('state-' + s).style.display = 'none'; });
+      document.getElementById('state-' + state).style.display = '';
+      document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      if (state === 'loading') {
+        setTimeout(() => { setState('populated'); document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active')); document.querySelector('.state-bar button').classList.add('active'); }, 2000);
+      }
+    }
+  </script>
+</body>
+</html>

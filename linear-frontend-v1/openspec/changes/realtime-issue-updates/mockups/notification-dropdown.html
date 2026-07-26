@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notification Dropdown — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #5E6AD2;
+      --color-primary-hover: #4C52B8;
+      --color-danger: #E5484D;
+      --color-success: #46A758;
+      --color-warning: #F5A623;
+      --color-neutral-50: #F8FAFC;
+      --color-neutral-100: #F1F5F9;
+      --color-neutral-200: #E2E8F0;
+      --color-neutral-300: #CBD5E1;
+      --color-neutral-400: #94A3B8;
+      --color-neutral-500: #64748B;
+      --color-neutral-600: #475569;
+      --color-neutral-700: #334155;
+      --color-neutral-800: #1E293B;
+      --color-neutral-900: #0F172A;
+      --color-surface: #FFFFFF;
+      --font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px;
+      --radius-sm: 4px; --radius-md: 6px; --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-neutral-50); color: var(--color-neutral-900); }
+
+    /* App Shell */
+    .app-header { display: flex; align-items: center; height: 56px; padding: 0 var(--space-4); background: var(--color-surface); border-bottom: 1px solid var(--color-neutral-200); position: sticky; top: 0; z-index: 100; }
+    .app-header .logo { font-weight: 700; font-size: 16px; color: var(--color-primary); margin-right: var(--space-6); }
+    .app-header nav { display: flex; gap: var(--space-4); }
+    .app-header nav a { font-size: 14px; color: var(--color-neutral-500); text-decoration: none; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); }
+    .app-header nav a.active { color: var(--color-neutral-900); background: var(--color-neutral-100); font-weight: 500; }
+    .app-header nav a:hover { color: var(--color-neutral-700); }
+    .app-header .header-right { margin-left: auto; display: flex; align-items: center; gap: var(--space-3); }
+    .notification-bell { position: relative; cursor: pointer; font-size: 18px; padding: var(--space-2); text-decoration: none; color: inherit; }
+    .notification-count { position: absolute; top: 0; right: 0; background: var(--color-danger); color: #fff; font-size: 10px; font-weight: 600; min-width: 16px; height: 16px; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+    .notification-count.hidden { display: none; }
+    .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
+
+    /* Dropdown */
+    .dropdown-wrapper { position: relative; }
+    .dropdown { position: absolute; top: calc(100% + var(--space-2)); right: 0; width: 380px; max-height: 480px; background: var(--color-surface); border: 1px solid var(--color-neutral-200); border-radius: var(--radius-lg); box-shadow: 0 8px 24px rgba(0,0,0,0.12); z-index: 200; overflow: hidden; display: none; }
+    .dropdown.open { display: block; }
+    .dropdown-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-4); border-bottom: 1px solid var(--color-neutral-200); }
+    .dropdown-header h3 { font-size: 16px; font-weight: 600; }
+    .btn { font-size: 14px; font-weight: 500; padding: var(--space-2) var(--space-4); border-radius: var(--radius-md); border: none; cursor: pointer; font-family: inherit; }
+    .btn-ghost { background: transparent; color: var(--color-neutral-600); }
+    .btn-ghost:hover { background: var(--color-neutral-100); }
+
+    /* Notification items */
+    .notification-list { max-height: 400px; overflow-y: auto; }
+    .notification-item { display: flex; gap: var(--space-3); padding: var(--space-3) var(--space-4); cursor: pointer; transition: background 0.1s; border-bottom: 1px solid var(--color-neutral-100); }
+    .notification-item:hover { background: var(--color-neutral-50); }
+    .notification-item.unread { background: rgba(94,106,210,0.04); }
+    .notification-item.unread:hover { background: rgba(94,106,210,0.08); }
+    .notification-item .avatar-sm { width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+    .notification-item .notif-body { flex: 1; min-width: 0; }
+    .notification-item .notif-text { font-size: 13px; line-height: 18px; color: var(--color-neutral-700); margin-bottom: 2px; }
+    .notification-item .notif-text strong { font-weight: 500; color: var(--color-neutral-900); }
+    .notification-item .notif-time { font-size: 12px; color: var(--color-neutral-400); }
+    .notification-item .unread-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-primary); flex-shrink: 0; align-self: center; }
+
+    /* States */
+    .empty-notifs { text-align: center; padding: var(--space-8) var(--space-4); color: var(--color-neutral-500); }
+    .empty-notifs h3 { font-size: 14px; font-weight: 500; color: var(--color-neutral-600); margin-bottom: var(--space-1); }
+    .empty-notifs p { font-size: 13px; }
+
+    /* Skeleton */
+    .skeleton { background: var(--color-neutral-100); border-radius: var(--radius-md); animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .skeleton-line { height: 12px; margin-bottom: var(--space-2); border-radius: var(--radius-sm); }
+
+    /* Overlay */
+    .overlay { position: fixed; inset: 0; z-index: 150; display: none; }
+    .overlay.visible { display: block; }
+
+    /* Main content */
+    .main { padding: var(--space-6); max-width: 1280px; margin: 0 auto; }
+    .main h1 { font-size: 24px; font-weight: 600; line-height: 32px; margin-bottom: var(--space-4); }
+    .main p { font-size: 14px; color: var(--color-neutral-500); }
+
+    /* State bar */
+    .state-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--color-neutral-800); color: #fff; display: flex; align-items: center; justify-content: center; gap: var(--space-3); padding: var(--space-3); z-index: 300; }
+    .state-bar button { font-size: 13px; padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); border: 1px solid var(--color-neutral-600); background: transparent; color: #fff; cursor: pointer; font-family: inherit; }
+    .state-bar button.active { background: var(--color-primary); border-color: var(--color-primary); }
+    .state-bar button:hover { border-color: var(--color-neutral-400); }
+
+    /* Responsive */
+    @media (max-width: 480px) { .dropdown { width: 100%; left: 0; right: 0; border-radius: 0 0 var(--radius-lg) var(--radius-lg); } }
+  </style>
+</head>
+<body>
+
+  <header class="app-header" role="banner">
+    <div class="logo">Linear</div>
+    <nav aria-label="Primary">
+      <a href="issue-list.html">Issues</a>
+      <a href="project-list.html">Projects</a>
+      <a href="cycle-list.html">Cycles</a>
+    </nav>
+    <div class="header-right">
+      <div class="dropdown-wrapper">
+        <button class="notification-bell" id="bellBtn" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+          🔔
+          <span class="notification-count" id="notifCount">3</span>
+        </button>
+        <div class="overlay" id="overlay" onclick="closeDropdown()"></div>
+        <div class="dropdown" id="dropdown" role="region" aria-label="Notifications">
+          <!-- Populated state -->
+          <div id="state-populated">
+            <div class="dropdown-header">
+              <h3>Notifications</h3>
+              <button class="btn btn-ghost" style="font-size:12px;">Mark all read</button>
+            </div>
+            <div class="notification-list" id="notifList">
+              <div class="notification-item unread" role="article" aria-label="New comment on issue 105 by Alice Kim">
+                <div class="avatar-sm" style="background:var(--color-success);">AK</div>
+                <div class="notif-body">
+                  <div class="notif-text"><strong>Alice Kim</strong> commented on <strong>#105</strong></div>
+                  <div class="notif-time">2 minutes ago</div>
+                </div>
+                <div class="unread-dot"></div>
+              </div>
+              <div class="notification-item unread" role="article" aria-label="Issue 106 assigned to you by Marcus Lee">
+                <div class="avatar-sm" style="background:var(--color-warning);">ML</div>
+                <div class="notif-body">
+                  <div class="notif-text"><strong>Marcus Lee</strong> assigned <strong>#106</strong> to you</div>
+                  <div class="notif-time">1 hour ago</div>
+                </div>
+                <div class="unread-dot"></div>
+              </div>
+              <div class="notification-item unread" role="article" aria-label="Cycle Sprint 5 activated by System">
+                <div class="avatar-sm" style="background:var(--color-primary);">S</div>
+                <div class="notif-body">
+                  <div class="notif-text">Cycle <strong>"Sprint 5"</strong> was activated</div>
+                  <div class="notif-time">3 hours ago</div>
+                </div>
+                <div class="unread-dot"></div>
+              </div>
+              <div class="notification-item" role="article" aria-label="Issue 100 completed by Jane Doe">
+                <div class="avatar-sm">JD</div>
+                <div class="notif-body">
+                  <div class="notif-text"><strong>Jane Doe</strong> moved <strong>#100</strong> to Done</div>
+                  <div class="notif-time">Yesterday</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading state -->
+          <div id="state-loading" style="display:none;">
+            <div class="dropdown-header">
+              <h3>Notifications</h3>
+              <button class="btn btn-ghost" style="font-size:12px;" disabled>Mark all read</button>
+            </div>
+            <div style="padding:var(--space-4);">
+              <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-4);"><div class="skeleton" style="width:32px;height:32px;border-radius:50%;"></div><div style="flex:1;"><div class="skeleton skeleton-line" style="width:80%;"></div><div class="skeleton skeleton-line" style="width:40%;"></div></div></div>
+              <div style="display:flex;gap:var(--space-3);margin-bottom:var(--space-4);"><div class="skeleton" style="width:32px;height:32px;border-radius:50%;"></div><div style="flex:1;"><div class="skeleton skeleton-line" style="width:70%;"></div><div class="skeleton skeleton-line" style="width:35%;"></div></div></div>
+              <div style="display:flex;gap:var(--space-3);"><div class="skeleton" style="width:32px;height:32px;border-radius:50%;"></div><div style="flex:1;"><div class="skeleton skeleton-line" style="width:90%;"></div><div class="skeleton skeleton-line" style="width:45%;"></div></div></div>
+            </div>
+          </div>
+
+          <!-- Empty state -->
+          <div id="state-empty" style="display:none;">
+            <div class="dropdown-header">
+              <h3>Notifications</h3>
+            </div>
+            <div class="empty-notifs">
+              <h3>No new notifications</h3>
+              <p>You're all caught up!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="avatar" aria-label="User menu">JD</div>
+    </div>
+  </header>
+
+  <main class="main" role="main">
+    <h1>Notification Dropdown Mockup</h1>
+    <p>Click the bell icon in the header to open the notification dropdown. Use the state controls below to switch between states.</p>
+  </main>
+
+  <div class="state-bar" role="toolbar" aria-label="State controls">
+    <span style="font-size:12px;color:var(--color-neutral-400);">State:</span>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('empty')">Empty</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="simulateNewNotif()">Simulate New</button>
+  </div>
+
+  <script>
+    const bellBtn = document.getElementById('bellBtn');
+    const dropdown = document.getElementById('dropdown');
+    const overlay = document.getElementById('overlay');
+    const notifCount = document.getElementById('notifCount');
+    let currentCount = 3;
+    let isOpen = false;
+
+    bellBtn.addEventListener('click', () => {
+      isOpen = !isOpen;
+      dropdown.classList.toggle('open', isOpen);
+      overlay.classList.toggle('visible', isOpen);
+      bellBtn.setAttribute('aria-expanded', isOpen);
+    });
+
+    function closeDropdown() {
+      isOpen = false;
+      dropdown.classList.remove('open');
+      overlay.classList.remove('visible');
+      bellBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    const states = ['populated', 'empty', 'loading'];
+    function setState(state) {
+      states.forEach(s => { document.getElementById('state-' + s).style.display = 'none'; });
+      document.getElementById('state-' + state).style.display = '';
+      document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      if (state === 'empty') { notifCount.classList.add('hidden'); }
+      else { notifCount.classList.remove('hidden'); }
+      if (state === 'loading') {
+        setTimeout(() => { setState('populated'); document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active')); document.querySelector('.state-bar button').classList.add('active'); }, 1500);
+      }
+    }
+
+    function simulateNewNotif() {
+      currentCount++;
+      notifCount.textContent = currentCount > 99 ? '99+' : currentCount;
+      notifCount.classList.remove('hidden');
+      const list = document.getElementById('notifList');
+      if (list) {
+        const item = document.createElement('div');
+        item.className = 'notification-item unread';
+        item.setAttribute('role', 'article');
+        item.innerHTML = `<div class="avatar-sm" style="background:var(--color-danger);">N</div><div class="notif-body"><div class="notif-text"><strong>New User</strong> commented on <strong>#107</strong></div><div class="notif-time">Just now</div></div><div class="unread-dot"></div>`;
+        list.insertBefore(item, list.firstChild);
+        item.style.animation = 'flash 0.4s ease-out';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) closeDropdown();
+    });
+  </script>
+</body>
+</html>
