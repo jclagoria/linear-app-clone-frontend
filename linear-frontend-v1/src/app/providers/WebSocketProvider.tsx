@@ -49,9 +49,9 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       url: WS_URL,
       token: accessToken,
       teamId,
-      onError: (error) => {
-        // Handle auth errors from WebSocket
-        console.error('WebSocket error:', error)
+      onError: (errorType) => {
+        // Handle auth errors from WebSocket close codes
+        handleAuthError(errorType)
       },
     })
     clientRef.current = client

@@ -10,7 +10,7 @@ export interface WSClientConfig {
   teamId?: string
   onOpen?: () => void
   onClose?: () => void
-  onError?: (error: Event) => void
+  onError?: (errorType: string) => void
 }
 
 export function createWSClient(config: WSClientConfig) {
@@ -95,9 +95,21 @@ export function createWSClient(config: WSClientConfig) {
       }
     }
 
-    ws.onclose = () => {
+    ws.onclose = (event) => {
       clearTimeout(connectTimeout)
       heartbeat.stop()
+      
+      // Detect auth-related close codes and trigger auth error handler
+      // 4001: Authentication failed
+      // 4002: Invalid token
+      // 4003: Token expired
+      // 4004: Session revoked
+      const authCloseCodes = [4001, 4002, 4003, 4004]
+      if (authCloseCodes.includes(event.code)) {
+        const errorType = event.code === 4004 ? 'session.revoked' : 'auth_failed'
+        config.onError?.(errorType)
+      }
+      
       if (isManualClose) {
         store.setDisconnected()
         config.onClose?.()
@@ -116,7 +128,7 @@ export function createWSClient(config: WSClientConfig) {
     }
 
     ws.onerror = (error) => {
-      config.onError?.(error)
+      config.onError?.('ws_error')
     }
   }
 
