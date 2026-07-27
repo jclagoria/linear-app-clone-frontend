@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Issue Board — WebSocket UI Mockup</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <header class="app-header">
+    <a href="index.html" class="logo">Linear Clone</a>
+    <nav>
+      <a href="issue-board.html" class="active">Board</a>
+      <a href="#">Projects</a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <div class="connection-status" role="status" aria-label="Connected">
+      <span class="status-dot connected"></span>
+      <span class="status-label">Connected</span>
+    </div>
+    <a href="notification-panel.html" style="text-decoration:none; font-size:18px; color: var(--color-text-secondary);">🔔</a>
+    <div class="user-menu">
+      <div class="avatar">JD</div>
+      <span style="font-size:12px; color: var(--color-text-muted);">▼</span>
+    </div>
+  </header>
+
+  <div class="app-content" style="flex-direction: column;">
+    <!-- Board Header -->
+    <div class="board-header">
+      <h1>Issues</h1>
+      <div style="display:flex; gap: var(--space-2); margin-left: auto;">
+        <button class="btn btn-ghost" style="min-height:36px; font: var(--caption);">Filters ▾</button>
+        <button class="btn btn-ghost" style="min-height:36px; font: var(--caption);">View: Board ▾</button>
+      </div>
+    </div>
+
+    <!-- Board Columns -->
+    <div class="board-columns" id="boardColumns"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- State Toggle Bar -->
+<div class="state-bar">
+  <label>Board State:</label>
+  <button class="active" onclick="setBoard('idle', this)">Idle</button>
+  <button onclick="setBoard('issue-updated', this)">Issue Updated</button>
+  <button onclick="setBoard('empty', this)">Empty</button>
+</div>
+
+<script>
+  const boardColumns = document.getElementById('boardColumns');
+  const toastContainer = document.getElementById('toastContainer');
+
+  const boards = {
+    idle: `
+      <div class="board-column">
+        <div class="column-header">Todo <span class="column-count">3</span></div>
+        <div class="issue-card">
+          <div class="title">Fix authentication token refresh</div>
+          <div class="meta"><span class="priority high"></span><span>High</span><span>·</span><span>JD</span></div>
+          <div class="labels"><span class="label">Bug</span><span class="label">Auth</span></div>
+        </div>
+        <div class="issue-card">
+          <div class="title">Add WebSocket reconnection logic</div>
+          <div class="meta"><span class="priority medium"></span><span>Medium</span><span>·</span><span>AK</span></div>
+          <div class="labels"><span class="label">Feature</span></div>
+        </div>
+        <div class="issue-card">
+          <div class="title">Write unit tests for auth module</div>
+          <div class="meta"><span class="priority low"></span><span>Low</span><span>·</span><span>MR</span></div>
+          <div class="labels"><span class="label">Testing</span></div>
+        </div>
+      </div>
+      <div class="board-column">
+        <div class="column-header">In Progress <span class="column-count">2</span></div>
+        <div class="issue-card">
+          <div class="title">Implement real-time notifications</div>
+          <div class="meta"><span class="priority high"></span><span>High</span><span>·</span><span>JD</span></div>
+          <div class="labels"><span class="label">Feature</span><span class="label">WebSocket</span></div>
+        </div>
+        <div class="issue-card">
+          <div class="title">Design notification panel UI</div>
+          <div class="meta"><span class="priority medium"></span><span>Medium</span><span>·</span><span>AK</span></div>
+          <div class="labels"><span class="label">Design</span></div>
+        </div>
+      </div>
+      <div class="board-column">
+        <div class="column-header">Done <span class="column-count">1</span></div>
+        <div class="issue-card">
+          <div class="title">Set up project structure</div>
+          <div class="meta"><span class="priority low"></span><span>Low</span><span>·</span><span>AK</span></div>
+          <div class="labels"><span class="label">Chore</span></div>
+        </div>
+      </div>`,
+
+    'issue-updated': `
+      <div class="board-column">
+        <div class="column-header">Todo <span class="column-count">3</span></div>
+        <div class="issue-card">
+          <div class="title">Fix authentication token refresh</div>
+          <div class="meta"><span class="priority high"></span><span>High</span><span>·</span><span>JD</span></div>
+          <div class="labels"><span class="label">Bug</span><span class="label">Auth</span></div>
+        </div>
+        <div class="issue-card highlight">
+          <div class="title">Add WebSocket reconnection logic <span style="font:var(--small); color:var(--color-success);">↑ moved</span></div>
+          <div class="meta"><span class="priority medium"></span><span>Medium</span><span>·</span><span>AK</span></div>
+          <div class="labels"><span class="label">Feature</span></div>
+        </div>
+        <div class="issue-card">
+          <div class="title">Write unit tests for auth module</div>
+          <div class="meta"><span class="priority low"></span><span>Low</span><span>·</span><span>MR</span></div>
+          <div class="labels"><span class="label">Testing</span></div>
+        </div>
+      </div>
+      <div class="board-column">
+        <div class="column-header">In Progress <span class="column-count">3</span></div>
+        <div class="issue-card">
+          <div class="title">Implement real-time notifications</div>
+          <div class="meta"><span class="priority high"></span><span>High</span><span>·</span><span>JD</span></div>
+          <div class="labels"><span class="label">Feature</span><span class="label">WebSocket</span></div>
+        </div>
+        <div class="issue-card">
+          <div class="title">Design notification panel UI</div>
+          <div class="meta"><span class="priority medium"></span><span>Medium</span><span>·</span><span>AK</span></div>
+          <div class="labels"><span class="label">Design</span></div>
+        </div>
+        <div class="issue-card highlight" style="animation-delay: 0.2s;">
+          <div class="title">Add WebSocket reconnection logic</div>
+          <div class="meta"><span class="priority medium"></span><span>Medium</span><span>·</span><span>AK</span></div>
+          <div class="labels"><span class="label">Feature</span></div>
+        </div>
+      </div>
+      <div class="board-column">
+        <div class="column-header">Done <span class="column-count">1</span></div>
+        <div class="issue-card">
+          <div class="title">Set up project structure</div>
+          <div class="meta"><span class="priority low"></span><span>Low</span><span>·</span><span>AK</span></div>
+          <div class="labels"><span class="label">Chore</span></div>
+        </div>
+      </div>`,
+
+    empty: `
+      <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-8); color: var(--color-text-muted);">
+        <div style="font-size: 48px; margin-bottom: var(--space-4);">📋</div>
+        <h2 style="font: var(--heading-3); margin-bottom: var(--space-2);">No issues yet</h2>
+        <p style="margin-bottom: var(--space-4);">Create your first issue to get started.</p>
+        <button class="btn btn-primary">Create Issue</button>
+      </div>`
+  };
+
+  function setBoard(state, btn) {
+    boardColumns.innerHTML = boards[state];
+    toastContainer.innerHTML = '';
+    document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // Initialize
+  setBoard('idle', document.querySelector('.state-bar button'));
+</script>
+</body>
+</html>

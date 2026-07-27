@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebSocket UI — Mockup Index</title>
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--space-6);
+    }
+    .index {
+      max-width: 640px;
+      width: 100%;
+    }
+    .index h1 {
+      font: var(--heading-1);
+      margin-bottom: var(--space-2);
+    }
+    .index .subtitle {
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-8);
+    }
+    .screen-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+    .screen-link {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-4);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.15s, transform 0.15s;
+    }
+    .screen-link:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .screen-link .section {
+      font: var(--small);
+      color: var(--color-text-muted);
+      flex-shrink: 0;
+      width: 32px;
+      text-align: center;
+      padding: var(--space-1) 0;
+      background: var(--color-neutral-bg);
+      border-radius: var(--radius-sm);
+    }
+    .screen-link .info { flex: 1; }
+    .screen-link .name {
+      font: var(--heading-3);
+      color: var(--color-text-primary);
+    }
+    .screen-link .desc {
+      font: var(--caption);
+      color: var(--color-text-secondary);
+      margin-top: 2px;
+    }
+    .screen-link .states {
+      display: flex;
+      gap: var(--space-1);
+      margin-top: var(--space-2);
+    }
+    .screen-link .state-badge {
+      font: var(--small);
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--color-neutral-bg);
+      color: var(--color-text-muted);
+    }
+    .screen-link .arrow {
+      color: var(--color-text-muted);
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="index">
+    <h1>WebSocket UI Mockups</h1>
+    <p class="subtitle">Interactive HTML mockups with mock data. Click a screen to view its states.</p>
+
+    <div class="screen-list">
+      <a href="app-layout.html" class="screen-link">
+        <span class="section">&sect;1</span>
+        <div class="info">
+          <div class="name">App Layout</div>
+          <div class="desc">Main application shell with WebSocket status indicator and toast container</div>
+          <div class="states">
+            <span class="state-badge">connected</span>
+            <span class="state-badge">loading</span>
+            <span class="state-badge">error</span>
+          </div>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a href="connection-error-modal.html" class="screen-link">
+        <span class="section">&sect;2</span>
+        <div class="info">
+          <div class="name">Connection Error Modal</div>
+          <div class="desc">Modal for critical WebSocket errors (auth_failed, forbidden, session.revoked)</div>
+          <div class="states">
+            <span class="state-badge">hidden</span>
+            <span class="state-badge">auth_failed</span>
+            <span class="state-badge">forbidden</span>
+            <span class="state-badge">session.revoked</span>
+          </div>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a href="error-toast.html" class="screen-link">
+        <span class="section">&sect;3</span>
+        <div class="info">
+          <div class="name">WebSocket Error Toast</div>
+          <div class="desc">Toast for transient errors (rate_limited, invalid_channel)</div>
+          <div class="states">
+            <span class="state-badge">hidden</span>
+            <span class="state-badge">rate_limited</span>
+            <span class="state-badge">invalid_channel</span>
+          </div>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a href="header-status.html" class="screen-link">
+        <span class="section">&sect;4</span>
+        <div class="info">
+          <div class="name">Header — Connection Status</div>
+          <div class="desc">Header with ConnectionStatusIndicator showing WebSocket state</div>
+          <div class="states">
+            <span class="state-badge">connected</span>
+            <span class="state-badge">connecting</span>
+            <span class="state-badge">reconnecting</span>
+            <span class="state-badge">disconnected</span>
+          </div>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a href="issue-board.html" class="screen-link">
+        <span class="section">&sect;5</span>
+        <div class="info">
+          <div class="name">Issue Board</div>
+          <div class="desc">Kanban board with real-time issue updates via WebSocket</div>
+          <div class="states">
+            <span class="state-badge">idle</span>
+            <span class="state-badge">issue-updated</span>
+            <span class="state-badge">empty</span>
+          </div>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a href="notification-panel.html" class="screen-link">
+        <span class="section">&sect;6</span>
+        <div class="info">
+          <div class="name">Notification Panel</div>
+          <div class="desc">Notification list with real-time updates via WebSocket</div>
+          <div class="states">
+            <span class="state-badge">idle</span>
+            <span class="state-badge">new-notification</span>
+            <span class="state-badge">empty</span>
+          </div>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+
+      <a href="comment-thread.html" class="screen-link">
+        <span class="section">&sect;7</span>
+        <div class="info">
+          <div class="name">Comment Thread</div>
+          <div class="desc">Issue comment thread with real-time updates via WebSocket</div>
+          <div class="states">
+            <span class="state-badge">idle</span>
+            <span class="state-badge">new-comment</span>
+            <span class="state-badge">empty</span>
+          </div>
+        </div>
+        <span class="arrow">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

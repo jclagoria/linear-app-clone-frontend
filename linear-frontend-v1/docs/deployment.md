@@ -1,32 +1,46 @@
-# Deployment — Linear App Clone (Frontend)
+# Deployment — Linear App Clone Frontend
 
 ## Overview
 
-Static SPA built with Vite, containerized with Docker, and deployed to a cloud platform. The frontend is a pure client-side application that communicates with the backend API via REST + SSE.
+This is a frontend-only deployment. The SPA is built with Vite and served as static files. The backend WebSocket gateway is deployed separately (handled in LAG-56).
 
 ## Architecture
 
-```
-Browser ──HTTPS──> CDN ──> Docker (nginx) ──> Backend API
-                        └──> Static files (built SPA)
+```text
+┌─────────────────────────────────────────────────────────┐
+│                    CDN (Cloudflare)                      │
+│              Static assets + SPA routing                 │
+└─────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│                  Vercel / Netlify                        │
+│           Static site hosting + CI/CD                    │
+└─────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────┐
+│               WebSocket Gateway (Backend)                │
+│              ws://api.example.com/ws                     │
+└─────────────────────────────────────────────────────────┘
 ```
 
 ## Infrastructure
 
 | Component | Service | Notes |
 |-----------|---------|-------|
-| Hosting | Docker container (nginx) | Serves built static files + reverse proxy |
-| CDN | Cloudflare | Static asset caching, SSL termination |
-| Domain | linear-clone.vercel.app / custom | TBD |
-| Backend | Separate deployment | REST API at `/api` |
+| Hosting | Vercel / Netlify | Static SPA hosting, automatic deployments |
+| CDN | Built-in (Cloudflare edge) | Static assets, global distribution |
+| Domain | Linear Clone | DNS: Cloudflare |
+| SSL | Auto-provisioned | HTTPS + WSS for WebSocket |
 
 ## CI/CD
 
 | Step | Tool | Action |
 |------|------|--------|
 | CI | GitHub Actions | Lint, typecheck, test, build |
-| CD | GitHub Actions | Build container, push, deploy |
-| Environments | dev → staging → production | Promotion: manual approval |
+| CD | Vercel / Netlify | Auto-deploy on push to main |
+| Environments | dev → preview → production | Branch-based promotion |
 
 ### Pipeline
 
@@ -39,43 +53,69 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'pnpm'
-      - run: pnpm install
-      - run: pnpm run lint
-      - run: pnpm run typecheck
-      - run: pnpm run test:run
-      - run: pnpm run build
+      - checkout
+      - setup-node (22)
+      - npm ci
+      - npm run lint
+      - npm run typecheck
+      - npm run test:run
+      - npm run build
   deploy:
     needs: test
-    runs-on: ubuntu-latest
     steps:
-      - run: docker build -t linear-frontend .
-      - run: docker push $REGISTRY/linear-frontend:latest
-      - run: kubectl set image deployment/frontend frontend=$REGISTRY/linear-frontend:latest
+      - deploy to Vercel/Netlify
 ```
 
 ## Frontend
 
-- **Build**: `vite build` — outputs static files to `dist/`
-- **Static files**: served via nginx container (or CDN)
-- **Env vars**: `VITE_API_URL` (compiled at build-time for Vite)
-- **Cache**: Long-lived cache for hashed assets; `index.html` uncached
+- **Build**: Vite production build (`npm run build`)
+- **Output**: `dist/` directory (static HTML, JS, CSS, assets)
+- **Static files**: Served via CDN edge network
+- **SPA routing**: All routes fallback to `index.html`
+- **Env vars**:
+  - `VITE_API_URL` — REST API base URL
+  - `VITE_WS_URL` — WebSocket gateway URL
+  - `VITE_APP_NAME` — Application name (optional)
+- **Cache**: Static assets with content-hash filenames (immutable), `index.html` with short TTL
+
+## Environment Configuration
+
+| Variable | Dev | Preview | Production |
+|----------|-----|---------|------------|
+| `VITE_API_URL` | `http://localhost:3000` | `https://preview-api.example.com` | `https://api.example.com` |
+| `VITE_WS_URL` | `ws://localhost:3000/ws` | `wss://preview-api.example.com/ws` | `wss://api.example.com/ws` |
+
+## Build Optimization
+
+- **Code splitting**: React Router lazy-loaded routes
+- **Tree shaking**: Vite automatic tree shaking
+- **Asset optimization**: Image compression, SVG inlining
+- **Bundle analysis**: `npm run build -- --analyze` for bundle size inspection
 
 ## Monitoring
 
 | Tool | Purpose |
 |------|---------|
-| Browser DevTools / React DevTools | Development debugging |
-| Error tracking | TBD (Sentry or equivalent) |
-| Analytics | TBD |
+| Vercel Analytics | Core Web Vitals, performance metrics |
+| Sentry (optional) | Error tracking, source maps |
+| Lighthouse CI | Performance, accessibility, SEO audits |
 
-## Backup & Recovery
+## Local Development
 
-- **Source**: Git repository (single source of truth)
-- **Build artifacts**: CI pipeline rebuilds from source
-- **Env config**: Encrypted in CI secrets, not committed
+```bash
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
+
+# Run tests
+npm run test        # Unit tests (Vitest)
+npm run test:e2e    # E2E tests (Playwright)
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```

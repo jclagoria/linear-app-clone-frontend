@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notification Panel — WebSocket UI Mockup</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <header class="app-header">
+    <a href="index.html" class="logo">Linear Clone</a>
+    <nav>
+      <a href="issue-board.html">Board</a>
+      <a href="#">Projects</a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <div class="connection-status" role="status" aria-label="Connected">
+      <span class="status-dot connected"></span>
+      <span class="status-label">Connected</span>
+    </div>
+    <button id="bellBtn" style="background:none;border:none;font-size:18px;color:var(--color-text-secondary);cursor:pointer;position:relative;">
+      🔔<span id="badge" style="position:absolute;top:-4px;right:-4px;background:var(--color-danger);color:white;font:var(--small);width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;display:none;">3</span>
+    </button>
+    <div class="user-menu">
+      <div class="avatar">JD</div>
+      <span style="font-size:12px; color: var(--color-text-muted);">▼</span>
+    </div>
+  </header>
+
+  <div class="app-content">
+    <div class="main-content">
+      <h1 style="font: var(--heading-2); margin-bottom: var(--space-4);">Issues</h1>
+      <p style="color: var(--color-text-muted);">Notification panel slides in from the right. Click 🔔 or use the state bar to toggle.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Panel -->
+<div class="notification-panel" id="notifPanel" style="display:none;">
+  <div class="panel-header">
+    <h2>Notifications</h2>
+    <div style="display:flex; gap: var(--space-2);">
+      <button class="btn btn-ghost" style="min-height:32px; font: var(--caption);">Mark all read</button>
+      <button class="toast-dismiss" aria-label="Close" onclick="togglePanel()" style="font-size:16px;">✕</button>
+    </div>
+  </div>
+  <div class="notification-list" id="notifList"></div>
+</div>
+
+<!-- State Toggle Bar -->
+<div class="state-bar">
+  <label>Panel State:</label>
+  <button class="active" onclick="setNotif('idle', this)">Idle (Populated)</button>
+  <button onclick="setNotif('new-notification', this)">New Notification</button>
+  <button onclick="setNotif('empty', this)">Empty</button>
+  <button onclick="togglePanel()">Toggle Panel</button>
+</div>
+
+<script>
+  const notifPanel = document.getElementById('notifPanel');
+  const notifList = document.getElementById('notifList');
+  const badge = document.getElementById('badge');
+  let panelOpen = false;
+
+  const notifications = {
+    idle: `
+      <div class="notification-item unread">
+        <div class="notification-icon mention">💬</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>AK</strong> mentioned you in <strong>Fix auth token refresh</strong></div>
+          <div class="notification-time">2m ago</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notification-item unread">
+        <div class="notification-icon assignment">📋</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>JD</strong> assigned you to <strong>Add WebSocket reconnection</strong></div>
+          <div class="notification-time">15m ago</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notification-item unread">
+        <div class="notification-icon comment">💬</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>MR</strong> commented on <strong>Design notification panel</strong></div>
+          <div class="notification-time">1h ago</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notification-item">
+        <div class="notification-icon mention">💬</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>AK</strong> mentioned you in <strong>Set up project structure</strong></div>
+          <div class="notification-time">3h ago</div>
+        </div>
+      </div>
+      <div class="notification-item">
+        <div class="notification-icon assignment">📋</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>JD</strong> assigned you to <strong>Write unit tests</strong></div>
+          <div class="notification-time">5h ago</div>
+        </div>
+      </div>`,
+
+    'new-notification': `
+      <div class="notification-item unread highlight">
+        <div class="notification-icon comment">💬</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>MR</strong> commented on <strong>Implement real-time notifications</strong></div>
+          <div class="notification-time">just now</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notification-item unread">
+        <div class="notification-icon mention">💬</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>AK</strong> mentioned you in <strong>Fix auth token refresh</strong></div>
+          <div class="notification-time">2m ago</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notification-item unread">
+        <div class="notification-icon assignment">📋</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>JD</strong> assigned you to <strong>Add WebSocket reconnection</strong></div>
+          <div class="notification-time">15m ago</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+      <div class="notification-item">
+        <div class="notification-icon comment">💬</div>
+        <div class="notification-body">
+          <div class="notification-message"><strong>MR</strong> commented on <strong>Design notification panel</strong></div>
+          <div class="notification-time">1h ago</div>
+        </div>
+      </div>`,
+
+    empty: `
+      <div class="empty-state">
+        <div class="icon">🔔</div>
+        <p>No notifications yet.</p>
+      </div>`
+  };
+
+  function setNotif(state, btn) {
+    notifList.innerHTML = notifications[state];
+    document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+
+    if (state === 'new-notification' || state === 'idle') {
+      badge.style.display = 'flex';
+      badge.textContent = state === 'new-notification' ? '4' : '3';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    if (!panelOpen) togglePanel();
+  }
+
+  function togglePanel() {
+    panelOpen = !panelOpen;
+    notifPanel.style.display = panelOpen ? 'flex' : 'none';
+  }
+
+  document.getElementById('bellBtn').addEventListener('click', togglePanel);
+
+  // Initialize
+  setNotif('idle', document.querySelector('.state-bar button'));
+  panelOpen = false;
+  notifPanel.style.display = 'none';
+</script>
+</body>
+</html>

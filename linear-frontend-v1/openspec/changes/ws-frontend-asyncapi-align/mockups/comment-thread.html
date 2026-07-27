@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comment Thread — WebSocket UI Mockup</title>
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    .thread-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .thread-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+    .thread-header .back {
+      text-decoration: none;
+      color: var(--color-text-secondary);
+      font-size: 18px;
+    }
+    .thread-header h1 { font: var(--heading-2); flex: 1; }
+    .thread-status {
+      font: var(--caption);
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: #F0FDF4;
+      color: #16A34A;
+    }
+    .thread-status.in-progress {
+      background: #FEF3C7;
+      color: #D97706;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <header class="app-header">
+    <a href="index.html" class="logo">Linear Clone</a>
+    <nav>
+      <a href="issue-board.html">Board</a>
+      <a href="#">Projects</a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <div class="connection-status" role="status" aria-label="Connected">
+      <span class="status-dot connected"></span>
+      <span class="status-label">Connected</span>
+    </div>
+    <div class="user-menu">
+      <div class="avatar">JD</div>
+      <span style="font-size:12px; color: var(--color-text-muted);">▼</span>
+    </div>
+  </header>
+
+  <div class="thread-shell">
+    <!-- Thread Header -->
+    <div class="thread-header">
+      <a href="issue-board.html" class="back">←</a>
+      <h1>Implement real-time notifications</h1>
+      <span class="thread-status in-progress" id="threadStatus">In Progress</span>
+    </div>
+
+    <!-- Comment List -->
+    <div class="comment-list" id="commentList"></div>
+
+    <!-- Comment Input -->
+    <div class="comment-input">
+      <input type="text" id="commentInput" placeholder="Write a comment..." />
+      <button class="btn btn-primary" style="min-height:36px;" id="postBtn" onclick="addComment()">Post</button>
+    </div>
+  </div>
+</div>
+
+<!-- State Toggle Bar -->
+<div class="state-bar">
+  <label>Thread State:</label>
+  <button class="active" onclick="setThread('idle', this)">Idle</button>
+  <button onclick="setThread('new-comment', this)">New Comment</button>
+  <button onclick="setThread('empty', this)">Empty</button>
+</div>
+
+<script>
+  const commentList = document.getElementById('commentList');
+  const commentInput = document.getElementById('commentInput');
+
+  const threads = {
+    idle: `
+      <div class="comment-item">
+        <div class="comment-avatar" style="background:#7C3AED;">AK</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Alex Kim</span>
+            <span class="comment-time">2h ago</span>
+          </div>
+          <div class="comment-text">I've started working on the WebSocket connection handler. The authenticate message is being sent correctly, but I need to handle the reconnection flow.</div>
+        </div>
+      </div>
+      <div class="comment-item">
+        <div class="comment-avatar">JD</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Jane Doe</span>
+            <span class="comment-time">1h ago</span>
+          </div>
+          <div class="comment-text">Great progress! For reconnection, we should implement exponential backoff. The spec says max 5 retries with increasing delays.</div>
+        </div>
+      </div>
+      <div class="comment-item">
+        <div class="comment-avatar" style="background:#DC2626;">MR</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Mike Ross</span>
+            <span class="comment-time">45m ago</span>
+          </div>
+          <div class="comment-text">Don't forget to handle the session.revoked event — that should clear tokens and redirect to login, not attempt reconnection.</div>
+        </div>
+      </div>`,
+
+    'new-comment': `
+      <div class="comment-item">
+        <div class="comment-avatar" style="background:#7C3AED;">AK</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Alex Kim</span>
+            <span class="comment-time">2h ago</span>
+          </div>
+          <div class="comment-text">I've started working on the WebSocket connection handler. The authenticate message is being sent correctly, but I need to handle the reconnection flow.</div>
+        </div>
+      </div>
+      <div class="comment-item">
+        <div class="comment-avatar">JD</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Jane Doe</span>
+            <span class="comment-time">1h ago</span>
+          </div>
+          <div class="comment-text">Great progress! For reconnection, we should implement exponential backoff. The spec says max 5 retries with increasing delays.</div>
+        </div>
+      </div>
+      <div class="comment-item">
+        <div class="comment-avatar" style="background:#DC2626;">MR</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Mike Ross</span>
+            <span class="comment-time">45m ago</span>
+          </div>
+          <div class="comment-text">Don't forget to handle the session.revoked event — that should clear tokens and redirect to login, not attempt reconnection.</div>
+        </div>
+      </div>
+      <div class="comment-item highlight">
+        <div class="comment-avatar" style="background:#7C3AED;">AK</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Alex Kim</span>
+            <span class="comment-time">just now</span>
+          </div>
+          <div class="comment-text">Thanks for the reminders! I've updated the reconnection logic to use exponential backoff and added a check for session.revoked. Ready for review.</div>
+        </div>
+      </div>`,
+
+    empty: `
+      <div class="empty-state" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="icon">💬</div>
+        <p>No comments yet. Be the first to comment.</p>
+      </div>`
+  };
+
+  function setThread(state, btn) {
+    commentList.innerHTML = threads[state];
+    document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function addComment() {
+    const text = commentInput.value.trim();
+    if (!text) return;
+
+    const html = `
+      <div class="comment-item highlight">
+        <div class="comment-avatar">JD</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">Jane Doe</span>
+            <span class="comment-time">just now</span>
+          </div>
+          <div class="comment-text">${text}</div>
+        </div>
+      </div>`;
+    commentList.insertAdjacentHTML('beforeend', html);
+    commentInput.value = '';
+    commentList.scrollTop = commentList.scrollHeight;
+  }
+
+  commentInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') addComment();
+  });
+
+  // Initialize
+  setThread('idle', document.querySelector('.state-bar button'));
+</script>
+</body>
+</html>

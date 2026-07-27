@@ -1,4 +1,4 @@
-# Frontend Stack — Linear App Clone
+# Tech Selection — Linear App Clone (Frontend)
 
 ## Decision Summary
 
@@ -17,11 +17,15 @@
 
 ## Generated Files
 
+The tech-selection skill generated these files in `docs/`:
+
 | File | Source Template | Status |
 |------|----------------|--------|
 | `docs/stack-frontend.md` | `openspec/schemas/frontend-schema/templates/technology/stack-templates.md` | ✅ verified |
 | `docs/architecture-frontend.md` | `openspec/schemas/frontend-schema/templates/technology/architecture-templates.md` | ✅ verified |
 | `docs/deployment.md` | `openspec/schemas/frontend-schema/templates/technology/deployment-templates.md` | ✅ verified |
+
+> **Note**: Status is updated to ✅ only after Phase 7 (File Verification) confirms each file exists on disk.
 
 ## Interactive Review Log
 

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>App Layout — WebSocket UI Mockup</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- Header -->
+  <header class="app-header">
+    <a href="index.html" class="logo">Linear Clone</a>
+    <nav>
+      <a href="issue-board.html" class="active">Board</a>
+      <a href="#">Projects</a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="header-spacer"></div>
+
+    <!-- ConnectionStatusIndicator -->
+    <div class="connection-status" id="connStatus" role="status" aria-label="Connected">
+      <span class="status-dot connected" id="connDot"></span>
+      <span class="status-label" id="connLabel">Connected</span>
+    </div>
+
+    <!-- Notification bell -->
+    <a href="notification-panel.html" style="text-decoration:none; font-size:18px; color: var(--color-text-secondary);">🔔</a>
+
+    <!-- User menu -->
+    <div class="user-menu">
+      <div class="avatar">JD</div>
+      <span style="font-size:12px; color: var(--color-text-muted);">▼</span>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="app-content">
+    <div class="main-content">
+      <h1 style="font: var(--heading-2); margin-bottom: var(--space-4);">Issues</h1>
+
+      <div class="board-columns" id="boardColumns">
+        <!-- Populated state -->
+        <div class="board-column">
+          <div class="column-header">
+            Todo <span class="column-count">2</span>
+          </div>
+          <div class="issue-card">
+            <div class="title">Fix authentication token refresh</div>
+            <div class="meta">
+              <span class="priority high"></span>
+              <span>High</span>
+              <span>·</span>
+              <span>JD</span>
+            </div>
+            <div class="labels">
+              <span class="label">Bug</span>
+              <span class="label">Auth</span>
+            </div>
+          </div>
+          <div class="issue-card">
+            <div class="title">Add WebSocket reconnection logic</div>
+            <div class="meta">
+              <span class="priority medium"></span>
+              <span>Medium</span>
+              <span>·</span>
+              <span>AK</span>
+            </div>
+            <div class="labels">
+              <span class="label">Feature</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="board-column">
+          <div class="column-header">
+            In Progress <span class="column-count">1</span>
+          </div>
+          <div class="issue-card">
+            <div class="title">Implement real-time notifications</div>
+            <div class="meta">
+              <span class="priority high"></span>
+              <span>High</span>
+              <span>·</span>
+              <span>JD</span>
+            </div>
+            <div class="labels">
+              <span class="label">Feature</span>
+              <span class="label">WebSocket</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="board-column">
+          <div class="column-header">
+            Done <span class="column-count">1</span>
+          </div>
+          <div class="issue-card">
+            <div class="title">Set up project structure</div>
+            <div class="meta">
+              <span class="priority low"></span>
+              <span>Low</span>
+              <span>·</span>
+              <span>AK</span>
+            </div>
+            <div class="labels">
+              <span class="label">Chore</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" style="padding: var(--space-4); border-left: 1px solid var(--color-border);">
+      <h2 style="font: var(--heading-3); margin-bottom: var(--space-3);">Activity</h2>
+      <div style="font: var(--caption); color: var(--color-text-muted);">
+        <p style="margin-bottom: var(--space-2);">🟢 WebSocket connected</p>
+        <p style="margin-bottom: var(--space-2);">📥 Channel: user:jd</p>
+        <p style="margin-bottom: var(--space-2);">📥 Channel: team:eng</p>
+        <p>Last event: 2m ago</p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- State Toggle Bar -->
+<div class="state-bar">
+  <label>WebSocket State:</label>
+  <button class="active" onclick="setState('connected')">Connected</button>
+  <button onclick="setState('loading')">Loading</button>
+  <button onclick="setState('error-modal')">Error Modal</button>
+  <button onclick="setState('error-toast')">Error Toast</button>
+  <button onclick="setState('revert-toast')">Revert Toast</button>
+  <button onclick="setState('reconnection')">Reconnecting</button>
+</div>
+
+<script>
+  const connDot = document.getElementById('connDot');
+  const connLabel = document.getElementById('connLabel');
+  const connStatus = document.getElementById('connStatus');
+  const toastContainer = document.getElementById('toastContainer');
+  const boardColumns = document.getElementById('boardColumns');
+  const stateButtons = document.querySelectorAll('.state-bar button');
+
+  function setActiveButton(btn) {
+    stateButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function setState(state) {
+    const btn = event.target;
+    setActiveButton(btn);
+    toastContainer.innerHTML = '';
+
+    switch (state) {
+      case 'connected':
+        connDot.className = 'status-dot connected';
+        connLabel.textContent = 'Connected';
+        connStatus.setAttribute('aria-label', 'Connected');
+        boardColumns.innerHTML = populatedBoard;
+        break;
+
+      case 'loading':
+        connDot.className = 'status-dot connecting';
+        connLabel.textContent = 'Connecting';
+        connStatus.setAttribute('aria-label', 'Connecting');
+        boardColumns.innerHTML = skeletonBoard;
+        break;
+
+      case 'error-modal':
+        connDot.className = 'status-dot disconnected';
+        connLabel.textContent = 'Disconnected';
+        connStatus.setAttribute('aria-label', 'Disconnected');
+        boardColumns.innerHTML = populatedBoard;
+        document.body.insertAdjacentHTML('beforeend', errorModalHTML);
+        document.querySelector('.modal-overlay').addEventListener('click', (e) => {
+          if (e.target === e.currentTarget) e.target.remove();
+        });
+        document.querySelector('.modal-overlay button').addEventListener('click', (e) => {
+          e.target.closest('.modal-overlay').remove();
+        });
+        break;
+
+      case 'error-toast':
+        connDot.className = 'status-dot connected';
+        connLabel.textContent = 'Connected';
+        connStatus.setAttribute('aria-label', 'Connected');
+        boardColumns.innerHTML = populatedBoard;
+        toastContainer.innerHTML = `
+          <div class="toast error">
+            <span class="toast-icon">⚠️</span>
+            <div class="toast-body">
+              <div class="toast-title">Rate limited</div>
+              <div class="toast-message">Retry after 30 seconds</div>
+              <div class="toast-progress"><div class="toast-progress-bar" style="width: 60%;"></div></div>
+            </div>
+            <button class="toast-dismiss" aria-label="Dismiss">✕</button>
+          </div>
+        `;
+        break;
+
+      case 'revert-toast':
+        connDot.className = 'status-dot connected';
+        connLabel.textContent = 'Connected';
+        connStatus.setAttribute('aria-label', 'Connected');
+        boardColumns.innerHTML = populatedBoard;
+        toastContainer.innerHTML = `
+          <div class="toast info">
+            <span class="toast-icon">↩️</span>
+            <div class="toast-body">
+              <div class="toast-title">Change reverted</div>
+              <div class="toast-message">Issue status was reverted to previous state</div>
+            </div>
+            <button class="toast-dismiss" aria-label="Dismiss">✕</button>
+          </div>
+        `;
+        break;
+
+      case 'reconnection':
+        connDot.className = 'status-dot reconnecting';
+        connLabel.textContent = 'Reconnecting';
+        connStatus.setAttribute('aria-label', 'Reconnecting');
+        boardColumns.innerHTML = populatedBoard;
+        toastContainer.innerHTML = `
+          <div class="toast reconnection">
+            <span class="toast-icon">🔄</span>
+            <div class="toast-body">
+              <div class="toast-title">Reconnecting...</div>
+              <div class="toast-message">Connection lost. Attempting to reconnect.</div>
+            </div>
+          </div>
+        `;
+        break;
+    }
+  }
+
+  const populatedBoard = `
+    <div class="board-column">
+      <div class="column-header">Todo <span class="column-count">2</span></div>
+      <div class="issue-card">
+        <div class="title">Fix authentication token refresh</div>
+        <div class="meta"><span class="priority high"></span><span>High</span><span>·</span><span>JD</span></div>
+        <div class="labels"><span class="label">Bug</span><span class="label">Auth</span></div>
+      </div>
+      <div class="issue-card">
+        <div class="title">Add WebSocket reconnection logic</div>
+        <div class="meta"><span class="priority medium"></span><span>Medium</span><span>·</span><span>AK</span></div>
+        <div class="labels"><span class="label">Feature</span></div>
+      </div>
+    </div>
+    <div class="board-column">
+      <div class="column-header">In Progress <span class="column-count">1</span></div>
+      <div class="issue-card">
+        <div class="title">Implement real-time notifications</div>
+        <div class="meta"><span class="priority high"></span><span>High</span><span>·</span><span>JD</span></div>
+        <div class="labels"><span class="label">Feature</span><span class="label">WebSocket</span></div>
+      </div>
+    </div>
+    <div class="board-column">
+      <div class="column-header">Done <span class="column-count">1</span></div>
+      <div class="issue-card">
+        <div class="title">Set up project structure</div>
+        <div class="meta"><span class="priority low"></span><span>Low</span><span>·</span><span>AK</span></div>
+        <div class="labels"><span class="label">Chore</span></div>
+      </div>
+    </div>`;
+
+  const skeletonBoard = `
+    <div class="board-column">
+      <div class="column-header">Todo <span class="column-count">—</span></div>
+      <div style="height:60px;background:var(--color-neutral-bg);border-radius:var(--radius-md);margin-bottom:8px;animation:pulse 1s infinite;"></div>
+      <div style="height:60px;background:var(--color-neutral-bg);border-radius:var(--radius-md);animation:pulse 1s infinite;"></div>
+    </div>
+    <div class="board-column">
+      <div class="column-header">In Progress <span class="column-count">—</span></div>
+      <div style="height:60px;background:var(--color-neutral-bg);border-radius:var(--radius-md);animation:pulse 1s infinite;"></div>
+    </div>
+    <div class="board-column">
+      <div class="column-header">Done <span class="column-count">—</span></div>
+    </div>`;
+
+  const errorModalHTML = `
+    <div class="modal-overlay">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+          <span class="icon">⚠️</span>
+          <span class="title" id="modal-title">Authentication failed</span>
+        </div>
+        <div class="modal-body">
+          Your session has expired or the token is invalid. Please log in again.
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" style="width:100%;">Return to Login</button>
+        </div>
+      </div>
+    </div>`;
+</script>
+</body>
+</html>

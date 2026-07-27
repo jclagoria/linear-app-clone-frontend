@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connection Error Modal — WebSocket UI Mockup</title>
+  <link rel="stylesheet" href="shared.css" />
+</head>
+<body>
+
+<div class="app-shell">
+  <header class="app-header">
+    <a href="index.html" class="logo">Linear Clone</a>
+    <nav>
+      <a href="issue-board.html">Board</a>
+      <a href="#">Projects</a>
+      <a href="#">Settings</a>
+    </nav>
+    <div class="header-spacer"></div>
+    <div class="connection-status" role="status" aria-label="Disconnected">
+      <span class="status-dot disconnected"></span>
+      <span class="status-label">Disconnected</span>
+    </div>
+    <div class="user-menu">
+      <div class="avatar">JD</div>
+      <span style="font-size:12px; color: var(--color-text-muted);">▼</span>
+    </div>
+  </header>
+
+  <div class="app-content">
+    <div class="main-content">
+      <h1 style="font: var(--heading-2); margin-bottom: var(--space-4);">Issues</h1>
+      <p style="color: var(--color-text-muted);">Modal overlay active — content dimmed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Overlay -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-header">
+      <span class="icon" id="modalIcon">⚠️</span>
+      <span class="title" id="modal-title">Authentication failed</span>
+    </div>
+    <div class="modal-body" id="modalBody">
+      Your session has expired or the token is invalid. Please log in again.
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" style="width:100%;" onclick="window.location.href='index.html'">Return to Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- State Toggle Bar -->
+<div class="state-bar">
+  <label>Error Type:</label>
+  <button class="active" onclick="setError('auth_failed', this)">auth_failed</button>
+  <button onclick="setError('forbidden', this)">forbidden</button>
+  <button onclick="setError('session.revoked', this)">session.revoked</button>
+</div>
+
+<script>
+  const modalIcon = document.getElementById('modalIcon');
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody = document.getElementById('modalBody');
+  const modalBtn = document.querySelector('.modal-footer button');
+
+  const errors = {
+    auth_failed: {
+      icon: '⚠️',
+      title: 'Authentication failed',
+      body: 'Your session has expired or the token is invalid. Please log in again.',
+      btnClass: 'btn-primary'
+    },
+    forbidden: {
+      icon: '🚫',
+      title: 'Access denied',
+      body: "You don't have permission to access this resource.",
+      btnClass: 'btn-primary'
+    },
+    'session.revoked': {
+      icon: '⏰',
+      title: 'Session expired',
+      body: 'Your session has been revoked. Please log in again.',
+      btnClass: 'btn-primary'
+    }
+  };
+
+  function setError(type, btn) {
+    const err = errors[type];
+    modalIcon.textContent = err.icon;
+    modalTitle.textContent = err.title;
+    modalBody.textContent = err.body;
+    modalBtn.className = 'btn ' + err.btnClass;
+
+    document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
