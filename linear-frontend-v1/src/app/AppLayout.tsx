@@ -9,6 +9,8 @@ import { ConnectionErrorModal } from '@/features/realtime/ui/ConnectionErrorModa
 import { ReconnectionToast } from '@/features/realtime/ui/ReconnectionToast'
 import { RevertToast } from '@/features/realtime/ui/RevertToast'
 import { useWebSocket } from '@/app/providers/WebSocketProvider'
+import { KeyboardProvider } from '@/app/providers/KeyboardProvider'
+import { ToastContainer as KeyboardToastContainer } from '@/features/keyboard/ui/ToastContainer'
 
 export function AppLayout() {
   const sidebarCollapsed = useUIStore((s) => s.sidebarCollapsed)
@@ -39,48 +41,52 @@ export function AppLayout() {
   const showErrorModal = connectionStatus === 'disconnected' && reconnectAttempts >= 10
 
   return (
-    <div className="flex min-h-screen bg-[var(--bg-primary)]">
-      {/* Desktop sidebar */}
-      <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+    <KeyboardProvider>
+      <KeyboardToastContainer>
+        <div className="flex min-h-screen bg-[var(--bg-primary)]">
+          {/* Desktop sidebar */}
+          <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
 
-      {/* Mobile sidebar overlay */}
-      <MobileSidebarOverlay
-        isOpen={isMobileSidebarOpen}
-        onClose={handleMobileSidebarClose}
-      />
+          {/* Mobile sidebar overlay */}
+          <MobileSidebarOverlay
+            isOpen={isMobileSidebarOpen}
+            onClose={handleMobileSidebarClose}
+          />
 
-      <div className="flex flex-1 flex-col min-w-0">
-        <Header
-          connectionStatus={connectionStatus}
-          onReconnect={reconnect}
-          showHamburger={true}
-          isMobileSidebarOpen={isMobileSidebarOpen}
-          onHamburgerClick={handleHamburgerClick}
-          hamburgerRef={setHamburgerRef}
-        />
+          <div className="flex flex-1 flex-col min-w-0">
+            <Header
+              connectionStatus={connectionStatus}
+              onReconnect={reconnect}
+              showHamburger={true}
+              isMobileSidebarOpen={isMobileSidebarOpen}
+              onHamburgerClick={handleHamburgerClick}
+              hamburgerRef={setHamburgerRef}
+            />
 
-        <main className="flex-1 overflow-y-auto p-6" role="main">
-          <Outlet />
-        </main>
-      </div>
+            <main className="flex-1 overflow-y-auto p-6" role="main">
+              <Outlet />
+            </main>
+          </div>
 
-      {/* Realtime overlays */}
-      {showReconnectionToast && (
-        <ReconnectionToast
-          onRetry={reconnect}
-          message="Connection lost. Reconnecting..."
-        />
-      )}
+          {/* Realtime overlays */}
+          {showReconnectionToast && (
+            <ReconnectionToast
+              onRetry={reconnect}
+              message="Connection lost. Reconnecting..."
+            />
+          )}
 
-      <ConnectionErrorModal
-        isVisible={showErrorModal}
-        onReconnect={reconnect}
-        onLogout={() => {
-          window.location.href = '/login'
-        }}
-      />
+          <ConnectionErrorModal
+            isVisible={showErrorModal}
+            onReconnect={reconnect}
+            onLogout={() => {
+              window.location.href = '/login'
+            }}
+          />
 
-      <RevertToast />
-    </div>
+          <RevertToast />
+        </div>
+      </KeyboardToastContainer>
+    </KeyboardProvider>
   )
 }

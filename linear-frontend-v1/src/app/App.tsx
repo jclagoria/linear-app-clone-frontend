@@ -4,8 +4,6 @@ import { ToastContainer } from '@/shared/ui/ToastContainer'
 import { useTheme } from '@/shared/lib/useTheme'
 import { WebSocketProvider } from '@/app/providers/WebSocketProvider'
 import { OptimisticProvider } from '@/app/providers/OptimisticProvider'
-import { KeyboardProvider } from '@/app/providers/KeyboardProvider'
-import { ToastContainer as KeyboardToastContainer } from '@/features/keyboard/ui/ToastContainer'
 
 export default function App() {
   useTheme()
@@ -13,12 +11,8 @@ export default function App() {
   return (
     <WebSocketProvider>
       <OptimisticProvider>
-        <KeyboardProvider>
-          <KeyboardToastContainer>
-            <RouterProvider router={router} />
-          </KeyboardToastContainer>
-          <ToastContainer />
-        </KeyboardProvider>
+        <RouterProvider router={router} />
+        <ToastContainer />
       </OptimisticProvider>
     </WebSocketProvider>
   )
