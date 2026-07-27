@@ -71,7 +71,7 @@ export function createWSClient(config: WSClientConfig) {
             clearTimeout(ackTimeout)
             store.setConnected()
             heartbeat.start()
-            ws?.send(JSON.stringify({ type: 'auth', token: config.token }))
+            ws?.send(JSON.stringify({ type: 'authenticate', token: config.token }))
             if (config.teamId) {
               ws?.send(JSON.stringify({ type: 'subscribe', teamId: config.teamId }))
             }
