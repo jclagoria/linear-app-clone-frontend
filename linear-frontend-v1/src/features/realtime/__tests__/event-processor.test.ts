@@ -14,33 +14,38 @@ describe('processEvent', () => {
   })
 
   it('returns null if eventId is missing', () => {
-    expect(processEvent({ type: 'issue.created', payload: {}, timestamp: '', teamId: 't1' })).toBeNull()
+    expect(processEvent({ type: 'event', channel: 'team:t1', event: 'issue.created', data: {}, timestamp: '', userId: 'u1' })).toBeNull()
   })
 
-  it('returns null if type is invalid', () => {
-    expect(processEvent({ eventId: 'e1', type: 'invalid.type', payload: {}, timestamp: '', teamId: 't1' })).toBeNull()
+  it('returns null if event type is invalid', () => {
+    expect(processEvent({ eventId: 'e1', type: 'event', channel: 'team:t1', event: 'invalid.type', data: {}, timestamp: '', userId: 'u1' })).toBeNull()
   })
 
   it('returns a valid WSEvent for valid input', () => {
     const result = processEvent({
       eventId: 'e1',
-      type: 'issue.created',
-      payload: { issueId: 'i1', title: 'Test' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1', title: 'Test' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     expect(result).not.toBeNull()
     expect(result?.eventId).toBe('e1')
-    expect(result?.type).toBe('issue.created')
+    expect(result?.type).toBe('event')
+    expect(result?.event).toBe('issue.created')
   })
 
   it('deduplicates events by eventId', () => {
     const input = {
       eventId: 'e-dedup',
-      type: 'issue.created',
-      payload: { issueId: 'i1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
     const first = processEvent(input)
     const second = processEvent(input)
@@ -51,10 +56,12 @@ describe('processEvent', () => {
   it('allows the same eventId after clearing dedup store', () => {
     const input = {
       eventId: 'e-clear',
-      type: 'issue.created',
-      payload: { issueId: 'i1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
     processEvent(input)
     clearDedupStore()
@@ -71,10 +78,12 @@ describe('routeEvent', () => {
 
     routeEvent({
       eventId: 'e1',
-      type: 'issue.created',
-      payload: { issueId: 'i1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(handler).toHaveBeenCalledOnce()
@@ -90,17 +99,21 @@ describe('entity-level deduplication (100ms window)', () => {
   it('drops duplicate events for the same entity within 100ms', () => {
     const first = processEvent({
       eventId: 'e-dedup-1',
-      type: 'issue.updated',
-      payload: { issueId: 'i1', title: 'First' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i1', title: 'First' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     const second = processEvent({
       eventId: 'e-dedup-2',
-      type: 'issue.updated',
-      payload: { issueId: 'i1', title: 'Second' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i1', title: 'Second' },
       timestamp: '2026-01-01T00:00:01Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(first).not.toBeNull()
@@ -110,10 +123,12 @@ describe('entity-level deduplication (100ms window)', () => {
   it('accepts same entity after 100ms window', async () => {
     const first = processEvent({
       eventId: 'e-window-1',
-      type: 'issue.updated',
-      payload: { issueId: 'i2', title: 'First' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i2', title: 'First' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     expect(first).not.toBeNull()
 
@@ -121,10 +136,12 @@ describe('entity-level deduplication (100ms window)', () => {
 
     const second = processEvent({
       eventId: 'e-window-2',
-      type: 'issue.updated',
-      payload: { issueId: 'i2', title: 'Second' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i2', title: 'Second' },
       timestamp: '2026-01-01T00:00:01Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     expect(second).not.toBeNull()
   })
@@ -132,17 +149,21 @@ describe('entity-level deduplication (100ms window)', () => {
   it('independent dedup for different entities', () => {
     const issueA = processEvent({
       eventId: 'e-entity-a',
-      type: 'issue.updated',
-      payload: { issueId: 'iA', title: 'A' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'iA', title: 'A' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     const issueB = processEvent({
       eventId: 'e-entity-b',
-      type: 'issue.updated',
-      payload: { issueId: 'iB', title: 'B' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'iB', title: 'B' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(issueA).not.toBeNull()
@@ -152,17 +173,21 @@ describe('entity-level deduplication (100ms window)', () => {
   it('different event types on same entity are deduplicated', () => {
     const first = processEvent({
       eventId: 'e-type-1',
-      type: 'issue.updated',
-      payload: { issueId: 'i3', title: 'Update' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i3', title: 'Update' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     const second = processEvent({
       eventId: 'e-type-2',
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i3', statusId: 'done' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i3', statusId: 'done' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(first).not.toBeNull()
@@ -172,17 +197,21 @@ describe('entity-level deduplication (100ms window)', () => {
   it('events without entity ID bypass entity dedup', () => {
     const first = processEvent({
       eventId: 'e-no-entity-1',
-      type: 'issue.created',
-      payload: {},
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: {},
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     const second = processEvent({
       eventId: 'e-no-entity-2',
-      type: 'issue.created',
-      payload: {},
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: {},
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(first).not.toBeNull()
@@ -192,20 +221,24 @@ describe('entity-level deduplication (100ms window)', () => {
   it('clearEntityDedupStore resets dedup state', () => {
     processEvent({
       eventId: 'e-clear-1',
-      type: 'issue.updated',
-      payload: { issueId: 'i4' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i4' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     clearEntityDedupStore()
 
     const second = processEvent({
       eventId: 'e-clear-2',
-      type: 'issue.updated',
-      payload: { issueId: 'i4' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i4' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(second).not.toBeNull()
@@ -223,17 +256,21 @@ describe('entity-level deduplication (100ms window)', () => {
 
     const first = processEvent({
       eventId: `e-dedup-${type}-1`,
-      type,
-      payload: { [idField]: 'same-id' },
+      type: 'event',
+      channel: 'team:t1',
+      event: type,
+      data: { [idField]: 'same-id' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     const second = processEvent({
       eventId: `e-dedup-${type}-2`,
-      type,
-      payload: { [idField]: 'same-id' },
+      type: 'event',
+      channel: 'team:t1',
+      event: type,
+      data: { [idField]: 'same-id' },
       timestamp: '2026-01-01T00:00:01Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(first).not.toBeNull()

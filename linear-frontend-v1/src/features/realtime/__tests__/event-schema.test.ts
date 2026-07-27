@@ -19,10 +19,12 @@ describe('validateWSEvent', () => {
   it('returns true for valid events', () => {
     expect(validateWSEvent({
       eventId: 'e1',
-      type: 'issue.created',
-      payload: { issueId: 'i1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })).toBe(true)
   })
 
@@ -34,20 +36,36 @@ describe('validateWSEvent', () => {
   it('returns false if eventId is empty', () => {
     expect(validateWSEvent({
       eventId: '',
-      type: 'issue.created',
-      payload: {},
-      timestamp: '',
-      teamId: '',
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: {},
+      timestamp: '2026-01-01T00:00:00Z',
+      userId: 'u1',
     })).toBe(false)
   })
 
-  it('returns false if type is invalid', () => {
+  it('returns false if type is not "event"', () => {
     expect(validateWSEvent({
       eventId: 'e1',
-      type: 'invalid.type',
-      payload: {},
-      timestamp: '',
-      teamId: '',
+      type: 'invalid',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: {},
+      timestamp: '2026-01-01T00:00:00Z',
+      userId: 'u1',
+    })).toBe(false)
+  })
+
+  it('returns false if event type is invalid', () => {
+    expect(validateWSEvent({
+      eventId: 'e1',
+      type: 'event',
+      channel: 'team:t1',
+      event: 'invalid.type',
+      data: {},
+      timestamp: '2026-01-01T00:00:00Z',
+      userId: 'u1',
     })).toBe(false)
   })
 })

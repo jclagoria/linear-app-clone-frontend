@@ -21,6 +21,9 @@ const ALL_EVENT_TYPES = [
   'cycle.activated',
   'cycle.completed',
   'notification.created',
+  'label.created',
+  'user.online',
+  'session.revoked',
 ] as const
 
 const VALID_PAYLOADS: Record<string, object> = {
@@ -44,11 +47,14 @@ const VALID_PAYLOADS: Record<string, object> = {
     title: 'Assigned',
     message: 'You were assigned',
   },
+  'label.created': { labelId: 'l1', name: 'Bug', color: '#ff0000' },
+  'user.online': { userId: 'u1', name: 'Alice', email: 'alice@example.com' },
+  'session.revoked': { sessionId: 's1', reason: 'Security violation' },
 }
 
-describe('event schema — all 15 event types', () => {
-  it('registers exactly 15 event types', () => {
-    expect(REGISTERED_EVENT_TYPES).toHaveLength(15)
+describe('event schema — all 18 event types', () => {
+  it('registers exactly 18 event types', () => {
+    expect(REGISTERED_EVENT_TYPES).toHaveLength(18)
   })
 
   it.each(ALL_EVENT_TYPES)('recognizes "%s" as valid', (type) => {
@@ -68,10 +74,12 @@ describe('validateWSEvent — payload validation per event type', () => {
   it.each(ALL_EVENT_TYPES)('accepts valid "%s" event', (type) => {
     const valid = validateWSEvent({
       eventId: `evt-${type}`,
-      type,
-      payload: VALID_PAYLOADS[type],
+      type: 'event',
+      channel: 'team:t1',
+      event: type,
+      data: VALID_PAYLOADS[type],
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
     expect(valid).toBe(true)
   })
@@ -79,20 +87,24 @@ describe('validateWSEvent — payload validation per event type', () => {
   it('rejects event with missing eventId', () => {
     expect(validateWSEvent({
       eventId: '',
-      type: 'issue.created',
-      payload: { issueId: 'i1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })).toBe(false)
   })
 
   it('rejects event with invalid type', () => {
     expect(validateWSEvent({
       eventId: 'e1',
-      type: 'invalid.type',
-      payload: {},
+      type: 'invalid',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: {},
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })).toBe(false)
   })
 
@@ -107,33 +119,39 @@ describe('validateWSEvent — payload validation per event type', () => {
     expect(validateWSEvent(true)).toBe(false)
   })
 
-  it('rejects event with null payload', () => {
+  it('rejects event with null data', () => {
     expect(validateWSEvent({
       eventId: 'e1',
-      type: 'issue.created',
-      payload: null,
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: null,
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })).toBe(false)
   })
 
   it('rejects event with missing timestamp', () => {
     expect(validateWSEvent({
       eventId: 'e1',
-      type: 'issue.created',
-      payload: { issueId: 'i1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1' },
       timestamp: '',
-      teamId: 't1',
+      userId: 'u1',
     })).toBe(false)
   })
 
-  it('rejects event with missing teamId', () => {
+  it('rejects event with missing userId', () => {
     expect(validateWSEvent({
       eventId: 'e1',
-      type: 'issue.created',
-      payload: { issueId: 'i1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: '',
+      userId: '',
     })).toBe(false)
   })
 })

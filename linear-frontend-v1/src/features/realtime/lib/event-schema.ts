@@ -108,10 +108,12 @@ export type WSEventPayload =
 
 export interface WSEvent {
   eventId: string
-  type: WSEventType
-  payload: WSEventPayload
+  type: 'event'
+  channel: string
+  event: WSEventType
+  data: WSEventPayload
   timestamp: string
-  teamId: string
+  userId: string
 }
 
 export type OptimisticAction = 'update' | 'add' | 'remove'
@@ -167,9 +169,11 @@ export function validateWSEvent(data: unknown): data is WSEvent {
   if (typeof data !== 'object' || data === null) return false
   const obj = data as Record<string, unknown>
   if (typeof obj.eventId !== 'string' || obj.eventId.length === 0) return false
-  if (typeof obj.type !== 'string' || !isValidEventType(obj.type)) return false
+  if (obj.type !== 'event') return false
+  if (typeof obj.channel !== 'string' || obj.channel.length === 0) return false
+  if (typeof obj.event !== 'string' || !isValidEventType(obj.event)) return false
   if (typeof obj.timestamp !== 'string' || obj.timestamp.length === 0) return false
-  if (typeof obj.teamId !== 'string' || obj.teamId.length === 0) return false
-  if (typeof obj.payload !== 'object' || obj.payload === null) return false
+  if (typeof obj.userId !== 'string' || obj.userId.length === 0) return false
+  if (typeof obj.data !== 'object' || obj.data === null) return false
   return true
 }

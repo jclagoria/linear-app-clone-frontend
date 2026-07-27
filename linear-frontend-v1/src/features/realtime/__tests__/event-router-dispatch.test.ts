@@ -18,15 +18,20 @@ const ALL_EVENT_TYPES: WSEventType[] = [
   'cycle.activated',
   'cycle.completed',
   'notification.created',
+  'label.created',
+  'user.online',
+  'session.revoked',
 ]
 
 function makeEvent(type: WSEventType, overrides: Partial<WSEvent> = {}): WSEvent {
   return {
     eventId: `evt-${type}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-    type,
-    payload: {} as WSEvent['payload'],
+    type: 'event',
+    channel: 'team:t1',
+    event: type,
+    data: {} as WSEvent['data'],
     timestamp: '2026-01-01T00:00:00Z',
-    teamId: 't1',
+    userId: 'u1',
     ...overrides,
   }
 }

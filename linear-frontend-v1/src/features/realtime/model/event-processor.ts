@@ -23,8 +23,8 @@ const ENTITY_DEDUP_MS = 100
 const lastEntityEvent = new Map<string, number>()
 
 function getEntityKey(event: WSEvent): string | null {
-  const payload = event.payload as Record<string, unknown>
-  switch (event.type) {
+  const payload = event.data as Record<string, unknown>
+  switch (event.event) {
     case 'issue.created':
     case 'issue.updated':
     case 'issue.statusChanged':
@@ -99,14 +99,16 @@ export function processEvent(data: unknown): WSEvent | null {
 
   const event: WSEvent = {
     eventId: String(obj.eventId || ''),
-    type: String(obj.type) as WSEventType,
-    payload: (obj.payload || {}) as WSEventPayload,
+    type: 'event',
+    channel: String(obj.channel || ''),
+    event: String(obj.event || '') as WSEventType,
+    data: (obj.data || {}) as WSEventPayload,
     timestamp: String(obj.timestamp || new Date().toISOString()),
-    teamId: String(obj.teamId || ''),
+    userId: String(obj.userId || ''),
   }
 
   if (!event.eventId) return null
-  if (!isValidEventType(event.type)) return null
+  if (!isValidEventType(event.event)) return null
 
   if (seenEvents.has(event.eventId)) return null
   seenEvents.set(event.eventId, Date.now())
@@ -119,7 +121,7 @@ export function processEvent(data: unknown): WSEvent | null {
 }
 
 export function routeEvent(event: WSEvent): void {
-  const handler = eventHandlers.get(event.type)
+  const handler = eventHandlers.get(event.event)
   if (handler) {
     handler(event)
   }

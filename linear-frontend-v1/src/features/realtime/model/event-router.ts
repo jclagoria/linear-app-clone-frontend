@@ -13,19 +13,19 @@ function isAutoUpdateEnabled(): boolean {
 function handleIssueEvent(event: WSEvent): void {
   if (!isAutoUpdateEnabled()) return
   const store = useIssuesStore.getState()
-  const { type, payload } = event
-  const issueId = (payload as Record<string, unknown>).issueId as string
+  const { event: eventType, data } = event
+  const issueId = (data as Record<string, unknown>).issueId as string
 
-  switch (type) {
+  switch (eventType) {
     case 'issue.created':
-      store.addIssue(payload as Parameters<typeof store.addIssue>[0])
+      store.addIssue(data as Parameters<typeof store.addIssue>[0])
       break
     case 'issue.updated':
     case 'issue.statusChanged':
     case 'issue.assigned':
     case 'issue.unassigned':
       if (issueId) {
-        store.updateIssue(issueId, payload as Parameters<typeof store.updateIssue>[1])
+        store.updateIssue(issueId, data as Parameters<typeof store.updateIssue>[1])
       }
       break
     case 'issue.deleted':
@@ -39,13 +39,13 @@ function handleIssueEvent(event: WSEvent): void {
 function handleCommentEvent(event: WSEvent): void {
   if (!isAutoUpdateEnabled()) return
   const store = useIssuesStore.getState()
-  const payload = event.payload as Record<string, unknown>
+  const payload = event.data as Record<string, unknown>
   const issueId = payload.issueId as string
   const commentId = payload.commentId as string
 
   if (!issueId) return
 
-  if (event.type === 'comment.created') {
+  if (event.event === 'comment.created') {
     const existing = store.commentsByIssue[issueId] || []
     store.setCommentsForIssue(issueId, [
       ...existing,
@@ -59,7 +59,7 @@ function handleCommentEvent(event: WSEvent): void {
         updatedAt: event.timestamp,
       },
     ])
-  } else if (event.type === 'comment.updated') {
+  } else if (event.event === 'comment.updated') {
     const body = payload.body as string
     if (body && commentId) {
       store.updateCommentInStore(issueId, commentId, body)
@@ -79,7 +79,7 @@ function handleCycleEvent(event: WSEvent): void {
 
 function handleNotificationEvent(event: WSEvent): void {
   if (!isAutoUpdateEnabled()) return
-  const payload = event.payload as Record<string, unknown>
+  const payload = event.data as Record<string, unknown>
   useNotificationsStore.getState().addNotification({
     id: (payload.notificationId as string) || event.eventId,
     type: (payload.type as string) || 'info',
