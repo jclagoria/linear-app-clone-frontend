@@ -28,8 +28,10 @@ describe('integration: SSE event triggers store mutation', () => {
   it('issue.created adds issue to store', () => {
     const data = {
       eventId: `e-${Date.now()}-1`,
-      type: 'issue.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: {
         id: 'i1',
         title: 'New Issue',
         description: '',
@@ -51,7 +53,7 @@ describe('integration: SSE event triggers store mutation', () => {
         updatedAt: '2026-01-01T00:00:00Z',
       },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
 
     const event = processEvent(data)
@@ -68,8 +70,10 @@ describe('integration: SSE event triggers store mutation', () => {
   it('project.created adds project to store', () => {
     const data = {
       eventId: `e-${Date.now()}-2`,
-      type: 'project.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'project.created',
+      data: {
         projectId: 'p1',
         id: 'p1',
         name: 'New Project',
@@ -81,7 +85,7 @@ describe('integration: SSE event triggers store mutation', () => {
         updatedAt: '2026-01-01T00:00:00Z',
       },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
 
     const event = processEvent(data)
@@ -97,15 +101,17 @@ describe('integration: SSE event triggers store mutation', () => {
   it('notification.created adds notification to store', () => {
     const data = {
       eventId: `e-${Date.now()}-3`,
-      type: 'notification.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: {
         notificationId: 'n1',
         type: 'issue_assigned',
         title: 'Assigned',
         message: 'You were assigned',
       },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
 
     const event = processEvent(data)
@@ -124,10 +130,12 @@ describe('integration: SSE event triggers store mutation', () => {
 
     const data = {
       eventId: `e-${Date.now()}-4`,
-      type: 'issue.created',
-      payload: { issueId: 'i2', title: 'Ignored Issue' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i2', title: 'Ignored Issue' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
 
     const event = processEvent(data)
@@ -142,8 +150,10 @@ describe('integration: SSE event triggers store mutation', () => {
   it('deduplication prevents duplicate store mutations', () => {
     const data1 = {
       eventId: `e-${Date.now()}-5`,
-      type: 'issue.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: {
         id: 'i3',
         title: 'First',
         description: '',
@@ -165,7 +175,7 @@ describe('integration: SSE event triggers store mutation', () => {
         updatedAt: '2026-01-01T00:00:00Z',
       },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
 
     const event1 = processEvent(data1)
@@ -175,10 +185,12 @@ describe('integration: SSE event triggers store mutation', () => {
 
     const data2 = {
       eventId: `e-${Date.now()}-6`,
-      type: 'issue.updated',
-      payload: { issueId: 'i3', title: 'Updated' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i3', title: 'Updated' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
 
     const event2 = processEvent(data2)

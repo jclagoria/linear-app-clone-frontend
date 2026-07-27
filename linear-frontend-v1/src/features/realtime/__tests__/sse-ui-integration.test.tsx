@@ -40,15 +40,17 @@ describe('integration: SSE event triggers UI re-render', () => {
 
     fireSSE({
       eventId: `e-${Date.now()}-1`,
-      type: 'notification.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: {
         notificationId: 'n1',
         type: 'issue_assigned',
         title: 'Assigned',
         message: 'You were assigned',
       },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(screen.getByText('1')).toBeInTheDocument()
@@ -60,18 +62,22 @@ describe('integration: SSE event triggers UI re-render', () => {
 
     fireSSE({
       eventId: `e-${Date.now()}-10`,
-      type: 'notification.created',
-      payload: { notificationId: 'n1', type: 'info', title: 'One', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n1', type: 'info', title: 'One', message: '' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     fireSSE({
       eventId: `e-${Date.now()}-11`,
-      type: 'notification.created',
-      payload: { notificationId: 'n2', type: 'info', title: 'Two', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n2', type: 'info', title: 'Two', message: '' },
       timestamp: '2026-01-01T00:00:01Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(screen.getByText('2')).toBeInTheDocument()
@@ -80,10 +86,12 @@ describe('integration: SSE event triggers UI re-render', () => {
   it('issue.created renders in IssueCard via store', () => {
     fireSSE({
       eventId: `e-${Date.now()}-20`,
-      type: 'issue.created',
-      payload: { issueId: 'i1', title: 'New Issue', statusId: 'todo' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1', title: 'New Issue', statusId: 'todo' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     const issues = useIssuesStore.getState().issues
@@ -121,10 +129,12 @@ describe('integration: SSE event triggers UI re-render', () => {
 
     fireSSE({
       eventId: `e-${Date.now()}-31`,
-      type: 'issue.updated',
-      payload: { issueId: 'i2', title: 'Updated Title', statusId: 'in-progress' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.updated',
+      data: { issueId: 'i2', title: 'Updated Title', statusId: 'in-progress' },
       timestamp: '2026-01-01T00:00:01Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(useIssuesStore.getState().issues[0].title).toBe('Updated Title')
@@ -140,10 +150,12 @@ describe('integration: SSE event triggers UI re-render', () => {
 
     fireSSE({
       eventId: `e-${Date.now()}-40`,
-      type: 'notification.created',
-      payload: { notificationId: 'n1', type: 'info', title: 'Ignored', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n1', type: 'info', title: 'Ignored', message: '' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     })
 
     expect(screen.queryByLabelText(/unread/)).not.toBeInTheDocument()
@@ -155,10 +167,12 @@ describe('integration: SSE event triggers UI re-render', () => {
 
     const data = {
       eventId: `e-${Date.now()}-50`,
-      type: 'notification.created',
-      payload: { notificationId: 'n1', type: 'info', title: 'Unique', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n1', type: 'info', title: 'Unique', message: '' },
       timestamp: '2026-01-01T00:00:00Z',
-      teamId: 't1',
+      userId: 'u1',
     }
 
     fireSSE(data)

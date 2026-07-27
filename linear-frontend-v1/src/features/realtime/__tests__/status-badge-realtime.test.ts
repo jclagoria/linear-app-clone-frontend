@@ -132,10 +132,13 @@ describe('E2E: change issue status → badge updates in real-time', () => {
     expect(useIssuesStore.getState().issues[0].statusId).toBe('todo')
 
     ws.send(JSON.stringify({
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i-status', statusId: 'in-progress' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i-status', statusId: 'in-progress' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-status-1',
+      userId: 'u1',
     }))
 
     await vi.advanceTimersByTimeAsync(0)
@@ -151,10 +154,13 @@ describe('E2E: change issue status → badge updates in real-time', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i-status', statusId: 'done' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i-status', statusId: 'done' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-status-2',
+      userId: 'u1',
     }))
 
     await vi.advanceTimersByTimeAsync(0)
@@ -169,28 +175,37 @@ describe('E2E: change issue status → badge updates in real-time', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i-status', statusId: 'in-progress' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i-status', statusId: 'in-progress' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-status-3a',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i-status', statusId: 'done' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i-status', statusId: 'done' },
       timestamp: '2026-01-01T00:00:02Z',
       eventId: 'e-status-3b',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i-status', statusId: 'todo' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i-status', statusId: 'todo' },
       timestamp: '2026-01-01T00:00:03Z',
       eventId: 'e-status-3c',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -212,10 +227,13 @@ describe('E2E: change issue status → badge updates in real-time', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     ws.send(JSON.stringify({
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i-status', statusId: 'done' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i-status', statusId: 'done' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-status-4',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -232,10 +250,13 @@ describe('E2E: change issue status → badge updates in real-time', () => {
     await vi.advanceTimersByTimeAsync(0)
 
     ws.send(JSON.stringify({
-      type: 'issue.statusChanged',
-      payload: { issueId: 'i-status', statusId: 'done' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.statusChanged',
+      data: { issueId: 'i-status', statusId: 'done' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-status-5',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 

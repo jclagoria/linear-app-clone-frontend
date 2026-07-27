@@ -48,20 +48,20 @@ export const useProjectsStore = create<ProjectsState>()(
       },
 
       applyEvent: (event) => {
-        const { type, payload } = event
-        const projectId = payload.projectId as string
+        const { event: eventType, data } = event as { event: string; data: Record<string, unknown> }
+        const projectId = data.projectId as string
         if (!projectId) return
 
-        switch (type) {
+        switch (eventType) {
           case 'project.created':
             set((state) => ({
-              projects: [payload as unknown as Project, ...state.projects],
+              projects: [data as unknown as Project, ...state.projects],
             }))
             break
           case 'project.updated':
             set((state) => ({
               projects: state.projects.map((p) =>
-                p.id === projectId ? { ...p, ...payload } : p,
+                p.id === projectId ? { ...p, ...data } : p,
               ),
             }))
             break

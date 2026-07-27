@@ -98,8 +98,10 @@ describe('E2E: notification count increments on new notification', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: {
         notificationId: 'n-1',
         type: 'mention',
         title: 'You were mentioned',
@@ -108,6 +110,7 @@ describe('E2E: notification count increments on new notification', () => {
       },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-notif-1',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -127,10 +130,13 @@ describe('E2E: notification count increments on new notification', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: { notificationId: 'n-1', type: 'mention', title: 'First', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n-1', type: 'mention', title: 'First', message: '' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-notif-2a',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -138,10 +144,13 @@ describe('E2E: notification count increments on new notification', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: { notificationId: 'n-2', type: 'assignment', title: 'Second', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n-2', type: 'assignment', title: 'Second', message: '' },
       timestamp: '2026-01-01T00:00:02Z',
       eventId: 'e-notif-2b',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -149,10 +158,13 @@ describe('E2E: notification count increments on new notification', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: { notificationId: 'n-3', type: 'comment', title: 'Third', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n-3', type: 'comment', title: 'Third', message: '' },
       timestamp: '2026-01-01T00:00:03Z',
       eventId: 'e-notif-2c',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -165,8 +177,10 @@ describe('E2E: notification count increments on new notification', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: {
         notificationId: 'n-detail',
         type: 'status_change',
         title: 'Status changed',
@@ -175,6 +189,7 @@ describe('E2E: notification count increments on new notification', () => {
       },
       timestamp: '2026-01-01T00:00:10Z',
       eventId: 'e-notif-3',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -194,19 +209,25 @@ describe('E2E: notification count increments on new notification', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: { notificationId: 'n-first', type: 'mention', title: 'First', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n-first', type: 'mention', title: 'First', message: '' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-notif-4a',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: { notificationId: 'n-second', type: 'assignment', title: 'Second', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n-second', type: 'assignment', title: 'Second', message: '' },
       timestamp: '2026-01-01T00:00:02Z',
       eventId: 'e-notif-4b',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -224,10 +245,13 @@ describe('E2E: notification count increments on new notification', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'notification.created',
-      payload: { notificationId: 'n-blocked', type: 'mention', title: 'Blocked', message: '' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'notification.created',
+      data: { notificationId: 'n-blocked', type: 'mention', title: 'Blocked', message: '' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-notif-5',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 

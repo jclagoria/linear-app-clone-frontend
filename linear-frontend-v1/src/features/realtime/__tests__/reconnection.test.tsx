@@ -86,10 +86,13 @@ describe('reconnection restores event stream after disconnect', () => {
     expect(useWebSocketStore.getState().reconnectAttempts).toBe(0)
 
     ws1.simulateMessage({
-      type: 'issue.created',
-      payload: { issueId: 'i1', title: 'Before disconnect', statusId: 'todo', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1', title: 'Before disconnect', statusId: 'todo', teamId: 't1' },
       timestamp: '2026-01-01T00:00:00Z',
       eventId: 'e1',
+      userId: 'u1',
     })
 
     expect(useIssuesStore.getState().issues).toHaveLength(1)
@@ -113,10 +116,13 @@ describe('reconnection restores event stream after disconnect', () => {
     expect(useWebSocketStore.getState().reconnectAttempts).toBe(0)
 
     ws2.simulateMessage({
-      type: 'issue.created',
-      payload: { issueId: 'i2', title: 'After reconnect', statusId: 'in-progress', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i2', title: 'After reconnect', statusId: 'in-progress', teamId: 't1' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e2',
+      userId: 'u1',
     })
 
     expect(useIssuesStore.getState().issues).toHaveLength(2)

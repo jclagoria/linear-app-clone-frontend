@@ -75,10 +75,13 @@ describe('E2E: create issue in second tab → appears in first tab', () => {
     }
 
     ws2.send(JSON.stringify({
-      type: 'issue.created',
-      payload: { issueId: 'i-tab2', title: 'From Tab 2', statusId: 'in-progress', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i-tab2', title: 'From Tab 2', statusId: 'in-progress', teamId: 't1' },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e2',
+      userId: 'u1',
     }))
 
     await vi.advanceTimersByTimeAsync(0)
@@ -102,10 +105,13 @@ describe('E2E: create issue in second tab → appears in first tab', () => {
     }
 
     ws2.send(JSON.stringify({
-      type: 'issue.created',
-      payload: { issueId: 'i-cross', title: 'Cross-Tab Issue', statusId: 'todo', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i-cross', title: 'Cross-Tab Issue', statusId: 'todo', teamId: 't1' },
       timestamp: '2026-01-01T00:00:00Z',
       eventId: 'e-cross-1',
+      userId: 'u1',
     }))
 
     await vi.advanceTimersByTimeAsync(0)
@@ -129,23 +135,32 @@ describe('E2E: create issue in second tab → appears in first tab', () => {
     }
 
     ws1.send(JSON.stringify({
-      type: 'issue.created',
-      payload: { issueId: 'i1', title: 'Tab 1 Issue', statusId: 'todo', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i1', title: 'Tab 1 Issue', statusId: 'todo', teamId: 't1' },
       timestamp: '2026-01-01T00:00:00Z', eventId: 'e1',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
     ws2.send(JSON.stringify({
-      type: 'issue.created',
-      payload: { issueId: 'i2', title: 'Tab 2 Issue', statusId: 'todo', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i2', title: 'Tab 2 Issue', statusId: 'todo', teamId: 't1' },
       timestamp: '2026-01-01T00:00:01Z', eventId: 'e2',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
     ws1.send(JSON.stringify({
-      type: 'issue.created',
-      payload: { issueId: 'i3', title: 'Tab 1 Another', statusId: 'todo', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i3', title: 'Tab 1 Another', statusId: 'todo', teamId: 't1' },
       timestamp: '2026-01-01T00:00:02Z', eventId: 'e3',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -172,8 +187,10 @@ describe('E2E: create issue in second tab → appears in first tab', () => {
     useWebSocketStore.getState().setAutoUpdateEnabled(false)
 
     ws2.send(JSON.stringify({
-      type: 'issue.created',
-      payload: { issueId: 'i-hidden', title: 'Hidden Issue', statusId: 'todo', teamId: 't1' },
+      type: 'event',
+      channel: 'team:t1',
+      event: 'issue.created',
+      data: { issueId: 'i-hidden', title: 'Hidden Issue', statusId: 'todo', teamId: 't1' },
       timestamp: '2026-01-01T00:00:00Z', eventId: 'e-hidden',
     }))
 

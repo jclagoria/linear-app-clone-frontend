@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { processEvent, clearDedupStore, clearEntityDedupStore } from '../model/event-processor'
 
-function makeInput(eventId: string, type = 'issue.created', issueId = 'i1') {
+function makeInput(eventId: string, event = 'issue.created', issueId = 'i1') {
   return {
     eventId,
-    type,
-    payload: { issueId },
+    type: 'event',
+    channel: 'team:t1',
+    event,
+    data: { issueId },
     timestamp: '2026-01-01T00:00:00Z',
-    teamId: 't1',
+    userId: 'u1',
   }
 }
 

@@ -144,8 +144,10 @@ describe('E2E: add comment → thread appends without page load', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'comment.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'comment.created',
+      data: {
         issueId: 'i-comment',
         commentId: 'c-new-1',
         body: 'Hello from WebSocket',
@@ -154,6 +156,7 @@ describe('E2E: add comment → thread appends without page load', () => {
       },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-comment-1',
+      userId: 'u1',
     }))
 
     await vi.advanceTimersByTimeAsync(0)
@@ -170,8 +173,10 @@ describe('E2E: add comment → thread appends without page load', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'comment.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'comment.created',
+      data: {
         issueId: 'i-comment',
         commentId: 'c-detail',
         body: 'Detailed comment body',
@@ -180,6 +185,7 @@ describe('E2E: add comment → thread appends without page load', () => {
       },
       timestamp: '2026-01-01T00:00:05Z',
       eventId: 'e-comment-2',
+      userId: 'u1',
     }))
 
     await vi.advanceTimersByTimeAsync(0)
@@ -199,8 +205,10 @@ describe('E2E: add comment → thread appends without page load', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'comment.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'comment.created',
+      data: {
         issueId: 'i-comment',
         commentId: 'c-order-1',
         body: 'First new comment',
@@ -209,13 +217,16 @@ describe('E2E: add comment → thread appends without page load', () => {
       },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-comment-3a',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'comment.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'comment.created',
+      data: {
         issueId: 'i-comment',
         commentId: 'c-order-2',
         body: 'Second new comment',
@@ -224,13 +235,16 @@ describe('E2E: add comment → thread appends without page load', () => {
       },
       timestamp: '2026-01-01T00:00:02Z',
       eventId: 'e-comment-3b',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'comment.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'comment.created',
+      data: {
         issueId: 'i-comment',
         commentId: 'c-order-3',
         body: 'Third new comment',
@@ -239,6 +253,7 @@ describe('E2E: add comment → thread appends without page load', () => {
       },
       timestamp: '2026-01-01T00:00:03Z',
       eventId: 'e-comment-3c',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -264,8 +279,10 @@ describe('E2E: add comment → thread appends without page load', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'comment.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'comment.created',
+      data: {
         issueId: 'i-comment',
         commentId: 'c-target',
         body: 'Targeted comment',
@@ -274,6 +291,7 @@ describe('E2E: add comment → thread appends without page load', () => {
       },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-comment-4',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
@@ -292,8 +310,10 @@ describe('E2E: add comment → thread appends without page load', () => {
 
     clearEntityDedupStore()
     ws.send(JSON.stringify({
-      type: 'comment.created',
-      payload: {
+      type: 'event',
+      channel: 'team:t1',
+      event: 'comment.created',
+      data: {
         issueId: 'i-comment',
         commentId: 'c-blocked',
         body: 'Should not appear',
@@ -302,6 +322,7 @@ describe('E2E: add comment → thread appends without page load', () => {
       },
       timestamp: '2026-01-01T00:00:01Z',
       eventId: 'e-comment-5',
+      userId: 'u1',
     }))
     await vi.advanceTimersByTimeAsync(0)
 
