@@ -18,12 +18,21 @@ export type CycleEventType =
 
 export type NotificationEventType = 'notification.created'
 
+export type LabelEventType = 'label.created'
+
+export type UserEventType = 'user.online'
+
+export type SessionEventType = 'session.revoked'
+
 export type WSEventType =
   | IssueEventType
   | CommentEventType
   | ProjectEventType
   | CycleEventType
   | NotificationEventType
+  | LabelEventType
+  | UserEventType
+  | SessionEventType
 
 export interface IssueEventPayload {
   issueId: string
@@ -69,12 +78,33 @@ export interface NotificationEventPayload {
   issueId?: string
 }
 
+export interface LabelEventPayload {
+  labelId: string
+  name: string
+  color: string
+}
+
+export interface UserEventPayload {
+  userId: string
+  name: string
+  email: string
+  avatarUrl?: string
+}
+
+export interface SessionEventPayload {
+  sessionId: string
+  reason: string
+}
+
 export type WSEventPayload =
   | IssueEventPayload
   | CommentEventPayload
   | ProjectEventPayload
   | CycleEventPayload
   | NotificationEventPayload
+  | LabelEventPayload
+  | UserEventPayload
+  | SessionEventPayload
 
 export interface WSEvent {
   eventId: string
@@ -124,6 +154,9 @@ export const REGISTERED_EVENT_TYPES: WSEventType[] = [
   'cycle.activated',
   'cycle.completed',
   'notification.created',
+  'label.created',
+  'user.online',
+  'session.revoked',
 ]
 
 export function isValidEventType(type: string): type is WSEventType {
