@@ -18,6 +18,8 @@ import { ProfilePage } from '@/pages/ProfilePage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { AuthGuard } from '@/features/auth/ui/AuthGuard'
 import { AppLayout } from '@/app/AppLayout'
+import { WebSocketProvider } from '@/app/providers/WebSocketProvider'
+import { OptimisticProvider } from '@/app/providers/OptimisticProvider'
 
 export const router = createBrowserRouter([
   {
@@ -28,7 +30,13 @@ export const router = createBrowserRouter([
     element: <AuthGuard />,
     children: [
       {
-        element: <AppLayout />,
+        element: (
+          <WebSocketProvider>
+            <OptimisticProvider>
+              <AppLayout />
+            </OptimisticProvider>
+          </WebSocketProvider>
+        ),
         children: [
           { index: true, element: <DashboardPage /> },
           { path: 'dashboard', element: <Navigate to="/" replace /> },

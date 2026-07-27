@@ -8,8 +8,14 @@ import { useLabelDefinitionsStore } from '@/entities/label/model/store'
 import { useAuthStore } from '@/entities/session/model/store'
 import { registerEventHandler } from './event-processor'
 
+// Test-only override: when non-null, this value takes precedence over the websocket store
+let testAutoUpdateOverride: boolean | null = null
+export function setTestAutoUpdateOverride(value: boolean | null) {
+  testAutoUpdateOverride = value
+}
+
 function isAutoUpdateEnabled(): boolean {
-  return useWebSocketStore.getState().autoUpdateEnabled
+  return testAutoUpdateOverride !== null ? testAutoUpdateOverride : useWebSocketStore.getState().autoUpdateEnabled
 }
 
 function handleIssueEvent(event: WSEvent): void {

@@ -53,12 +53,15 @@ export function createWSClient(config: WSClientConfig) {
       reconnectAttempts = 0
       store.setConnecting()
       setupEventRouter()
-      config.onOpen?.()
+      
+      // Send authenticate message immediately to avoid auth timeout (5 second limit)
+      ws?.send(JSON.stringify({ type: 'authenticate', token: config.token }))
 
-      const ackTimeout = setTimeout(() => {
+      const authTimeout = setTimeout(() => {
         if (store.connectionStatus === 'connecting') {
           ws?.close()
           store.setDisconnected()
+          config.onError?.('auth_timeout')
           config.onClose?.()
         }
       }, 5000)
@@ -67,15 +70,21 @@ export function createWSClient(config: WSClientConfig) {
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data)
-          if (data.type === 'connection_ack') {
-            clearTimeout(ackTimeout)
+          if (data.type === 'authenticated') {
+            clearTimeout(authTimeout)
             store.setConnected()
             heartbeat.start()
-            ws?.send(JSON.stringify({ type: 'authenticate', token: config.token }))
+            config.onOpen?.()
             if (config.teamId) {
               ws?.send(JSON.stringify({ type: 'subscribe', teamId: config.teamId }))
             }
             ws.onmessage = defaultHandler
+            return
+          } else if (data.type === 'error' && data.message === 'auth_timeout') {
+            clearTimeout(authTimeout)
+            store.setDisconnected()
+            config.onError?.('auth_timeout')
+            ws?.close()
             return
           }
         } catch {}

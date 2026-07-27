@@ -126,3 +126,8 @@ export function routeEvent(event: WSEvent): void {
     handler(event)
   }
 }
+
+// Clear all registered event handlers (used by tests to isolate state)
+export function clearEventHandlers(): void {
+  eventHandlers.clear()
+}
