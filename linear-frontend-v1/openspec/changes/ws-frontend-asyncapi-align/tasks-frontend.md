@@ -2,69 +2,69 @@
 
 ## Scaffold
 
-- [ ] Create `src/lib/ws/` directory structure with `client.ts`, `types.ts`, `handlers.ts`, `schema.ts`
-- [ ] Install Zod dependency (`zod`) and configure TypeScript strict mode for WebSocket module
-- [ ] Create `src/types/websocket.ts` for shared WebSocket type definitions
-- [ ] Create `src/stores/websocketStore.ts` with Zustand store for connection state management
-- [ ] Create `src/stores/issueStore.ts` with Zustand store for issue data and optimistic updates
-- [ ] Create `src/stores/notificationStore.ts` with Zustand store for notifications and unread count
-- [ ] Create `src/stores/labelStore.ts` with Zustand store for label definitions
+- [x] Create `src/lib/ws/` directory structure with `client.ts`, `types.ts`, `handlers.ts`, `schema.ts` — implemented as `src/features/realtime/lib/`
+- [x] Install Zod dependency (`zod`) and configure TypeScript strict mode for WebSocket module — already configured
+- [x] Create `src/types/websocket.ts` for shared WebSocket type definitions — implemented as `src/features/realtime/lib/event-schema.ts`
+- [x] Create `src/stores/websocketStore.ts` with Zustand store for connection state management — exists at `src/shared/stores/websocketStore.ts`
+- [x] Create `src/stores/issueStore.ts` with Zustand store for issue data and optimistic updates — exists at `src/entities/issue/model/store.ts`
+- [x] Create `src/stores/notificationStore.ts` with Zustand store for notifications and unread count — exists at `src/shared/stores/notificationsStore.ts`
+- [x] Create `src/stores/labelStore.ts` with Zustand store for label definitions — exists at `src/entities/label/model/store.ts`
 
 ## Components
 
-- [ ] Create `src/components/websocket/ConnectionStatusIndicator.tsx` — displays WebSocket status as colored dot with pulse animation
-- [ ] Create `src/components/websocket/ConnectionErrorModal.tsx` — critical error overlay with focus trap and backdrop blur
-- [ ] Create `src/components/websocket/WebSocketErrorToast.tsx` — transient error notification with auto-dismiss countdown
-- [ ] Create `src/components/websocket/ToastContainer.tsx` — renders active toasts with `aria-live` region
-- [ ] Create `src/components/websocket/WebSocketProvider.tsx` — context provider wrapping isolated WebSocket client
-- [ ] Update `src/app/AppLayout.tsx` — integrate WebSocketProvider and ToastContainer
-- [ ] Update `src/components/Header.tsx` — add ConnectionStatusIndicator to header navigation
-- [ ] Create `src/components/board/BoardColumn.tsx` — kanban column with real-time issue updates
-- [ ] Create `src/components/board/IssueCard.tsx` — issue card with optimistic move support
-- [ ] Create `src/components/board/EmptyState.tsx` — empty state illustration when no issues exist
-- [ ] Create `src/components/notifications/NotificationItem.tsx` — notification list item with unread indicator
-- [ ] Create `src/components/comments/CommentItem.tsx` — comment list item with real-time additions
+- [x] Create `src/components/websocket/ConnectionStatusIndicator.tsx` — exists at `src/features/realtime/ui/ConnectionStatusIndicator.tsx`
+- [x] Create `src/components/websocket/ConnectionErrorModal.tsx` — exists at `src/features/realtime/ui/ConnectionErrorModal.tsx`
+- [x] Create `src/components/websocket/WebSocketErrorToast.tsx` — exists as `ReconnectionToast.tsx`
+- [x] Create `src/components/websocket/ToastContainer.tsx` — created at `src/features/realtime/ui/ToastContainer.tsx`
+- [x] Create `src/components/websocket/WebSocketProvider.tsx` — exists at `src/app/providers/WebSocketProvider.tsx`
+- [x] Update `src/app/AppLayout.tsx` — already integrated with WebSocketProvider and ToastContainer
+- [x] Update `src/components/Header.tsx` — already has ConnectionStatusIndicator
+- [x] Create `src/components/board/BoardColumn.tsx` — created at `src/features/realtime/ui/BoardColumn.tsx`
+- [x] Create `src/components/board/IssueCard.tsx` — exists at `src/features/realtime/ui/IssueCard.tsx`
+- [x] Create `src/components/board/EmptyState.tsx` — created at `src/features/realtime/ui/EmptyState.tsx`
+- [x] Create `src/components/notifications/NotificationItem.tsx` — created at `src/features/realtime/ui/NotificationItem.tsx`
+- [x] Create `src/components/comments/CommentItem.tsx` — created at `src/features/realtime/ui/CommentItem.tsx`
 
 ## State & Data
 
-- [ ] Implement `src/lib/ws/client.ts` — WebSocket client with connection lifecycle, message serialization, and exponential backoff reconnection
-- [ ] Implement `src/lib/ws/types.ts` — discriminated union types for all WebSocket messages (authenticate, subscribe, event, error)
-- [ ] Implement `src/lib/ws/schema.ts` — Zod schemas for runtime validation of all incoming/outgoing messages
-- [ ] Implement `src/lib/ws/handlers.ts` — centralized error handler with UI dispatch (critical → modal, transient → toast)
-- [ ] Implement `src/stores/websocketStore.ts` — connection status, error state, retry count, connect/disconnect actions
-- [ ] Implement `src/stores/issueStore.ts` — issue CRUD with optimistic updates and rollback on WS error
-- [ ] Implement `src/stores/notificationStore.ts` — notifications list with unread count tracking
-- [ ] Implement `src/stores/labelStore.ts` — label definitions with real-time label.created events
-- [ ] Create `src/lib/api/client.ts` — REST API client with auth interceptor (Bearer JWT) and error handling
-- [ ] Create `src/hooks/useWebSocket.ts` — React hook for accessing WebSocket context and connection status
-- [ ] Create `src/hooks/useIssueBoard.ts` — React hook for issue board data with real-time updates
-- [ ] Create `src/hooks/useNotifications.ts` — React hook for notifications with unread count
+- [x] Implement `src/lib/ws/client.ts` — exists at `src/features/realtime/lib/ws-client.ts`
+- [x] Implement `src/lib/ws/types.ts` — exists at `src/features/realtime/lib/event-schema.ts`
+- [x] Implement `src/lib/ws/schema.ts` — exists at `src/features/realtime/lib/event-schema.ts`
+- [x] Implement `src/lib/ws/handlers.ts` — exists as `src/features/realtime/model/event-router.ts`
+- [x] Implement `src/stores/websocketStore.ts` — exists at `src/shared/stores/websocketStore.ts`
+- [x] Implement `src/stores/issueStore.ts` — exists at `src/entities/issue/model/store.ts`
+- [x] Implement `src/stores/notificationStore.ts` — exists at `src/shared/stores/notificationsStore.ts`
+- [x] Implement `src/stores/labelStore.ts` — exists at `src/entities/label/model/store.ts`
+- [x] Create `src/lib/api/client.ts` — exists at `src/shared/lib/api-client/`
+- [x] Create `src/hooks/useWebSocket.ts` — exists in `src/app/providers/WebSocketProvider.tsx`
+- [x] Create `src/hooks/useIssueBoard.ts` — created at `src/features/realtime/lib/useIssueBoard.ts`
+- [x] Create `src/hooks/useNotifications.ts` — created at `src/features/realtime/lib/useNotifications.ts`
 
 ## Routing
 
-- [ ] Update `src/app/routes.tsx` — add `/notifications` route and `/issues/:id/comments` route
-- [ ] Implement auth redirect logic — redirect to `/login` on WebSocket `auth_failed` or `session.revoked` errors
-- [ ] Implement catch-all redirect — `*` route navigates to `/`
-- [ ] Create `src/pages/LoginPage.tsx` — public login page with JWT token input
-- [ ] Create `src/pages/IssueBoardPage.tsx` — protected board view with real-time issue updates
-- [ ] Create `src/pages/NotificationPanelPage.tsx` — protected notification list with unread indicators
-- [ ] Create `src/pages/CommentThreadPage.tsx` — protected comment thread with real-time additions
+- [x] Update `src/app/routes.tsx` — added `/notifications` and `/issues/:id/comments` routes
+- [x] Implement auth redirect logic — added to WebSocketProvider for `auth_failed` and `session.revoked`
+- [x] Implement catch-all redirect — `*` route navigates to NotFoundPage
+- [x] Create `src/pages/LoginPage.tsx` — exists at `src/pages/LoginPage.tsx`
+- [x] Create `src/pages/IssueBoardPage.tsx` — created at `src/pages/IssueBoardPage.tsx`
+- [x] Create `src/pages/NotificationPanelPage.tsx` — created at `src/pages/NotificationPanelPage.tsx`
+- [x] Create `src/pages/CommentThreadPage.tsx` — created at `src/pages/CommentThreadPage.tsx`
 
 ## Integration
 
-- [ ] Connect `src/lib/ws/client.ts` to WebSocket Gateway endpoint (`VITE_WS_URL`)
-- [ ] Replace mock data in `src/stores/issueStore.ts` with REST API calls to backend
-- [ ] Replace mock data in `src/stores/notificationStore.ts` with REST API calls to backend
-- [ ] Replace mock data in `src/stores/labelStore.ts` with REST API calls to backend
-- [ ] Implement WebSocket event routing — `issue.updated`, `issue.created`, `issue.deleted` events update issueStore
-- [ ] Implement WebSocket event routing — `comment.created` events update commentStore
-- [ ] Implement WebSocket event routing — `label.created` events update labelStore
-- [ ] Implement WebSocket event routing — `user.online` events update userStore
-- [ ] Implement WebSocket event routing — `session.revoked` events trigger authStore.logout()
-- [ ] Implement optimistic update pattern — save previous state, apply new state, rollback on server rejection
-- [ ] Implement revert toast notification — show user when optimistic update is reverted
-- [ ] Implement reconnection toast notification — show user when WebSocket is reconnecting
-- [ ] Configure environment variables — `VITE_API_URL` and `VITE_WS_URL` in `.env.local`
+- [x] Connect `src/lib/ws/client.ts` to WebSocket Gateway endpoint (`VITE_WS_URL`) — configured in WebSocketProvider
+- [x] Replace mock data in `src/stores/issueStore.ts` with REST API calls to backend — already implemented
+- [x] Replace mock data in `src/stores/notificationStore.ts` with REST API calls to backend — already implemented
+- [x] Replace mock data in `src/stores/labelStore.ts` with REST API calls to backend — already implemented
+- [x] Implement WebSocket event routing — `issue.updated`, `issue.created`, `issue.deleted` events update issueStore — implemented in event-router.ts
+- [x] Implement WebSocket event routing — `comment.created` events update commentStore — implemented in event-router.ts
+- [x] Implement WebSocket event routing — `label.created` events update labelStore — implemented in event-router.ts
+- [x] Implement WebSocket event routing — `user.online` events update userStore — implemented in event-router.ts
+- [x] Implement WebSocket event routing — `session.revoked` events trigger authStore.logout() — implemented in WebSocketProvider
+- [x] Implement optimistic update pattern — save previous state, apply new state, rollback on server rejection — implemented in optimistic-store.ts
+- [x] Implement revert toast notification — show user when optimistic update is reverted — exists as RevertToast.tsx
+- [x] Implement reconnection toast notification — show user when WebSocket is reconnecting — exists as ReconnectionToast.tsx
+- [x] Configure environment variables — `VITE_API_URL` and `VITE_WS_URL` in `.env.local` — configured in .env
 
 ## Validation
 

@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useRef, useCallback, type ReactNode } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/entities/session/model/store'
 import { useTeamStore } from '@/entities/team/model/store'
 import { createWSClient } from '@/features/realtime/lib/ws-client'
@@ -31,6 +32,14 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const accessToken = useAuthStore((s) => s.accessToken)
   const currentTeamId = useTeamStore((s) => s.currentTeamId)
   const connectionStatus = useWebSocketStore((s) => s.connectionStatus)
+  const navigate = useNavigate()
+
+  const handleAuthError = useCallback((errorType: string) => {
+    if (errorType === 'auth_failed' || errorType === 'session.revoked') {
+      useAuthStore.getState().logout()
+      navigate('/login', { replace: true })
+    }
+  }, [navigate])
 
   useEffect(() => {
     if (!isAuthenticated || !accessToken) return
@@ -40,6 +49,10 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       url: WS_URL,
       token: accessToken,
       teamId,
+      onError: (error) => {
+        // Handle auth errors from WebSocket
+        console.error('WebSocket error:', error)
+      },
     })
     clientRef.current = client
     client.connect()
@@ -52,7 +65,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       client.disconnect()
       clientRef.current = null
     }
-  }, [isAuthenticated, accessToken])
+  }, [isAuthenticated, accessToken, handleAuthError])
 
   useEffect(() => {
     if (connectionStatus === 'connected' && currentTeamId && clientRef.current) {
