@@ -454,11 +454,11 @@ describe('IssueDetailPage Edit Comment', () => {
     const editButton = await screen.findByRole('button', { name: /edit comment/i })
     await user.click(editButton)
 
-    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    const textarea = await screen.findByRole('textbox', { name: /edit comment body/i })
     await user.clear(textarea)
     await user.type(textarea, 'Updated body content')
 
-    await user.click(screen.getByRole('button', { name: /save comment/i }))
+    await user.click(await screen.findByRole('button', { name: /save comment/i }))
 
     await waitFor(() => {
       expect(updateComment).toHaveBeenCalledWith('1', 'c1', 'Updated body content')
@@ -487,13 +487,13 @@ describe('IssueDetailPage Edit Comment', () => {
     await screen.findByText('Original comment body')
 
     const user = userEvent.setup()
-    await user.click(screen.getByRole('button', { name: /edit comment/i }))
+    await user.click(await screen.findByRole('button', { name: /edit comment/i }))
 
-    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    const textarea = await screen.findByRole('textbox', { name: /edit comment body/i })
     await user.clear(textarea)
     await user.type(textarea, 'Updated body content')
 
-    await user.click(screen.getByRole('button', { name: /save comment/i }))
+    await user.click(await screen.findByRole('button', { name: /save comment/i }))
 
     await waitFor(() => {
       const comments = useIssuesStore.getState().commentsByIssue['1']
@@ -516,11 +516,11 @@ describe('IssueDetailPage Edit Comment', () => {
     const editButton = await screen.findByRole('button', { name: /edit comment/i })
     await user.click(editButton)
 
-    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    const textarea = await screen.findByRole('textbox', { name: /edit comment body/i })
     await user.clear(textarea)
     await user.type(textarea, 'Updated body')
 
-    await user.click(screen.getByRole('button', { name: /save comment/i }))
+    await user.click(await screen.findByRole('button', { name: /save comment/i }))
 
     await waitFor(() => {
       const toasts = useToastStore.getState().toasts
@@ -543,11 +543,11 @@ describe('IssueDetailPage Edit Comment', () => {
     const editButton = await screen.findByRole('button', { name: /edit comment/i })
     await user.click(editButton)
 
-    const textarea = screen.getByRole('textbox', { name: /edit comment body/i })
+    const textarea = await screen.findByRole('textbox', { name: /edit comment body/i })
     await user.clear(textarea)
     await user.type(textarea, 'Updated body')
 
-    await user.click(screen.getByRole('button', { name: /save comment/i }))
+    await user.click(await screen.findByRole('button', { name: /save comment/i }))
 
     await waitFor(() => {
       const toasts = useToastStore.getState().toasts
@@ -639,8 +639,8 @@ describe('IssueDetailPage Delete Comment', () => {
     await screen.findByText('Test Issue')
     await screen.findByText('Original comment body')
 
-    await user.click(screen.getByRole('button', { name: /delete comment/i }))
-    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+    await user.click(await screen.findByRole('button', { name: /delete comment/i }))
+    await user.click(await screen.findByRole('button', { name: /confirm delete/i }))
 
     await waitFor(() => {
       const comments = useIssuesStore.getState().commentsByIssue['1']
@@ -666,8 +666,8 @@ describe('IssueDetailPage Delete Comment', () => {
     await screen.findByText('Test Issue')
     await screen.findByText('Original comment body')
 
-    await user.click(screen.getByRole('button', { name: /delete comment/i }))
-    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+    await user.click(await screen.findByRole('button', { name: /delete comment/i }))
+    await user.click(await screen.findByRole('button', { name: /confirm delete/i }))
 
     await waitFor(() => {
       const toasts = useToastStore.getState().toasts
@@ -695,8 +695,8 @@ describe('IssueDetailPage Delete Comment', () => {
     await screen.findByText('Test Issue')
     await screen.findByText('Original comment body')
 
-    await user.click(screen.getByRole('button', { name: /delete comment/i }))
-    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+    await user.click(await screen.findByRole('button', { name: /delete comment/i }))
+    await user.click(await screen.findByRole('button', { name: /confirm delete/i }))
 
     await waitFor(() => {
       const toasts = useToastStore.getState().toasts
@@ -723,8 +723,8 @@ describe('IssueDetailPage Delete Comment', () => {
     await screen.findByText('Test Issue')
     await screen.findByText('Original comment body')
 
-    await user.click(screen.getByRole('button', { name: /delete comment/i }))
-    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+    await user.click(await screen.findByRole('button', { name: /delete comment/i }))
+    await user.click(await screen.findByRole('button', { name: /confirm delete/i }))
 
     await waitFor(() => {
       const toasts = useToastStore.getState().toasts
@@ -751,8 +751,8 @@ describe('IssueDetailPage Delete Comment', () => {
     await screen.findByText('Test Issue')
     await screen.findByText('Original comment body')
 
-    await user.click(screen.getByRole('button', { name: /delete comment/i }))
-    await user.click(screen.getByRole('button', { name: /confirm delete/i }))
+    await user.click(await screen.findByRole('button', { name: /delete comment/i }))
+    await user.click(await screen.findByRole('button', { name: /confirm delete/i }))
 
     await waitFor(() => {
       const comments = useIssuesStore.getState().commentsByIssue['1']
