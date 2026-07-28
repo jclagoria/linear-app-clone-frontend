@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-danger: #DC2626;
+      --color-danger-bg: #FEF2F2;
+      --color-success: #16A34A;
+      --color-success-bg: #F0FDF4;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-border-focus: #2563EB;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+    .card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-8);
+      max-width: 400px;
+      width: 100%;
+    }
+    .brand { text-align: center; margin-bottom: var(--space-6); }
+    .brand svg { width: 40px; height: 40px; }
+    h1 { font-size: 1.25rem; font-weight: 600; text-align: center; margin-bottom: var(--space-6); }
+    .form-group { margin-bottom: var(--space-4); }
+    label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: var(--space-2); }
+    input {
+      width: 100%;
+      padding: var(--space-3);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-family: var(--font-family);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: var(--color-border-focus); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    input:disabled { background: var(--color-surface); opacity: 0.6; cursor: not-allowed; }
+    input.input-error { border-color: var(--color-danger); }
+    .error-msg { color: var(--color-danger); font-size: 0.75rem; margin-top: var(--space-2); display: flex; align-items: center; gap: 4px; }
+    .btn {
+      width: 100%;
+      padding: var(--space-3);
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: var(--font-family);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s;
+    }
+    .btn-primary { background: var(--color-primary); color: #fff; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .footer { text-align: center; margin-top: var(--space-6); font-size: 0.875rem; color: var(--color-text-secondary); }
+    .footer a { color: var(--color-primary); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    .alert {
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      margin-bottom: var(--space-4);
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert-error { background: var(--color-danger-bg); border: 1px solid var(--color-danger); color: var(--color-danger); }
+    .alert-success { background: var(--color-success-bg); border: 1px solid var(--color-success); color: var(--color-success); }
+    .state-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--space-2) var(--space-4);
+      display: flex;
+      gap: var(--space-2);
+      z-index: 10;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .state-bar button {
+      padding: 4px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background: var(--color-surface-elevated);
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: var(--font-family);
+    }
+    .state-bar button.active { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+    body { padding-top: 48px; }
+  </style>
+</head>
+<body>
+
+  <div class="state-bar">
+    <button class="active" onclick="setState('idle')">Idle</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('error-client')">Client Error</button>
+    <button onclick="setState('error-server')">Server Error</button>
+    <button onclick="setState('success')">Success</button>
+  </div>
+
+  <main>
+    <div class="card">
+      <div class="brand">
+        <svg viewBox="0 0 40 40" fill="none"><rect width="40" height="40" rx="8" fill="#2563EB"/><path d="M12 20l5 5 11-11" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+
+      <h1>Create your account</h1>
+
+      <div id="alert-server" class="alert alert-error" style="display:none;">
+        <span>&#9888;</span> <span id="server-error-text">This email is already in use</span>
+      </div>
+
+      <div id="alert-success" class="alert alert-success" style="display:none;">
+        <span>&#10003;</span> Account created successfully. Redirecting to dashboard...
+      </div>
+
+      <form id="register-form" onsubmit="return false;">
+        <div class="form-group">
+          <label for="name">Full name</label>
+          <input type="text" id="name" />
+          <div id="err-name" class="error-msg" style="display:none;"><span>&#9888;</span> Name is required</div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" id="email" />
+          <div id="err-email" class="error-msg" style="display:none;"><span>&#9888;</span> Please enter a valid email</div>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" />
+          <div id="err-password" class="error-msg" style="display:none;"><span>&#9888;</span> Password must be at least 8 characters</div>
+        </div>
+        <div class="form-group">
+          <label for="confirm">Confirm password</label>
+          <input type="password" id="confirm" />
+          <div id="err-confirm" class="error-msg" style="display:none;"><span>&#9888;</span> Passwords do not match</div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="submit-btn">
+          <span id="btn-label">Create account</span>
+          <span id="btn-spinner" class="spinner" style="display:none;"></span>
+        </button>
+      </form>
+
+      <p class="footer">Already have an account? <a href="auth-login.html">Sign in</a></p>
+    </div>
+  </main>
+
+  <script>
+    function clearErrors() {
+      document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
+      document.querySelectorAll('input').forEach(i => i.classList.remove('input-error'));
+      document.getElementById('alert-server').style.display = 'none';
+    }
+
+    function setState(state) {
+      document.querySelectorAll('.state-bar button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      clearErrors();
+      const btn = document.getElementById('submit-btn');
+      const label = document.getElementById('btn-label');
+      const spinner = document.getElementById('btn-spinner');
+      const inputs = document.querySelectorAll('input');
+      const successAlert = document.getElementById('alert-success');
+
+      btn.disabled = false;
+      label.textContent = 'Create account';
+      spinner.style.display = 'none';
+      successAlert.style.display = 'none';
+      inputs.forEach(i => { i.disabled = false; i.value = ''; });
+
+      if (state === 'loading') {
+        btn.disabled = true;
+        label.textContent = 'Creating account...';
+        spinner.style.display = 'block';
+        inputs.forEach(i => i.disabled = true);
+      } else if (state === 'error-client') {
+        document.getElementById('err-name').style.display = 'flex';
+        document.getElementById('err-email').style.display = 'flex';
+        document.getElementById('err-password').style.display = 'flex';
+        document.getElementById('err-confirm').style.display = 'flex';
+        document.getElementById('name').classList.add('input-error');
+        document.getElementById('email').classList.add('input-error');
+        document.getElementById('password').classList.add('input-error');
+        document.getElementById('confirm').classList.add('input-error');
+      } else if (state === 'error-server') {
+        document.getElementById('alert-server').style.display = 'flex';
+      } else if (state === 'success') {
+        btn.disabled = true;
+        successAlert.style.display = 'flex';
+        inputs.forEach(i => i.disabled = true);
+        label.textContent = 'Create account';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+# Wireframes — Implement Register User API Integration
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `📎N` | N attachments |
+| `💬N` | N comments | `🔗` | Card relationship |
+| `👤` | User / mention | `○ ●` | Radio unselected / selected |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `header`, `main`, `aside`, `contentinfo` |
+| Heading order | One `h1` per screen, `h2` for sections |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab, Enter/Space, Escape, Arrow keys |
+| Target size | ≥24×24 CSS px reservation |
+| Non-color intent | Icon + text, never color alone |
+
+---
+
+## Screen Inventory
+
+| Flow | Screen | States | Wireframe Section |
+|------|--------|--------|-------------------|
+| Registration | LoginPage | idle, loading, error | [LoginPage](#loginpage) |
+| Registration | RegisterPage | idle, loading, error, success | [RegisterPage](#registerpage) |
+
+---
+
+## LoginPage
+
+### Purpose & Flow Context
+
+Entry point for unauthenticated users. Allows login with email/password or navigate to registration. Serves as the starting point of the Registration flow. Exit to Dashboard on success, RegisterPage on "Sign up".
+
+### Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm.
+
+**App-shell**: Minimal for auth pages — centered content, no nav shell.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Main | Auth card centered | Vertically + horizontally centered |
+| Card Header | Logo/brand, title | "Sign in to your account" |
+| Card Content | Form fields, CTA | Email, password, submit button |
+| Card Footer | Link to register | "Don't have an account? Sign up" |
+
+**Content hierarchy** (by visual priority):
+1. Form fields (email, password)
+2. Primary CTA (Sign in)
+3. Secondary link (Sign up)
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                       [Logo / Brand]                              |
+|                                                                    |
+|            +----------------------------------+                   |
+|            |  Sign in to your account         |                   |
+|            +----------------------------------|                   |
+|            |                                  |                   |
+|            |  [______ Email address _______]  |                   |
+|            |  [______ Password ______________]|                   |
+|            |                                  |                   |
+|            |  [ Button: Sign in ]             |                   |
+|            |                                  |                   |
+|            |  Don't have an account? [Sign up]|                   |
+|            +----------------------------------+                   |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Email input | Input[type=email] | Focus ring, validation on blur | Invalid format: error message |
+| Password input | Input[type=password] | Masked, optional show/hide | Min length validation |
+| Sign in button | Button[primary] | Submit form, loading state | Disabled when loading |
+| Sign up link | Anchor/Link | Navigate to RegisterPage | — |
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Heading | "Sign in to your account" | Clear, welcoming |
+| Email label | "Email address" | User language, not "email" |
+| Password label | "Password" | — |
+| Button | "Sign in" | Action-oriented |
+| Footer link | "Don't have an account? Sign up" | Guidance to register |
+
+### States
+
+#### Populated (Default)
+
+Form fields empty, ready for input. All elements visible and interactive.
+
+#### Loading
+
+```
++------------------------------------------------------------------+
+|            +----------------------------------+                   |
+|            |  Sign in to your account         |                   |
+|            +----------------------------------|                   |
+|            |  [______ Email address _______]  |                   |
+|            |  [______ Password ______________]|                   |
+|            |                                  |                   |
+|            |  [ Button: (Spinner) Signing in ]|                   |
+|            |                                  |                   |
+|            |  Don't have an account? [Sign up]|                   |
+|            +----------------------------------+                   |
++------------------------------------------------------------------+
+```
+
+Button shows spinner, text changes to "Signing in". All inputs disabled. No double-submit.
+
+#### Error
+
+```
++------------------------------------------------------------------+
+|            +----------------------------------+                   |
+|            |  Sign in to your account         |                   |
+|            +----------------------------------|                   |
+|            |  ⚠ Invalid email or password     |                   |
+|            +----------------------------------|                   |
+|            |  [______ Email address _______]  |                   |
+|            |  [______ Password ______________]|                   |
+|            |                                  |                   |
+|            |  [ Button: Sign in ]             |                   |
+|            |                                  |                   |
+|            |  Don't have an account? [Sign up]|                   |
+|            +----------------------------------+                   |
++------------------------------------------------------------------+
+```
+
+Alert component above form with error message. Inline validation per field if applicable.
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Centered card, max-width 400px |
+| Tablet (768-1024px) | Same centered layout |
+| Mobile (<768px) | Full-width card, padding 16px |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | main (card region) |
+| Heading order | h1 "Sign in to your account" |
+| Reading / Focus order | Email → Password → Submit → Footer link |
+| Accessible names | All inputs have visible labels |
+| Keyboard operability | Tab through fields, Enter submits |
+| Target size | All interactive elements ≥24×24 CSS px |
+| Focus not obscured | No sticky elements on auth pages |
+| Non-color intent | Error icon + text message, not color alone |
+
+---
+
+## RegisterPage
+
+### Purpose & Flow Context
+
+Allows new users to create an account. Entry from LoginPage "Sign up" link. Exit to Dashboard on success, LoginPage on "Sign in" link.
+
+### Layout Regions
+
+**Grid**: 12-column layout. Spacing cadence: 8px rhythm.
+
+**App-shell**: Minimal for auth pages — centered content, no nav shell.
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Main | Auth card centered | Vertically + horizontally centered |
+| Card Header | Logo/brand, title | "Create your account" |
+| Card Content | Form fields, CTA | Name, email, password, confirm password |
+| Card Footer | Link to login | "Already have an account? Sign in" |
+
+**Content hierarchy** (by visual priority):
+1. Form fields (name, email, password, confirm password)
+2. Primary CTA (Create account)
+3. Secondary link (Sign in)
+
+```
++------------------------------------------------------------------+
+|                                                                    |
+|                       [Logo / Brand]                              |
+|                                                                    |
+|            +----------------------------------+                   |
+|            |  Create your account             |                   |
+|            +----------------------------------|                   |
+|            |                                  |                   |
+|            |  [______ Full name ____________] |                   |
+|            |  [______ Email address _______]  |                   |
+|            |  [______ Password ______________]|                   |
+|            |  [______ Confirm password ______]|                   |
+|            |                                  |                   |
+|            |  [ Button: Create account ]      |                   |
+|            |                                  |                   |
+|            |  Already have an account? [Sign  |                   |
+|            |  in]                             |                   |
+|            +----------------------------------+                   |
+|                                                                    |
++------------------------------------------------------------------+
+```
+
+### Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Name input | Input[type=text] | Focus ring, required | Empty: error on submit |
+| Email input | Input[type=email] | Focus ring, format validation | Invalid: error on submit |
+| Password input | Input[type=password] | Masked, min 8 chars | Too short: error on submit |
+| Confirm password | Input[type=password] | Masked, must match password | Mismatch: error on submit |
+| Create account button | Button[primary] | Submit form, loading state | Disabled when loading |
+| Sign in link | Anchor/Link | Navigate to LoginPage | — |
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Heading | "Create your account" | Clear, action-oriented |
+| Name label | "Full name" | User language |
+| Email label | "Email address" | — |
+| Password label | "Password" | — |
+| Confirm label | "Confirm password" | — |
+| Button | "Create account" | Action-oriented |
+| Footer link | "Already have an account? Sign in" | Guidance to login |
+
+### States
+
+#### Populated (Default / Idle)
+
+Form fields empty, ready for input. All elements visible and interactive.
+
+#### Loading
+
+```
++------------------------------------------------------------------+
+|            +----------------------------------+                   |
+|            |  Create your account             |                   |
+|            +----------------------------------|                   |
+|            |  [______ Full name ____________] |                   |
+|            |  [______ Email address _______]  |                   |
+|            |  [______ Password ______________]|                   |
+|            |  [______ Confirm password ______]|                   |
+|            |                                  |                   |
+|            |  [ Button: (Spinner) Creating     |
+|            |   account... ]                    |                   |
+|            |                                  |                   |
+|            |  Already have an account? [Sign  |                   |
+|            |  in]                             |                   |
+|            +----------------------------------+                   |
++------------------------------------------------------------------+
+```
+
+Button shows spinner, text changes to "Creating...". All inputs disabled. No double-submit.
+
+#### Error (Client-side Validation)
+
+```
++------------------------------------------------------------------+
+|            +----------------------------------+                   |
+|            |  Create your account             |                   |
+|            +----------------------------------|                   |
+|            |  [______ Full name ____________] |                   |
+|            |  ⚠ Name is required              |                   |
+|            |  [______ Email address _______]  |                   |
+|            |  ⚠ Please enter a valid email    |                   |
+|            |  [______ Password ______________]|                   |
+|            |  ⚠ Password must be 8+ characters|                   |
+|            |  [______ Confirm password ______]|                   |
+|            |  ⚠ Passwords do not match        |                   |
+|            |                                  |                   |
+|            |  [ Button: Create account ]      |                   |
+|            |                                  |                   |
+|            |  Already have an account? [Sign  |                   |
+|            |  in]                             |                   |
+|            +----------------------------------+                   |
++------------------------------------------------------------------+
+```
+
+Per-field error messages below each input. Alert component at top for server errors (409 conflict: "Email already in use").
+
+#### Error (Server-side)
+
+```
++------------------------------------------------------------------+
+|            +----------------------------------+                   |
+|            |  Create your account             |                   |
+|            +----------------------------------|                   |
+|            |  ⚠ This email is already in use  |                   |
+|            +----------------------------------|                   |
+|            |  [______ Full name ____________] |                   |
+|            |  [______ Email address _______]  |                   |
+|            |  [______ Password ______________]|                   |
+|            |  [______ Confirm password ______]|                   |
+|            |                                  |                   |
+|            |  [ Button: Create account ]      |                   |
+|            |                                  |                   |
+|            |  Already have an account? [Sign  |                   |
+|            |  in]                             |                   |
+|            +----------------------------------+                   |
++------------------------------------------------------------------+
+```
+
+Alert component at top with server error. Fields remain editable.
+
+#### Success
+
+```
++------------------------------------------------------------------+
+|            +----------------------------------+                   |
+|            |  Create your account             |                   |
+|            +----------------------------------|                   |
+|            |                                  |                   |
+|            |  ✓ Account created successfully  |                   |
+|            |                                  |                   |
+|            |  Redirecting to dashboard...     |                   |
+|            |                                  |                   |
+|            +----------------------------------+                   |
++------------------------------------------------------------------+
+```
+
+Success alert, brief message, auto-redirect to Dashboard after 2 seconds.
+
+### Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Centered card, max-width 400px |
+| Tablet (768-1024px) | Same centered layout |
+| Mobile (<768px) | Full-width card, padding 16px, fields stack vertically |
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | main (card region) |
+| Heading order | h1 "Create your account" |
+| Reading / Focus order | Name → Email → Password → Confirm → Submit → Footer link |
+| Accessible names | All inputs have visible labels |
+| Keyboard operability | Tab through fields, Enter submits |
+| Target size | All interactive elements ≥24×24 CSS px |
+| Focus not obscured | No sticky elements on auth pages |
+| Non-color intent | Error icon + text message, not color alone |
+| Error association | Each error linked to input via aria-describedby |
+| Invalid state | aria-invalid="true" on fields with errors |
