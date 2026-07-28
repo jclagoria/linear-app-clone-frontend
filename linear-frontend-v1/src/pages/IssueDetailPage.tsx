@@ -7,7 +7,7 @@ import { IssueDetail } from '@/entities/issue/ui/IssueDetail'
 import { IssueFormModal } from '@/entities/issue/ui/IssueFormModal'
 import { ConfirmDeleteDialog } from '@/entities/issue/ui/ConfirmDeleteDialog'
 import { useToastStore } from '@/shared/stores/toastStore'
-import { updateIssue, updateComment, deleteIssue } from '@/entities/issue/api'
+import { updateIssue, deleteIssue } from '@/entities/issue/api'
 import { isBusinessRuleError, isForbiddenError } from '@/shared/lib/api-client'
 import { selectIssueById } from '@/entities/issue/model/selectors'
 import { useShallow } from 'zustand/react/shallow'
@@ -258,6 +258,7 @@ export function IssueDetailPage() {
     async (commentId: string, body: string) => {
       if (!id) return
       try {
+        const { updateComment } = await import('@/entities/issue/api')
         await updateComment(id, commentId, body)
         updateCommentInStore(id, commentId, body)
         addToast({
@@ -266,7 +267,7 @@ export function IssueDetailPage() {
           duration: 3000,
         })
       } catch (err) {
-        if (isForbiddenError(err)) {
+        if ((err as Error)?.name === 'ForbiddenError' || isForbiddenError(err)) {
           addToast({
             title: 'Not the comment owner',
             variant: 'error',
@@ -296,7 +297,7 @@ export function IssueDetailPage() {
           duration: 3000,
         })
       } catch (err) {
-        if (isForbiddenError(err)) {
+        if ((err as Error)?.name === 'ForbiddenError' || isForbiddenError(err)) {
           addToast({
             title: 'You don\'t have permission to delete this comment.',
             variant: 'error',

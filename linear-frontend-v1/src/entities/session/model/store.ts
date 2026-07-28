@@ -22,6 +22,7 @@ interface AuthState {
   error: string | null
 
   login: (email: string, password: string) => Promise<void>
+  register: (data: { email: string; name: string; password: string }) => Promise<void>
   logout: () => Promise<void>
   hydrate: () => Promise<void>
   refreshAccessToken: () => Promise<string | null>
@@ -69,6 +70,64 @@ export const useAuthStore = create<AuthState>()(
           }
 
           const json = (await response.json()) as LoginResponse
+          const { user, accessToken } = json.data
+
+          set({
+            user,
+            accessToken,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          })
+        } catch (err) {
+          const message =
+            err instanceof Error
+              ? err.message
+              : 'Connection error. Please try again.'
+          if (message === 'Failed to fetch') {
+            set({
+              error: 'Connection error. Please try again.',
+              isLoading: false,
+            })
+          } else {
+            set({ error: message, isLoading: false })
+          }
+        }
+      },
+
+      register: async (data: { email: string; name: string; password: string }) => {
+        const { isLoading } = get()
+        if (isLoading) return
+
+        set({ isLoading: true, error: null })
+
+        try {
+          const response = await fetch(`${API_BASE}/auth/register`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          })
+
+          if (!response.ok) {
+            const body = await response.json().catch(() => ({}))
+            if (response.status === 409) {
+              throw new Error('An account with this email already exists')
+            }
+            if (response.status === 400) {
+              const errors = (body as { errors?: Record<string, string> }).errors
+              if (errors) {
+                const firstError = Object.values(errors)[0]
+                throw new Error(firstError || 'Validation failed')
+              }
+            }
+            throw new Error(
+              (body as { message?: string }).message ??
+                'Registration failed',
+            )
+          }
+
+          const json = (await response.json()) as { data: { user: User; accessToken: string } }
           const { user, accessToken } = json.data
 
           set({

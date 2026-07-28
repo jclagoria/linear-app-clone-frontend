@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { fetchIssues, changeIssueStatus, assignIssue as assignIssueApi, fetchComments as fetchCommentsApi, deleteComment as deleteCommentApi } from '@/entities/issue/api'
+import { fetchIssues, changeIssueStatus, assignIssue as assignIssueApi } from '@/entities/issue/api'
 import type { Issue, IssueFilters, Comment } from './types'
 
 interface IssuesState {
@@ -244,6 +244,7 @@ export const useIssuesStore = create<IssuesState>()(
       fetchComments: async (issueId: string) => {
         set({ commentsLoading: true, commentsError: null })
         try {
+          const { fetchComments: fetchCommentsApi } = await import('@/entities/issue/api')
           const result = await fetchCommentsApi(issueId)
           set((state) => ({
             commentsByIssue: { ...state.commentsByIssue, [issueId]: result.data },
@@ -289,6 +290,7 @@ export const useIssuesStore = create<IssuesState>()(
         }))
 
         try {
+          const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
           await deleteCommentApi(issueId, commentId)
         } catch (err) {
           set((state) => ({

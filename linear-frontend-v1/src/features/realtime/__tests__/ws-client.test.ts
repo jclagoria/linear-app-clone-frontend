@@ -88,19 +88,18 @@ describe('WebSocket client lifecycle', () => {
 
       ws.simulateOpen()
 
-      expect(onOpen).toHaveBeenCalled()
-
-      // Simulate connection_ack to trigger authenticate message
-      ws.simulateMessage({ type: 'connection_ack' })
-
-      expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
-
       // Check that authenticate message was sent
       const authMessage = JSON.parse(ws.sent[0])
       expect(authMessage).toEqual({
         type: 'authenticate',
         token: 'test-token',
       })
+
+      // Simulate authenticated message to complete authentication
+      ws.simulateMessage({ type: 'authenticated' })
+
+      expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
+      expect(onOpen).toHaveBeenCalled()
     })
 
     it('sends subscribe message after authentication when teamId is provided', () => {
@@ -109,7 +108,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -135,7 +134,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       // Check that only authenticate message was sent
       expect(ws.sent).toHaveLength(1)
@@ -161,7 +160,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       client.connect() // Should be ignored
 
@@ -177,7 +176,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -193,7 +192,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       client.disconnect()
 
@@ -206,7 +205,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       client.disconnect()
 
@@ -225,7 +224,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       // Manually send ping (simulating heartbeat)
       ws.send(JSON.stringify({ type: 'ping' }))
@@ -241,7 +240,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       const authMessage = JSON.parse(ws.sent[0])
       expect(authMessage).toHaveProperty('type', 'authenticate')
@@ -255,7 +254,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       const subscribeMessage = JSON.parse(ws.sent[1])
       expect(subscribeMessage).toHaveProperty('type', 'subscribe')
@@ -269,7 +268,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       expect(ws.sent).toHaveLength(2)
       
@@ -289,7 +288,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       ws.simulateError()
 
@@ -302,7 +301,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       // Send non-JSON message
       expect(() => {
@@ -318,7 +317,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -340,7 +339,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       client.disconnect()
 
@@ -357,7 +356,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       // Simulate failure
       ws.simulateClose(1000)
@@ -385,7 +384,7 @@ describe('WebSocket client lifecycle', () => {
 
       const ws = MockWebSocket.instances[0]
       ws.simulateOpen()
-      ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
       client.subscribeToTeam('team-new')
 

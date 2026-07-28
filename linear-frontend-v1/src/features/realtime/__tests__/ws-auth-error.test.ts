@@ -94,7 +94,7 @@ describe('WebSocket auth error handling', () => {
     expect(ws).toBeDefined()
 
     ws.simulateOpen()
-    ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -113,7 +113,7 @@ describe('WebSocket auth error handling', () => {
     expect(ws).toBeDefined()
 
     ws.simulateOpen()
-    ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -132,7 +132,7 @@ describe('WebSocket auth error handling', () => {
     expect(ws).toBeDefined()
 
     ws.simulateOpen()
-    ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -151,7 +151,7 @@ describe('WebSocket auth error handling', () => {
     expect(ws).toBeDefined()
 
     ws.simulateOpen()
-    ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -170,7 +170,7 @@ describe('WebSocket auth error handling', () => {
     expect(ws).toBeDefined()
 
     ws.simulateOpen()
-    ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -189,7 +189,7 @@ describe('WebSocket auth error handling', () => {
     expect(ws).toBeDefined()
 
     ws.simulateOpen()
-    ws.simulateMessage({ type: 'connection_ack' })
+      ws.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
