@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
+// ponytail: direct file path to avoid vi.mock interception of barrel
 import { BusinessRuleError } from '@/shared/lib/api-client/errors/BusinessRuleError'
 import type { Issue } from '@/entities/issue/model/store'
 
