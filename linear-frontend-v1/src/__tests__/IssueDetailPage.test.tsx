@@ -394,6 +394,7 @@ const mockComments = [
 
 describe('IssueDetailPage Edit Comment', () => {
   beforeEach(async () => {
+    vi.resetModules()
     useAuthStore.setState({
       user: { id: 'u1', name: 'User', email: 'user@test.com' },
       accessToken: 'token',
@@ -449,6 +450,7 @@ describe('IssueDetailPage Edit Comment', () => {
     renderPage()
 
     await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
 
     const user = userEvent.setup()
     const editButton = await screen.findByRole('button', { name: /edit comment/i })
@@ -511,6 +513,7 @@ describe('IssueDetailPage Edit Comment', () => {
     renderPage()
 
     await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
 
     const user = userEvent.setup()
     const editButton = await screen.findByRole('button', { name: /edit comment/i })
@@ -538,6 +541,7 @@ describe('IssueDetailPage Edit Comment', () => {
     renderPage()
 
     await screen.findByText('Test Issue')
+    await screen.findByText('Original comment body')
 
     const user = userEvent.setup()
     const editButton = await screen.findByRole('button', { name: /edit comment/i })
@@ -581,6 +585,7 @@ describe('IssueDetailPage Edit Comment', () => {
 
 describe('IssueDetailPage Delete Comment', () => {
   beforeEach(async () => {
+    vi.resetModules()
     useAuthStore.setState({
       user: { id: 'u1', name: 'User', email: 'user@test.com' },
       accessToken: 'token',

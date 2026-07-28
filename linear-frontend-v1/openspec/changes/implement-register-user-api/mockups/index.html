@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auth Pages — Mockups</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-4: 1rem;
+      --space-6: 1.5rem;
+      --radius-md: 6px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--color-surface);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card {
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      max-width: 400px;
+      width: 100%;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: var(--space-4); }
+    .link-list { list-style: none; }
+    .link-list li { margin-bottom: var(--space-4); }
+    .link-list a {
+      color: var(--color-primary);
+      text-decoration: none;
+      font-size: 1rem;
+    }
+    .link-list a:hover { text-decoration: underline; }
+    .note { color: var(--color-text-secondary); font-size: 0.875rem; margin-top: var(--space-6); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Auth Pages — Mockups</h1>
+    <ul class="link-list">
+      <li><a href="auth-login.html">LoginPage</a> — login form with states</li>
+      <li><a href="auth-register.html">RegisterPage</a> — registration form with states</li>
+    </ul>
+    <p class="note">Each screen includes state toggles (idle / loading / error / success). No build step — open directly in browser.</p>
+  </div>
+</body>
+</html>

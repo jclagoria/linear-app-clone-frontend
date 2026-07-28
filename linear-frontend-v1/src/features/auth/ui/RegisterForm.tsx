@@ -1,29 +1,39 @@
 import { TextInput } from '@/shared/ui/TextInput'
 import { Button } from '@/shared/ui/Button'
 import { ErrorBanner } from '@/shared/ui/ErrorBanner'
-import { useLoginForm } from '@/features/auth/hooks/useLoginForm'
-import { LogIn } from 'lucide-react'
+import { useRegisterForm } from '@/features/auth/hooks/useRegisterForm'
+import { UserPlus } from 'lucide-react'
 
-interface LoginFormProps {
-  onSwitchToRegister?: () => void
+interface RegisterFormProps {
+  onSwitchToLogin?: () => void
 }
 
-export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
+export function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
   const {
     register,
     handleSubmit,
     errors,
     isLoading,
     error,
-  } = useLoginForm()
+  } = useRegisterForm()
 
   return (
     <form
       onSubmit={handleSubmit}
-      aria-label="Login"
+      aria-label="Register"
       className="flex flex-col gap-4"
       noValidate
     >
+      <TextInput
+        type="text"
+        label="Name"
+        placeholder="Your name"
+        autoComplete="name"
+        error={errors.name?.message}
+        disabled={isLoading}
+        {...register('name')}
+      />
+
       <TextInput
         type="email"
         label="Email"
@@ -37,11 +47,21 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
       <TextInput
         type="password"
         label="Password"
-        placeholder="Enter your password"
-        autoComplete="current-password"
+        placeholder="At least 8 characters"
+        autoComplete="new-password"
         error={errors.password?.message}
         disabled={isLoading}
         {...register('password')}
+      />
+
+      <TextInput
+        type="password"
+        label="Confirm password"
+        placeholder="Confirm your password"
+        autoComplete="new-password"
+        error={errors.confirmPassword?.message}
+        disabled={isLoading}
+        {...register('confirmPassword')}
       />
 
       {error && <ErrorBanner message={error} />}
@@ -51,21 +71,21 @@ export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         variant="primary"
         loading={isLoading}
         disabled={isLoading}
-        icon={<LogIn className="h-4 w-4" />}
+        icon={<UserPlus className="h-4 w-4" />}
         className="mt-2"
       >
-        {isLoading ? 'Logging in...' : 'Log in'}
+        {isLoading ? 'Creating...' : 'Create account'}
       </Button>
 
-      {onSwitchToRegister && (
+      {onSwitchToLogin && (
         <p className="text-center text-sm text-text-muted">
-          Don't have an account?{' '}
+          Already have an account?{' '}
           <button
             type="button"
-            onClick={onSwitchToRegister}
+            onClick={onSwitchToLogin}
             className="text-primary hover:underline"
           >
-            Sign up
+            Sign in
           </button>
         </p>
       )}

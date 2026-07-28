@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { resetDomainStores } from '@/shared/stores/resetAllStores'
+import { registerUser, RegisterError } from '@/shared/api/auth'
 import type { User, LoginResponse, RefreshResponse } from './types'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
@@ -20,8 +21,10 @@ interface AuthState {
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
+  fieldErrors: Record<string, string> | null
 
   login: (email: string, password: string) => Promise<void>
+  register: (data: { email: string; name: string; password: string }) => Promise<void>
   logout: () => Promise<void>
   hydrate: () => Promise<void>
   refreshAccessToken: () => Promise<string | null>
@@ -34,6 +37,7 @@ export const initialAuthState = {
   isAuthenticated: false,
   isLoading: false,
   error: null as string | null,
+  fieldErrors: null as Record<string, string> | null,
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -41,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       ...initialAuthState,
 
-      clearError: () => set({ error: null }),
+      clearError: () => set({ error: null, fieldErrors: null }),
 
       login: async (email: string, password: string) => {
         const { isLoading } = get()
@@ -82,14 +86,55 @@ export const useAuthStore = create<AuthState>()(
           const message =
             err instanceof Error
               ? err.message
-              : 'Connection error. Please try again.'
+              : 'Something went wrong. Please try again.'
           if (message === 'Failed to fetch') {
             set({
-              error: 'Connection error. Please try again.',
+              error: 'Something went wrong. Please try again.',
               isLoading: false,
             })
           } else {
             set({ error: message, isLoading: false })
+          }
+        }
+      },
+
+      register: async (data: { email: string; name: string; password: string }) => {
+        const { isLoading } = get()
+        if (isLoading) return
+
+        set({ isLoading: true, error: null, fieldErrors: null })
+
+        try {
+          const result = await registerUser(data)
+
+          set({
+            user: result.user,
+            accessToken: result.accessToken,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+            fieldErrors: null,
+          })
+        } catch (err) {
+          if (err instanceof RegisterError) {
+            set({
+              error: err.message,
+              fieldErrors: err.fieldErrors ?? null,
+              isLoading: false,
+            })
+          } else {
+            const message =
+              err instanceof Error
+                ? err.message
+                : 'Something went wrong. Please try again.'
+            if (message === 'Failed to fetch') {
+              set({
+                error: 'Something went wrong. Please try again.',
+                isLoading: false,
+              })
+            } else {
+              set({ error: message, isLoading: false })
+            }
           }
         }
       },

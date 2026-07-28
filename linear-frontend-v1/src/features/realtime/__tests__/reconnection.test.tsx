@@ -80,7 +80,7 @@ describe('reconnection restores event stream after disconnect', () => {
     expect(useWebSocketStore.getState().connectionStatus).toBe('connecting')
 
     ws1.simulateOpen()
-    ws1.simulateMessage({ type: 'connection_ack' })
+      ws1.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
     expect(useWebSocketStore.getState().reconnectAttempts).toBe(0)
@@ -110,7 +110,7 @@ describe('reconnection restores event stream after disconnect', () => {
     expect(useWebSocketStore.getState().connectionStatus).toBe('connecting')
 
     ws2.simulateOpen()
-    ws2.simulateMessage({ type: 'connection_ack' })
+    ws2.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
     expect(useWebSocketStore.getState().reconnectAttempts).toBe(0)
@@ -189,7 +189,7 @@ describe('reconnection restores event stream after disconnect', () => {
 
     const ws1 = MockWebSocket.instances[0]
     ws1.simulateOpen()
-    ws1.simulateMessage({ type: 'connection_ack' })
+      ws1.simulateMessage({ type: 'authenticated' })
 
     expect(useWebSocketStore.getState().connectionStatus).toBe('connected')
 
@@ -198,7 +198,7 @@ describe('reconnection restores event stream after disconnect', () => {
 
     const ws2 = MockWebSocket.instances[1]
     ws2.simulateOpen()
-    ws2.simulateMessage({ type: 'connection_ack' })
+    ws2.simulateMessage({ type: 'authenticated' })
 
     useWebSocketStore.getState().setAutoUpdateEnabled(false)
 

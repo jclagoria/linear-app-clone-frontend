@@ -1,8 +1,8 @@
 import { Navigate, useNavigate } from 'react-router-dom'
-import { LoginForm } from '@/features/auth/ui/LoginForm'
+import { RegisterForm } from '@/features/auth/ui/RegisterForm'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
-export function LoginPage() {
+export function RegisterPage() {
   const navigate = useNavigate()
   const { isAuthenticated, isLoading } = useAuth()
 
@@ -11,7 +11,7 @@ export function LoginPage() {
     return <Navigate to="/" replace />
   }
 
-  // If hydrating, don't flash login
+  // If hydrating, don't flash register
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -59,16 +59,16 @@ export function LoginPage() {
               />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-text">Welcome back</h1>
+          <h1 className="text-2xl font-bold text-text">Create your account</h1>
           <p className="mt-1 text-sm text-text-muted">
-            Sign in to your account to continue
+            Get started with your free account
           </p>
         </div>
 
-        {/* Login Card */}
+        {/* Register Card */}
         <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-          <LoginForm
-            onSwitchToRegister={() => navigate('/register')}
+          <RegisterForm
+            onSwitchToLogin={() => navigate('/login')}
           />
         </div>
       </div>
