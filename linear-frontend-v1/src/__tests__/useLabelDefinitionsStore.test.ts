@@ -2,8 +2,13 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useLabelDefinitionsStore } from '@/entities/label/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
 
-vi.mock('@/entities/label/api', () => ({
-  fetchLabelDefinitions: vi.fn(),
+vi.mock('@/shared/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }))
 
 const mockLabels = [
@@ -33,9 +38,9 @@ describe('useLabelDefinitionsStore', () => {
 
   describe('fetchLabelDefinitions', () => {
     it('sets loading state then populates labels on success', async () => {
-      const { fetchLabelDefinitions } = await import('@/entities/label/api')
+      const { apiClient } = await import('@/shared/lib/api-client')
       let resolvePromise!: (value: { data: typeof mockLabels }) => void
-      vi.mocked(fetchLabelDefinitions).mockReturnValue(
+      vi.mocked(apiClient.get).mockReturnValue(
         new Promise((resolve) => { resolvePromise = resolve }),
       )
 
@@ -51,11 +56,12 @@ describe('useLabelDefinitionsStore', () => {
       expect(state.isLoading).toBe(false)
       expect(state.labels).toEqual(mockLabels)
       expect(state.error).toBeNull()
+      expect(apiClient.get).toHaveBeenCalledWith('/labels')
     })
 
     it('stores fetched labels in cache', async () => {
-      const { fetchLabelDefinitions } = await import('@/entities/label/api')
-      vi.mocked(fetchLabelDefinitions).mockResolvedValue({ data: mockLabels })
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
 
       await useLabelDefinitionsStore.getState().fetchLabelDefinitions()
 
@@ -69,20 +75,20 @@ describe('useLabelDefinitionsStore', () => {
       useCacheStore.getState().set('label:definitions', mockLabels)
       useLabelDefinitionsStore.setState({ labels: mockLabels })
 
-      const { fetchLabelDefinitions } = await import('@/entities/label/api')
-      vi.mocked(fetchLabelDefinitions).mockClear()
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockClear()
 
       await useLabelDefinitionsStore.getState().fetchLabelDefinitions()
 
-      expect(fetchLabelDefinitions).not.toHaveBeenCalled()
+      expect(apiClient.get).not.toHaveBeenCalled()
       const state = useLabelDefinitionsStore.getState()
       expect(state.labels).toEqual(mockLabels)
       expect(state.isLoading).toBe(false)
     })
 
     it('sets error message on failure and clears loading', async () => {
-      const { fetchLabelDefinitions } = await import('@/entities/label/api')
-      vi.mocked(fetchLabelDefinitions).mockRejectedValue(new Error('Network error'))
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockRejectedValue(new Error('Network error'))
 
       await useLabelDefinitionsStore.getState().fetchLabelDefinitions()
 
@@ -93,8 +99,8 @@ describe('useLabelDefinitionsStore', () => {
     })
 
     it('uses fallback error message when error has no message', async () => {
-      const { fetchLabelDefinitions } = await import('@/entities/label/api')
-      vi.mocked(fetchLabelDefinitions).mockRejectedValue(null)
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockRejectedValue(null)
 
       await useLabelDefinitionsStore.getState().fetchLabelDefinitions()
 

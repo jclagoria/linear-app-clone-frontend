@@ -1,14 +1,16 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useIssuesStore } from '@/entities/issue/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { BusinessRuleError } from '@/shared/lib/api-client'
+import { BusinessRuleError } from '@/shared/lib/api-client/errors/BusinessRuleError'
 import type { Issue } from '@/entities/issue/model/store'
 
-vi.mock('@/entities/issue/api', () => ({
-  fetchIssues: vi.fn(),
-  changeIssueStatus: vi.fn(),
-  assignIssue: vi.fn(),
-  deleteComment: vi.fn(),
+vi.mock('@/shared/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }))
 
 const mockIssues: Issue[] = [
@@ -55,8 +57,8 @@ describe('issuesStore', () => {
 
   describe('loadIssues', () => {
     it('sets loading state and populates issues', async () => {
-      const { fetchIssues } = await import('@/entities/issue/api')
-      vi.mocked(fetchIssues).mockResolvedValue({
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({
         data: mockIssues,
         pagination: { nextCursor: 'cursor-2', hasMore: true },
       })
@@ -71,11 +73,12 @@ describe('issuesStore', () => {
       expect(state.issues).toHaveLength(3)
       expect(state.cursor).toBe('cursor-2')
       expect(state.hasMore).toBe(true)
+      expect(apiClient.get).toHaveBeenCalledWith('/issues', { params: {} })
     })
 
     it('sets error on failure', async () => {
-      const { fetchIssues } = await import('@/entities/issue/api')
-      vi.mocked(fetchIssues).mockRejectedValue(new Error('Network error'))
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockRejectedValue(new Error('Network error'))
 
       await useIssuesStore.getState().loadIssues()
 
@@ -87,24 +90,26 @@ describe('issuesStore', () => {
 
   describe('changeStatus', () => {
     it('calls API and updates issue on success', async () => {
-      const { changeIssueStatus } = await import('@/entities/issue/api')
+      const { apiClient } = await import('@/shared/lib/api-client')
       const updatedIssue = { ...mockIssues[0], status: 'In Progress' }
-      vi.mocked(changeIssueStatus).mockResolvedValue({ data: updatedIssue })
+      vi.mocked(apiClient.patch).mockResolvedValue({ data: updatedIssue })
 
       useIssuesStore.setState({ issues: mockIssues })
       useCacheStore.getState().set('issues:list?', { data: mockIssues, meta: { cursor: null, hasMore: false } })
 
       const result = await useIssuesStore.getState().changeStatus('1', 'status-2')
 
-      expect(changeIssueStatus).toHaveBeenCalledWith('1', 'status-2')
+      expect(apiClient.patch).toHaveBeenCalledWith('/issues/1/status', {
+        body: { statusId: 'status-2' },
+      })
       expect(result.status).toBe('In Progress')
       expect(useIssuesStore.getState().issues[0].status).toBe('In Progress')
       expect(useCacheStore.getState().get('issues:list?')).toBeNull()
     })
 
     it('reverts issue status on BusinessRuleError', async () => {
-      const { changeIssueStatus } = await import('@/entities/issue/api')
-      vi.mocked(changeIssueStatus).mockRejectedValue(new BusinessRuleError('Invalid transition'))
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.patch).mockRejectedValue(new BusinessRuleError('Invalid transition'))
 
       useIssuesStore.setState({ issues: mockIssues })
       const previousStatus = useIssuesStore.getState().issues[0].status
@@ -116,8 +121,8 @@ describe('issuesStore', () => {
     })
 
     it('reverts issue status on network error', async () => {
-      const { changeIssueStatus } = await import('@/entities/issue/api')
-      vi.mocked(changeIssueStatus).mockRejectedValue(new Error('Network error'))
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.patch).mockRejectedValue(new Error('Network error'))
 
       useIssuesStore.setState({ issues: mockIssues })
       const previousStatus = useIssuesStore.getState().issues[0].status
@@ -131,28 +136,30 @@ describe('issuesStore', () => {
 
   describe('assignIssue', () => {
     it('calls API and updates issue assignee on success', async () => {
-      const { assignIssue } = await import('@/entities/issue/api')
+      const { apiClient } = await import('@/shared/lib/api-client')
       const updatedIssue = { ...mockIssues[0], assigneeId: 'user-1', assigneeName: 'John Doe' }
-      vi.mocked(assignIssue).mockResolvedValue({ data: updatedIssue })
+      vi.mocked(apiClient.patch).mockResolvedValue({ data: updatedIssue })
 
       useIssuesStore.setState({ issues: mockIssues })
       useCacheStore.getState().set('issues:list?', { data: mockIssues, meta: { cursor: null, hasMore: false } })
 
       const result = await useIssuesStore.getState().assignIssue('1', 'user-1')
 
-      expect(assignIssue).toHaveBeenCalledWith('1', 'user-1')
+      expect(apiClient.patch).toHaveBeenCalledWith('/issues/1/assignee', {
+        body: { assigneeId: 'user-1' },
+      })
       expect(result.assigneeId).toBe('user-1')
       expect(useIssuesStore.getState().issues[0].assigneeId).toBe('user-1')
       expect(useCacheStore.getState().get('issues:list?')).toBeNull()
     })
 
     it('optimistically updates assignee before API response', async () => {
-      const { assignIssue } = await import('@/entities/issue/api')
+      const { apiClient } = await import('@/shared/lib/api-client')
       let resolvePromise: (value: { data: Issue }) => void
       const promise = new Promise<{ data: Issue }>((resolve) => {
         resolvePromise = resolve
       })
-      vi.mocked(assignIssue).mockReturnValue(promise)
+      vi.mocked(apiClient.patch).mockReturnValue(promise)
 
       useIssuesStore.setState({ issues: mockIssues })
 
@@ -165,8 +172,8 @@ describe('issuesStore', () => {
     })
 
     it('reverts assignee on BusinessRuleError', async () => {
-      const { assignIssue } = await import('@/entities/issue/api')
-      vi.mocked(assignIssue).mockRejectedValue(new BusinessRuleError('Not a team member'))
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.patch).mockRejectedValue(new BusinessRuleError('Not a team member'))
 
       useIssuesStore.setState({ issues: mockIssues })
       const previousAssigneeId = useIssuesStore.getState().issues[0].assigneeId
@@ -178,8 +185,8 @@ describe('issuesStore', () => {
     })
 
     it('reverts assignee on network error', async () => {
-      const { assignIssue } = await import('@/entities/issue/api')
-      vi.mocked(assignIssue).mockRejectedValue(new Error('Network error'))
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.patch).mockRejectedValue(new Error('Network error'))
 
       useIssuesStore.setState({ issues: mockIssues })
       const previousAssigneeId = useIssuesStore.getState().issues[0].assigneeId
@@ -191,15 +198,17 @@ describe('issuesStore', () => {
     })
 
     it('sets assigneeId to null for unassign', async () => {
-      const { assignIssue } = await import('@/entities/issue/api')
+      const { apiClient } = await import('@/shared/lib/api-client')
       const updatedIssue = { ...mockIssues[0], assigneeId: null, assigneeName: null }
-      vi.mocked(assignIssue).mockResolvedValue({ data: updatedIssue })
+      vi.mocked(apiClient.patch).mockResolvedValue({ data: updatedIssue })
 
       useIssuesStore.setState({ issues: mockIssues })
 
       await useIssuesStore.getState().assignIssue('1', null)
 
-      expect(assignIssue).toHaveBeenCalledWith('1', null)
+      expect(apiClient.patch).toHaveBeenCalledWith('/issues/1/assignee', {
+        body: { assigneeId: null },
+      })
       expect(useIssuesStore.getState().issues[0].assigneeId).toBeNull()
     })
   })
@@ -220,8 +229,8 @@ describe('issuesStore', () => {
         },
       ]
 
-      const { fetchIssues } = await import('@/entities/issue/api')
-      vi.mocked(fetchIssues).mockResolvedValue({
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({
         data: moreIssues,
         pagination: { nextCursor: null, hasMore: false },
       })
@@ -232,6 +241,9 @@ describe('issuesStore', () => {
       expect(state.issues).toHaveLength(4)
       expect(state.hasMore).toBe(false)
       expect(state.cursor).toBeNull()
+      expect(apiClient.get).toHaveBeenCalledWith('/issues', {
+        params: { cursor: 'cursor-1' },
+      })
     })
 
     it('does nothing if hasMore is false', async () => {
@@ -239,8 +251,8 @@ describe('issuesStore', () => {
 
       await useIssuesStore.getState().loadNextPage()
 
-      const { fetchIssues } = await import('@/entities/issue/api')
-      expect(fetchIssues).not.toHaveBeenCalled()
+      const { apiClient } = await import('@/shared/lib/api-client')
+      expect(apiClient.get).not.toHaveBeenCalled()
     })
   })
 
@@ -297,9 +309,9 @@ describe('issuesStore', () => {
     })
 
     it('removes comment optimistically before API resolves', async () => {
-      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
+      const { apiClient } = await import('@/shared/lib/api-client')
       let resolvePromise!: () => void
-      vi.mocked(deleteCommentApi).mockReturnValue(new Promise((resolve) => { resolvePromise = resolve }))
+      vi.mocked(apiClient.delete).mockReturnValue(new Promise((resolve) => { resolvePromise = resolve }))
 
       const promise = useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')
 
@@ -312,8 +324,8 @@ describe('issuesStore', () => {
     })
 
     it('keeps comment removed after API succeeds', async () => {
-      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
-      vi.mocked(deleteCommentApi).mockResolvedValue(undefined)
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.delete).mockResolvedValue(undefined)
 
       await useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')
 
@@ -323,8 +335,8 @@ describe('issuesStore', () => {
     })
 
     it('rolls back comment on API error', async () => {
-      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
-      vi.mocked(deleteCommentApi).mockRejectedValue(new Error('Network error'))
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.delete).mockRejectedValue(new Error('Network error'))
 
       await expect(useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')).rejects.toThrow('Network error')
 
@@ -334,12 +346,12 @@ describe('issuesStore', () => {
     })
 
     it('calls deleteComment API with correct params', async () => {
-      const { deleteComment: deleteCommentApi } = await import('@/entities/issue/api')
-      vi.mocked(deleteCommentApi).mockResolvedValue(undefined)
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.delete).mockResolvedValue(undefined)
 
       await useIssuesStore.getState().deleteCommentFromStore('i1', 'c1')
 
-      expect(deleteCommentApi).toHaveBeenCalledWith('i1', 'c1')
+      expect(apiClient.delete).toHaveBeenCalledWith('/issues/i1/comments/c1')
     })
   })
 })
