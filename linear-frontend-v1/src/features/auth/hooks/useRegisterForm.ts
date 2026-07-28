@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -22,11 +22,12 @@ export type RegisterFormData = z.infer<typeof registerSchema>
 
 export function useRegisterForm() {
   const navigate = useNavigate()
-  const { register: registerUser, isLoading, error, clearError } = useAuthStore()
+  const { register: registerUser, isLoading, error, fieldErrors, clearError } = useAuthStore()
 
   const {
     register,
     handleSubmit: rhfHandleSubmit,
+    setError,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -37,6 +38,16 @@ export function useRegisterForm() {
       confirmPassword: '',
     },
   })
+
+  useEffect(() => {
+    if (fieldErrors) {
+      for (const [field, message] of Object.entries(fieldErrors)) {
+        if (field in registerSchema.shape) {
+          setError(field as keyof RegisterFormData, { message })
+        }
+      }
+    }
+  }, [fieldErrors, setError])
 
   const onSubmit = useCallback(
     async (data: RegisterFormData) => {

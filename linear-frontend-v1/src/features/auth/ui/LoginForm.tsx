@@ -4,7 +4,11 @@ import { ErrorBanner } from '@/shared/ui/ErrorBanner'
 import { useLoginForm } from '@/features/auth/hooks/useLoginForm'
 import { LogIn } from 'lucide-react'
 
-export function LoginForm() {
+interface LoginFormProps {
+  onSwitchToRegister?: () => void
+}
+
+export function LoginForm({ onSwitchToRegister }: LoginFormProps) {
   const {
     register,
     handleSubmit,
@@ -52,6 +56,19 @@ export function LoginForm() {
       >
         {isLoading ? 'Logging in...' : 'Log in'}
       </Button>
+
+      {onSwitchToRegister && (
+        <p className="text-center text-sm text-text-muted">
+          Don't have an account?{' '}
+          <button
+            type="button"
+            onClick={onSwitchToRegister}
+            className="text-primary hover:underline"
+          >
+            Sign up
+          </button>
+        </p>
+      )}
     </form>
   )
 }

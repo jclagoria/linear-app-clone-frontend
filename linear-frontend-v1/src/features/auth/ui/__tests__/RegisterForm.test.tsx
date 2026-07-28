@@ -1,24 +1,26 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { RegisterForm } from '../RegisterForm'
+import { useAuthStore } from '@/entities/session/model/store'
 
-// Mock the useRegisterForm hook
-vi.mock('@/features/auth/hooks/useRegisterForm', () => ({
-  useRegisterForm: () => ({
-    register: vi.fn((name: string) => ({
-      onChange: vi.fn(),
-      onBlur: vi.fn(),
-      ref: vi.fn(),
-      name,
-    })),
-    handleSubmit: vi.fn((e: Event) => e.preventDefault()),
-    errors: {},
-    isLoading: false,
-    error: null,
-  }),
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
 }))
 
 describe('RegisterForm', () => {
+  beforeEach(() => {
+    useAuthStore.setState({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false,
+      isLoading: false,
+      error: null,
+      fieldErrors: null,
+    })
+    vi.restoreAllMocks()
+  })
+
   it('renders all form fields', () => {
     render(<RegisterForm />)
 
@@ -56,23 +58,36 @@ describe('RegisterForm', () => {
     expect(onSwitchToLogin).toHaveBeenCalled()
   })
 
-  it('displays error message when error is present', () => {
-    // This test would require mocking the hook to return an error
-    // For now, we'll test the component renders without error
+  it('shows validation errors when submitting empty form', async () => {
+    const user = userEvent.setup()
     render(<RegisterForm />)
 
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /create account/i }))
+
+    await waitFor(() => {
+      expect(screen.getByText(/name is required/i)).toBeInTheDocument()
+    })
+    expect(screen.getByText(/email is required/i)).toBeInTheDocument()
+    expect(screen.getByText(/password must be at least 8 characters/i)).toBeInTheDocument()
+    expect(screen.getByText(/passwords do not match/i)).toBeInTheDocument()
+  })
+
+  it('shows server error message when error is present', () => {
+    useAuthStore.setState({ error: 'An account with this email already exists' })
+    render(<RegisterForm />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent(/account with this email already exists/i)
   })
 
   it('disables form fields when loading', () => {
-    // This test would require mocking the hook to return isLoading: true
-    // For now, we'll test the component renders with enabled fields
+    useAuthStore.setState({ isLoading: true })
     render(<RegisterForm />)
 
-    expect(screen.getByLabelText(/name/i)).not.toBeDisabled()
-    expect(screen.getByLabelText(/email/i)).not.toBeDisabled()
-    expect(screen.getByLabelText(/^password$/i)).not.toBeDisabled()
-    expect(screen.getByLabelText(/confirm password/i)).not.toBeDisabled()
+    expect(screen.getByLabelText(/name/i)).toBeDisabled()
+    expect(screen.getByLabelText(/email/i)).toBeDisabled()
+    expect(screen.getByLabelText(/^password$/i)).toBeDisabled()
+    expect(screen.getByLabelText(/confirm password/i)).toBeDisabled()
+    expect(screen.getByRole('button', { name: /creating/i })).toBeDisabled()
   })
 
   it('has proper accessibility attributes', () => {

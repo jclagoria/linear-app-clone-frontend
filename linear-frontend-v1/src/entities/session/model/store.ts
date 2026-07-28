@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { resetDomainStores } from '@/shared/stores/resetAllStores'
+import { registerUser, RegisterError } from '@/shared/api/auth'
 import type { User, LoginResponse, RefreshResponse } from './types'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
@@ -20,6 +21,7 @@ interface AuthState {
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
+  fieldErrors: Record<string, string> | null
 
   login: (email: string, password: string) => Promise<void>
   register: (data: { email: string; name: string; password: string }) => Promise<void>
@@ -35,6 +37,7 @@ export const initialAuthState = {
   isAuthenticated: false,
   isLoading: false,
   error: null as string | null,
+  fieldErrors: null as Record<string, string> | null,
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -42,7 +45,7 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       ...initialAuthState,
 
-      clearError: () => set({ error: null }),
+      clearError: () => set({ error: null, fieldErrors: null }),
 
       login: async (email: string, password: string) => {
         const { isLoading } = get()
@@ -83,10 +86,10 @@ export const useAuthStore = create<AuthState>()(
           const message =
             err instanceof Error
               ? err.message
-              : 'Connection error. Please try again.'
+              : 'Something went wrong. Please try again.'
           if (message === 'Failed to fetch') {
             set({
-              error: 'Connection error. Please try again.',
+              error: 'Something went wrong. Please try again.',
               isLoading: false,
             })
           } else {
@@ -99,56 +102,39 @@ export const useAuthStore = create<AuthState>()(
         const { isLoading } = get()
         if (isLoading) return
 
-        set({ isLoading: true, error: null })
+        set({ isLoading: true, error: null, fieldErrors: null })
 
         try {
-          const response = await fetch(`${API_BASE}/auth/register`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          })
-
-          if (!response.ok) {
-            const body = await response.json().catch(() => ({}))
-            if (response.status === 409) {
-              throw new Error('An account with this email already exists')
-            }
-            if (response.status === 400) {
-              const errors = (body as { errors?: Record<string, string> }).errors
-              if (errors) {
-                const firstError = Object.values(errors)[0]
-                throw new Error(firstError || 'Validation failed')
-              }
-            }
-            throw new Error(
-              (body as { message?: string }).message ??
-                'Registration failed',
-            )
-          }
-
-          const json = (await response.json()) as { data: { user: User; accessToken: string } }
-          const { user, accessToken } = json.data
+          const result = await registerUser(data)
 
           set({
-            user,
-            accessToken,
+            user: result.user,
+            accessToken: result.accessToken,
             isAuthenticated: true,
             isLoading: false,
             error: null,
+            fieldErrors: null,
           })
         } catch (err) {
-          const message =
-            err instanceof Error
-              ? err.message
-              : 'Connection error. Please try again.'
-          if (message === 'Failed to fetch') {
+          if (err instanceof RegisterError) {
             set({
-              error: 'Connection error. Please try again.',
+              error: err.message,
+              fieldErrors: err.fieldErrors ?? null,
               isLoading: false,
             })
           } else {
-            set({ error: message, isLoading: false })
+            const message =
+              err instanceof Error
+                ? err.message
+                : 'Something went wrong. Please try again.'
+            if (message === 'Failed to fetch') {
+              set({
+                error: 'Something went wrong. Please try again.',
+                isLoading: false,
+              })
+            } else {
+              set({ error: message, isLoading: false })
+            }
           }
         }
       },

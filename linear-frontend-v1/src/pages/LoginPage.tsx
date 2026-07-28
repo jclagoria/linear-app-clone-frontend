@@ -1,8 +1,9 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { LoginForm } from '@/features/auth/ui/LoginForm'
 import { useAuth } from '@/features/auth/hooks/useAuth'
 
 export function LoginPage() {
+  const navigate = useNavigate()
   const { isAuthenticated, isLoading } = useAuth()
 
   // If already authenticated, redirect to app
@@ -66,7 +67,9 @@ export function LoginPage() {
 
         {/* Login Card */}
         <div className="rounded-xl border border-border bg-surface p-6 shadow-sm">
-          <LoginForm />
+          <LoginForm
+            onSwitchToRegister={() => navigate('/register')}
+          />
         </div>
       </div>
     </main>
