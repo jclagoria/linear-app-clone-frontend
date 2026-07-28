@@ -115,23 +115,31 @@ export function renderWithRouter(
 }
 
 /**
- * Sets up fake timers with a deterministic system time.
- * Returns a restore function to revert to real timers.
+ * Canonical deterministic "now" for tests.
+ * Use this instead of `new Date()` or `Date.now()` to avoid non-determinism.
+ */
+export const TEST_NOW = '2024-06-15T12:00:00Z'
+
+/**
+ * Freezes time at a deterministic value. Call in beforeEach, pair with
+ * `vi.useRealTimers()` in afterEach when the suite needs fake timers.
  *
  * @example
  * ```tsx
- * beforeEach(() => {
- *   setSystemTime('2024-06-15T12:00:00Z')
- * })
+ * beforeEach(() => { setTestNow() })       // freezes at TEST_NOW
+ * afterEach(() => { vi.useRealTimers() })
+ * ```
  *
- * afterEach(() => {
- *   vi.useRealTimers()
- * })
+ * Override the frozen time per-test when needed:
+ * ```tsx
+ * setTestNow('2024-12-25T00:00:00Z')
  * ```
  */
-export function setSystemTime(time: string | number | Date): void {
+export function setTestNow(time: string | number | Date = TEST_NOW): Date {
   vi.useFakeTimers()
-  vi.setSystemTime(new Date(time))
+  const d = new Date(time)
+  vi.setSystemTime(d)
+  return d
 }
 
 /**

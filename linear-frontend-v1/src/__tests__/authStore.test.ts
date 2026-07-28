@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { useAuthStore } from '@/entities/session/model/store'
+import { setTestNow } from './test-utils'
 
 describe('AuthStore', () => {
   beforeEach(() => {
@@ -180,6 +181,9 @@ describe('AuthStore', () => {
   })
 
   describe('refreshAccessToken', () => {
+    beforeEach(() => { setTestNow() })
+    afterEach(() => { vi.useRealTimers() })
+
     it('returns existing token if still valid', async () => {
       const farFutureExp = Math.floor((Date.now() + 3600_000) / 1000)
       const mockToken = `header.${btoa(JSON.stringify({ exp: farFutureExp }))}.signature`

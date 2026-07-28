@@ -68,11 +68,15 @@ interface IssueOverrides extends Partial<Issue> {}
  * const issue = createMockIssue({ title: 'Custom Title', statusId: 'Done' })
  * ```
  */
+// ponytail: counter for unique IDs — Date.now() freezes under fake timers
+let _id = 0
+function uid(prefix: string) { return `${prefix}-${++_id}-${Math.random().toString(36).slice(2, 7)}` }
+
 export function createMockIssue(overrides: IssueOverrides = {}): Issue {
   return {
     ...mockIssue,
     ...overrides,
-    id: overrides.id ?? `issue-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    id: overrides.id ?? uid('issue'),
   }
 }
 
@@ -89,7 +93,7 @@ export function createMockLabel(overrides: LabelOverrides = {}): Label {
   return {
     ...mockLabels[0],
     ...overrides,
-    id: overrides.id ?? `label-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    id: overrides.id ?? uid('label'),
   }
 }
 
@@ -106,7 +110,7 @@ export function createMockComment(overrides: CommentOverrides = {}): Comment {
   return {
     ...mockComments[0],
     ...overrides,
-    id: overrides.id ?? `comment-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    id: overrides.id ?? uid('comment'),
   }
 }
 
