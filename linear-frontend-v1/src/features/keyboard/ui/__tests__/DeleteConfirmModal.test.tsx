@@ -2,9 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { DeleteConfirmModal } from '../DeleteConfirmModal'
 import { useModalStore } from '@/shared/stores/modalStore'
+import { resetStores } from '@/__tests__/test-utils'
 
 describe('DeleteConfirmModal', () => {
   beforeEach(() => {
+    resetStores()
     useModalStore.setState({ stack: [], topId: null })
     document.body.innerHTML = ''
   })

@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { setTestNow, TEST_NOW } from './test-utils'
 import {
   selectIssuesByStatus,
   selectProjectProgress,
@@ -66,8 +67,11 @@ describe('selectors', () => {
   })
 
   describe('selectActiveCycle', () => {
+    beforeEach(() => { setTestNow() })
+    afterEach(() => { vi.useRealTimers() })
+
     it('returns the cycle containing current date', () => {
-      const now = new Date()
+      const now = new Date(TEST_NOW)
       const past = new Date(now.getTime() - 86400_000)
       const future = new Date(now.getTime() + 86400_000)
 

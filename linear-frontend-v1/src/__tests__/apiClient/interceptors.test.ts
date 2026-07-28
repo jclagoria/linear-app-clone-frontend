@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { setTestNow } from '../test-utils'
 import { authInterceptor } from '@/shared/lib/api-client/interceptors/auth'
 import { errorInterceptor } from '@/shared/lib/api-client/interceptors/error'
 import { rateLimitInterceptor } from '@/shared/lib/api-client/interceptors/rate-limit'
@@ -140,8 +141,10 @@ describe('errorInterceptor', () => {
 
 describe('rateLimitInterceptor', () => {
   beforeEach(() => {
+    setTestNow()
     useRateLimitStore.setState({ endpoints: new Map() })
   })
+  afterEach(() => { vi.useRealTimers() })
 
   function makeResponse(status: number, headers?: Record<string, string>): Response {
     return new Response(null, {

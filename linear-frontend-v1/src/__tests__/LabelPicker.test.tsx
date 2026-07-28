@@ -4,17 +4,16 @@ import userEvent from '@testing-library/user-event'
 import { LabelPicker } from '@/entities/label/ui/LabelPicker'
 import { useLabelDefinitionsStore } from '@/entities/label/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { fetchLabelDefinitions } from '@/entities/label/api'
+import { mockLabels } from './fixtures'
 
-vi.mock('@/entities/label/api', () => ({
-  fetchLabelDefinitions: vi.fn(),
+vi.mock('@/shared/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }))
-
-const mockLabels = [
-  { id: 'l1', name: 'Bug', color: '#ef4444', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-  { id: 'l2', name: 'Feature', color: '#22c55e', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-  { id: 'l3', name: 'Enhancement', color: '#3b82f6', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-]
 
 function renderLabelPicker(props: Partial<Parameters<typeof LabelPicker>[0]> = {}) {
   const triggerRef = { current: document.createElement('button') }
@@ -30,18 +29,19 @@ function renderLabelPicker(props: Partial<Parameters<typeof LabelPicker>[0]> = {
 
 describe('LabelPicker', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     useLabelDefinitionsStore.setState({
       labels: [],
       isLoading: false,
       error: null,
     })
     useCacheStore.getState().clear()
+    vi.clearAllMocks()
   })
 
   describe('when labels are loaded', () => {
-    beforeEach(() => {
-      vi.mocked(fetchLabelDefinitions).mockResolvedValue({ data: mockLabels })
+    beforeEach(async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
     })
 
     it('renders search input with placeholder', async () => {
@@ -217,7 +217,6 @@ describe('LabelPicker', () => {
       renderLabelPicker({ selectedIds: ['l1', 'l2'] })
 
       await screen.findByText('Bug')
-      // Without search all labels are visible (selected ones highlighted via aria-selected)
       expect(screen.getByText('Bug')).toBeInTheDocument()
       expect(screen.getByText('Feature')).toBeInTheDocument()
       expect(screen.getByText('Enhancement')).toBeInTheDocument()
@@ -232,15 +231,15 @@ describe('LabelPicker', () => {
       const searchInput = screen.getByPlaceholderText('Search labels...')
       await user.type(searchInput, 'Bug')
 
-      // Bug is selected and search matches it - should be filtered out
       expect(screen.queryByText('Bug')).not.toBeInTheDocument()
       expect(screen.getByText('No labels match your search')).toBeInTheDocument()
     })
   })
 
   describe('empty state', () => {
-    beforeEach(() => {
-      vi.mocked(fetchLabelDefinitions).mockResolvedValue({ data: [] })
+    beforeEach(async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: [] })
     })
 
     it('shows empty state when no labels exist at all', async () => {
@@ -251,8 +250,9 @@ describe('LabelPicker', () => {
   })
 
   describe('loading state', () => {
-    beforeEach(() => {
-      vi.mocked(fetchLabelDefinitions).mockReturnValue(new Promise(() => {}))
+    beforeEach(async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockReturnValue(new Promise(() => {}))
     })
 
     it('shows loading state when loading', async () => {

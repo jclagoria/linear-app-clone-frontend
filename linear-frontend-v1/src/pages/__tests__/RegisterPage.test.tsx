@@ -1,14 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import { RegisterPage } from '../RegisterPage'
-import { useAuthStore } from '@/entities/session/model/store'
 import { useAuth } from '@/features/auth/hooks/useAuth'
+import { renderWithRouter, resetStores } from '../../__tests__/test-utils'
 
-// Mock react-router-dom
-vi.mock('react-router-dom', () => ({
-  Navigate: ({ to }: { to: string }) => <div data-testid="navigate" data-to={to} />,
-  useNavigate: () => vi.fn(),
-}))
+// Mock react-router-dom (partial mock - keep MemoryRouter for renderWithRouter)
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+  return {
+    ...actual,
+    Navigate: ({ to }: { to: string }) => <div data-testid="navigate" data-to={to} />,
+    useNavigate: () => vi.fn(),
+  }
+})
 
 // Mock the useAuth hook
 vi.mock('@/features/auth/hooks/useAuth', () => ({
@@ -29,14 +33,7 @@ vi.mock('@/features/auth/ui/RegisterForm', () => ({
 
 describe('RegisterPage', () => {
   beforeEach(() => {
-    useAuthStore.setState({
-      user: null,
-      accessToken: null,
-      isAuthenticated: false,
-      isLoading: false,
-      error: null,
-    })
-    vi.clearAllMocks()
+    resetStores()
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: false,
       isLoading: false,
@@ -44,13 +41,13 @@ describe('RegisterPage', () => {
   })
 
   it('renders register form when not authenticated', () => {
-    render(<RegisterPage />)
+    renderWithRouter(<RegisterPage />)
 
     expect(screen.getByTestId('register-form')).toBeInTheDocument()
   })
 
   it('renders page heading', () => {
-    render(<RegisterPage />)
+    renderWithRouter(<RegisterPage />)
 
     expect(screen.getByText('Create your account')).toBeInTheDocument()
     expect(screen.getByText('Get started with your free account')).toBeInTheDocument()
@@ -62,7 +59,7 @@ describe('RegisterPage', () => {
       isLoading: false,
     })
 
-    render(<RegisterPage />)
+    renderWithRouter(<RegisterPage />)
 
     expect(screen.getByTestId('navigate')).toHaveAttribute('data-to', '/')
   })
@@ -73,14 +70,14 @@ describe('RegisterPage', () => {
       isLoading: true,
     })
 
-    render(<RegisterPage />)
+    renderWithRouter(<RegisterPage />)
 
     expect(screen.getByText('Checking session...')).toBeInTheDocument()
     expect(screen.queryByTestId('register-form')).not.toBeInTheDocument()
   })
 
   it('passes onSwitchToLogin to RegisterForm', () => {
-    render(<RegisterPage />)
+    renderWithRouter(<RegisterPage />)
 
     const switchButton = screen.getByText('Switch to Login')
     expect(switchButton).toBeInTheDocument()

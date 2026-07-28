@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Routes, Route } from 'react-router-dom'
+import { screen } from '@testing-library/react'
+import { Routes, Route } from 'react-router-dom'
+import { renderWithRouter } from './test-utils'
 import { AuthGuard } from '@/features/auth/ui/AuthGuard'
 
 vi.mock('@/features/auth/hooks/useAuth', () => ({
@@ -12,6 +13,17 @@ const mockedUseAuth = vi.mocked(useAuth)
 
 function ProtectedPage() {
   return <div>Protected Content</div>
+}
+
+function AuthGuardWithRoutes() {
+  return (
+    <Routes>
+      <Route element={<AuthGuard />}>
+        <Route path="/protected" element={<ProtectedPage />} />
+        <Route path="/issues" element={<ProtectedPage />} />
+      </Route>
+    </Routes>
+  )
 }
 
 describe('AuthGuard', () => {
@@ -30,15 +42,7 @@ describe('AuthGuard', () => {
       clearError: vi.fn(),
     })
 
-    render(
-      <MemoryRouter initialEntries={['/protected']}>
-        <Routes>
-          <Route element={<AuthGuard />}>
-            <Route path="/protected" element={<ProtectedPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<AuthGuardWithRoutes />, { initialEntries: ['/protected'] })
     expect(screen.getByText('Protected Content')).toBeInTheDocument()
   })
 
@@ -53,15 +57,7 @@ describe('AuthGuard', () => {
       clearError: vi.fn(),
     })
 
-    render(
-      <MemoryRouter initialEntries={['/issues']}>
-        <Routes>
-          <Route element={<AuthGuard />}>
-            <Route path="/issues" element={<ProtectedPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<AuthGuardWithRoutes />, { initialEntries: ['/issues'] })
     expect(screen.queryByText('Protected Content')).not.toBeInTheDocument()
   })
 
@@ -76,15 +72,7 @@ describe('AuthGuard', () => {
       clearError: vi.fn(),
     })
 
-    render(
-      <MemoryRouter initialEntries={['/protected']}>
-        <Routes>
-          <Route element={<AuthGuard />}>
-            <Route path="/protected" element={<ProtectedPage />} />
-          </Route>
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<AuthGuardWithRoutes />, { initialEntries: ['/protected'] })
     expect(screen.getByText(/checking authentication/i)).toBeInTheDocument()
   })
 })

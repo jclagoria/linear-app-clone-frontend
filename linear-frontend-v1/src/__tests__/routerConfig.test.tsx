@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Routes, Route } from 'react-router-dom'
+import { screen } from '@testing-library/react'
+import { renderWithRouter, resetStores } from './test-utils'
+import { createMockIssue } from './fixtures'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { IssuesPage } from '@/pages/IssuesPage'
 import { IssueDetailPage } from '@/pages/IssueDetailPage'
@@ -14,137 +15,82 @@ vi.mock('@/features/auth/ui/AuthGuard', () => ({
   AuthGuard: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
 
-// Mocks for IssueDetailPage API calls
-vi.mock('@/entities/issue/api', () => ({
-  fetchComments: vi.fn().mockResolvedValue({ data: [] }),
-  updateIssue: vi.fn(),
-  deleteIssue: vi.fn(),
-  changeIssueStatus: vi.fn(),
+vi.mock('@/shared/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn().mockResolvedValue({ data: [], pagination: { nextCursor: null, hasMore: false } }),
+    post: vi.fn().mockResolvedValue({ data: { id: '1', title: 'New Issue' } }),
+    patch: vi.fn().mockResolvedValue({ data: { id: '1', title: 'Updated Issue' } }),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
 }))
 
-vi.mock('@/entities/label/api', () => ({
-  fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
-  fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
-  attachLabel: vi.fn(),
-  detachLabel: vi.fn(),
-}))
-
-const mockIssue = {
+const mockIssue = createMockIssue({
   id: 'abc-123',
-  title: 'Test Issue',
-  description: 'Test description',
-  status: 'Todo',
-  priority: 2,
+  identifier: 'ABC-123',
+  statusId: 'Todo',
   assigneeId: null,
   assigneeName: null,
-  projectId: null,
-  cycleId: null,
-  labels: [],
-  identifier: 'ABC-123',
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-01-01T00:00:00Z',
-}
+})
 
 describe('Router Config', () => {
   beforeEach(() => {
-    // Reset issues store to avoid cross-test leakage
-    useIssuesStore.setState({
-      issues: [],
-      selectedIssueId: null,
-      filters: { statusId: null, assigneeId: null, projectId: null, cycleId: null, labelIds: [] },
-      cursor: null,
-      hasMore: true,
-      isLoading: false,
-      error: null,
-    })
+    resetStores()
+    vi.clearAllMocks()
   })
 
   it('renders DashboardPage at /', () => {
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Routes>
-          <Route index element={<DashboardPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<DashboardPage />, { initialEntries: ['/'] })
     expect(screen.getByText(/dashboard/i)).toBeInTheDocument()
   })
 
   it('renders IssuesPage at /issues', async () => {
-    render(
-      <MemoryRouter initialEntries={['/issues']}>
-        <Routes>
-          <Route path="issues" element={<IssuesPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<IssuesPage />, {
+      initialEntries: ['/issues'],
+      routePath: 'issues',
+    })
     expect(await screen.findByRole('heading', { name: /issues/i })).toBeInTheDocument()
   })
 
   it('renders IssueDetailPage at /issues/:id', async () => {
-    useIssuesStore.setState({
-      issues: [mockIssue],
-      selectedIssueId: null,
-      filters: { statusId: null, assigneeId: null, projectId: null, cycleId: null, labelIds: [] },
-      cursor: null,
-      hasMore: true,
-      isLoading: false,
-      error: null,
+    useIssuesStore.setState({ issues: [mockIssue] })
+
+    renderWithRouter(<IssueDetailPage />, {
+      initialEntries: ['/issues/abc-123'],
+      routePath: 'issues/:id',
     })
 
-    render(
-      <MemoryRouter initialEntries={['/issues/abc-123']}>
-        <Routes>
-          <Route path="issues/:id" element={<IssueDetailPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
-
-    // Wait for comments/labels fetches to resolve, then validate issue identifier renders
     expect(await screen.findByText(/ABC-123/i)).toBeInTheDocument()
   })
 
   it('renders ProjectsPage at /projects', () => {
-    render(
-      <MemoryRouter initialEntries={['/projects']}>
-        <Routes>
-          <Route path="projects" element={<ProjectsPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<ProjectsPage />, {
+      initialEntries: ['/projects'],
+      routePath: 'projects',
+    })
     expect(screen.getByRole('heading', { level: 1, name: /projects/i })).toBeInTheDocument()
   })
 
   it('renders ProjectDetailPage at /projects/:id', () => {
-    render(
-      <MemoryRouter initialEntries={['/projects/p1']}>
-        <Routes>
-          <Route path="projects/:id" element={<ProjectDetailPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<ProjectDetailPage />, {
+      initialEntries: ['/projects/p1'],
+      routePath: 'projects/:id',
+    })
     expect(screen.getByText(/p1/i)).toBeInTheDocument()
   })
 
   it('renders CyclesPage at /cycles', () => {
-    render(
-      <MemoryRouter initialEntries={['/cycles']}>
-        <Routes>
-          <Route path="cycles" element={<CyclesPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<CyclesPage />, {
+      initialEntries: ['/cycles'],
+      routePath: 'cycles',
+    })
     expect(screen.getByRole('heading', { level: 1, name: /cycles/i })).toBeInTheDocument()
   })
 
   it('renders SettingsPage at /settings', () => {
-    render(
-      <MemoryRouter initialEntries={['/settings']}>
-        <Routes>
-          <Route path="settings" element={<SettingsPage />} />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderWithRouter(<SettingsPage />, {
+      initialEntries: ['/settings'],
+      routePath: 'settings',
+    })
     expect(screen.getByText(/settings/i)).toBeInTheDocument()
   })
 })

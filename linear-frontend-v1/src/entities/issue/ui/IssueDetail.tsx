@@ -125,7 +125,7 @@ export function IssueDetail({
 
       <div className="flex flex-wrap items-center gap-2">
         <IssueStatusBadge
-          status={issue.statusId}
+          statusId={issue.statusId}
           loading={statusChanging}
           onStatusChange={onStatusChange ?? (() => {})}
         />

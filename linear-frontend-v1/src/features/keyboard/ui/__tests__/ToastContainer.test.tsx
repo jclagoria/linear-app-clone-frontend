@@ -1,16 +1,16 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { screen } from '@testing-library/react'
 import { useToastStore } from '@/shared/stores/toastStore'
 import { ToastContainer } from '../ToastContainer'
+import { renderWithRouter, resetStores } from '@/__tests__/test-utils'
 
 describe('ToastContainer', () => {
   beforeEach(() => {
-    useToastStore.setState({ toasts: [] })
+    resetStores()
   })
 
   it('renders children', () => {
-    render(
+    renderWithRouter(
       <ToastContainer>
         <div data-testid="child">Content</div>
       </ToastContainer>,
@@ -19,7 +19,7 @@ describe('ToastContainer', () => {
   })
 
   it('adds toast on keyboard-shortcut event', () => {
-    render(
+    renderWithRouter(
       <ToastContainer>
         <div />
       </ToastContainer>,
@@ -36,7 +36,7 @@ describe('ToastContainer', () => {
   })
 
   it('adds multiple toasts for multiple events', () => {
-    render(
+    renderWithRouter(
       <ToastContainer>
         <div />
       </ToastContainer>,
@@ -53,7 +53,7 @@ describe('ToastContainer', () => {
   })
 
   it('shows delete-issue toast with error variant', () => {
-    render(
+    renderWithRouter(
       <ToastContainer>
         <div />
       </ToastContainer>,
@@ -69,8 +69,7 @@ describe('ToastContainer', () => {
   })
 
   it('removes toast on dismiss', async () => {
-    const user = userEvent.setup()
-    render(
+    const { user } = renderWithRouter(
       <ToastContainer>
         <div />
       </ToastContainer>,
@@ -90,7 +89,7 @@ describe('ToastContainer', () => {
   })
 
   it('cleans up event listener on unmount', () => {
-    const { unmount } = render(
+    const { unmount } = renderWithRouter(
       <ToastContainer>
         <div />
       </ToastContainer>,

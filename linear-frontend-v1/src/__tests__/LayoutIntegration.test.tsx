@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { screen } from '@testing-library/react'
+import { Route, Routes } from 'react-router-dom'
+import { renderWithRouter, resetStores } from './test-utils'
 import { AppLayout } from '@/app/AppLayout'
 import { useUIStore } from '@/shared/stores/uiStore'
 import { useWebSocketStore } from '@/shared/stores/websocketStore'
@@ -14,46 +15,36 @@ vi.mock('@/app/providers/WebSocketProvider', () => ({
   }),
 }))
 
-function renderLayout(initialRoute = '/') {
-  return render(
-    <MemoryRouter initialEntries={[initialRoute]}>
-      <Routes>
-        <Route element={<AppLayout />}>
-          <Route
-            index
-            element={<div data-testid="page-content">Page Content</div>}
-          />
-        </Route>
-      </Routes>
-    </MemoryRouter>,
+function LayoutWithRoutes() {
+  return (
+    <Routes>
+      <Route element={<AppLayout />}>
+        <Route index element={<div data-testid="page-content">Page Content</div>} />
+      </Route>
+    </Routes>
   )
 }
 
 describe('Layout Integration', () => {
   beforeEach(() => {
+    resetStores()
     useUIStore.setState({ sidebarCollapsed: false, theme: 'light' })
     useWebSocketStore.setState({ notifications: [] })
   })
 
   it('renders sidebar, header, and outlet content', () => {
-    renderLayout()
+    renderWithRouter(<LayoutWithRoutes />, { initialEntries: ['/'] })
 
-    // Sidebar - there are two aria-label="Main navigation" elements
-    // (desktop sidebar + mobile overlay), so use getAllByLabelText
     const navElements = screen.getAllByLabelText('Main navigation')
     expect(navElements.length).toBeGreaterThanOrEqual(1)
-
-    // Header (banner)
     expect(screen.getByRole('banner')).toBeInTheDocument()
-
-    // Main content
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByTestId('page-content')).toHaveTextContent('Page Content')
   })
 
   it('renders nav items', () => {
-    renderLayout()
-    // Both sidebar and mobile overlay render nav items, so use getAllByText
+    renderWithRouter(<LayoutWithRoutes />, { initialEntries: ['/'] })
+
     const dashboardLinks = screen.getAllByText('Dashboard')
     expect(dashboardLinks.length).toBeGreaterThanOrEqual(1)
 
@@ -68,7 +59,8 @@ describe('Layout Integration', () => {
   })
 
   it('renders search trigger and notification bell in header', () => {
-    renderLayout()
+    renderWithRouter(<LayoutWithRoutes />, { initialEntries: ['/'] })
+
     expect(screen.getByLabelText('Open command palette')).toBeInTheDocument()
     expect(screen.getByLabelText('Toggle notifications')).toBeInTheDocument()
   })
@@ -87,7 +79,8 @@ describe('Layout Integration', () => {
       ],
     })
 
-    renderLayout()
+    renderWithRouter(<LayoutWithRoutes />, { initialEntries: ['/'] })
+
     expect(screen.getByLabelText('Toggle notifications')).toBeInTheDocument()
   })
 })

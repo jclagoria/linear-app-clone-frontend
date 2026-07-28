@@ -1,21 +1,25 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
-import { MemoryRouter, Routes, Route } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { KeyboardProvider } from '@/app/providers/KeyboardProvider'
 import { useKeyboardStore } from '../../model/useKeyboardStore'
+import { renderWithRouter, resetStores } from '@/__tests__/test-utils'
 
-function renderWithRoute(route: string) {
-  return render(
-    <MemoryRouter initialEntries={[route]}>
-      <KeyboardProvider>
-        <div data-testid="child">App Content</div>
-      </KeyboardProvider>
-    </MemoryRouter>,
+function KeyboardProviderWithChild({ route }: { route: string }) {
+  return (
+    <Routes>
+      <Route path={route} element={
+        <KeyboardProvider>
+          <div data-testid="child">App Content</div>
+        </KeyboardProvider>
+      } />
+    </Routes>
   )
 }
 
 describe('KeyboardProvider', () => {
   beforeEach(() => {
+    resetStores()
     useKeyboardStore.setState({
       context: 'global',
       selectedIssueId: null,
@@ -26,42 +30,42 @@ describe('KeyboardProvider', () => {
   })
 
   it('renders children', () => {
-    renderWithRoute('/issues')
+    renderWithRouter(<KeyboardProviderWithChild route="/issues" />, { initialEntries: ['/issues'] })
     expect(screen.getByTestId('child')).toBeInTheDocument()
   })
 
   it('sets list context on /issues route', () => {
-    renderWithRoute('/issues')
+    renderWithRouter(<KeyboardProviderWithChild route="/issues" />, { initialEntries: ['/issues'] })
     expect(useKeyboardStore.getState().context).toBe('list')
   })
 
   it('sets list context on /projects route', () => {
-    renderWithRoute('/projects')
+    renderWithRouter(<KeyboardProviderWithChild route="/projects" />, { initialEntries: ['/projects'] })
     expect(useKeyboardStore.getState().context).toBe('list')
   })
 
   it('sets detail context on /issues/:id route', () => {
-    renderWithRoute('/issues/123')
+    renderWithRouter(<KeyboardProviderWithChild route="/issues/:id" />, { initialEntries: ['/issues/123'] })
     expect(useKeyboardStore.getState().context).toBe('detail')
   })
 
   it('sets detail context on /projects/:id route', () => {
-    renderWithRoute('/projects/abc')
+    renderWithRouter(<KeyboardProviderWithChild route="/projects/:id" />, { initialEntries: ['/projects/abc'] })
     expect(useKeyboardStore.getState().context).toBe('detail')
   })
 
   it('sets global context on /settings/keyboard route', () => {
-    renderWithRoute('/settings/keyboard')
+    renderWithRouter(<KeyboardProviderWithChild route="/settings/keyboard" />, { initialEntries: ['/settings/keyboard'] })
     expect(useKeyboardStore.getState().context).toBe('global')
   })
 
   it('sets global context on root path', () => {
-    renderWithRoute('/')
+    renderWithRouter(<KeyboardProviderWithChild route="/" />, { initialEntries: ['/'] })
     expect(useKeyboardStore.getState().context).toBe('global')
   })
 
   it('dispatches keyboard-shortcut events via handleKeyDown', () => {
-    renderWithRoute('/issues')
+    renderWithRouter(<KeyboardProviderWithChild route="/issues" />, { initialEntries: ['/issues'] })
 
     const spy = vi.fn()
     window.addEventListener('keyboard-shortcut', spy)
@@ -73,7 +77,7 @@ describe('KeyboardProvider', () => {
   })
 
   it('does not dispatch keyboard-shortcut events for input elements', () => {
-    renderWithRoute('/issues')
+    renderWithRouter(<KeyboardProviderWithChild route="/issues" />, { initialEntries: ['/issues'] })
 
     const spy = vi.fn()
     window.addEventListener('keyboard-shortcut', spy)
@@ -90,7 +94,7 @@ describe('KeyboardProvider', () => {
   })
 
   it('does not dispatch keyboard-shortcut events for textarea elements', () => {
-    renderWithRoute('/issues')
+    renderWithRouter(<KeyboardProviderWithChild route="/issues" />, { initialEntries: ['/issues'] })
 
     const spy = vi.fn()
     window.addEventListener('keyboard-shortcut', spy)
@@ -111,12 +115,11 @@ describe('KeyboardProvider', () => {
       return <div data-testid="consumer">Consumer rendered</div>
     }
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <KeyboardProvider>
-          <TestConsumer />
-        </KeyboardProvider>
-      </MemoryRouter>,
+    renderWithRouter(
+      <KeyboardProvider>
+        <TestConsumer />
+      </KeyboardProvider>,
+      { initialEntries: ['/'] },
     )
 
     expect(screen.getByTestId('consumer')).toBeInTheDocument()
