@@ -15,24 +15,13 @@ vi.mock('@/features/auth/ui/AuthGuard', () => ({
   AuthGuard: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
 
-vi.mock('@/entities/issue/api', () => ({
-  fetchIssues: vi.fn().mockResolvedValue({ data: [], pagination: { nextCursor: null, hasMore: false } }),
-  createIssue: vi.fn().mockResolvedValue({ data: { id: '1', title: 'New Issue' } }),
-  updateIssue: vi.fn().mockResolvedValue({ data: { id: '1', title: 'Updated Issue' } }),
-  deleteIssue: vi.fn().mockResolvedValue(undefined),
-  fetchComments: vi.fn().mockResolvedValue({ data: [] }),
-  changeIssueStatus: vi.fn().mockResolvedValue({ data: { id: '1', statusId: 'In Progress' } }),
-  assignIssue: vi.fn().mockResolvedValue({ data: { id: '1', assigneeId: 'u1' } }),
-  createComment: vi.fn().mockResolvedValue({ data: { id: 'c1', body: 'New comment' } }),
-  updateComment: vi.fn().mockResolvedValue({ data: { id: 'c1', body: 'Updated comment' } }),
-  deleteComment: vi.fn().mockResolvedValue(undefined),
-}))
-
-vi.mock('@/entities/label/api', () => ({
-  fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
-  attachLabel: vi.fn().mockResolvedValue({ data: { id: 'l1', name: 'Bug' } }),
-  detachLabel: vi.fn().mockResolvedValue(undefined),
-  fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
+vi.mock('@/shared/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn().mockResolvedValue({ data: [], pagination: { nextCursor: null, hasMore: false } }),
+    post: vi.fn().mockResolvedValue({ data: { id: '1', title: 'New Issue' } }),
+    patch: vi.fn().mockResolvedValue({ data: { id: '1', title: 'Updated Issue' } }),
+    delete: vi.fn().mockResolvedValue(undefined),
+  },
 }))
 
 const mockIssue = createMockIssue({
@@ -46,6 +35,7 @@ const mockIssue = createMockIssue({
 describe('Router Config', () => {
   beforeEach(() => {
     resetStores()
+    vi.clearAllMocks()
   })
 
   it('renders DashboardPage at /', () => {

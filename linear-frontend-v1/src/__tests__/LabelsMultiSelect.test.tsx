@@ -4,14 +4,15 @@ import userEvent from '@testing-library/user-event'
 import { LabelsMultiSelect } from '@/entities/label/ui/LabelsMultiSelect'
 import { useLabelDefinitionsStore } from '@/entities/label/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { fetchLabelDefinitions } from '@/entities/label/api'
 import { mockLabels } from './fixtures'
 
-vi.mock('@/entities/label/api', () => ({
-  fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
-  attachLabel: vi.fn().mockResolvedValue({ data: { id: 'l1', name: 'Bug' } }),
-  detachLabel: vi.fn().mockResolvedValue(undefined),
-  fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
+vi.mock('@/shared/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }))
 
 describe('LabelsMultiSelect', () => {
@@ -22,10 +23,13 @@ describe('LabelsMultiSelect', () => {
       error: null,
     })
     useCacheStore.getState().clear()
-    vi.mocked(fetchLabelDefinitions).mockResolvedValue({ data: mockLabels })
+    vi.clearAllMocks()
   })
 
-  it('renders label text and the combobox', () => {
+  it('renders label text and the combobox', async () => {
+    const { apiClient } = await import('@/shared/lib/api-client')
+    vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
     render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 
     expect(screen.getByText('Labels')).toBeInTheDocument()
@@ -40,7 +44,7 @@ describe('LabelsMultiSelect', () => {
     expect(screen.getByText('Bug')).toBeInTheDocument()
   })
 
-  it('shows remove button on each selected label chip', () => {
+  it('shows remove button on each selected label chip', async () => {
     useLabelDefinitionsStore.setState({ labels: mockLabels })
 
     render(<LabelsMultiSelect selected={['l1', 'l2']} onChange={vi.fn()} />)
@@ -51,6 +55,9 @@ describe('LabelsMultiSelect', () => {
 
   describe('dropdown behavior', () => {
     it('opens dropdown on combobox click', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 
@@ -61,6 +68,9 @@ describe('LabelsMultiSelect', () => {
     })
 
     it('shows all labels in dropdown (LabelsMultiSelect only filters selected in the dropdown list, not the main view)', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(<LabelsMultiSelect selected={['l1']} onChange={vi.fn()} />)
 
@@ -72,6 +82,9 @@ describe('LabelsMultiSelect', () => {
     })
 
     it('closes dropdown when clicking outside', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(
         <div>
@@ -92,6 +105,9 @@ describe('LabelsMultiSelect', () => {
 
   describe('search', () => {
     it('filters labels by search query', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 
@@ -105,6 +121,9 @@ describe('LabelsMultiSelect', () => {
     })
 
     it('shows "No labels match your search" when search has no results', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 
@@ -116,7 +135,9 @@ describe('LabelsMultiSelect', () => {
     })
 
     it('shows "No labels available" when there are no labels at all', async () => {
-      vi.mocked(fetchLabelDefinitions).mockResolvedValue({ data: [] })
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: [] })
+
       const user = userEvent.setup()
 
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
@@ -129,6 +150,9 @@ describe('LabelsMultiSelect', () => {
 
   describe('selection behavior', () => {
     it('calls onChange with label id when selecting an unselected label', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const handleChange = vi.fn()
       const user = userEvent.setup()
 
@@ -154,7 +178,10 @@ describe('LabelsMultiSelect', () => {
   })
 
   describe('error state', () => {
-    it('shows error message with role="alert"', () => {
+    it('shows error message with role="alert"', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: [] })
+
       render(
         <LabelsMultiSelect
           selected={[]}
@@ -167,7 +194,10 @@ describe('LabelsMultiSelect', () => {
       expect(alert).toHaveTextContent('One or more selected labels are invalid')
     })
 
-    it('applies error border styling to combobox', () => {
+    it('applies error border styling to combobox', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: [] })
+
       render(
         <LabelsMultiSelect
           selected={[]}
@@ -183,6 +213,9 @@ describe('LabelsMultiSelect', () => {
 
   describe('keyboard interaction', () => {
     it('closes dropdown on Escape key', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 
@@ -198,6 +231,9 @@ describe('LabelsMultiSelect', () => {
 
   describe('ARIA attributes', () => {
     it('has aria-expanded on combobox', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 
@@ -208,13 +244,19 @@ describe('LabelsMultiSelect', () => {
       expect(combobox).toHaveAttribute('aria-expanded', 'true')
     })
 
-    it('has aria-haspopup on combobox', () => {
+    it('has aria-haspopup on combobox', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: [] })
+
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 
       expect(screen.getByRole('combobox')).toHaveAttribute('aria-haspopup', 'listbox')
     })
 
     it('has aria-multiselectable on listbox', async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
+
       const user = userEvent.setup()
       render(<LabelsMultiSelect selected={[]} onChange={vi.fn()} />)
 

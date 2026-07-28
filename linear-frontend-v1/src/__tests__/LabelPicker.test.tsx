@@ -4,14 +4,15 @@ import userEvent from '@testing-library/user-event'
 import { LabelPicker } from '@/entities/label/ui/LabelPicker'
 import { useLabelDefinitionsStore } from '@/entities/label/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
-import { fetchLabelDefinitions } from '@/entities/label/api'
 import { mockLabels } from './fixtures'
 
-vi.mock('@/entities/label/api', () => ({
-  fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
-  attachLabel: vi.fn().mockResolvedValue({ data: { id: 'l1', name: 'Bug' } }),
-  detachLabel: vi.fn().mockResolvedValue(undefined),
-  fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
+vi.mock('@/shared/lib/api-client', () => ({
+  apiClient: {
+    get: vi.fn(),
+    post: vi.fn(),
+    patch: vi.fn(),
+    delete: vi.fn(),
+  },
 }))
 
 function renderLabelPicker(props: Partial<Parameters<typeof LabelPicker>[0]> = {}) {
@@ -34,11 +35,13 @@ describe('LabelPicker', () => {
       error: null,
     })
     useCacheStore.getState().clear()
+    vi.clearAllMocks()
   })
 
   describe('when labels are loaded', () => {
-    beforeEach(() => {
-      vi.mocked(fetchLabelDefinitions).mockResolvedValue({ data: mockLabels })
+    beforeEach(async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: mockLabels })
     })
 
     it('renders search input with placeholder', async () => {
@@ -234,8 +237,9 @@ describe('LabelPicker', () => {
   })
 
   describe('empty state', () => {
-    beforeEach(() => {
-      vi.mocked(fetchLabelDefinitions).mockResolvedValue({ data: [] })
+    beforeEach(async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockResolvedValue({ data: [] })
     })
 
     it('shows empty state when no labels exist at all', async () => {
@@ -246,8 +250,9 @@ describe('LabelPicker', () => {
   })
 
   describe('loading state', () => {
-    beforeEach(() => {
-      vi.mocked(fetchLabelDefinitions).mockReturnValue(new Promise(() => {}))
+    beforeEach(async () => {
+      const { apiClient } = await import('@/shared/lib/api-client')
+      vi.mocked(apiClient.get).mockReturnValue(new Promise(() => {}))
     })
 
     it('shows loading state when loading', async () => {
