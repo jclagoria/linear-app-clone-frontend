@@ -89,7 +89,7 @@ export const useAuthStore = create<AuthState>()(
               : 'Something went wrong. Please try again.'
           if (message === 'Failed to fetch') {
             set({
-              error: 'Something went wrong. Please try again.',
+              error: 'Connection error. Please try again.',
               isLoading: false,
             })
           } else {
@@ -129,7 +129,7 @@ export const useAuthStore = create<AuthState>()(
                 : 'Something went wrong. Please try again.'
             if (message === 'Failed to fetch') {
               set({
-                error: 'Something went wrong. Please try again.',
+                error: 'Connection error. Please try again.',
                 isLoading: false,
               })
             } else {

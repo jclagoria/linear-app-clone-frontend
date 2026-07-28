@@ -2,47 +2,27 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen, waitFor } from '@testing-library/react'
 import { IssueDetailPage } from '@/pages/IssueDetailPage'
 import { renderWithRouter, resetStores } from './test-utils'
-import type { Issue } from '@/entities/issue/model/types'
-import type { Label } from '@/entities/label/model/types'
+import { mockIssue, mockLabels, mockComments } from './fixtures'
 
 vi.mock('@/entities/issue/api', () => ({
-  changeIssueStatus: vi.fn(),
+  fetchIssues: vi.fn().mockResolvedValue({ data: [], pagination: { nextCursor: null, hasMore: false } }),
+  createIssue: vi.fn().mockResolvedValue({ data: { id: '1', title: 'New Issue' } }),
+  updateIssue: vi.fn().mockResolvedValue({ data: { id: '1', title: 'Updated Issue' } }),
+  deleteIssue: vi.fn().mockResolvedValue(undefined),
   fetchComments: vi.fn().mockResolvedValue({ data: [] }),
-  updateIssue: vi.fn(),
-  deleteIssue: vi.fn(),
-  updateComment: vi.fn(),
-  deleteComment: vi.fn(),
+  changeIssueStatus: vi.fn().mockResolvedValue({ data: { id: '1', statusId: 'In Progress' } }),
+  assignIssue: vi.fn().mockResolvedValue({ data: { id: '1', assigneeId: 'u1' } }),
+  createComment: vi.fn().mockResolvedValue({ data: { id: 'c1', body: 'New comment' } }),
+  updateComment: vi.fn().mockResolvedValue({ data: { id: 'c1', body: 'Updated comment' } }),
+  deleteComment: vi.fn().mockResolvedValue(undefined),
 }))
 
 vi.mock('@/entities/label/api', () => ({
-  fetchIssueLabels: vi.fn(),
-  attachLabel: vi.fn(),
-  detachLabel: vi.fn(),
-  fetchLabelDefinitions: vi.fn(),
+  fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
+  attachLabel: vi.fn().mockResolvedValue({ data: { id: 'l1', name: 'Bug' } }),
+  detachLabel: vi.fn().mockResolvedValue(undefined),
+  fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
 }))
-
-const mockIssue: Issue = {
-  id: '1',
-  title: 'Test Issue',
-  description: 'Test description',
-  statusId: 'Todo',
-  priority: 2,
-  assigneeId: 'u1',
-  assigneeName: 'User',
-  projectId: null,
-  cycleId: null,
-  labels: [],
-  identifier: 'TST-1',
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-01-01T00:00:00Z',
-  teamId: 't1',
-  parentId: null,
-  sortOrder: 0,
-  sequence: 1,
-  completedAt: null,
-  canceledAt: null,
-  deletedAt: null,
-}
 
 describe('IssueDetailPage Status Integration', () => {
   beforeEach(() => {
@@ -124,7 +104,7 @@ describe('IssueDetailPage Status Integration', () => {
 
   it('sets aria-busy while status change is in flight', async () => {
     const { changeIssueStatus } = await import('@/entities/issue/api')
-    let resolvePromise!: (value: { data: Issue }) => void
+    let resolvePromise!: (value: { data: typeof mockIssue }) => void
     vi.mocked(changeIssueStatus).mockReturnValue(
       new Promise((resolve) => { resolvePromise = resolve }),
     )
@@ -150,11 +130,6 @@ describe('IssueDetailPage Status Integration', () => {
     })
   })
 })
-
-const mockLabels: Label[] = [
-  { id: 'l1', name: 'Bug', color: '#ef4444', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-  { id: 'l2', name: 'Feature', color: '#22c55e', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-]
 
 describe('IssueDetailPage Label Attach/Detach', () => {
   beforeEach(async () => {
@@ -340,27 +315,6 @@ describe('IssueDetailPage Label Attach/Detach', () => {
     })
   })
 })
-
-const mockComments = [
-  {
-    id: 'c1',
-    issueId: '1',
-    body: 'Original comment body',
-    authorId: 'u1',
-    authorName: 'User',
-    createdAt: '2024-01-01T12:00:00Z',
-    updatedAt: '2024-01-01T12:00:00Z',
-  },
-  {
-    id: 'c2',
-    issueId: '1',
-    body: 'Comment by another user',
-    authorId: 'u2',
-    authorName: 'Other User',
-    createdAt: '2024-01-02T12:00:00Z',
-    updatedAt: '2024-01-02T12:00:00Z',
-  },
-]
 
 describe('IssueDetailPage Edit Comment', () => {
   beforeEach(async () => {

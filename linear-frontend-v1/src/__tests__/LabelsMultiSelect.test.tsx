@@ -5,16 +5,14 @@ import { LabelsMultiSelect } from '@/entities/label/ui/LabelsMultiSelect'
 import { useLabelDefinitionsStore } from '@/entities/label/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
 import { fetchLabelDefinitions } from '@/entities/label/api'
+import { mockLabels } from './fixtures'
 
 vi.mock('@/entities/label/api', () => ({
-  fetchLabelDefinitions: vi.fn(),
+  fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
+  attachLabel: vi.fn().mockResolvedValue({ data: { id: 'l1', name: 'Bug' } }),
+  detachLabel: vi.fn().mockResolvedValue(undefined),
+  fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
 }))
-
-const mockLabels = [
-  { id: 'l1', name: 'Bug', color: '#ef4444', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-  { id: 'l2', name: 'Feature', color: '#22c55e', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-  { id: 'l3', name: 'Enhancement', color: '#3b82f6', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-]
 
 describe('LabelsMultiSelect', () => {
   beforeEach(() => {
@@ -36,7 +34,6 @@ describe('LabelsMultiSelect', () => {
   })
 
   it('shows selected labels as chips when store has labels', async () => {
-    // LabelsMultiSelect only loads labels when dropdown opens, so pre-populate store
     useLabelDefinitionsStore.setState({ labels: mockLabels })
 
     render(<LabelsMultiSelect selected={['l1']} onChange={vi.fn()} />)
@@ -45,7 +42,6 @@ describe('LabelsMultiSelect', () => {
   })
 
   it('shows remove button on each selected label chip', () => {
-    // Pre-populate store since component only loads on dropdown open
     useLabelDefinitionsStore.setState({ labels: mockLabels })
 
     render(<LabelsMultiSelect selected={['l1', 'l2']} onChange={vi.fn()} />)
@@ -71,7 +67,6 @@ describe('LabelsMultiSelect', () => {
 
       await user.click(screen.getByRole('combobox'))
 
-      // Bug is selected and shows as a chip above, but does NOT appear as an option in the dropdown
       expect(screen.queryByRole('option', { name: /Bug/i })).not.toBeInTheDocument()
       expect(screen.getByText('Feature')).toBeInTheDocument()
       expect(screen.getByText('Enhancement')).toBeInTheDocument()

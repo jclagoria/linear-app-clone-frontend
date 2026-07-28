@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen } from '@testing-library/react'
 import { renderWithRouter, resetStores } from './test-utils'
+import { createMockIssue } from './fixtures'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { IssuesPage } from '@/pages/IssuesPage'
 import { IssueDetailPage } from '@/pages/IssueDetailPage'
@@ -14,36 +15,33 @@ vi.mock('@/features/auth/ui/AuthGuard', () => ({
   AuthGuard: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }))
 
-// Mocks for IssueDetailPage API calls
 vi.mock('@/entities/issue/api', () => ({
+  fetchIssues: vi.fn().mockResolvedValue({ data: [], pagination: { nextCursor: null, hasMore: false } }),
+  createIssue: vi.fn().mockResolvedValue({ data: { id: '1', title: 'New Issue' } }),
+  updateIssue: vi.fn().mockResolvedValue({ data: { id: '1', title: 'Updated Issue' } }),
+  deleteIssue: vi.fn().mockResolvedValue(undefined),
   fetchComments: vi.fn().mockResolvedValue({ data: [] }),
-  updateIssue: vi.fn(),
-  deleteIssue: vi.fn(),
-  changeIssueStatus: vi.fn(),
+  changeIssueStatus: vi.fn().mockResolvedValue({ data: { id: '1', statusId: 'In Progress' } }),
+  assignIssue: vi.fn().mockResolvedValue({ data: { id: '1', assigneeId: 'u1' } }),
+  createComment: vi.fn().mockResolvedValue({ data: { id: 'c1', body: 'New comment' } }),
+  updateComment: vi.fn().mockResolvedValue({ data: { id: 'c1', body: 'Updated comment' } }),
+  deleteComment: vi.fn().mockResolvedValue(undefined),
 }))
 
 vi.mock('@/entities/label/api', () => ({
   fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
+  attachLabel: vi.fn().mockResolvedValue({ data: { id: 'l1', name: 'Bug' } }),
+  detachLabel: vi.fn().mockResolvedValue(undefined),
   fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
-  attachLabel: vi.fn(),
-  detachLabel: vi.fn(),
 }))
 
-const mockIssue = {
+const mockIssue = createMockIssue({
   id: 'abc-123',
-  title: 'Test Issue',
-  description: 'Test description',
-  status: 'Todo',
-  priority: 2,
+  identifier: 'ABC-123',
+  statusId: 'Todo',
   assigneeId: null,
   assigneeName: null,
-  projectId: null,
-  cycleId: null,
-  labels: [],
-  identifier: 'ABC-123',
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-01-01T00:00:00Z',
-}
+})
 
 describe('Router Config', () => {
   beforeEach(() => {

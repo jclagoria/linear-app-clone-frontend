@@ -5,16 +5,14 @@ import { LabelPicker } from '@/entities/label/ui/LabelPicker'
 import { useLabelDefinitionsStore } from '@/entities/label/model/store'
 import { useCacheStore } from '@/shared/stores/cacheStore'
 import { fetchLabelDefinitions } from '@/entities/label/api'
+import { mockLabels } from './fixtures'
 
 vi.mock('@/entities/label/api', () => ({
-  fetchLabelDefinitions: vi.fn(),
+  fetchIssueLabels: vi.fn().mockResolvedValue({ data: [] }),
+  attachLabel: vi.fn().mockResolvedValue({ data: { id: 'l1', name: 'Bug' } }),
+  detachLabel: vi.fn().mockResolvedValue(undefined),
+  fetchLabelDefinitions: vi.fn().mockResolvedValue({ data: [] }),
 }))
-
-const mockLabels = [
-  { id: 'l1', name: 'Bug', color: '#ef4444', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-  { id: 'l2', name: 'Feature', color: '#22c55e', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-  { id: 'l3', name: 'Enhancement', color: '#3b82f6', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
-]
 
 function renderLabelPicker(props: Partial<Parameters<typeof LabelPicker>[0]> = {}) {
   const triggerRef = { current: document.createElement('button') }
@@ -217,7 +215,6 @@ describe('LabelPicker', () => {
       renderLabelPicker({ selectedIds: ['l1', 'l2'] })
 
       await screen.findByText('Bug')
-      // Without search all labels are visible (selected ones highlighted via aria-selected)
       expect(screen.getByText('Bug')).toBeInTheDocument()
       expect(screen.getByText('Feature')).toBeInTheDocument()
       expect(screen.getByText('Enhancement')).toBeInTheDocument()
@@ -232,7 +229,6 @@ describe('LabelPicker', () => {
       const searchInput = screen.getByPlaceholderText('Search labels...')
       await user.type(searchInput, 'Bug')
 
-      // Bug is selected and search matches it - should be filtered out
       expect(screen.queryByText('Bug')).not.toBeInTheDocument()
       expect(screen.getByText('No labels match your search')).toBeInTheDocument()
     })
