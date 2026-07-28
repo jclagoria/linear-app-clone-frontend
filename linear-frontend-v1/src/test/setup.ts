@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { vi } from 'vitest'
+import { vi, afterEach } from 'vitest'
 
 // Mock localStorage for jsdom
 const localStorageMock = (() => {
@@ -26,4 +26,8 @@ Object.defineProperty(globalThis, 'localStorage', {
   value: localStorageMock,
   writable: true,
   configurable: true,
+})
+
+afterEach(() => {
+  vi.clearAllMocks()
 })

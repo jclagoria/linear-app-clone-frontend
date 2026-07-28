@@ -16,7 +16,6 @@ vi.mock('@/entities/label/api', () => ({
 
 describe('LabelsMultiSelect', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     useLabelDefinitionsStore.setState({
       labels: [],
       isLoading: false,

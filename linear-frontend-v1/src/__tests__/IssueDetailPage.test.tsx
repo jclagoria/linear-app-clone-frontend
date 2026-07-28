@@ -3,6 +3,7 @@ import { screen, waitFor } from '@testing-library/react'
 import { IssueDetailPage } from '@/pages/IssueDetailPage'
 import { renderWithRouter, resetStores } from './test-utils'
 import { mockIssue, mockLabels, mockComments } from './fixtures'
+import { useIssuesStore } from '@/entities/issue/model/store'
 
 vi.mock('@/entities/issue/api', () => ({
   fetchIssues: vi.fn().mockResolvedValue({ data: [], pagination: { nextCursor: null, hasMore: false } }),

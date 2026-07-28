@@ -28,7 +28,6 @@ function renderLabelPicker(props: Partial<Parameters<typeof LabelPicker>[0]> = {
 
 describe('LabelPicker', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
     useLabelDefinitionsStore.setState({
       labels: [],
       isLoading: false,

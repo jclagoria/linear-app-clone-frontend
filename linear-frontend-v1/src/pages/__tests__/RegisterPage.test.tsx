@@ -34,7 +34,6 @@ vi.mock('@/features/auth/ui/RegisterForm', () => ({
 describe('RegisterPage', () => {
   beforeEach(() => {
     resetStores()
-    vi.clearAllMocks()
     vi.mocked(useAuth).mockReturnValue({
       isAuthenticated: false,
       isLoading: false,
