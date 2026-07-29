@@ -4,246 +4,246 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 2105 nodes · 3115 edges · 270 communities (150 shown, 120 thin omitted)
-- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 159 edges (avg confidence: 0.82)
-- Token cost: 7,945 input · 3,126 output
+- 2105 nodes · 3112 edges · 270 communities (148 shown, 122 thin omitted)
+- Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 158 edges (avg confidence: 0.82)
+- Token cost: 7,856 input · 3,231 output
 
 ## Graph Freshness
-- Built from commit: `8e7d8c9b`
+- Built from commit: `5ca6b16e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- Optimistic Update Manager
-- API Client Infrastructure
+- WebSocket Event Routing
+- API Client Error Handling
 - UI Component Library
-- Issue Data Stores
-- App Layout System
-- Auth and Error Handling
-- Base UI Components
-- Issue API Integration
-- Keyboard Shortcut Module
+- Issue Data Fetching
+- Auth and Error Middleware
+- Base UI Primitives
+- Issue Management Bugfixes
+- Keyboard Shortcut System
 - Keyboard Sequence Logic
 - Form Validation Hooks
 - Design System Specifications
-- Auth and Page Routing
-- Frontend Architecture ADRs
-- Feature-Sliced Design Patterns
-- Form Management System
+- App Pages and Routing
+- MSW Testing Infrastructure
+- State and Cache Architecture
+- Layout and Accessibility
+- Frontend Architecture Design
 - Realtime State Management
-- Auth and Project Setup
-- MSW Mocking Infrastructure
+- Connection Status Components
+- Form Management System
+- Tech Stack Configuration
 - Label Management Store
 - Realtime Event Schemas
-- TypeScript Configuration
-- Event Deduplication Logic
+- TypeScript App Configuration
+- Label Management Logic
 - API Specification Fixes
-- Sidebar Navigation Components
+- Frontend Dependencies
+- Optimistic Update Manager
+- Navigation and Sidebar
 - Build and Test Config
 - Generic UI Components
+- Feature Architecture ADRs
 - Development Dependencies
 - Documentation Templates
-- WebSocket Client Logic
-- Mock API Environment
+- Mock API Setup
 - Comment Management Features
-- Core Project Dependencies
-- Realtime UI Indicators
-- Issue API Services
-- Realtime Event Router
+- Theming and Responsive Layout
+- Realtime UI Feedback
 - Issue Assignment Logic
-- Issue Watcher Features
-- Tech Stack Selection
+- Issue API Services
 - State Selectors and Memoization
-- API Error Interceptors
+- API Interceptor Pipeline
+- Auth and Login UI
 - Issue Detail Components
-- Form Data Schemas
-- Header and Navigation
-- Issue Watcher Components
-- Frontend Tech Stack
-- WebSocket Channel Architecture
+- Form Validation Schemas
+- Header and Notifications UI
+- Issue Watchers Feature
+- WebSocket Gateway Channels
 - NPM Scripts
 - Auth Session Store
-- Watcher API and UI
-- API Client Methods
-- Architecture and ADRs
-- Keyboard Module Design
-- Issue Form Components
-- Cycle and Project Stores
+- Watchers API and UI
+- API Client Implementation
+- Keyboard Module Specifications
+- Issues Store Architecture
 - WebSocket Mock Server
 - WebSocket Mock Server
 - WebSocket Mock Server
 - WebSocket Mock Server
 - WebSocket UI Specifications
-- Comment UI Components
-- Label Management Design
-- Component Design System
+- Comment List Components
+- Issue Form Components
+- Component Design Specs
 - Docker Containerization
+- Issue List UI
 - Issue Filter Store
-- Commitlint Configuration
-- Error Handling UI
+- Commit Lint Configuration
+- Error and Toast Specs
 - Architecture Decision Records
-- Event Handler Testing
-- WebSocket Mocking Utility
-- WebSocket Mocking Utility
-- Project Management Module
+- Issue Board Logic
+- WebSocket Mock Client
+- WebSocket Mock Client
 - Keyboard Context Provider
-- Issue List Components
+- Cycle State Management
 - Realtime UI Mockups
 - Auth Module Design
-- Layout Shell Components
+- Responsive Layout Shell
 - Optimistic Update Context
-- WebSocket Mocking Utility
-- Toast Notification System
+- Toast Notification UI
 - MSW Worker Setup
-- Layout and Sidebar Design
+- Layout and Settings Specs
 - Feature View Mockups
 - App Entry Point
 - WebSocket Context Provider
 - Auth and Login Hooks
-- Watcher UI Components
+- Watch Button Components
 - User Registration API
-- Cache Store Logic
-- WebSocket State Store
-- API Contract Proposals
+- Cache Store Management
+- WebSocket Connection Store
+- API Contract Fixes
 - Event Subscription Mockups
-- Store Architecture Design
-- Issue Management Mockups
+- Work Module Mockups
 - Lint and Format Config
 - Registration Form Logic
-- Shortcut API Services
-- Shortcut Toast UI
-- Notification UI Components
+- Shortcut Customization API
+- Shortcut Toast Tests
+- Notification Item UI
 - Issue Editing Page
-- Notification Store
-- Toast Notification Store
-- UI State Management
+- Notifications Store
+- Toast State Store
+- Global UI Store
 - Error Banner Component
-- Schema and Metadata
+- API Schema Specifications
 - Issue Management Mockups
-- Layout and Accessibility
+- UI Layout Conventions
 - Deployment Configuration
-- Comment Management UI
-- Registration Form
+- Comment UI Components
+- Registration Form Component
 - Delete Confirmation Modal
 - Comment Item Component
+- Issue Assignee Selector
 - Watchers State Management
-- Issue Creation Page
+- Create Issue Page
 - Project API Services
 - SVG Icon Assets
-- Modal Stack Store
-- Rate Limit Management
-- Breadcrumb Navigation
-- MCP Configuration
-- Docker Nginx Setup
+- Modal State Management
+- Rate Limit Store
+- Breadcrumb Navigation Component
+- Code Graph Configuration
+- Dockerized SPA Deployment
 - Delete Comment Mockups
-- Delete Comment Planning
-- Edit Comment Planning
-- Auth Page Mockups
-- Label Management UI
-- MSW Mock Server
+- Delete Comment Specifications
+- Edit Comment Specifications
+- Authentication Page Mockups
+- Label UI Components
+- Mock Service Worker
 - Delete Confirmation Dialog
 - Label Validation Schemas
 - Team State Management
 - Login Form Component
 - Keyboard Shortcut Actions
-- Keyboard Shortcut Provider
+- Keyboard Shortcut Wrapper
 - Notification Hook
 - Empty State Component
-- Theme Selection UI
+- Theme Selection Component
 - Comment Thread Page
 - Issue Board Page
-- Projects Overview Page
+- Projects List Page
 - Registration Page
 - Theme Management Hook
 - Rate Limit Toast
 - Vite Environment Types
 - TypeScript Configuration
 - Optimistic UI Updates
-- Auth State Module
+- Authentication State Module
+- Commit Linting
+- ESLint TypeScript Resolver
+- ESLint Core Configuration
+- ESLint Architecture Boundaries
+- ESLint React Rules
+- ESLint React Hooks
 - ESLint Configuration
-- ESLint TS Resolver
-- ESLint Core Config
-- ESLint Boundary Rules
-- ESLint React Plugin
-- ESLint Hooks Plugin
-- Husky Git Hooks
-- Lint Staged Config
-- Task Implementation Review
-- Auth Architecture ADRs
+- Git Hooks Management
+- Development Task Management
+- Auth Architecture Documentation
 - Edit Comment Mockups
+- Design Review Documentation
 - Watcher UI Components
-- Playwright Testing
-- Prettier Formatting
-- Tailwind Vite Plugin
-- Testing Library Events
-- Node Type Definitions
+- Playwright Testing Framework
+- Prettier Code Formatting
+- Tailwind CSS Vite
+- Testing Library Utilities
+- Node.js Type Definitions
 - React Type Definitions
-- TypeScript ESLint Plugin
+- TypeScript ESLint Tooling
 - Vite Build Tool
 - Vitest Testing Framework
-- App Router Configuration
-- Project Page Tests
+- Application Routing
+- Projects Page Tests
 - Test Setup Configuration
-- Label Accessibility
+- Label List Accessibility
 - Label List States
 - Label Badge Accessibility
 - Label Badge States
 - Label Picker Accessibility
 - Label Picker States
-- Toast UI States
+- Toast Notification States
 - Label Badge Component
-- API Module
-- Form Module
-- Keyboard Module
-- Layout Module
-- Routing Module
-- UI Module
-- Work Module
-- User Flows
+- Core API Module
+- Core Form Module
+- Keyboard Shortcuts Module
+- UI Layout Module
+- App Routing Module
+- UI Component Library
+- Work Management Module
+- User Experience Flows
 - Auth API Specification
-- State Module Mockups
-- Auth Store Specification
+- State Management Mockups
+- Auth State Specification
 - Docker Containerization Mockups
-- Issue Status Specification
+- Issue Status API Spec
 - Issue Status Mockups
 - Issue Status Review
-- Assignee API Specification
+- Issue Assignee API Spec
 - Issue Assignment Logic
-- Issue Assignment Stack
+- Issue Assignment Tech
 - Issue Assignment Flows
-- Layout Specification Config
-- Work Module UI
-- Delete Comment Config
-- Issue Response Mockups
+- Layout API Specification
+- Issue Store Configuration
+- Delete Comment API Spec
+- Delete Issue Mockups
 - Issue Model Mockups
-- Pagination Response ADR
+- Pagination ADR Review
 - Pagination Design System
-- Pagination API Specification
-- Pagination Response Review
+- Pagination API Spec
+- Pagination Implementation Review
 - Pagination Tech Selection
-- Pagination Mockups
-- Query Parameter ADR
+- Pagination UI Mockups
+- Query Parameter ADR Review
 - Query Parameter Design
-- Query Parameter Specification
+- Query Parameter API Spec
 - Query Parameter Review
 - Query Parameter Tech
 - Query Parameter Mockups
 - Form Validation Metadata
-- Keyboard Implementation Metadata
-- Layout Specification
+- Keyboard Module Metadata
+- Layout API Spec
 - Layout Theme Review
-- Responsive Layout Tasks
-- Realtime Updates Specification
-- User Registration Specification
-- Edit Comment Specification
-- Issue Watchers Specification
+- Layout Frontend Tasks
+- Realtime Updates API Spec
+- User Registration API Spec
+- Edit Comment API Spec
+- Issue Watchers API Spec
 - WebSocket Layout Mockups
 - WebSocket Comment Mockups
 - WebSocket Error Mockups
-- Design System Clone
+- Design System Assets
+- Project List API Spec
 - Project List Proposal
+- Project List Frontend Tasks
 - Frontend Tech Selection
-- Project List Flows
+- Project List User Flows
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApiError` - 24 edges
@@ -326,13 +326,13 @@
 - **Client-side store layer** — openspec_specs_frontend_storearchitecture_md, openspec_specs_frontend_uistore_md, openspec_specs_frontend_websocketstore_md [INFERRED 0.85]
 - **SVG Icons Group** — src_shared_assets_icons_trash_svg, src_shared_assets_icons_x_svg [INFERRED 0.85]
 
-## Communities (270 total, 120 thin omitted)
+## Communities (270 total, 122 thin omitted)
 
-### Community 0 - "Optimistic Update Manager"
+### Community 0 - "WebSocket Event Routing"
 Cohesion: 0.06
-Nodes (41): OptimisticUpdate, applyOptimistic(), ApplyOptimisticOptions, checkStaleUpdates(), createOptimisticUpdate(), onRevertEvent(), onStaleRevert(), RevertListener (+33 more)
+Nodes (46): WSEvent, WSEventType, ProjectsState, useProjectsStore, createWSClient(), WSClientConfig, cleanupEntityDedupStore(), cleanupSeenEvents() (+38 more)
 
-### Community 1 - "API Client Infrastructure"
+### Community 1 - "API Client Error Handling"
 Cohesion: 0.09
 Nodes (35): ApiClientConfig, RequestInterceptor, RequestMethod, RequestOptions, ResponseInterceptor, dispatchTable, dispatchToHandler(), ErrorHandler (+27 more)
 
@@ -340,179 +340,179 @@ Nodes (35): ApiClientConfig, RequestInterceptor, RequestMethod, RequestOptions, 
 Cohesion: 0.07
 Nodes (55): LabelList, Button, Card, Checkbox, EmptyState, ErrorBanner Component, Input, IssueFormModal (+47 more)
 
-### Community 3 - "Issue Data Stores"
+### Community 3 - "Issue Data Fetching"
 Cohesion: 0.08
 Nodes (50): CacheStore, FetchIssuesParams, FetchIssuesResponse, IssueFilters, IssuesStore, labelIds Query Parameter, OpenAPI 3.1 Spec, PaginationCursor (+42 more)
 
-### Community 4 - "App Layout System"
-Cohesion: 0.09
-Nodes (49): WCAG 2.1 AA Accessibility Conformance, AppLayout Component, Backdrop Component, CSS Custom Properties, localStorage Persistence, matchMedia API, Page Layout Shell, React Context (+41 more)
-
-### Community 5 - "Auth and Error Handling"
+### Community 4 - "Auth and Error Middleware"
 Cohesion: 0.04
 Nodes (48): Cache Invalidation, ApiClient, ApiError, ErrorHandler, ErrorTaxonomy, RateLimitStore, TokenRefreshFlow, AssignIssueApi (+40 more)
 
-### Community 6 - "Base UI Components"
+### Community 5 - "Base UI Primitives"
 Cohesion: 0.06
 Nodes (32): Button, ButtonProps, ButtonSize, ButtonVariant, sizeStyles, variantStyles, Card(), CardProps (+24 more)
 
-### Community 7 - "Issue API Integration"
+### Community 6 - "Issue Management Bugfixes"
 Cohesion: 0.07
 Nodes (45): Fix: API Client Inconsistency, Fix: Create Issue Missing teamId, 401 Auto-Refresh, apiClient Singleton, Auth Token Injection, Cache-Before-Fetch Pattern, createIssue() Function, CreateIssueData Type (+37 more)
 
-### Community 8 - "Keyboard Shortcut Module"
+### Community 7 - "Keyboard Shortcut System"
 Cohesion: 0.07
 Nodes (43): Context-Specificity Hierarchy, Keyboard Context Management, Keyboard Module, Keyboard Shortcut Registry, Keyboard Store (Zustand), Server-Sent Events, Shortcut Help Modal, Zustand + localStorage Offline-First (+35 more)
 
-### Community 9 - "Keyboard Sequence Logic"
+### Community 8 - "Keyboard Sequence Logic"
 Cohesion: 0.08
 Nodes (22): getCurrentSequence(), handleKeyInSequence(), isInSequence(), resetSequence(), SequenceState, state, Shortcut, ShortcutContext (+14 more)
 
-### Community 10 - "Form Validation Hooks"
+### Community 9 - "Form Validation Hooks"
 Cohesion: 0.08
 Nodes (27): useDebounce(), useFormFormik(), UseFormFormikOptions, UseFormFormikReturn, AsyncFormData, asyncValidationSchema, AsyncValidationTestForm(), DoubleSubmitTestForm() (+19 more)
 
-### Community 11 - "Design System Specifications"
+### Community 10 - "Design System Specifications"
 Cohesion: 0.06
 Nodes (41): Client-Side Validation, ConnectionErrorModal Component, ConnectionStatusIndicator Component, Loading State, Color Semantics, Component Catalog, Layout Tokens, Design System — Linear App Clone (+33 more)
 
-### Community 12 - "Auth and Page Routing"
-Cohesion: 0.11
-Nodes (39): Auth Hydration, AuthGuard, Breadcrumb, CyclesPage, DashboardPage, IssueDetailPage, IssuesPage, LoginForm (+31 more)
+### Community 11 - "App Pages and Routing"
+Cohesion: 0.12
+Nodes (38): Auth Hydration, AuthGuard, Breadcrumb, CyclesPage, DashboardPage, IssueDetailPage, IssuesPage, LoginForm (+30 more)
 
-### Community 13 - "Frontend Architecture ADRs"
+### Community 12 - "MSW Testing Infrastructure"
+Cohesion: 0.09
+Nodes (33): MSW Browser Worker Runtime, Fetch Credentials Include Pattern, Cursor-Based Pagination, HttpOnly Cookie Authentication, LocalStorage Token Removal, Centralized MSW Handlers, Per-Test Handler Override, MSW Node Server Runtime (+25 more)
+
+### Community 13 - "State and Cache Architecture"
 Cohesion: 0.09
 Nodes (32): ADR-0006 Stack Selection Zustand Vite React Router Vitest, ADR-0007 Store Isolation, ARIA Live Regions, Cache-First Stale-While-Revalidate Strategy, Cache Layer with TTL, ConnectionStatusIndicator, Derived State Selectors, Event Deduplication (+24 more)
 
-### Community 14 - "Feature-Sliced Design Patterns"
+### Community 14 - "Layout and Accessibility"
+Cohesion: 0.17
+Nodes (31): WCAG 2.1 AA Accessibility Conformance, AppLayout Component, Backdrop Component, CSS Custom Property Theme System, Flexbox Layout Shell, Focus Management Pattern, HamburgerButton Component, Header Component (+23 more)
+
+### Community 15 - "Frontend Architecture Design"
 Cohesion: 0.09
 Nodes (30): Feature-Sliced Design Architecture, React Hook Form + Zod for Form Management, Stack Selection — Zustand, Vite, React Router, Vitest, Store Isolation — Separate Zustand Stores per Domain, API Error Taxonomy via Class Hierarchy, UI Component Architecture — Presentational Primitives, Dedicated Status Transition Endpoint for Issue Workflow, Dedicated Assignee Transition Endpoint for Issue Assignment (+22 more)
-
-### Community 15 - "Form Management System"
-Cohesion: 0.11
-Nodes (30): Async Validation, CheckboxField Wrapper, Double Submit Guard, Field Wrapper Pattern, Form Module, Form State Management, SelectField Wrapper, Submission Flow (+22 more)
 
 ### Community 16 - "Realtime State Management"
 Cohesion: 0.08
 Nodes (30): IssuesState, Optimistic Update Interface, Realtime Module, State Module, WebSocketState, ADR Review, Auth Handshake Decision, Deduplication Decision (+22 more)
 
-### Community 17 - "Auth and Project Setup"
+### Community 17 - "Connection Status Components"
 Cohesion: 0.12
-Nodes (29): AuthGuard, AuthStore, Button, Design System Tokens, ErrorBanner, LoginForm, LoginPage, React 19 + Vite + pnpm (+21 more)
+Nodes (18): AutoUpdateToggle(), ConnectionErrorModal(), ConnectionErrorModalProps, ConnectionStatusIndicator(), ConnectionStatusIndicatorProps, STATUS_CONFIG, IssueCard(), IssueCardProps (+10 more)
 
-### Community 18 - "MSW Mocking Infrastructure"
+### Community 18 - "Form Management System"
 Cohesion: 0.11
-Nodes (29): MSW Browser Worker Runtime, Fetch Credentials Include Pattern, Cursor-Based Pagination, HttpOnly Cookie Authentication, LocalStorage Token Removal, Centralized MSW Handlers, Per-Test Handler Override, MSW Node Server Runtime (+21 more)
+Nodes (29): Async Validation, CheckboxField Wrapper, Double Submit Guard, Field Wrapper Pattern, Form Module, Form State Management, SelectField Wrapper, Submission Flow (+21 more)
 
-### Community 19 - "Label Management Store"
+### Community 19 - "Tech Stack Configuration"
+Cohesion: 0.11
+Nodes (28): JWT Dual Token Auth, Server-Sent Events (SSE), Vite 8, Vitest, Zod, React Router 7.x, TypeScript 6.x, Vite 8.x (+20 more)
+
+### Community 20 - "Label Management Store"
 Cohesion: 0.13
 Nodes (12): IssueLabelsState, LabelDefinitionsState, useIssueLabelsStore, useLabelDefinitionsStore, Label, LabelBadge(), LabelBadgeProps, LabelListProps (+4 more)
 
-### Community 20 - "Realtime Event Schemas"
+### Community 21 - "Realtime Event Schemas"
 Cohesion: 0.09
 Nodes (24): CommentEventPayload, CommentEventType, CycleEventPayload, CycleEventType, IssueEventPayload, IssueEventType, isValidEventType(), LabelEventPayload (+16 more)
 
-### Community 21 - "TypeScript Configuration"
+### Community 22 - "TypeScript App Configuration"
 Cohesion: 0.08
 Nodes (25): DOM, DOM.Iterable, ES2020, src, compilerOptions, allowImportingTsExtensions, baseUrl, isolatedModules (+17 more)
 
-### Community 22 - "Event Deduplication Logic"
-Cohesion: 0.19
-Nodes (13): cleanupEntityDedupStore(), cleanupSeenEvents(), clearDedupStore(), clearEntityDedupStore(), eventHandlers, getEntityKey(), isDuplicateEntityEvent(), lastEntityEvent (+5 more)
+### Community 23 - "Label Management Logic"
+Cohesion: 0.14
+Nodes (26): Cache Strategy, Issue Watchers, IssueDetailPage, Label Accessibility Requirements, Label Management, Label Type Definition, Label API Endpoints, Label Validation Schemas (+18 more)
 
-### Community 23 - "API Specification Fixes"
+### Community 24 - "API Specification Fixes"
 Cohesion: 0.12
 Nodes (24): OpenSpec Config — fix-delete-issue-response-type, ADR Review — fix-delete-issue-response-type, deleteIssue() Return Type Fix, Frontend Design — fix-delete-issue-response-type, Design System — fix-delete-issue-response-type, Proposal — fix-delete-issue-response-type, Review — fix-delete-issue-response-type, Spec: Delete Issue API Return Type (+16 more)
 
-### Community 24 - "Sidebar Navigation Components"
+### Community 25 - "Frontend Dependencies"
+Cohesion: 0.09
+Nodes (23): clsx, @hookform/resolvers, Store Architecture, Store Architecture Spec, Tech Selection — Linear App Clone (Frontend), dependencies, class-variance-authority, clsx (+15 more)
+
+### Community 26 - "Optimistic Update Manager"
+Cohesion: 0.20
+Nodes (15): OptimisticUpdate, applyOptimistic(), ApplyOptimisticOptions, checkStaleUpdates(), createOptimisticUpdate(), onRevertEvent(), onStaleRevert(), RevertListener (+7 more)
+
+### Community 27 - "Navigation and Sidebar"
 Cohesion: 0.14
 Nodes (16): useActiveRoute(), HamburgerButton, HamburgerButtonProps, MobileSidebarOverlay(), MobileSidebarOverlayProps, navItems, teams, NavLink (+8 more)
 
-### Community 25 - "Build and Test Config"
+### Community 28 - "Build and Test Config"
 Cohesion: 0.10
 Nodes (20): ES2023, node, playwright.config.ts, vite.config.ts, compilerOptions, allowImportingTsExtensions, erasableSyntaxOnly, lib (+12 more)
 
-### Community 26 - "Generic UI Components"
+### Community 29 - "Generic UI Components"
 Cohesion: 0.23
 Nodes (20): lucide-react, UI Generic Components Frontend Design, UI Generic Components Proposal, UI Generic Components Review, UI Generic Components Tasks, UI Generic Components User Flows, class-variance-authority, Button Component (+12 more)
 
-### Community 27 - "Development Dependencies"
-Cohesion: 0.11
-Nodes (19): @commitlint/cli, eslint-config-prettier, jsdom, msw, devDependencies, @commitlint/cli, eslint-config-prettier, jsdom (+11 more)
+### Community 30 - "Feature Architecture ADRs"
+Cohesion: 0.14
+Nodes (18): Store Isolation Pattern, Feature-Sliced Design, RegisterForm, REST API OpenAPI Contract, Delete Comment ADR Review, Issue Watchers Tech Stack, Label Management ADR Review, Label Management Tech Stack (+10 more)
 
-### Community 28 - "Documentation Templates"
+### Community 31 - "Development Dependencies"
+Cohesion: 0.11
+Nodes (19): eslint-config-prettier, jsdom, lint-staged, msw, devDependencies, eslint-config-prettier, jsdom, lint-staged (+11 more)
+
+### Community 32 - "Documentation Templates"
 Cohesion: 0.11
 Nodes (19): Design System Concept, Frontend Schema Pipeline, Mockups Convention, Frontend Schema, ADR Template, Frontend Design Template, Design System Template, Mockups README Template (+11 more)
 
-### Community 29 - "WebSocket Client Logic"
-Cohesion: 0.23
-Nodes (10): createWSClient(), WSClientConfig, setupEventRouter(), createHeartbeat(), DEFAULT_CONFIG, HeartbeatConfig, calculateBackoff(), DEFAULT_CONFIG (+2 more)
-
-### Community 30 - "Mock API Environment"
+### Community 33 - "Mock API Setup"
 Cohesion: 0.16
 Nodes (18): API Base Path Constant, Auth + Issues Mock API, ConnectionIndicator, EmptyState, ErrorBanner, HeaderBar, IssueList Component, LoadingSkeleton (+10 more)
 
-### Community 31 - "Comment Management Features"
+### Community 34 - "Comment Management Features"
 Cohesion: 0.18
 Nodes (18): Author-Only Access Control, CommentCard Component, CommentList Component, Delete Comment Feature, DeleteConfirmation Component, DeleteConfirmOverlay Component, Edit Comment Feature, Inline Confirmation Pattern (+10 more)
 
-### Community 32 - "Core Project Dependencies"
-Cohesion: 0.12
-Nodes (17): clsx, @hookform/resolvers, dependencies, class-variance-authority, clsx, @hookform/resolvers, lucide-react, react (+9 more)
+### Community 35 - "Theming and Responsive Layout"
+Cohesion: 0.17
+Nodes (17): CSS Custom Properties, localStorage Persistence, matchMedia API, Page Layout Shell, React Context, Responsive Design, Theme Switching (light/dark/system), Layout Module Mockup Index (+9 more)
 
-### Community 33 - "Realtime UI Indicators"
+### Community 36 - "Realtime UI Feedback"
 Cohesion: 0.13
 Nodes (17): ConnectionErrorModal, ConnectionStatusIndicator, Design System — Realtime, IssueAssigneeSelector, IssueCard, NotificationBadge, NotificationItem, NotificationPanel (+9 more)
 
-### Community 34 - "Issue API Services"
-Cohesion: 0.13
-Nodes (5): FetchIssuesParams, FetchIssuesResponse, CreateIssueData, PaginationCursor, UpdateIssueData
-
-### Community 35 - "Realtime Event Router"
-Cohesion: 0.18
-Nodes (14): handleCommentEvent(), handleCycleEvent(), handleIssueEvent(), handleLabelEvent(), handleNotificationEvent(), handleProjectEvent(), handleUserEvent(), isAutoUpdateEnabled() (+6 more)
-
-### Community 36 - "Issue Assignment Logic"
+### Community 37 - "Issue Assignment Logic"
 Cohesion: 0.28
 Nodes (16): ADR-0011 Dedicated Assign Endpoint, BUSINESS_RULE_ERROR (422), Cache Invalidation by Prefix, changeStatus Store Action Pattern, Issue Entity, Implement PATCH /issues/{id}/assignee Endpoint Proposal, Issue Assign/Unassign Endpoint Review, Issue Assign Frontend Specification (+8 more)
 
-### Community 37 - "Issue Watcher Features"
-Cohesion: 0.22
-Nodes (16): Issue Watchers, IssueDetailPage, Label Accessibility Requirements, Label Management, Optimistic Update, Watcher Accessibility Requirements, Watcher API Endpoints, Issue Watchers Proposal (+8 more)
-
-### Community 38 - "Tech Stack Selection"
-Cohesion: 0.17
-Nodes (16): JWT Dual Token Auth, Routing Tech Stack, API Client Tech Stack, UI Generic Components Tech Stack, Issue Status Transition Tech Stack, playwright, tailwindcss, playwright (+8 more)
+### Community 38 - "Issue API Services"
+Cohesion: 0.13
+Nodes (5): FetchIssuesParams, FetchIssuesResponse, CreateIssueData, PaginationCursor, UpdateIssueData
 
 ### Community 39 - "State Selectors and Memoization"
 Cohesion: 0.16
 Nodes (14): ActiveFilters, Cycle, ProjectProgress, selectActiveCycle, selectFilteredIssues, selectIssuesByStatus, selectProjectProgress, selectUnreadCount (+6 more)
 
-### Community 40 - "API Error Interceptors"
+### Community 40 - "API Interceptor Pipeline"
 Cohesion: 0.32
 Nodes (14): apiClient, Error Subscriber Pattern, HTTP Interceptor Pipeline, Rate Limit Tracking, API Error Taxonomy, ErrorHandler Subscriber Pattern, Interceptor Pipeline, RateLimitStore (+6 more)
 
-### Community 41 - "Issue Detail Components"
+### Community 41 - "Auth and Login UI"
+Cohesion: 0.19
+Nodes (14): AuthGuard, AuthStore, Button, Design System Tokens, ErrorBanner, LoginForm, LoginPage, React 19 + Vite + pnpm (+6 more)
+
+### Community 42 - "Issue Detail Components"
 Cohesion: 0.18
 Nodes (9): CommentList(), IssueDetailProps, priorityLabels, IssueStatusBadge(), IssueStatusBadgeProps, STATUS_OPTIONS, statusColorMap, SkeletonLoader() (+1 more)
 
-### Community 42 - "Form Data Schemas"
+### Community 43 - "Form Validation Schemas"
 Cohesion: 0.22
 Nodes (8): CreateIssueFormData, createIssueSchema, EditIssueFormData, editIssueSchema, ProfileFormData, profileSchema, ProjectSettingsFormData, projectSettingsSchema
 
-### Community 43 - "Header and Navigation"
+### Community 44 - "Header and Notifications UI"
 Cohesion: 0.23
 Nodes (9): Header(), HeaderProps, NotificationBell(), NotificationBellProps, SearchTrigger(), SearchTriggerProps, themeConfig, themeCycle (+1 more)
 
-### Community 44 - "Issue Watcher Components"
+### Community 45 - "Issue Watchers Feature"
 Cohesion: 0.24
 Nodes (13): Issue Watchers Feature, Optimistic Update Pattern, useWatchersStore, WatchButton Component, Watcher Type Definition, WatcherItem Component, WatcherList Component, WatcherSection Component (+5 more)
 
-### Community 45 - "Frontend Tech Stack"
-Cohesion: 0.23
-Nodes (13): Server-Sent Events (SSE), Vite 8, Vitest, Zod, React Router 7.x, TypeScript 6.x, Vite 8.x, Tech Selection — Linear App Clone (Frontend) (+5 more)
-
-### Community 46 - "WebSocket Channel Architecture"
+### Community 46 - "WebSocket Gateway Channels"
 Cohesion: 0.15
 Nodes (13): EventMessage, issue:{issueId} Channel, team:{teamId} Channel, user:{userId} Channel, WebSocket Gateway, Auth Endpoints, Issue Endpoints, Issue Status Transition (+5 more)
 
@@ -524,269 +524,261 @@ Nodes (13): scripts, build, dev, format, format:check, lint, lint:fix, prepare (
 Cohesion: 0.21
 Nodes (10): AuthState, initialAuthState, useAuthStore, AuthError, LoginFormData, LoginResponse, LogoutResponse, RefreshResponse (+2 more)
 
-### Community 49 - "Watcher API and UI"
+### Community 49 - "Watchers API and UI"
 Cohesion: 0.24
 Nodes (4): Watcher, WatcherItem(), WatcherItemProps, WatcherListProps
 
-### Community 51 - "Architecture and ADRs"
-Cohesion: 0.21
-Nodes (12): Store Isolation Pattern, Feature-Sliced Design, REST API OpenAPI Contract, Issue Watchers Tech Stack, Label Management ADR Review, Label Management Tech Stack, Edit Comment ADR Review, Issue Watchers ADR Review (+4 more)
-
-### Community 52 - "Keyboard Module Design"
+### Community 51 - "Keyboard Module Specifications"
 Cohesion: 0.23
 Nodes (12): Context Management, Keyboard Shortcuts, Specificity-Based Conflict Resolution, Delete Confirmation Modal — Mockup, Keyboard Module — Mockups Index, Keyboard Settings — Mockup, Shortcut Help Modal — Mockup, Toast Notification — Mockup (+4 more)
 
-### Community 53 - "Issue Form Components"
-Cohesion: 0.30
-Nodes (8): Issue, issueFormFieldLabels, IssueFormSchema, IssueForm(), IssueFormProps, priorityOptions, statusOptions, IssueFormModalProps
+### Community 52 - "Issues Store Architecture"
+Cohesion: 0.36
+Nodes (12): react-hook-form with Zod Validation, Separate API Layer Pattern, Zustand Issues Store, Issues Store ADRs, Issues Store Frontend Design, Issues Store Design System, Issues Store Proposal, Issues Store Review (+4 more)
 
-### Community 54 - "Cycle and Project Stores"
-Cohesion: 0.30
-Nodes (8): CyclesState, useCyclesStore, Cycle, Project, WSEventPayload, WSEventType, ProjectsState, useProjectsStore
-
-### Community 59 - "WebSocket UI Specifications"
+### Community 57 - "WebSocket UI Specifications"
 Cohesion: 0.29
 Nodes (11): Channel Subscription, Connection Status Display, WebSocket Error Handling, Event Processing, WebSocket Authentication, WebSocket Error Toast Mockup, Header Connection Status Mockup, WebSocket UI Mockup Index (+3 more)
 
-### Community 60 - "Comment UI Components"
+### Community 58 - "Comment List Components"
 Cohesion: 0.33
 Nodes (8): Comment, CommentCard(), CommentCardProps, formatTimestamp(), initials(), CommentListProps, mockComment, otherComment
 
-### Community 61 - "Label Management Design"
-Cohesion: 0.29
-Nodes (10): Cache Strategy, Label Type Definition, Label API Endpoints, Label Validation Schemas, useCacheStore, useIssueLabelsStore, useLabelDefinitionsStore, Label Management Frontend Design (+2 more)
+### Community 59 - "Issue Form Components"
+Cohesion: 0.30
+Nodes (8): Issue, issueFormFieldLabels, IssueFormSchema, IssueForm(), IssueFormProps, priorityOptions, statusOptions, IssueFormModalProps
 
-### Community 62 - "Component Design System"
+### Community 60 - "Component Design Specs"
 Cohesion: 0.20
 Nodes (10): Button Component Spec, UI Generic Design System, Button Design System, Card Design System, Checkbox Design System, EmptyState Design System, LoadingIndicator Design System, Modal Design System (+2 more)
 
-### Community 63 - "Docker Containerization"
+### Community 61 - "Docker Containerization"
 Cohesion: 0.38
 Nodes (10): ADR Review Manifest — Containerization, Docker Multi-Stage Build, nginx, Containerization Design — Frontend, Design System — Dockerfile Containerization, Proposal — Add Dockerfile for Containerization, Review — Add Dockerfile for Containerization, Tasks — Add Dockerfile for Containerization (Frontend) (+2 more)
 
-### Community 64 - "Issue Filter Store"
-Cohesion: 0.24
-Nodes (7): initialFilters, initialIssuesState, IssuesState, useIssuesStore, IssueFilters, IssueFiltersProps, statusOptions
-
-### Community 65 - "Commitlint Configuration"
-Cohesion: 0.22
-Nodes (8): @commitlint/config-conventional, commitlint, extends, @commitlint/config-conventional, name, private, type, version
-
-### Community 66 - "Error Handling UI"
-Cohesion: 0.33
-Nodes (9): ErrorBanner Component Spec, Toast Component Spec, API Client Error Handling Schema, API Client Design System, ErrorBanner Mockup, API Client Mockup Hub, Rate Limit Toast Mockup, API Client Error Handling Review (+1 more)
-
-### Community 67 - "Architecture Decision Records"
-Cohesion: 0.42
-Nodes (9): API Client Error Handling ADR Review, UI Generic Components ADR Review, Layout Module ADR Review, ADR-0004 Feature-Sliced Design, ADR-0005 React Hook Form + Zod, ADR-0006 Stack Selection, ADR-0007 Store Isolation, ADR-0008 API Error Taxonomy (+1 more)
-
-### Community 68 - "Event Handler Testing"
-Cohesion: 0.25
-Nodes (5): WSEvent, clearEventHandlers(), registerEventHandler(), mockLogout, mockSetLastHeartbeat
-
-### Community 71 - "Project Management Module"
-Cohesion: 0.29
-Nodes (8): ADR Review Manifest, List Projects — Frontend Design, Tasks — List Projects API, ProjectsPage, useProjectsStore, ProjectCard Component, ProjectList Component, StatusFilter Component
-
-### Community 72 - "Keyboard Context Provider"
-Cohesion: 0.32
-Nodes (6): getRouteContext(), isInputElement(), KeyboardContext, KeyboardContextValue, KeyboardProvider(), KeyboardProviderProps
-
-### Community 73 - "Issue List Components"
+### Community 62 - "Issue List UI"
 Cohesion: 0.29
 Nodes (5): IssueCard(), IssueCardProps, priorityLabels, statusColors, IssueListProps
 
-### Community 74 - "Realtime UI Mockups"
+### Community 63 - "Issue Filter Store"
+Cohesion: 0.24
+Nodes (7): initialFilters, initialIssuesState, IssuesState, useIssuesStore, IssueFilters, IssueFiltersProps, statusOptions
+
+### Community 64 - "Commit Lint Configuration"
+Cohesion: 0.22
+Nodes (8): @commitlint/config-conventional, commitlint, extends, @commitlint/config-conventional, name, private, type, version
+
+### Community 65 - "Error and Toast Specs"
+Cohesion: 0.33
+Nodes (9): ErrorBanner Component Spec, Toast Component Spec, API Client Error Handling Schema, API Client Design System, ErrorBanner Mockup, API Client Mockup Hub, Rate Limit Toast Mockup, API Client Error Handling Review (+1 more)
+
+### Community 66 - "Architecture Decision Records"
+Cohesion: 0.42
+Nodes (9): API Client Error Handling ADR Review, UI Generic Components ADR Review, Layout Module ADR Review, ADR-0004 Feature-Sliced Design, ADR-0005 React Hook Form + Zod, ADR-0006 Stack Selection, ADR-0007 Store Isolation, ADR-0008 API Error Taxonomy (+1 more)
+
+### Community 67 - "Issue Board Logic"
+Cohesion: 0.28
+Nodes (5): TODO: Send API request to persist the change, UseIssueBoardOptions, UseIssueBoardReturn, BoardColumnProps, BoardIssue
+
+### Community 70 - "Keyboard Context Provider"
+Cohesion: 0.32
+Nodes (6): getRouteContext(), isInputElement(), KeyboardContext, KeyboardContextValue, KeyboardProvider(), KeyboardProviderProps
+
+### Community 71 - "Cycle State Management"
+Cohesion: 0.46
+Nodes (5): CyclesState, useCyclesStore, Cycle, Project, WSEventPayload
+
+### Community 72 - "Realtime UI Mockups"
 Cohesion: 0.29
 Nodes (7): IssueAssigneeSelector Mockup, IssueCard Mockup, ProjectCard Mockup, ReconnectionToast Mockup, RevertToast Mockup, Optimistic Updates Spec, WebSocket Connection Spec
 
-### Community 75 - "Auth Module Design"
+### Community 73 - "Auth Module Design"
 Cohesion: 0.33
 Nodes (7): Auth Module Frontend Design, Design System, Auth Login Mockup, Auth Module Proposal, Auth Module Review, Auth Module Frontend Tasks, Auth Module User Flows
 
-### Community 76 - "Layout Shell Components"
+### Community 74 - "Responsive Layout Shell"
 Cohesion: 0.29
 Nodes (7): Header, PageLayout, ResponsiveDesktopLayout, ResponsiveMobileLayout, ResponsiveTabletLayout, Sidebar, ThemeToggle
 
-### Community 77 - "Optimistic Update Context"
+### Community 75 - "Optimistic Update Context"
 Cohesion: 0.29
 Nodes (4): OptimisticContext, OptimisticContextValue, OptimisticProviderProps, TODO: Implement optimistic update context (Phase 3)
 
-### Community 79 - "Toast Notification System"
+### Community 76 - "Toast Notification UI"
 Cohesion: 0.29
 Nodes (4): POSITION_STYLES, Toast, TOAST_STYLES, ToastContainerProps
 
-### Community 80 - "MSW Worker Setup"
+### Community 77 - "MSW Worker Setup"
 Cohesion: 0.38
 Nodes (4): worker, handlers, mockIssues, server
 
-### Community 81 - "Layout and Sidebar Design"
+### Community 78 - "Layout and Settings Specs"
 Cohesion: 0.47
 Nodes (6): LayoutProvider, Sidebar, ThemeToggle, Settings Mockup, Tasks Mockup, Layout Module Responsive Sidebar Theme Specification
 
-### Community 82 - "Feature View Mockups"
+### Community 79 - "Feature View Mockups"
 Cohesion: 0.33
 Nodes (6): Cycle List View Mockup, Realtime Mockups Index, Issue Detail View Mockup, Issue List View Mockup, Notification Dropdown Mockup, Project List View Mockup
 
-### Community 83 - "App Entry Point"
+### Community 80 - "App Entry Point"
 Cohesion: 0.47
 Nodes (3): App(), StoreProvider(), StoreProviderProps
 
-### Community 84 - "WebSocket Context Provider"
+### Community 81 - "WebSocket Context Provider"
 Cohesion: 0.33
 Nodes (3): WebSocketContext, WebSocketContextValue, WebSocketProviderProps
 
-### Community 85 - "Auth and Login Hooks"
+### Community 82 - "Auth and Login Hooks"
 Cohesion: 0.47
 Nodes (4): useAuth(), LoginFormData, loginSchema, useLoginForm()
 
-### Community 86 - "Watcher UI Components"
+### Community 83 - "Watch Button Components"
 Cohesion: 0.40
 Nodes (3): WatchButton(), WatchButtonProps, WatcherSectionProps
 
-### Community 87 - "User Registration API"
+### Community 84 - "User Registration API"
 Cohesion: 0.33
 Nodes (3): RegisterError, RegisterPayload, RegisterResponse
 
-### Community 88 - "Cache Store Logic"
+### Community 85 - "Cache Store Management"
 Cohesion: 0.33
 Nodes (4): CacheEntry, CacheState, DEFAULT_TTLS, useCacheStore
 
-### Community 89 - "WebSocket State Store"
+### Community 86 - "WebSocket Connection Store"
 Cohesion: 0.33
 Nodes (5): ConnectionStatus, initialWebSocketState, Notification, useWebSocketStore, WebSocketState
 
-### Community 90 - "API Contract Proposals"
+### Community 87 - "API Contract Fixes"
 Cohesion: 0.40
 Nodes (5): API Contract Alignment, Pagination Response Shape Fix, Query Parameter Mismatch Fix, Proposal — Fix Pagination Response Shape, Proposal — Fix Query Parameter Mismatch
 
-### Community 91 - "Event Subscription Mockups"
+### Community 88 - "Event Subscription Mockups"
 Cohesion: 0.40
 Nodes (5): IssueDetail Mockup, IssueList Mockup, NotificationPanel Mockup, ProjectList Mockup, Event Subscription Spec
 
-### Community 92 - "Store Architecture Design"
-Cohesion: 0.50
-Nodes (5): Store Architecture, Store Architecture Spec, Tech Selection — Linear App Clone (Frontend), zustand, zustand
-
-### Community 93 - "Issue Management Mockups"
+### Community 89 - "Work Module Mockups"
 Cohesion: 0.80
 Nodes (5): Confirm Delete Dialog Mockup, Work Module Mockup Index, Issue Detail Mockup, Issue Form Modal Mockup, Issues Page Mockup
 
-### Community 94 - "Lint and Format Config"
+### Community 90 - "Lint and Format Config"
 Cohesion: 0.50
 Nodes (5): lint-staged, *.{json,md,css}, *.{ts,tsx}, eslint --fix, prettier --write
 
-### Community 95 - "Registration Form Logic"
+### Community 91 - "Registration Form Logic"
 Cohesion: 0.50
 Nodes (3): RegisterFormData, registerSchema, useRegisterForm()
 
-### Community 97 - "Shortcut Toast UI"
+### Community 93 - "Shortcut Toast Tests"
 Cohesion: 0.50
 Nodes (3): SHORTCUT_TOAST_MESSAGES, ToastContainer(), ToastContainerProps
 
-### Community 98 - "Notification UI Components"
+### Community 94 - "Notification Item UI"
 Cohesion: 0.40
 Nodes (3): NotificationItemData, NotificationItemProps, TYPE_ICONS
 
-### Community 99 - "Issue Editing Page"
+### Community 95 - "Issue Editing Page"
 Cohesion: 0.40
 Nodes (3): priorityOptions, projectOptions, statusOptions
 
-### Community 100 - "Notification Store"
+### Community 96 - "Notifications Store"
 Cohesion: 0.40
 Nodes (4): initialNotificationsState, NotificationItem, NotificationsState, useNotificationsStore
 
-### Community 101 - "Toast Notification Store"
+### Community 97 - "Toast State Store"
 Cohesion: 0.40
 Nodes (4): Toast, ToastState, ToastVariant, useToastStore
 
-### Community 102 - "UI State Management"
+### Community 98 - "Global UI Store"
 Cohesion: 0.40
 Nodes (4): KeyboardContext, Theme, UIState, useUIStore
 
-### Community 103 - "Error Banner Component"
+### Community 99 - "Error Banner Component"
 Cohesion: 0.40
 Nodes (3): ErrorBannerProps, ErrorBannerType, typeStyles
 
-### Community 104 - "Schema and Metadata"
+### Community 100 - "API Schema Specifications"
 Cohesion: 0.50
 Nodes (4): Change Metadata, OpenSpec Artifact Rules, frontend-schema, OpenSpec Schema Collection
 
-### Community 105 - "Issue Management Mockups"
+### Community 101 - "Issue Management Mockups"
 Cohesion: 0.83
 Nodes (4): Issue Assign Mockups Index, Issue Detail Page Mockup, Issue Form Modal Mockup, Issues List Mockup
 
-### Community 106 - "Layout and Accessibility"
+### Community 102 - "UI Layout Conventions"
 Cohesion: 0.50
 Nodes (4): AccessibilityConventions, LayoutRegions, ResponsiveLayout, WireframeTemplate
 
-### Community 107 - "Deployment Configuration"
+### Community 103 - "Deployment Configuration"
 Cohesion: 0.50
 Nodes (4): Dockerfile, NginxConfig, SecurityHeaders, SpaFallbackRouting
 
-### Community 108 - "Comment Management UI"
+### Community 104 - "Comment UI Components"
 Cohesion: 0.67
 Nodes (4): CommentCard, CommentList, DeleteConfirmOverlay, EditComment
 
-### Community 113 - "Watchers State Management"
+### Community 109 - "Issue Assignee Selector"
+Cohesion: 0.50
+Nodes (3): IssueAssigneeSelector(), IssueAssigneeSelectorProps, User
+
+### Community 110 - "Watchers State Management"
 Cohesion: 0.50
 Nodes (3): initialWatchersState, useWatchersStore, WatchersState
 
-### Community 118 - "Modal Stack Store"
+### Community 115 - "Modal State Management"
 Cohesion: 0.50
 Nodes (3): ModalStackItem, ModalState, useModalStore
 
-### Community 119 - "Rate Limit Management"
+### Community 116 - "Rate Limit Store"
 Cohesion: 0.50
 Nodes (3): EndpointRateLimit, RateLimitState, useRateLimitStore
 
-### Community 122 - "Docker Nginx Setup"
+### Community 119 - "Dockerized SPA Deployment"
 Cohesion: 0.67
 Nodes (3): Containerized SPA Serving, Dockerfile Multi-Stage Build, Nginx Server
 
-### Community 123 - "Delete Comment Mockups"
+### Community 120 - "Delete Comment Mockups"
 Cohesion: 0.67
 Nodes (3): Delete Comment Mockups Index, Delete Comment Issue Detail Mockup, Delete Comment User Flows
 
-### Community 124 - "Delete Comment Planning"
+### Community 121 - "Delete Comment Specifications"
 Cohesion: 0.67
 Nodes (3): Delete Comment Review, Delete Comment Frontend Spec, Delete Comment Frontend Tasks
 
-### Community 125 - "Edit Comment Planning"
+### Community 122 - "Edit Comment Specifications"
 Cohesion: 0.67
 Nodes (3): Edit Comment Review, Edit Comment Frontend Spec, Edit Comment Frontend Tasks
 
-### Community 126 - "Auth Page Mockups"
+### Community 123 - "Authentication Page Mockups"
 Cohesion: 1.00
 Nodes (3): Sign In — Mockup, Create Account — Mockup, Auth Pages — Mockups
 
-### Community 127 - "Label Management UI"
+### Community 124 - "Label UI Components"
 Cohesion: 0.67
 Nodes (3): LabelBadge, LabelList, LabelPicker
 
-### Community 128 - "MSW Mock Server"
+### Community 125 - "Mock Service Worker"
 Cohesion: 0.67
 Nodes (3): MswBrowser, MswHandlers, MswServer
 
 ## Knowledge Gaps
-- **632 isolated node(s):** `codegraph`, `name`, `private`, `version`, `type` (+627 more)
+- **634 isolated node(s):** `codegraph`, `name`, `private`, `version`, `type` (+629 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **120 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **122 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `zustand` connect `Store Architecture Design` to `Issue Data Stores`, `App Layout System`, `Tech Stack Selection`, `API Error Interceptors`, `Frontend Tech Stack`, `Keyboard Module Design`, `Generic UI Components`?**
+- **Why does `zustand` connect `Frontend Dependencies` to `Theming and Responsive Layout`, `Issue Data Fetching`, `API Interceptor Pipeline`, `Keyboard Module Specifications`, `Tech Stack Configuration`, `Generic UI Components`?**
   _High betweenness centrality (0.031) - this node is a cross-community bridge._
-- **Why does `IssuesStore` connect `Issue Data Stores` to `API Error Interceptors`, `Store Architecture Design`?**
+- **Why does `IssuesStore` connect `Issue Data Fetching` to `API Interceptor Pipeline`, `Frontend Dependencies`?**
   _High betweenness centrality (0.020) - this node is a cross-community bridge._
-- **Why does `Feature-Sliced Design` connect `Architecture and ADRs` to `App Layout System`, `Issue Watcher Features`, `Tech Stack Selection`, `Frontend Tech Stack`, `Frontend Architecture ADRs`, `Auth and Project Setup`, `Keyboard Module Design`?**
+- **Why does `Feature-Sliced Design` connect `Feature Architecture ADRs` to `Theming and Responsive Layout`, `State and Cache Architecture`, `Keyboard Module Specifications`, `Tech Stack Configuration`, `Label Management Logic`?**
   _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **What connects `codegraph`, `name`, `private` to the rest of the system?**
-  _632 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Optimistic Update Manager` be split into smaller, more focused modules?**
-  _Cohesion score 0.06247086247086247 - nodes in this community are weakly interconnected._
-- **Should `API Client Infrastructure` be split into smaller, more focused modules?**
+  _634 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `WebSocket Event Routing` be split into smaller, more focused modules?**
+  _Cohesion score 0.06112616681722373 - nodes in this community are weakly interconnected._
+- **Should `API Client Error Handling` be split into smaller, more focused modules?**
   _Cohesion score 0.08951048951048951 - nodes in this community are weakly interconnected._
 - **Should `UI Component Library` be split into smaller, more focused modules?**
   _Cohesion score 0.07003367003367003 - nodes in this community are weakly interconnected._

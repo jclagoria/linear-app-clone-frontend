@@ -1,16 +1,16 @@
 # Graph Report - linear-app-clone-frontend  (2026-07-29)
 
 ## Corpus Check
-- 617 files · ~356,434 words
+- 618 files · ~357,160 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5835 nodes · 5979 edges · 528 communities (471 shown, 57 thin omitted)
+- 5858 nodes · 6001 edges · 530 communities (473 shown, 57 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a27046c8`
+- Built from commit: `0da89069`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -402,7 +402,7 @@
 - Flow Inventory
 - Behaviour
 - Behaviour
-- realtime/lib/index.ts
+- optimistic-manager.ts
 - Realtime Module — WebSocket Connection Management
 - Session Summary: Test Suite Optimization — Phase 4 Complete
 - Behaviour
@@ -453,7 +453,7 @@
 - Real-time Issue Updates
 - ADR Review Manifest
 - issue/model/store.ts
-- event-router.ts
+- ws-client.ts
 - MockWebSocket
 - Layout Module — Frontend Specification
 - notificationsStore.ts
@@ -491,7 +491,7 @@
 - WebSocket Frontend: Align Client with AsyncAPI Specification
 - MockWSEndpoint
 - @commitlint/config-conventional
-- Component Catalog
+- List Projects — Frontend Specification
 - api/auth.ts
 - Tasks — Register User API Integration (Frontend)
 - useRegisterForm.ts
@@ -504,17 +504,19 @@
 - Review — Register User API Integration
 - ADR Review Manifest
 - realtime/ui/index.ts
+- event-router.ts
+- Component Catalog
 - List Projects — Frontend Design
 - Tasks — List Projects API (Frontend)
 - Projects: List Projects
 - Tech Selection — Linear App Clone (Frontend)
 - List Projects API
-- Review — List Projects API (Frontend)
-- ADR Review Manifest
 - MockWSEndpoint
 - MockWSEndpoint
 - projects.ts
 - ProjectsPage.test.tsx
+- Review — List Projects API (Frontend)
+- ADR Review Manifest
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApiError` - 24 edges
@@ -543,7 +545,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (528 total, 57 thin omitted)
+## Communities (530 total, 57 thin omitted)
 
 ### Community 0 - "errors/index.ts"
 Cohesion: 0.07
@@ -1945,9 +1947,9 @@ Nodes (26): Accessibility, Behaviour, Components, OptimisticUpdateManager, Optim
 Cohesion: 0.05
 Nodes (38): Accessibility, Behaviour, CommentEvent handler, Components, CycleEvent handler, IssueEvent handler, NotificationEvent handler, ProjectEvent handler (+30 more)
 
-### Community 411 - "realtime/lib/index.ts"
-Cohesion: 0.17
-Nodes (18): CyclesState, useCyclesStore, Cycle, Project, OptimisticUpdate, applyOptimistic(), ApplyOptimisticOptions, checkStaleUpdates() (+10 more)
+### Community 411 - "optimistic-manager.ts"
+Cohesion: 0.25
+Nodes (11): OptimisticUpdate, applyOptimistic(), ApplyOptimisticOptions, checkStaleUpdates(), createOptimisticUpdate(), onRevertEvent(), onStaleRevert(), RevertListener (+3 more)
 
 ### Community 412 - "Realtime Module — WebSocket Connection Management"
 Cohesion: 0.07
@@ -2046,8 +2048,8 @@ Cohesion: 0.14
 Nodes (13): ADR-003: Server-Sent Events over WebSocket for Real-Time Updates, Confirmation, Consequences, Considered Options, Context and Problem Statement, Decision Drivers, Decision Outcome, More Information (+5 more)
 
 ### Community 436 - "event-processor.ts"
-Cohesion: 0.12
-Nodes (22): cleanupEntityDedupStore(), cleanupSeenEvents(), clearDedupStore(), clearEntityDedupStore(), clearEventHandlers(), eventHandlers, getEntityKey(), isDuplicateEntityEvent() (+14 more)
+Cohesion: 0.11
+Nodes (23): WSEvent, cleanupEntityDedupStore(), cleanupSeenEvents(), clearDedupStore(), clearEntityDedupStore(), clearEventHandlers(), eventHandlers, getEntityKey() (+15 more)
 
 ### Community 437 - "KeyboardProvider.tsx"
 Cohesion: 0.32
@@ -2133,9 +2135,9 @@ Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created
 Cohesion: 0.24
 Nodes (7): initialFilters, initialIssuesState, IssuesState, useIssuesStore, IssueFilters, IssueFiltersProps, statusOptions
 
-### Community 463 - "event-router.ts"
-Cohesion: 0.14
-Nodes (20): WSEventType, createWSClient(), WSClientConfig, handleCommentEvent(), handleCycleEvent(), handleIssueEvent(), handleLabelEvent(), handleNotificationEvent() (+12 more)
+### Community 463 - "ws-client.ts"
+Cohesion: 0.18
+Nodes (13): createWSClient(), WSClientConfig, setupEventRouter(), createHeartbeat(), DEFAULT_CONFIG, HeartbeatConfig, calculateBackoff(), DEFAULT_CONFIG (+5 more)
 
 ### Community 465 - "Layout Module — Frontend Specification"
 Cohesion: 0.11
@@ -2154,8 +2156,8 @@ Cohesion: 0.17
 Nodes (11): Actors, Authentication: Login, Authentication: User Registration, Flow Inventory, Navigation Graph, Navigation Graph, Screen List, Screen List (+3 more)
 
 ### Community 469 - "useIssueBoard.ts"
-Cohesion: 0.24
-Nodes (6): WSEvent, TODO: Send API request to persist the change, UseIssueBoardOptions, UseIssueBoardReturn, BoardColumnProps, BoardIssue
+Cohesion: 0.28
+Nodes (5): TODO: Send API request to persist the change, UseIssueBoardOptions, UseIssueBoardReturn, BoardColumnProps, BoardIssue
 
 ### Community 470 - "Review — Layout Module — Responsive & Theme Finalization"
 Cohesion: 0.18
@@ -2245,9 +2247,9 @@ Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review
 Cohesion: 0.33
 Nodes (5): Impact, Motivation, Problem Statement, Scope, WebSocket Frontend: Align Client with AsyncAPI Specification
 
-### Community 503 - "Component Catalog"
-Cohesion: 0.17
-Nodes (11): Color Semantics, Component Catalog, Design System — Linear App Clone Frontend, EmptyState, ErrorMessage, Layout Tokens, LoadingSpinner, ProjectCard (+3 more)
+### Community 503 - "List Projects — Frontend Specification"
+Cohesion: 0.09
+Nodes (22): Accessibility, Behaviour, Components, List Projects — Frontend Specification, ProjectCard, ProjectList, Requirement: Fetch projects on mount, Requirement: Filter projects by status (+14 more)
 
 ### Community 504 - "api/auth.ts"
 Cohesion: 0.33
@@ -2286,53 +2288,61 @@ Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
 ### Community 516 - "realtime/ui/index.ts"
-Cohesion: 0.09
-Nodes (24): AutoUpdateToggle(), ConnectionErrorModal(), ConnectionErrorModalProps, ConnectionStatusIndicator(), ConnectionStatusIndicatorProps, STATUS_CONFIG, IssueAssigneeSelector(), IssueAssigneeSelectorProps (+16 more)
+Cohesion: 0.11
+Nodes (22): useOptimisticStore, AutoUpdateToggle(), ConnectionErrorModal(), ConnectionErrorModalProps, ConnectionStatusIndicator(), ConnectionStatusIndicatorProps, STATUS_CONFIG, IssueAssigneeSelector() (+14 more)
 
-### Community 517 - "List Projects — Frontend Design"
+### Community 517 - "event-router.ts"
+Cohesion: 0.18
+Nodes (16): CyclesState, useCyclesStore, Cycle, Project, WSEventType, ProjectsState, useProjectsStore, handleCommentEvent() (+8 more)
+
+### Community 518 - "Component Catalog"
+Cohesion: 0.17
+Nodes (11): Color Semantics, Component Catalog, Design System — Linear App Clone Frontend, EmptyState, ErrorMessage, Layout Tokens, LoadingSpinner, ProjectCard (+3 more)
+
+### Community 519 - "List Projects — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, List Projects — Frontend Design, Routing, State Management (+1 more)
 
-### Community 518 - "Tasks — List Projects API (Frontend)"
+### Community 520 - "Tasks — List Projects API (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — List Projects API (Frontend), Validation
 
-### Community 519 - "Projects: List Projects"
+### Community 521 - "Projects: List Projects"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Navigation Graph, Projects: List Projects, Screen List, State Transitions, User Flows — List Projects API
 
-### Community 520 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 522 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 521 - "List Projects API"
+### Community 523 - "List Projects API"
 Cohesion: 0.33
 Nodes (5): Impact, List Projects API, Motivation, Problem Statement, Scope
 
-### Community 522 - "Review — List Projects API (Frontend)"
+### Community 528 - "Review — List Projects API (Frontend)"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — List Projects API (Frontend), Spec Compliance
 
-### Community 523 - "ADR Review Manifest"
+### Community 529 - "ADR Review Manifest"
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
 ## Knowledge Gaps
-- **3634 isolated node(s):** `ProjectsState`, `STATUS_OPTIONS`, `mockProjects`, `ProjectListParams`, `PaginatedResponse` (+3629 more)
+- **3648 isolated node(s):** `Review Summary`, `In-Force ADRs Reviewed`, `New Durable ADRs Created`, `Architecture Decisions`, `Component Tree` (+3643 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `MockWebSocket` connect `MockWebSocket` to `event-router.ts`?**
-  _High betweenness centrality (0.000) - this node is a cross-community bridge._
+- **Why does `devDependencies` connect `devDependencies` to `eslint-plugin-react`, `msw`, `@tailwindcss/vite`, `jsdom`, `lint-staged`, `vitest`, `@playwright/test`, `@testing-library/jest-dom`, `@testing-library/user-event`, `package.json`, `typescript-eslint`, `@commitlint/config-conventional`, `eslint`, `eslint-config-prettier`, `eslint-import-resolver-typescript`, `@eslint/js`?**
+  _High betweenness centrality (0.001) - this node is a cross-community bridge._
 - **Why does `MockWSEndpoint` connect `MockWSEndpoint` to `event-processor.ts`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **Why does `devDependencies` connect `devDependencies` to `eslint-plugin-react`, `msw`, `@tailwindcss/vite`, `jsdom`, `lint-staged`, `vitest`, `@playwright/test`, `@testing-library/jest-dom`, `@testing-library/user-event`, `package.json`, `typescript-eslint`, `@commitlint/config-conventional`, `eslint`, `eslint-config-prettier`, `eslint-import-resolver-typescript`, `@eslint/js`?**
+- **Why does `MockWSServer` connect `MockWSEndpoint` to `event-processor.ts`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **What connects `ProjectsState`, `STATUS_OPTIONS`, `mockProjects` to the rest of the system?**
-  _3634 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `Review Summary`, `In-Force ADRs Reviewed`, `New Durable ADRs Created` to the rest of the system?**
+  _3648 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `errors/index.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.0694579681921454 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
