@@ -1,16 +1,16 @@
 # Graph Report - linear-app-clone-frontend  (2026-07-28)
 
 ## Corpus Check
-- 606 files · ~348,109 words
+- 606 files · ~349,753 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5726 nodes · 5882 edges · 517 communities (463 shown, 54 thin omitted)
+- 5742 nodes · 5898 edges · 517 communities (463 shown, 54 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `21783031`
+- Built from commit: `70ec0be3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1218,8 +1218,8 @@ Cohesion: 0.50
 Nodes (3): EndpointRateLimit, RateLimitState, useRateLimitStore
 
 ### Community 173 - "AGENTS.md"
-Cohesion: 0.40
-Nodes (4): 1. CodeGraph + Graphify (Inteligencia de Código), 2. Memory (Conocimiento Persistente), 3. RTK - Comandos Optimizados (Ahorro de Tokens), Mandatory Project Rules
+Cohesion: 0.10
+Nodes (20): 1. CodeGraph + Graphify (Code Intelligence), 2. Memory (Persistent Knowledge), 3. RTK - Optimized Commands (Token Savings), Analysis (70-90% savings), Analysis (70-90% savings), Build & Lint (80-90% savings) — shows errors only, Build & Lint (80-90% savings) — shows errors only, Files & Search (60-75% savings) (+12 more)
 
 ### Community 176 - "Requirement: Loading Indicator"
 Cohesion: 0.67
@@ -2270,19 +2270,19 @@ Cohesion: 0.09
 Nodes (24): AutoUpdateToggle(), ConnectionErrorModal(), ConnectionErrorModalProps, ConnectionStatusIndicator(), ConnectionStatusIndicatorProps, STATUS_CONFIG, IssueAssigneeSelector(), IssueAssigneeSelectorProps (+16 more)
 
 ## Knowledge Gaps
-- **3555 isolated node(s):** `1. CodeGraph + Graphify (Inteligencia de Código)`, `2. Memory (Conocimiento Persistente)`, `3. RTK - Comandos Optimizados (Ahorro de Tokens)`, `codegraph`, `name` (+3550 more)
+- **3571 isolated node(s):** `1. CodeGraph + Graphify (Code Intelligence)`, `2. Memory (Persistent Knowledge)`, `3. RTK - Optimized Commands (Token Savings)`, `Git (59-80% savings)`, `Files & Search (60-75% savings)` (+3566 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Behaviour` connect `Behaviour` to `Requirement: Modal with Stack Management`, `Requirement: Input Field`, `Requirement: Toast Notifications`, `UI Module — Frontend Specification`, `Requirement: Loading Indicator`, `Requirement: Select Dropdown`, `Requirement: Textarea`, `Requirement: Button Variants`?**
+- **Why does `dependencies` connect `Behaviour` to `Component Catalog`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **Why does `devDependencies` connect `devDependencies` to `eslint-plugin-react`, `msw`, `@tailwindcss/vite`, `jsdom`, `lint-staged`, `vitest`, `@playwright/test`, `@testing-library/jest-dom`, `@testing-library/user-event`, `Component Catalog`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint`, `eslint-config-prettier`, `eslint-import-resolver-typescript`, `@eslint/js`?**
+- **Why does `IssueCard()` connect `IssueAssigneeSelector.tsx` to `optimistic-manager.ts`, `Tasks — Keyboard Module (Frontend)`, `scripts`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **What connects `1. CodeGraph + Graphify (Inteligencia de Código)`, `2. Memory (Conocimiento Persistente)`, `3. RTK - Comandos Optimizados (Ahorro de Tokens)` to the rest of the system?**
-  _3555 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `1. CodeGraph + Graphify (Code Intelligence)`, `2. Memory (Persistent Knowledge)`, `3. RTK - Optimized Commands (Token Savings)` to the rest of the system?**
+  _3571 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Behaviour` be split into smaller, more focused modules?**
   _Cohesion score 0.0694579681921454 - nodes in this community are weakly interconnected._
 - **Should `Behaviour` be split into smaller, more focused modules?**

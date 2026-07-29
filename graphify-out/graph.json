@@ -26,37 +26,213 @@
       "norm_label": "mandatory project rules"
     },
     {
-      "label": "1. CodeGraph + Graphify (Inteligencia de C\u00f3digo)",
+      "label": "1. CodeGraph + Graphify (Code Intelligence)",
       "file_type": "document",
       "source_file": "linear-frontend-v1/AGENTS.md",
       "source_location": "L5",
       "_origin": "ast",
-      "id": "linear_frontend_v1_agents_1_codegraph_graphify_inteligencia_de_c\u00f3digo",
+      "id": "linear_frontend_v1_agents_1_codegraph_graphify_code_intelligence",
       "community": 173,
       "community_name": "AGENTS.md",
-      "norm_label": "1. codegraph + graphify (inteligencia de codigo)"
+      "norm_label": "1. codegraph + graphify (code intelligence)"
     },
     {
-      "label": "2. Memory (Conocimiento Persistente)",
+      "label": "2. Memory (Persistent Knowledge)",
       "file_type": "document",
       "source_file": "linear-frontend-v1/AGENTS.md",
       "source_location": "L13",
       "_origin": "ast",
-      "id": "linear_frontend_v1_agents_2_memory_conocimiento_persistente",
+      "id": "linear_frontend_v1_agents_2_memory_persistent_knowledge",
       "community": 173,
       "community_name": "AGENTS.md",
-      "norm_label": "2. memory (conocimiento persistente)"
+      "norm_label": "2. memory (persistent knowledge)"
     },
     {
-      "label": "3. RTK - Comandos Optimizados (Ahorro de Tokens)",
+      "label": "3. RTK - Optimized Commands (Token Savings)",
       "file_type": "document",
       "source_file": "linear-frontend-v1/AGENTS.md",
       "source_location": "L24",
       "_origin": "ast",
-      "id": "linear_frontend_v1_agents_3_rtk_comandos_optimizados_ahorro_de_tokens",
+      "id": "linear_frontend_v1_agents_3_rtk_optimized_commands_token_savings",
       "community": 173,
       "community_name": "AGENTS.md",
-      "norm_label": "3. rtk - comandos optimizados (ahorro de tokens)"
+      "norm_label": "3. rtk - optimized commands (token savings)"
+    },
+    {
+      "label": "Git (59-80% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L30",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_git_59_80_savings",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "git (59-80% savings)"
+    },
+    {
+      "label": "Files & Search (60-75% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L33",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_files_search_60_75_savings",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "files & search (60-75% savings)"
+    },
+    {
+      "label": "Test (90-99% savings) \u2014 shows failures only",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L37",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_test_90_99_savings_shows_failures_only",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "test (90-99% savings) \u2014 shows failures only"
+    },
+    {
+      "label": "Build & Lint (80-90% savings) \u2014 shows errors only",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L40",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_build_lint_80_90_savings_shows_errors_only",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "build & lint (80-90% savings) \u2014 shows errors only"
+    },
+    {
+      "label": "Analysis (70-90% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L44",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_analysis_70_90_savings",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "analysis (70-90% savings)"
+    },
+    {
+      "label": "GitHub (26-87% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_github_26_87_savings",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "github (26-87% savings)"
+    },
+    {
+      "label": "Infrastructure (85% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L51",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_infrastructure_85_savings",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "infrastructure (85% savings)"
+    },
+    {
+      "label": "Package managers (70-90% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L54",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_package_managers_70_90_savings",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "package managers (70-90% savings)"
+    },
+    {
+      "label": "Git (59-80% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L71",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_git_59_80_savings_71",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "git (59-80% savings)"
+    },
+    {
+      "label": "Files & Search (60-75% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L74",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_files_search_60_75_savings_74",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "files & search (60-75% savings)"
+    },
+    {
+      "label": "Test (90-99% savings) \u2014 shows failures only",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L78",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_test_90_99_savings_shows_failures_only_78",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "test (90-99% savings) \u2014 shows failures only"
+    },
+    {
+      "label": "Build & Lint (80-90% savings) \u2014 shows errors only",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L81",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_build_lint_80_90_savings_shows_errors_only_81",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "build & lint (80-90% savings) \u2014 shows errors only"
+    },
+    {
+      "label": "Analysis (70-90% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L85",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_analysis_70_90_savings_85",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "analysis (70-90% savings)"
+    },
+    {
+      "label": "GitHub (26-87% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L89",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_github_26_87_savings_89",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "github (26-87% savings)"
+    },
+    {
+      "label": "Infrastructure (85% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L92",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_infrastructure_85_savings_92",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "infrastructure (85% savings)"
+    },
+    {
+      "label": "Package managers (70-90% savings)",
+      "file_type": "document",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L95",
+      "_origin": "ast",
+      "id": "linear_frontend_v1_agents_package_managers_70_90_savings_95",
+      "community": 173,
+      "community_name": "AGENTS.md",
+      "norm_label": "package managers (70-90% savings)"
     },
     {
       "label": "mcp.json",
@@ -63004,6 +63180,138 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_analysis_70_90_savings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L85",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_analysis_70_90_savings_85",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_build_lint_80_90_savings_shows_errors_only",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_build_lint_80_90_savings_shows_errors_only_81",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L33",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_files_search_60_75_savings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_files_search_60_75_savings_74",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_git_59_80_savings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L71",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_git_59_80_savings_71",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_github_26_87_savings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_github_26_87_savings_89",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_infrastructure_85_savings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L92",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_infrastructure_85_savings_92",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
@@ -63015,11 +63323,55 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L54",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_package_managers_70_90_savings",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_package_managers_70_90_savings_95",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_test_90_99_savings_shows_failures_only",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "linear_frontend_v1_agents",
+      "target": "linear_frontend_v1_agents_test_90_99_savings_shows_failures_only_78",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "linear-frontend-v1/AGENTS.md",
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
       "source": "linear_frontend_v1_agents_mandatory_project_rules",
-      "target": "linear_frontend_v1_agents_1_codegraph_graphify_inteligencia_de_c\u00f3digo",
+      "target": "linear_frontend_v1_agents_1_codegraph_graphify_code_intelligence",
       "confidence_score": 1.0
     },
     {
@@ -63030,7 +63382,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "linear_frontend_v1_agents_mandatory_project_rules",
-      "target": "linear_frontend_v1_agents_2_memory_conocimiento_persistente",
+      "target": "linear_frontend_v1_agents_2_memory_persistent_knowledge",
       "confidence_score": 1.0
     },
     {
@@ -63041,7 +63393,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "linear_frontend_v1_agents_mandatory_project_rules",
-      "target": "linear_frontend_v1_agents_3_rtk_comandos_optimizados_ahorro_de_tokens",
+      "target": "linear_frontend_v1_agents_3_rtk_optimized_commands_token_savings",
       "confidence_score": 1.0
     },
     {
@@ -128523,5 +128875,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "21783031729353c76f2268617072f9439732a3d7"
+  "built_at_commit": "70ec0be37acc2641a891ac126fd9b41176fef0bb"
 }
