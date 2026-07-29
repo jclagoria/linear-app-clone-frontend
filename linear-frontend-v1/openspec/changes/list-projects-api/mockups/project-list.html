@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ProjectList — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --color-danger: #EF4444;
+      --color-success: #10B981;
+      --color-warning: #F59E0B;
+      --color-badge-planned: #E2E8F0;
+      --color-badge-progress: #DBEAFE;
+      --color-badge-completed: #D1FAE5;
+      --color-badge-canceled: #FEE2E2;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-2: 4px;
+      --space-4: 8px;
+      --space-6: 12px;
+      --space-8: 16px;
+      --space-12: 24px;
+      --space-16: 32px;
+      --radius-md: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); font-size: 14px; line-height: 1.5; }
+    a { color: var(--color-primary); text-decoration: none; cursor: pointer; }
+    a:hover { text-decoration: underline; }
+
+    .app-shell { display: flex; flex-direction: column; height: 100vh; }
+
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 48px; padding: 0 var(--space-8); background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border); position: sticky; top: 0; z-index: 10;
+    }
+    .header-left { display: flex; align-items: center; gap: var(--space-8); }
+    .header-logo { font-weight: 700; font-size: 16px; color: var(--color-text-primary); }
+    .header-center { display: flex; align-items: center; gap: var(--space-4); }
+    .header-search {
+      padding: var(--space-4) var(--space-8); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); background: var(--color-surface);
+      color: var(--color-text-secondary); font-size: 13px; width: 240px;
+    }
+    .header-right { display: flex; align-items: center; gap: var(--space-6); }
+
+    .workspace-switcher { font-size: 13px; color: var(--color-text-secondary); cursor: pointer; }
+    .nav-toggle { display: none; background: none; border: none; font-size: 18px; cursor: pointer; padding: var(--space-4); }
+    .icon-btn { background: none; border: none; cursor: pointer; padding: var(--space-4); font-size: 16px; border-radius: var(--radius-md); }
+    .icon-btn:hover { background: var(--color-surface); }
+    .avatar {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--color-primary);
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+
+    .body { display: flex; flex: 1; overflow: hidden; }
+
+    .nav {
+      width: 220px; background: var(--color-surface-elevated); border-right: 1px solid var(--color-border);
+      padding: var(--space-8) 0; display: flex; flex-direction: column; flex-shrink: 0;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: var(--space-8); padding: var(--space-6) var(--space-8);
+      font-size: 13px; color: var(--color-text-secondary); cursor: pointer; border: none;
+      background: none; width: 100%; text-align: left; border-radius: 0;
+    }
+    .nav-item:hover { background: var(--color-surface); color: var(--color-text-primary); }
+    .nav-item.active { background: var(--color-surface); color: var(--color-primary); font-weight: 500; }
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+    .main {
+      flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: var(--space-12);
+      max-width: 1280px;
+    }
+
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-12);
+    }
+    .page-title { font-size: 24px; font-weight: 600; line-height: 32px; }
+    .page-actions { display: flex; gap: var(--space-6); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: var(--space-4); padding: var(--space-4) var(--space-8);
+      border-radius: var(--radius-md); font-size: 13px; font-weight: 500; cursor: pointer;
+      border: 1px solid var(--color-border); background: var(--color-surface-elevated);
+      color: var(--color-text-primary); min-height: 32px;
+    }
+    .btn:hover { background: var(--color-surface); }
+    .btn-primary {
+      background: var(--color-primary); color: white; border-color: var(--color-primary);
+    }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+
+    .filter-bar {
+      display: flex; align-items: center; gap: var(--space-6); margin-bottom: var(--space-8);
+    }
+    .filter-label { font-size: 13px; color: var(--color-text-secondary); }
+    .filter-select {
+      padding: var(--space-4) var(--space-8); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); background: var(--color-surface-elevated);
+      font-size: 13px; color: var(--color-text-primary); min-height: 32px;
+      cursor: pointer;
+    }
+    .filter-select:focus { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+    .card-list {
+      display: flex; flex-direction: column; gap: var(--space-6); flex: 1;
+    }
+
+    .card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--space-8) var(--space-12); background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+      cursor: pointer; transition: box-shadow 0.1s;
+    }
+    .card:hover { box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .card:focus { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .card-left { display: flex; align-items: center; gap: var(--space-8); flex: 1; min-width: 0; }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+    }
+    .card-info { min-width: 0; }
+    .card-name {
+      font-size: 14px; font-weight: 500; color: var(--color-text-primary);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .card-meta { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+    .card-right { display: flex; align-items: center; gap: var(--space-6); flex-shrink: 0; }
+    .card-contributors { display: flex; }
+    .contributor-avatar {
+      width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--color-surface-elevated);
+      margin-left: -6px; display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 600; color: white;
+    }
+    .contributor-avatar:first-child { margin-left: 0; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: var(--space-2);
+      padding: 2px var(--space-4); border-radius: 100px; font-size: 11px; font-weight: 500;
+    }
+    .status-planned { background: var(--color-badge-planned); color: #475569; }
+    .status-in_progress { background: var(--color-badge-progress); color: #1D4ED8; }
+    .status-completed { background: var(--color-badge-completed); color: #065F46; }
+    .status-canceled { background: var(--color-badge-canceled); color: #991B1B; }
+
+    .skeleton {
+      display: flex; align-items: center; gap: var(--space-8);
+      padding: var(--space-8) var(--space-12); background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+    }
+    .skeleton-icon { width: 36px; height: 36px; border-radius: var(--radius-md); background: #E2E8F0; animation: pulse 1.5s infinite; }
+    .skeleton-lines { flex: 1; display: flex; flex-direction: column; gap: var(--space-4); }
+    .skeleton-line { height: 12px; background: #E2E8F0; border-radius: 4px; animation: pulse 1.5s infinite; }
+    .skeleton-line:first-child { width: 60%; }
+    .skeleton-line:last-child { width: 40%; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: var(--space-16); text-align: center; flex: 1;
+    }
+    .empty-icon { font-size: 48px; margin-bottom: var(--space-12); }
+    .empty-title { font-size: 18px; font-weight: 600; margin-bottom: var(--space-4); }
+    .empty-desc { font-size: 13px; color: var(--color-text-secondary); margin-bottom: var(--space-12); }
+
+    .error-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: var(--space-16); text-align: center; flex: 1;
+    }
+    .error-icon { font-size: 48px; margin-bottom: var(--space-12); }
+    .error-title { font-size: 18px; font-weight: 600; margin-bottom: var(--space-4); }
+    .error-desc { font-size: 13px; color: var(--color-text-secondary); margin-bottom: var(--space-12); }
+
+    .state-controls {
+      display: flex; gap: var(--space-4); margin-bottom: var(--space-8); flex-wrap: wrap;
+    }
+    .state-btn {
+      padding: var(--space-4) var(--space-8); border: 1px solid var(--color-border);
+      border-radius: var(--radius-md); background: var(--color-surface-elevated);
+      font-size: 12px; cursor: pointer;
+    }
+    .state-btn:hover { background: var(--color-surface); }
+    .state-btn.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+
+    .loading-section { display: flex; flex-direction: column; gap: var(--space-6); }
+    .empty-hidden, .loading-hidden, .error-hidden, .populated-hidden { display: none; }
+
+    .footer-note {
+      text-align: center; padding: var(--space-8); font-size: 12px; color: var(--color-text-secondary);
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="header" role="banner">
+    <div class="header-left">
+      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      <span class="header-logo">Linear</span>
+      <span class="workspace-switcher">Lagoria ▼</span>
+    </div>
+    <div class="header-center">
+      <input class="header-search" type="search" placeholder="Search..." aria-label="Search" />
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" aria-label="Notifications">🔔</button>
+      <div class="avatar" aria-label="User menu" role="button" tabindex="0">JC</div>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <button class="nav-item"><span class="nav-icon">📋</span> Dashboard</button>
+      <button class="nav-item active"><span class="nav-icon">📁</span> Projects</button>
+      <button class="nav-item"><span class="nav-icon">⚠️</span> Issues</button>
+      <button class="nav-item"><span class="nav-icon">📅</span> Calendar</button>
+      <button class="nav-item"><span class="nav-icon">📄</span> Docs</button>
+    </nav>
+
+    <main class="main" role="main">
+      <div class="page-header">
+        <h1 class="page-title">Projects</h1>
+        <div class="page-actions">
+          <button class="btn btn-primary" aria-label="New project">+ New Project</button>
+        </div>
+      </div>
+
+      <div class="state-controls" role="group" aria-label="State simulation controls">
+        <button class="state-btn active" onclick="setState('populated')" data-state="populated">Populated</button>
+        <button class="state-btn" onclick="setState('loading')" data-state="loading">Loading</button>
+        <button class="state-btn" onclick="setState('empty-filtered')" data-state="empty-filtered">Empty (filtered)</button>
+        <button class="state-btn" onclick="setState('empty-firstrun')" data-state="empty-firstrun">Empty (first-run)</button>
+        <button class="state-btn" onclick="setState('error')" data-state="error">Error</button>
+      </div>
+
+      <div class="filter-bar">
+        <span class="filter-label">Status:</span>
+        <select class="filter-select" aria-label="Filter projects by status">
+          <option>All</option>
+          <option>Planned</option>
+          <option>In Progress</option>
+          <option>Completed</option>
+          <option>Canceled</option>
+        </select>
+      </div>
+
+      <div id="section-populated" class="card-list">
+        <div class="card" tabindex="0" role="article" aria-label="Project: Q3 Roadmap">
+          <div class="card-left">
+            <div class="card-icon" style="background:#DBEAFE;">📊</div>
+            <div class="card-info">
+              <div class="card-name">Q3 Roadmap</div>
+              <div class="card-meta">12 issues • Due Aug 15</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <span class="status-badge status-in_progress"><span>●</span> In Progress</span>
+            <div class="card-contributors">
+              <div class="contributor-avatar" style="background:#2563EB;">AK</div>
+              <div class="contributor-avatar" style="background:#8B5CF6;">ML</div>
+              <div class="contributor-avatar" style="background:#10B981;">JR</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" tabindex="0" role="article" aria-label="Project: Design System Migration">
+          <div class="card-left">
+            <div class="card-icon" style="background:#D1FAE5;">🎨</div>
+            <div class="card-info">
+              <div class="card-name">Design System Migration</div>
+              <div class="card-meta">8 issues • Due Jul 30</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <span class="status-badge status-completed"><span>✓</span> Completed</span>
+            <div class="card-contributors">
+              <div class="contributor-avatar" style="background:#F59E0B;">SP</div>
+              <div class="contributor-avatar" style="background:#EF4444;">JC</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" tabindex="0" role="article" aria-label="Project: API Performance">
+          <div class="card-left">
+            <div class="card-icon" style="background:#FEE2E2;">⚡</div>
+            <div class="card-info">
+              <div class="card-name">API Performance</div>
+              <div class="card-meta">5 issues • Due Sep 1</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <span class="status-badge status-planned"><span>○</span> Planned</span>
+            <div class="card-contributors">
+              <div class="contributor-avatar" style="background:#8B5CF6;">ML</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" tabindex="0" role="article" aria-label="Project: User Onboarding">
+          <div class="card-left">
+            <div class="card-icon" style="background:#DBEAFE;">🚀</div>
+            <div class="card-info">
+              <div class="card-name">User Onboarding</div>
+              <div class="card-meta">3 issues • Due Oct 10</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <span class="status-badge status-in_progress"><span>●</span> In Progress</span>
+            <div class="card-contributors">
+              <div class="contributor-avatar" style="background:#2563EB;">AK</div>
+              <div class="contributor-avatar" style="background:#10B981;">JR</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" tabindex="0" role="article" aria-label="Project: Analytics Dashboard">
+          <div class="card-left">
+            <div class="card-icon" style="background:#D1FAE5;">📈</div>
+            <div class="card-info">
+              <div class="card-name">Analytics Dashboard</div>
+              <div class="card-meta">7 issues • Due Nov 5</div>
+            </div>
+          </div>
+          <div class="card-right">
+            <span class="status-badge status-canceled"><span>✗</span> Canceled</span>
+            <div class="card-contributors">
+              <div class="contributor-avatar" style="background:#F59E0B;">SP</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="section-loading" class="loading-section empty-hidden">
+        <div class="skeleton"><div class="skeleton-icon"></div><div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton"><div class="skeleton-icon"></div><div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton"><div class="skeleton-icon"></div><div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton"><div class="skeleton-icon"></div><div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+        <div class="skeleton"><div class="skeleton-icon"></div><div class="skeleton-lines"><div class="skeleton-line"></div><div class="skeleton-line"></div></div></div>
+      </div>
+
+      <div id="section-empty-filtered" class="empty-state empty-hidden">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No projects match this filter</div>
+        <div class="empty-desc">Try selecting a different status or clearing the filter</div>
+        <button class="btn" onclick="setState('populated')">Adjust filters</button>
+      </div>
+
+      <div id="section-empty-firstrun" class="empty-state empty-hidden">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No projects yet</div>
+        <div class="empty-desc">Create your first project to get started</div>
+        <button class="btn btn-primary">Create your first project</button>
+      </div>
+
+      <div id="section-error" class="error-state empty-hidden">
+        <div class="error-icon">⚠️</div>
+        <div class="error-title">Failed to load projects</div>
+        <div class="error-desc">Invalid team ID or you may not have access to this workspace.</div>
+        <button class="btn" onclick="setState('populated')">Retry</button>
+      </div>
+
+      <div class="footer-note">Showing 5 of 12 projects • Scroll to load more</div>
+    </main>
+  </div>
+</div>
+
+<script>
+  const sections = {
+    populated: document.getElementById('section-populated'),
+    loading: document.getElementById('section-loading'),
+    'empty-filtered': document.getElementById('section-empty-filtered'),
+    'empty-firstrun': document.getElementById('section-empty-firstrun'),
+    error: document.getElementById('section-error'),
+  };
+
+  function setState(state) {
+    document.querySelectorAll('.state-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.state-btn[data-state="${state}"]`)?.classList.add('active');
+    Object.entries(sections).forEach(([key, el]) => {
+      if (key === state) {
+        el.classList.remove('empty-hidden');
+      } else {
+        el.classList.add('empty-hidden');
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => setState('populated'));
+</script>
+</body>
+</html>
