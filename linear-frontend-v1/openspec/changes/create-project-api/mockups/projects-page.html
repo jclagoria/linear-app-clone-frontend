@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects Page — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-primary-hover: #1D4ED8;
+      --color-primary-active: #1E40AF;
+      --color-danger: #DC2626;
+      --color-success: #16A34A;
+      --color-text: #0F172A;
+      --color-text-muted: #64748B;
+      --color-text-inverse: #FFFFFF;
+      --color-surface: #FFFFFF;
+      --color-surface-alt: #F1F5F9;
+      --color-border: #E2E8F0;
+      --color-bg: #F8FAFC;
+      --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --radius: 6px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--color-bg); color: var(--color-text); min-height: 100vh; }
+
+    .app-shell { display: flex; min-height: 100vh; }
+
+    .sidebar { width: 240px; background: var(--color-surface); border-right: 1px solid var(--color-border); padding: var(--space-4); flex-shrink: 0; }
+    .sidebar h2 { font-size: 14px; font-weight: 600; color: var(--color-text-muted); margin-bottom: var(--space-4); padding: var(--space-2) var(--space-3); }
+    .sidebar nav a { display: block; padding: var(--space-2) var(--space-3); border-radius: var(--radius); color: var(--color-text); text-decoration: none; font-size: 14px; margin-bottom: 2px; }
+    .sidebar nav a:hover { background: var(--color-surface-alt); }
+    .sidebar nav a.active { background: var(--color-surface-alt); font-weight: 500; }
+
+    .main { flex: 1; display: flex; flex-direction: column; }
+
+    .header { height: 56px; border-bottom: 1px solid var(--color-border); background: var(--color-surface); display: flex; align-items: center; padding: 0 var(--space-6); }
+    .header-title { font-size: 15px; font-weight: 600; }
+
+    .content { padding: var(--space-6); flex: 1; }
+
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-6); }
+    .page-header h1 { font-size: 24px; font-weight: 700; }
+
+    .btn { display: inline-flex; align-items: center; gap: var(--space-2); padding: 10px 16px; border-radius: var(--radius); font-size: 14px; font-weight: 500; border: none; cursor: pointer; transition: background 0.15s; min-height: 44px; min-width: 44px; text-decoration: none; }
+    .btn-primary { background: var(--color-primary); color: var(--color-text-inverse); }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary { background: var(--color-surface); border: 1px solid var(--color-border); color: var(--color-text); }
+    .btn-secondary:hover { background: var(--color-surface-alt); }
+    .btn:disabled { opacity: 0.5; pointer-events: none; }
+    .btn .spinner { width: 16px; height: 16px; border: 2px solid transparent; border-top-color: currentColor; border-radius: 50%; animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .select-wrap { position: relative; width: 180px; }
+    .select-wrap select { width: 100%; padding: 10px 32px 10px 12px; border: 1px solid var(--color-border); border-radius: var(--radius); background: var(--color-surface); font-size: 14px; color: var(--color-text); appearance: none; cursor: pointer; }
+    .select-wrap::after { content: '▼'; position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 10px; color: var(--color-text-muted); pointer-events: none; }
+
+    .filter-bar { display: flex; align-items: center; gap: var(--space-3); }
+
+    .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); }
+    .project-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4); cursor: pointer; transition: box-shadow 0.15s; }
+    .project-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    .card-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+    .card-icon { width: 36px; height: 36px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .card-name { font-size: 15px; font-weight: 600; }
+    .card-meta { display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-3); }
+    .status-badge { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--color-surface-alt); color: var(--color-text-muted); }
+    .progress-bar { height: 6px; background: var(--color-surface-alt); border-radius: 999px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--color-primary); border-radius: 999px; }
+
+    .error-banner { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius); margin-bottom: var(--space-4); }
+    .error-banner .msg { font-size: 14px; color: var(--color-danger); flex: 1; }
+
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 64px 24px; text-align: center; }
+    .empty-state .icon { font-size: 48px; margin-bottom: var(--space-4); }
+    .empty-state h3 { font-size: 18px; font-weight: 600; margin-bottom: var(--space-2); }
+    .empty-state p { font-size: 14px; color: var(--color-text-muted); margin-bottom: var(--space-4); max-width: 360px; }
+
+    .loading-more { display: flex; justify-content: center; padding: var(--space-8); }
+    .end-marker { text-align: center; padding: var(--space-4); font-size: 13px; color: var(--color-text-muted); }
+
+    .skeleton { background: var(--color-surface-alt); border-radius: var(--radius); animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
+    .skeleton-card { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4); }
+    .skeleton-icon { width: 36px; height: 36px; border-radius: var(--radius); }
+    .skeleton-line { height: 14px; width: 80%; margin-top: var(--space-2); }
+    .skeleton-line.short { width: 50%; }
+    .skeleton-bar { height: 6px; width: 100%; margin-top: var(--space-3); border-radius: 999px; }
+    .skeleton-row { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); }
+
+    .toast-container { position: fixed; top: 16px; right: 16px; z-index: 1000; }
+    .toast { display: flex; align-items: start; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--color-surface); box-shadow: 0 4px 12px rgba(0,0,0,.12); font-size: 14px; max-width: 360px; border-left: 4px solid var(--color-success); animation: slideIn .3s ease-out; }
+    .toast .close-btn { background: none; border: none; cursor: pointer; padding: 4px; color: var(--color-text-muted); font-size: 16px; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+    .state-toolbar { position: fixed; bottom: 0; left: 0; right: 0; background: #1E293B; color: white; padding: var(--space-3) var(--space-6); display: flex; align-items: center; gap: var(--space-3); font-size: 13px; z-index: 999; flex-wrap: wrap; }
+    .state-toolbar button { padding: 6px 12px; border-radius: 4px; border: 1px solid #475569; background: transparent; color: white; cursor: pointer; font-size: 12px; }
+    .state-toolbar button:hover { background: #334155; }
+    .state-toolbar .label { color: #94A3B8; margin-right: auto; }
+
+    @media (max-width: 1024px) { .card-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .card-grid { grid-template-columns: 1fr; } .page-header { flex-direction: column; align-items: stretch; gap: var(--space-3); } .filter-bar { flex-wrap: wrap; } .select-wrap { width: 100%; } }
+  </style>
+</head>
+<body data-state="populated">
+  <div class="app-shell">
+    <aside class="sidebar">
+      <h2>Linear Clone</h2>
+      <nav>
+        <a href="#">Dashboard</a>
+        <a href="#">Issues</a>
+        <a href="#" class="active">Projects</a>
+        <a href="#">Cycles</a>
+        <a href="#">Settings</a>
+      </nav>
+    </aside>
+    <div class="main">
+      <header class="header"><span class="header-title">Projects</span></header>
+      <div class="content">
+        <div class="page-header">
+          <h1>Projects</h1>
+          <div class="filter-bar">
+            <div class="select-wrap">
+              <select onchange="filterByStatus(this.value)">
+                <option value="">All</option>
+                <option value="planned">Planned</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="canceled">Canceled</option>
+              </select>
+            </div>
+            <a href="../mockups/create-project-dialog.html" class="btn btn-primary">+ New Project</a>
+          </div>
+        </div>
+
+        <div id="error-area" style="display:none;">
+          <div class="error-banner">
+            <span class="msg">Failed to load projects. Server returned an error.</span>
+            <button class="btn btn-secondary" style="min-height:auto;padding:6px 12px;" onclick="setState('populated')">Retry</button>
+          </div>
+        </div>
+
+        <div id="empty-area" style="display:none;">
+          <div class="empty-state">
+            <div class="icon">📭</div>
+            <h3>No projects yet</h3>
+            <p>Create your first project to get started.</p>
+            <a href="../mockups/create-project-dialog.html" class="btn btn-primary">+ New Project</a>
+          </div>
+        </div>
+
+        <div id="empty-filtered-area" style="display:none;">
+          <div class="empty-state">
+            <div class="icon">🔍</div>
+            <h3>No projects match this filter</h3>
+            <p>Try a different status filter.</p>
+          </div>
+        </div>
+
+        <div id="loading-area" style="display:none;">
+          <div class="card-grid">
+            <div class="skeleton-card"><div class="skeleton-row"><div class="skeleton skeleton-icon"></div><div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div><div class="skeleton skeleton-bar"></div></div>
+            <div class="skeleton-card"><div class="skeleton-row"><div class="skeleton skeleton-icon"></div><div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div><div class="skeleton skeleton-bar"></div></div>
+            <div class="skeleton-card"><div class="skeleton-row"><div class="skeleton skeleton-icon"></div><div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div><div class="skeleton skeleton-bar"></div></div>
+            <div class="skeleton-card"><div class="skeleton-row"><div class="skeleton skeleton-icon"></div><div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div><div class="skeleton skeleton-bar"></div></div>
+            <div class="skeleton-card"><div class="skeleton-row"><div class="skeleton skeleton-icon"></div><div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div><div class="skeleton skeleton-bar"></div></div>
+            <div class="skeleton-card"><div class="skeleton-row"><div class="skeleton skeleton-icon"></div><div><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div><div class="skeleton skeleton-bar"></div></div>
+          </div>
+        </div>
+
+        <div id="grid-area">
+          <div class="card-grid" id="project-grid"></div>
+          <div id="loading-more-area" style="display:none;" class="loading-more"><div class="spinner"></div></div>
+          <div id="end-marker" style="display:none;" class="end-marker">No more projects to show</div>
+        </div>
+
+        <div id="success-toast" class="toast-container" style="display:none;">
+          <div class="toast"><span style="flex:1;">Project created</span><button class="close-btn" onclick="this.parentElement.parentElement.style.display='none'">×</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="state-toolbar">
+    <span class="label">🔧 State:</span>
+    <button onclick="setState('populated')">Populated</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('empty')">Empty (first-run)</button>
+    <button onclick="setState('empty_filtered')">Empty (filtered)</button>
+    <button onclick="setState('error')">Error</button>
+    <button onclick="setState('success')">Success</button>
+  </div>
+
+  <script>
+    const mockProjects = [
+      { id: 'p1', icon: '📊', name: 'Frontend Redesign', status: 'active', progress: 65, completed: 13, total: 20, team: 'Design' },
+      { id: 'p2', icon: '⚙️', name: 'API v2 Migration', status: 'in_progress', progress: 30, completed: 6, total: 20, team: 'Backend' },
+      { id: 'p3', icon: '📱', name: 'Mobile App', status: 'planned', progress: 0, completed: 0, total: 15, team: 'Mobile' },
+      { id: 'p4', icon: '🔒', name: 'Security Audit', status: 'in_progress', progress: 50, completed: 5, total: 10, team: 'Security' },
+      { id: 'p5', icon: '🚀', name: 'Q4 Launch', status: 'active', progress: 80, completed: 16, total: 20, team: 'Product' },
+      { id: 'p6', icon: '🧪', name: 'Experiment Platform', status: 'planned', progress: 0, completed: 0, total: 12, team: 'Data' },
+    ];
+
+    function filterByStatus(status) {
+      if (status) {
+        const filtered = mockProjects.filter(p => p.status === status);
+        if (filtered.length === 0) { setState('empty_filtered'); return; }
+      }
+      setState('populated');
+    }
+
+    function setState(state) {
+      document.body.dataset.state = state;
+      document.getElementById('error-area').style.display = 'none';
+      document.getElementById('empty-area').style.display = 'none';
+      document.getElementById('empty-filtered-area').style.display = 'none';
+      document.getElementById('loading-area').style.display = 'none';
+      document.getElementById('grid-area').style.display = 'none';
+      document.getElementById('success-toast').style.display = 'none';
+      document.getElementById('loading-more-area').style.display = 'none';
+      document.getElementById('end-marker').style.display = 'none';
+
+      switch (state) {
+        case 'loading':
+          document.getElementById('loading-area').style.display = 'block';
+          break;
+        case 'empty':
+          document.getElementById('empty-area').style.display = 'block';
+          break;
+        case 'empty_filtered':
+          document.getElementById('empty-filtered-area').style.display = 'block';
+          break;
+        case 'error':
+          document.getElementById('error-area').style.display = 'block';
+          break;
+        case 'success':
+          document.getElementById('grid-area').style.display = 'block';
+          renderProjects();
+          document.getElementById('success-toast').style.display = 'block';
+          document.getElementById('success-toast').querySelector('.toast').style.borderLeftColor = 'var(--color-success)';
+          break;
+        default:
+          document.getElementById('grid-area').style.display = 'block';
+          renderProjects();
+          break;
+      }
+    }
+
+    function renderProjects() {
+      const grid = document.getElementById('project-grid');
+      grid.innerHTML = mockProjects.map(p => `
+        <div class="project-card" onclick="window.location.href='../mockups/create-project-dialog.html'">
+          <div class="card-header">
+            <div class="card-icon" style="background:var(--color-surface-alt)">${p.icon}</div>
+            <span class="card-name">${p.name}</span>
+          </div>
+          <div class="card-meta">
+            <span class="status-badge">${p.status.replace('_', ' ')}</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${p.progress}%"></div></div>
+        </div>
+      `).join('');
+      document.getElementById('end-marker').style.display = mockProjects.length > 0 ? 'block' : 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => setState('populated'));
+  </script>
+</body>
+</html>
