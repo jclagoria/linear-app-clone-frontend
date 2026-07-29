@@ -1,5 +1,7 @@
 import { useAuthStore } from '@/entities/session/model/store'
-import { UnauthorizedError } from './errors'
+import { ApiError, UnauthorizedError } from './errors'
+import { authInterceptor } from './interceptors/auth'
+import { errorInterceptor } from './interceptors/error'
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '/api/v1'
 
@@ -61,17 +63,16 @@ export class ApiClient {
   }
 
   private buildUrl(endpoint: string, params?: Record<string, string>): string {
-    const url = endpoint.startsWith('http')
+    let url = endpoint.startsWith('http')
       ? endpoint
       : `${this.baseUrl}${endpoint}`
 
-    if (!params) return url
-
-    const parsed = new URL(url)
-    for (const [key, value] of Object.entries(params)) {
-      parsed.searchParams.set(key, value)
+    if (params) {
+      const qs = new URLSearchParams(params).toString()
+      url += (url.includes('?') ? '&' : '?') + qs
     }
-    return parsed.toString()
+
+    return url
   }
 
   private buildInit(method: RequestMethod, options: RequestOptions): RequestInit {
@@ -148,7 +149,7 @@ export class ApiClient {
     }
 
     // 6. If response interceptors didn't throw (no error interceptor registered), throw generic
-    throw new UnauthorizedError(`Request failed with status ${response.status}`)
+    throw new ApiError('UNKNOWN', `Request failed with status ${response.status}`, response.status)
   }
 
   private async refreshTokenSingleFlight(): Promise<string | null> {
@@ -179,3 +180,7 @@ export class ApiClient {
 
 // Singleton instance for app-wide use
 export const apiClient = new ApiClient()
+
+// Register default interceptors
+apiClient.addRequestInterceptor(authInterceptor)
+apiClient.addResponseInterceptor(errorInterceptor)
