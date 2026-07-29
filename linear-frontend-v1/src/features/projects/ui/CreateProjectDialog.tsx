@@ -7,6 +7,7 @@ import { useProjectsStore } from '@/features/realtime/lib/project-store'
 import {
   isBusinessRuleError,
   isForbiddenError,
+  isValidationError,
 } from '@/shared/lib/api-client/errors'
 import type { CreateProjectFormSchema } from '../model/validation'
 
@@ -36,7 +37,7 @@ export function CreateProjectDialog({
       })
       onClose()
     } catch (err) {
-      if (isBusinessRuleError(err)) {
+      if (isBusinessRuleError(err) || isValidationError(err)) {
         setServerError(err.message)
         return
       }

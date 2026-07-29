@@ -37,7 +37,7 @@
 - [x] Write unit test for `createProject()` API function (vitest, mock `apiClient.post`)
 - [x] Write unit test for `ProjectForm` validation — empty name, name >255, invalid date format, valid submission
 - [x] Write component test for `CreateProjectDialog` — modal open/close, success flow, error flow (403 toast, 422 inline)
-- [ ] Write a11y test — modal focus trap, Escape close, `aria-describedby` on errors, `aria-live` region
+- [x] Write a11y test — modal focus trap, Escape close, `aria-describedby` on errors, `aria-live` region
 
 ## Review
 

@@ -122,6 +122,30 @@ describe('CreateProjectDialog', () => {
     })
   })
 
+  it('shows inline server error on ValidationError (400)', async () => {
+    vi.mocked(projectsApi.createProject).mockRejectedValue(
+      new (await import('@/shared/lib/api-client/errors')).ValidationError(
+        'Name contains invalid characters',
+      ),
+    )
+
+    renderWithRouter(
+      <CreateProjectDialog
+        teamId={teamId}
+        isOpen={true}
+        onClose={vi.fn()}
+      />,
+    )
+
+    fillAndSubmit()
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Name contains invalid characters'),
+      ).toBeInTheDocument()
+    })
+  })
+
   it('shows inline server error on BusinessRuleError', async () => {
     vi.mocked(projectsApi.createProject).mockRejectedValue(
       new (await import('@/shared/lib/api-client/errors')).BusinessRuleError(
