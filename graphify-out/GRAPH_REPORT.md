@@ -1,16 +1,16 @@
 # Graph Report - linear-app-clone-frontend  (2026-07-29)
 
 ## Corpus Check
-- 633 files · ~365,046 words
+- 634 files · ~365,324 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5967 nodes · 6107 edges · 540 communities (483 shown, 57 thin omitted)
+- 5968 nodes · 6110 edges · 539 communities (485 shown, 54 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a025e7c4`
+- Built from commit: `2f14b76b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -402,7 +402,7 @@
 - Flow Inventory
 - Behaviour
 - Behaviour
-- realtime/lib/index.ts
+- optimistic-manager.ts
 - Realtime Module — WebSocket Connection Management
 - Session Summary: Test Suite Optimization — Phase 4 Complete
 - Behaviour
@@ -453,7 +453,7 @@
 - Real-time Issue Updates
 - ADR Review Manifest
 - issue/model/store.ts
-- event-router.ts
+- ws-client.ts
 - MockWebSocket
 - Layout Module — Frontend Specification
 - notificationsStore.ts
@@ -511,8 +511,7 @@
 - Projects: List Projects
 - Tech Selection — Linear App Clone (Frontend)
 - List Projects API
-- MockWSEndpoint
-- MockWSEndpoint
+- event-router.ts
 - projects.ts
 - ProjectsPage.test.tsx
 - Review — List Projects API (Frontend)
@@ -555,7 +554,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (540 total, 57 thin omitted)
+## Communities (539 total, 54 thin omitted)
 
 ### Community 0 - "errors/index.ts"
 Cohesion: 0.07
@@ -1373,6 +1372,10 @@ Nodes (28): Accessibility, Authentication — Frontend Specification, Behaviour,
 Cohesion: 0.15
 Nodes (12): Confirmation, Consequences, Considered Options, Context and Problem Statement, Decision Drivers, Decision Outcome, Dedicated endpoint, Dedicated Status Transition Endpoint for Issue Workflow (+4 more)
 
+### Community 250 - "MockWSEndpoint"
+Cohesion: 0.07
+Nodes (6): MockWSEndpoint, MockWSServer, MockWSEndpoint, MockWSServer, MockWSEndpoint, MockWSServer
+
 ### Community 251 - "IssueDetail.tsx"
 Cohesion: 0.18
 Nodes (9): CommentList(), IssueDetailProps, priorityLabels, IssueStatusBadge(), IssueStatusBadgeProps, STATUS_OPTIONS, statusColorMap, SkeletonLoader() (+1 more)
@@ -1957,9 +1960,9 @@ Nodes (26): Accessibility, Behaviour, Components, OptimisticUpdateManager, Optim
 Cohesion: 0.05
 Nodes (38): Accessibility, Behaviour, CommentEvent handler, Components, CycleEvent handler, IssueEvent handler, NotificationEvent handler, ProjectEvent handler (+30 more)
 
-### Community 411 - "realtime/lib/index.ts"
-Cohesion: 0.17
-Nodes (18): CyclesState, useCyclesStore, Cycle, Project, OptimisticUpdate, applyOptimistic(), ApplyOptimisticOptions, checkStaleUpdates() (+10 more)
+### Community 411 - "optimistic-manager.ts"
+Cohesion: 0.20
+Nodes (15): OptimisticUpdate, applyOptimistic(), ApplyOptimisticOptions, checkStaleUpdates(), createOptimisticUpdate(), onRevertEvent(), onStaleRevert(), RevertListener (+7 more)
 
 ### Community 412 - "Realtime Module — WebSocket Connection Management"
 Cohesion: 0.07
@@ -1975,7 +1978,7 @@ Nodes (26): Accessibility, Behaviour, Components, OptimisticUpdateManager, Optim
 
 ### Community 415 - "event-schema.ts"
 Cohesion: 0.09
-Nodes (25): CommentEventPayload, CommentEventType, CycleEventPayload, CycleEventType, IssueEventPayload, IssueEventType, isValidEventType(), LabelEventPayload (+17 more)
+Nodes (24): CommentEventPayload, CommentEventType, CycleEventPayload, CycleEventType, IssueEventPayload, IssueEventType, isValidEventType(), LabelEventPayload (+16 more)
 
 ### Community 416 - "Realtime Module — WebSocket Connection Management"
 Cohesion: 0.07
@@ -2059,7 +2062,7 @@ Nodes (13): ADR-003: Server-Sent Events over WebSocket for Real-Time Updates, Co
 
 ### Community 436 - "event-processor.ts"
 Cohesion: 0.12
-Nodes (22): cleanupEntityDedupStore(), cleanupSeenEvents(), clearDedupStore(), clearEntityDedupStore(), clearEventHandlers(), eventHandlers, getEntityKey(), isDuplicateEntityEvent() (+14 more)
+Nodes (21): cleanupEntityDedupStore(), cleanupSeenEvents(), clearDedupStore(), clearEntityDedupStore(), clearEventHandlers(), eventHandlers, getEntityKey(), isDuplicateEntityEvent() (+13 more)
 
 ### Community 437 - "KeyboardProvider.tsx"
 Cohesion: 0.32
@@ -2145,9 +2148,9 @@ Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created
 Cohesion: 0.24
 Nodes (7): initialFilters, initialIssuesState, IssuesState, useIssuesStore, IssueFilters, IssueFiltersProps, statusOptions
 
-### Community 463 - "event-router.ts"
-Cohesion: 0.14
-Nodes (20): WSEventType, createWSClient(), WSClientConfig, handleCommentEvent(), handleCycleEvent(), handleIssueEvent(), handleLabelEvent(), handleNotificationEvent() (+12 more)
+### Community 463 - "ws-client.ts"
+Cohesion: 0.18
+Nodes (13): createWSClient(), WSClientConfig, setupEventRouter(), createHeartbeat(), DEFAULT_CONFIG, HeartbeatConfig, calculateBackoff(), DEFAULT_CONFIG (+5 more)
 
 ### Community 465 - "Layout Module — Frontend Specification"
 Cohesion: 0.11
@@ -2298,11 +2301,11 @@ Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
 ### Community 516 - "realtime/ui/index.ts"
-Cohesion: 0.09
-Nodes (24): AutoUpdateToggle(), ConnectionErrorModal(), ConnectionErrorModalProps, ConnectionStatusIndicator(), ConnectionStatusIndicatorProps, STATUS_CONFIG, IssueAssigneeSelector(), IssueAssigneeSelectorProps (+16 more)
+Cohesion: 0.11
+Nodes (19): fireSSE(), AutoUpdateToggle(), ConnectionErrorModal(), ConnectionErrorModalProps, ConnectionStatusIndicator(), ConnectionStatusIndicatorProps, STATUS_CONFIG, IssueAssigneeSelector() (+11 more)
 
 ### Community 517 - "CreateProjectDialog.tsx"
-Cohesion: 0.26
+Cohesion: 0.24
 Nodes (7): CreateProjectFormSchema, createProjectSchema, mockProject, CreateProjectDialog(), CreateProjectDialogProps, ProjectForm(), ProjectFormProps
 
 ### Community 518 - "Component Catalog"
@@ -2328,6 +2331,10 @@ Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review
 ### Community 523 - "List Projects API"
 Cohesion: 0.33
 Nodes (5): Impact, List Projects API, Motivation, Problem Statement, Scope
+
+### Community 524 - "event-router.ts"
+Cohesion: 0.16
+Nodes (17): CyclesState, useCyclesStore, Cycle, Project, WSEventPayload, WSEventType, ProjectsState, useProjectsStore (+9 more)
 
 ### Community 526 - "projects.ts"
 Cohesion: 0.33
@@ -2378,23 +2385,23 @@ Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
 ## Knowledge Gaps
-- **3718 isolated node(s):** `Scaffold`, `Components`, `State & Data`, `Routing`, `Integration` (+3713 more)
+- **3718 isolated node(s):** `CreateProjectDialogProps`, `STATUS_OPTIONS`, `RequestMethod`, `RequestOptions`, `Scaffold` (+3713 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `MockWSEndpoint` connect `MockWSEndpoint` to `event-processor.ts`?**
+- **Why does `MockWebSocket` connect `MockWebSocket` to `ws-client.ts`?**
+  _High betweenness centrality (0.001) - this node is a cross-community bridge._
+- **Why does `MockWebSocket` connect `MockWebSocket` to `ws-client.ts`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **Why does `processEvent()` connect `event-processor.ts` to `event-schema.ts`, `event-router.ts`?**
+- **Why does `devDependencies` connect `devDependencies` to `eslint-plugin-react`, `msw`, `@tailwindcss/vite`, `jsdom`, `lint-staged`, `vitest`, `@playwright/test`, `@testing-library/jest-dom`, `@testing-library/user-event`, `package.json`, `typescript-eslint`, `@commitlint/config-conventional`, `eslint`, `eslint-config-prettier`, `eslint-import-resolver-typescript`, `@eslint/js`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **Why does `routeEvent()` connect `event-processor.ts` to `event-router.ts`?**
-  _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **What connects `Scaffold`, `Components`, `State & Data` to the rest of the system?**
+- **What connects `CreateProjectDialogProps`, `STATUS_OPTIONS`, `RequestMethod` to the rest of the system?**
   _3718 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `errors/index.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.0694579681921454 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06978253813696851 - nodes in this community are weakly interconnected._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
 - **Should `shared/ui/index.ts` be split into smaller, more focused modules?**
