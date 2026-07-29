@@ -9,7 +9,7 @@ export function ToastContainer() {
   return (
     <aside
       aria-label="Notifications"
-      className="pointer-events-none fixed inset-x-0 top-0 z-50 flex flex-col items-end gap-2 p-4 sm:right-4 sm:left-auto sm:top-4 sm:p-0"
+      className="pointer-events-none fixed inset-x-0 top-0 z-[9999] flex flex-col items-end gap-2 p-4 sm:right-4 sm:left-auto sm:top-4 sm:p-0"
     >
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} />

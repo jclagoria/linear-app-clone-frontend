@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Modal } from '@/shared/ui/Modal'
 import { ProjectForm } from './ProjectForm'
 import { useToastStore } from '@/shared/stores/toastStore'
@@ -7,6 +8,7 @@ import { useProjectsStore } from '@/features/realtime/lib/project-store'
 import {
   isBusinessRuleError,
   isForbiddenError,
+  isUnauthorizedError,
   isValidationError,
 } from '@/shared/lib/api-client/errors'
 import type { CreateProjectFormSchema } from '../model/validation'
@@ -22,6 +24,7 @@ export function CreateProjectDialog({
   isOpen,
   onClose,
 }: CreateProjectDialogProps) {
+  const navigate = useNavigate()
   const addToast = useToastStore((s) => s.addToast)
   const [serverError, setServerError] = useState<string | null>(null)
 
@@ -39,6 +42,10 @@ export function CreateProjectDialog({
     } catch (err) {
       if (isBusinessRuleError(err) || isValidationError(err)) {
         setServerError(err.message)
+        return
+      }
+      if (isUnauthorizedError(err)) {
+        navigate('/login')
         return
       }
       if (isForbiddenError(err)) {
