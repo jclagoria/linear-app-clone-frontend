@@ -1,7 +1,8 @@
-import { useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useProjectsStore } from '@/features/realtime/lib/project-store'
 import { ProjectCard } from '@/features/realtime/ui/ProjectCard'
+import { CreateProjectDialog } from '@/features/projects/ui/CreateProjectDialog'
 import { Spinner } from '@/shared/ui/Spinner'
 import { EmptyState } from '@/shared/ui/EmptyState'
 import { Select } from '@/shared/ui/Select'
@@ -18,6 +19,7 @@ const STATUS_OPTIONS = [
 
 export function ProjectsPage() {
   const navigate = useNavigate()
+  const [isCreateOpen, setIsCreateOpen] = useState(false)
   const projects = useProjectsStore((s) => s.projects)
   const isLoading = useProjectsStore((s) => s.isLoading)
   const error = useProjectsStore((s) => s.error)
@@ -67,14 +69,19 @@ export function ProjectsPage() {
     <div className="p-6">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-text">Projects</h1>
-        <div className="w-48">
-          <Select
-            aria-label="Filter projects by status"
-            options={STATUS_OPTIONS}
-            value={statusFilter ?? ''}
-            onChange={handleFilterChange}
-            placeholder="Filter by status"
-          />
+        <div className="flex items-center gap-3">
+          <Button variant="primary" onClick={() => setIsCreateOpen(true)}>
+            New Project
+          </Button>
+          <div className="w-48">
+            <Select
+              aria-label="Filter projects by status"
+              options={STATUS_OPTIONS}
+              value={statusFilter ?? ''}
+              onChange={handleFilterChange}
+              placeholder="Filter by status"
+            />
+          </div>
         </div>
       </div>
 
@@ -136,6 +143,12 @@ export function ProjectsPage() {
           <div ref={sentinelRef} className="h-1" aria-hidden="true" />
         </>
       )}
+
+      <CreateProjectDialog
+        teamId={teamId}
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+      />
     </div>
   )
 }

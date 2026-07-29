@@ -13,6 +13,14 @@ export interface PaginatedResponse<T> {
   pagination: { nextCursor: string | null; hasMore: boolean }
 }
 
+export interface CreateProjectPayload {
+  teamId: string
+  name: string
+  description?: string
+  startDate?: string
+  targetDate?: string
+}
+
 export async function listProjects(
   params: ProjectListParams,
 ): Promise<PaginatedResponse<Project>> {
@@ -26,4 +34,10 @@ export async function listProjects(
   return apiClient.get<PaginatedResponse<Project>>('/projects', {
     params: queryParams,
   })
+}
+
+export async function createProject(
+  payload: CreateProjectPayload,
+): Promise<Project> {
+  return apiClient.post<Project>('/projects', { body: payload })
 }
