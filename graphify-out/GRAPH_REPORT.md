@@ -1,35 +1,35 @@
-# Graph Report - linear-app-clone-frontend  (2026-07-28)
+# Graph Report - linear-app-clone-frontend  (2026-07-29)
 
 ## Corpus Check
-- 606 files · ~349,753 words
+- 617 files · ~356,434 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 5742 nodes · 5898 edges · 517 communities (463 shown, 54 thin omitted)
+- 5835 nodes · 5979 edges · 528 communities (471 shown, 57 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS · INFERRED: 10 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `70ec0be3`
+- Built from commit: `a27046c8`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
+- errors/index.ts
+- dependencies
+- shared/ui/index.ts
+- Requirement: ErrorTaxonomy
+- Behaviour
+- Requirement: ErrorTaxonomy
 - Behaviour
 - Behaviour
-- Component Catalog
+- Module Contracts & Interactions
 - Flow Inventory
-- Layout Module — Frontend Specification
-- Layout Module — Frontend Specification
-- Layout Module — Frontend Design
-- Tasks — Layout Module Page Structure & Theme (Frontend)
-- Review — Layout Module Page Structure & Theme
-- Tech Selection — Linear App Clone (Frontend)
-- Layout Module — Page Structure & Theme
-- Requirement: ResponsiveBreakpoints
-- ADR Review Manifest
-- Requirement: StickyHeader
-- Requirement: StickyHeader
+- Flow Inventory
+- Auth Module — Frontend Specification
+- Auth Module — Frontend Specification
+- MSW Handlers — Frontend Specification
+- MSW Handlers — Frontend Specification
 - compilerOptions
 - Auth — Frontend Specification
 - Flow Inventory
@@ -45,7 +45,7 @@
 - Selectors — Frontend Specification
 - Flow Inventory
 - Cache Layer — Frontend Specification
-- Issues Store — Frontend Specification
+- Requirement: IssuesStore
 - Selectors — Frontend Specification
 - Containerized SPA Serving — Frontend Specification
 - Containerized SPA Serving — Frontend Specification
@@ -57,20 +57,20 @@
 - Tasks — State Module: Cache & Selectors (Frontend)
 - API Client: Error Handling Flow
 - Component Catalog
+- Behaviour
 - Component Catalog
-- Flow Inventory
 - Available Features
-- selectors/index.ts
+- stores/selectors/index.ts
 - Routing — Frontend Design
 - WebSocket Store — Frontend Specification
 - WebSocket Store — Frontend Specification
 - ADR-0008: API Error Taxonomy via Class Hierarchy
-- Architecture — Linear App Clone (Frontend)
+- Frontend Architecture — Linear App Clone
 - Component Catalog
 - Auth Store — Frontend Specification
 - Architecture
 - Auth Store — Frontend Specification
-- Header.tsx
+- Header/index.ts
 - ADR-0004: Feature-Sliced Design Architecture
 - ADR-0005: React Hook Form + Zod for Form Management
 - Component Catalog
@@ -89,21 +89,21 @@
 - Components
 - Deployment
 - Components
-- Deployment — Linear App Clone (Frontend)
+- Deployment — Linear App Clone Frontend
 - Atomic Parts
 - Atomic Parts
 - State Module: Cache & Selectors — Frontend Design
 - Tasks — Add Dockerfile for Containerization (Frontend)
 - API Client & Error Handling — Frontend Design
-- Layout Module — Frontend Design
-- Tasks — Layout Module Page Structure & Theme (Frontend)
+- Flow Inventory
+- ADR-0001: Zustand Issues Store Following Entity-Store Pattern
 - OpenSpec Schema Collection
 - {Domain} — Frontend Design
 - devDependencies
 - Atomic Parts
 - Atomic Parts
 - Atomic Parts
-- Stack — Linear App Clone (Frontend)
+- Frontend Stack — Linear App Clone
 - Tasks — Routing Module (Frontend)
 - Design System — Linear App Clone (Frontend)
 - Behaviour
@@ -119,7 +119,7 @@
 - Tasks — Auth Module (Frontend)
 - Containerization — Frontend Design
 - Tech Selection — Add Dockerfile for Containerization
-- Review — Layout Module Page Structure & Theme
+- Layout Module — Frontend Design
 - Design System — {Project Name}
 - Mockups — {Domain}
 - Review — Auth Module
@@ -131,11 +131,11 @@
 - Tech Selection — Linear App Clone (Frontend)
 - Tech Selection — Linear App Clone (Frontend)
 - Tech Selection — Linear App Clone (Frontend)
-- Tech Selection — Linear App Clone (Frontend)
+- Tasks — Layout Module Page Structure & Theme (Frontend)
 - Tech Selection — {Project Name} (Frontend)
 - Stack
 - Screen: {ScreenName}
-- issue/model/store.ts
+- issue/api/index.ts
 - handlers.ts
 - 3. Work Module
 - Auth Module — Login & Token Management
@@ -155,7 +155,7 @@
 - UI Module — Generic Components
 - Review — UI Generic Components
 - UI Module — Frontend Specification
-- Layout Module — Page Structure & Theme
+- Review — Layout Module Page Structure & Theme
 - {Change Title}
 - Review — {Change Title}
 - UI Module — Frontend Specification
@@ -172,7 +172,7 @@
 - ADR Review Manifest
 - Requirement: Button Variants
 - Requirement: Modal with Stack Management
-- ADR Review Manifest
+- Tech Selection — Linear App Clone (Frontend)
 - ADR Review Manifest
 - Requirement: Button Variants
 - Requirement: Modal with Stack Management
@@ -200,33 +200,34 @@
 - RateLimitToast.tsx
 - vite-env.d.ts
 - tsconfig.json
-- @commitlint/cli
+- Issue Labels — Frontend Specification
 - eslint
 - eslint-config-prettier
 - eslint-import-resolver-typescript
 - @eslint/js
-- eslint-plugin-boundaries
+- Issue Labels — Frontend Specification
 - eslint-plugin-react
-- eslint-plugin-react-hooks
-- husky
+- form/ui/index.ts
+- Behaviour
 - jsdom
 - lint-staged
-- msw
-- playwright
+- Flow Inventory
+- Behaviour
 - @playwright/test
-- @tailwindcss/vite
+- Component Catalog
 - @testing-library/jest-dom
-- @testing-library/react
+- Flow Inventory
 - @testing-library/user-event
-- @types/node
-- @types/react-dom
+- Label Management — Frontend Design
+- form/model/index.ts
 - useKeyboardStore.ts
 - typescript-eslint
-- vite
+- Comment Deletion — Frontend Specification
 - Keyboard Module — Frontend Design
-- vitest
+- Edit Comment — Frontend Specification
 - router.tsx
 - LoginForm.tsx
+- ProjectsPage.tsx
 - setup.ts
 - README.md
 - Layout Module — Page Structure & Theme
@@ -240,21 +241,21 @@
 - Tech Selection — Linear App Clone (Frontend)
 - Work Module: Issues Store & UI Components
 - ConfirmDeleteDialog.tsx
-- IssueForm.tsx
+- Authentication — Frontend Specification
 - Dedicated Status Transition Endpoint for Issue Workflow
+- MockWSEndpoint
 - IssueDetail.tsx
-- Issue
-- IssueList.tsx
-- issue/model/store.ts
+- Issues — Frontend Specification
+- MockWebSocket
+- Issue Status — Frontend Specification
+- Issue Status — Frontend Specification
+- Issue Assign/Unassign — Frontend Design
+- Edit Comment — Frontend Specification
 - Issue Status Transition — Frontend Design
 - Component Catalog
 - Tasks — Implement Issue Status Transitions (Frontend)
-- package.json
-- Tech Selection — Linear App Clone (Frontend)
-- Implement Issue Status Transitions
-- Review — Implement Issue Status Transitions
-- ADR Review Manifest
-- Issue Assign/Unassign — Frontend Design
+- Issue Detail: Change Issue Status
+- Issue Assign — Frontend Specification
 - Issue Assign — Frontend Specification
 - Tech Selection — Linear App Clone (Frontend)
 - Implement Issue Status Transitions
@@ -271,76 +272,76 @@
 - Issue Watchers — Frontend Specification
 - ADR-0012: Watcher Feature Slice — New FSD Entity and Feature for Issue Watchers
 - WatcherList.tsx
-- ApiClient
+- Label
+- Issue Watchers — Frontend Specification
 - Issue Watchers — Frontend Design
 - Tasks — Issue Watchers (Frontend)
 - Design System — Linear App Clone
 - Issue Detail: Watch/Unwatch Issue
 - Tech Selection — Linear App Clone (Frontend)
 - Issue Watchers
-- Review — Issue Watchers
 - WatcherSection.tsx
-- ADR Review Manifest
+- Review — Issue Watchers
 - watchers/model/store.ts
 - ADR Review Manifest
-- Issue Labels — Frontend Specification
-- Flow Inventory
-- Component Catalog
-- Label Management — Frontend Design
 - Tasks — Label Management Endpoints for Issues (Frontend)
+- Comment Deletion — Frontend Specification
 - Tech Selection — Linear App Clone (Frontend)
-- Comments: Edit Own Comment
+- Label Management Endpoints for Issues
 - Review — Label Management Endpoints for Issues
-- Comment
-- label/model/validation.ts
-- Edit Comment — Frontend Specification
+- ADR Review Manifest
 - Edit Comment — Frontend Design
+- Component Catalog
+- Authentication — Frontend Specification
+- label/model/validation.ts
 - Tasks — Edit Comment (Frontend)
 - Comments: Edit Own Comment
+- Comment Deletion — Frontend Design
+- Tasks — Delete Comment (Frontend)
 - Tech Selection — Linear App Clone (Frontend)
+- Issue Comments: Delete Comment
+- Frontend Design — Register User API Integration
 - Component Catalog
-- issue/model/selectors/index.ts
+- Edit Comment
 - Review — Edit Comment
-- ADR Review Manifest
-- Review — Edit Comment
+- Tech Selection — Linear App Clone (Frontend)
 - Delete Comment on Issue
+- ADR Review Manifest
 - Review — Delete Comment
-- ADR Review Manifest
-- ADR Review Manifest
-- Issues Filtering — Frontend Specification
-- eslint-plugin-boundaries
-- msw
-- @tailwindcss/vite
-- Issues Filtering — Frontend Design
-- vite
-- vitest
-- ADR Review Manifest
-- Issues — Frontend Specification
+- Issues Module — Pagination Response Shape — Frontend Specification
 - Issues — Frontend Design
+- Behaviour
 - Issues: Browse and Paginate Issues
+- Issues Module — Pagination Response Shape — Frontend Specification
+- Components
+- Requirement: IssuesFilters
+- ADR Review Manifest
 - Fix: API Client Inconsistency — Store Uses Raw Fetch Instead of apiClient
 - Review — Fix: API Client Inconsistency
+- Issues Module — Frontend Specification
 - ADR Review Manifest
-- ApiClient
-- Tech Selection — Fix: API Client Inconsistency
-- fix-api-client-inconsistency/design-system.md
+- Tasks — Fix: API Client Inconsistency (Frontend)
+- Requirement: IssueForm
+- Issue Model — Frontend Specification
+- Requirement: IssueDetail
+- Requirement: IssueList
 - Tech Selection — Fix: API Client Inconsistency
 - Requirement: LoadNextPageUsesApiClient
 - 2026-07-23-fix-api-client-inconsistency/design-system.md
-- Tasks — Fix Query Parameter Mismatch (Frontend)
-- Issues: Filter Issues List
-- Fix: Query Parameter Mismatch — status vs statusId, extra search/priority
-- Review — Fix Query Parameter Mismatch
+- Issues: Browse Paginated List
+- Issues Module — Frontend Design (Pagination Shape Fix)
+- Fix: Pagination response shape mismatch — meta vs pagination
+- Review — Fix Pagination Response Shape
+- Tasks — Fix Pagination Response Shape (Frontend)
 - ADR Review Manifest
-- Tech Selection — Fix Query Parameter Mismatch
-- @commitlint/cli
-- eslint-plugin-boundaries
-- fix-query-param-mismatch/design-system.md
-- 2026-07-23-fix-query-param-mismatch/design-system.md
-- @tailwindcss/vite
-- @types/node
-- vite
-- vitest
+- Tech Selection — Fix Pagination Response Shape
+- Issue API — Frontend Specification
+- Issue API — Frontend Specification
+- Issue API — Frontend Design
+- Tasks — Fix Delete Issue Response Type (Frontend)
+- Issue Management: Delete Issue
+- Requirement: Validation Types
+- Tech Selection — Fix Delete Issue Response Type
 - Issues Filtering — Frontend Specification
 - Issues Filtering — Frontend Specification
 - Issues Filtering — Frontend Design
@@ -353,6 +354,7 @@
 - 2026-07-23-fix-query-param-mismatch/design-system.md
 - Design System — Fix Pagination Response Shape
 - Issue Creation — Frontend Specification
+- Issue Creation — Frontend Specification
 - Issue Creation — Frontend Design
 - Design System — Linear App Clone
 - Issue Creation: Create Issue with Team Context
@@ -360,34 +362,33 @@
 - Tech Selection — Linear App Clone (Frontend)
 - Fix: Create Issue Missing Required teamId Field
 - Review — Fix: Create Issue Missing Required teamId Field
-- ADR Review Manifest
 - team/model/store.ts
 - ADR Review Manifest
-- Issue API — Frontend Specification
-- Issue API — Frontend Design
-- Tasks — Fix Delete Issue Response Type (Frontend)
-- Issue Management: Delete Issue
-- Tech Selection — Fix Delete Issue Response Type
 - Design System — Fix Delete Issue Response Type
 - Fix: Delete Issue Response Type Mismatch
 - Review — Fix Delete Issue Response Type
+- ADR Review Manifest
+- Issue Model — Frontend Specification
+- 2026-07-23-fix-delete-issue-response-type/mockups/README.md
+- Issue Model Alignment — Frontend Design
+- Issue Model: Type Alignment
+- Tasks — Fix: Issue Model Missing 7 Fields from API Spec (Frontend)
 - Tech Selection — Fix: Issue Model Missing Fields (Frontend)
 - Design System — Fix: Issue Model Missing Fields
 - Fix: Issue Model Missing 7 Fields from API Spec
 - Review — Fix: Issue Model Missing 7 Fields from API Spec
-- ADR Review Manifest
-- @commitlint/cli
-- eslint-plugin-boundaries
+- Requirement: Validation Types
+- Behaviour
 - msw
 - @tailwindcss/vite
-- @types/node
-- vite
+- Behaviour
+- Behaviour
 - vitest
 - ADR Review Manifest
-- Tasks — Form Module: Validation & Submission (Frontend)
-- Review — Form Module: Validation & Submission
-- Form Module — Validation & Submission
-- ADR Review Manifest
+- Behaviour
+- Form Module — Frontend Design
+- Component Catalog
+- Tech Selection — Form Module (Validation & Submission)
 - EditIssuePage.tsx
 - CreateIssuePage.tsx
 - Behaviour
@@ -396,49 +397,49 @@
 - Form Module — Validation & Submission
 - ADR Review Manifest
 - Realtime Module — Event Subscription & Processing
+- Realtime Module — Event Subscription & Processing
+- IssueForm.tsx
 - Flow Inventory
-- Authentication — Frontend Specification
 - Behaviour
+- Behaviour
+- realtime/lib/index.ts
 - Realtime Module — WebSocket Connection Management
-- event-processor.ts
-- optimistic-manager.ts
-- Realtime Module — Frontend Design
-- Frontend Design — Register User API Integration
-- Component Catalog
+- Session Summary: Test Suite Optimization — Phase 4 Complete
+- Behaviour
 - event-schema.ts
+- Realtime Module — WebSocket Connection Management
+- Realtime Module — Frontend Design
+- Component Catalog
 - Architecture — Realtime Module (Frontend)
 - Deployment — Realtime Module (Frontend)
 - Review — Realtime WebSocket Events
 - Realtime Module — WebSocket & Events
 - ADR Review Manifest — Realtime WebSocket Events
 - Tasks — Realtime WebSocket Events (Frontend)
-- Project Summary — Realtime WebSocket Events
-- Stack — Realtime Module (Frontend)
-- Tech Selection — Realtime Module (Frontend)
 - OptimisticProvider.tsx
 - WebSocketProvider.tsx
 - Project Summary — Realtime WebSocket Events
 - Stack — Realtime Module (Frontend)
 - Tech Selection — Realtime Module (Frontend)
+- Behaviour
 - Flow Inventory
 - ADR-001: Context-Specificity for Keyboard Shortcut Conflict Resolution
 - Review — Keyboard Module (LAG-29)
 - ADR-002: Zustand + localStorage for Offline-First Shortcut Customizations
 - ADR-003: Server-Sent Events over WebSocket for Real-Time Updates
-- Component Catalog
-- Tasks — Keyboard Module (Frontend)
+- event-processor.ts
 - KeyboardProvider.tsx
-- Comment
-- eslint-plugin-boundaries
-- eslint-plugin-react-hooks
+- Issue
+- Component Catalog
+- api/shortcuts.ts
 - keyboard/ui/ToastContainer.tsx
 - DeleteConfirmModal.tsx
 - shortcutActions.ts
 - KeyboardShortcutWrapper.tsx
-- @commitlint/cli
-- eslint-plugin-boundaries
-- eslint-plugin-react-hooks
-- husky
+- Tasks — Keyboard Module (Frontend)
+- Tech Selection — Linear App Clone (Frontend)
+- Ticket 10: Keyboard Module — Shortcuts & Context
+- Component Catalog
 - Behaviour
 - Flow Inventory
 - ADR-0013: SSE for Real-Time Transport
@@ -452,13 +453,13 @@
 - Real-time Issue Updates
 - ADR Review Manifest
 - issue/model/store.ts
-- MockWSEndpoint
+- event-router.ts
 - MockWebSocket
 - Layout Module — Frontend Specification
 - notificationsStore.ts
 - Layout Module: Dashboard View
-- Tasks — Register User API Integration (Frontend)
-- scripts
+- Authentication: Login
+- useIssueBoard.ts
 - Review — Layout Module — Responsive & Theme Finalization
 - Layout Module — Frontend Design
 - Component Catalog
@@ -467,42 +468,53 @@
 - Tech Selection — Linear App Clone (Frontend)
 - Layout Module — Responsive & Theme Finalization
 - ThemeSelector.tsx
-- @testing-library/react
-- husky
-- playwright
-- @testing-library/react
-- @types/node
-- @types/react-dom
-- typescript
-- Tech Selection — Linear App Clone (Frontend)
+- realtime/ui/ToastContainer.tsx
+- NotificationItem.tsx
+- CommentItem.tsx
+- useNotifications.ts
+- realtime/ui/EmptyState.tsx
+- CommentThreadPage.tsx
+- IssueBoardPage.tsx
+- List Projects — Frontend Specification
 - Behaviour
 - New Durable ADRs Created
 - Frontend WebSocket Changes — Align with AsyncAPI Spec
 - WebSocket Frontend Alignment — Frontend Design
 - Flow Inventory
-- @commitlint/cli
+- MockWebSocket
+- package.json
+- scripts
 - Component Catalog
 - Review — WebSocket Frontend Alignment
 - Tasks — WebSocket Frontend Alignment (Frontend)
 - Tech Selection — Linear App Clone (Frontend)
 - WebSocket Frontend: Align Client with AsyncAPI Specification
-- eslint-plugin-boundaries
-- eslint-plugin-react-hooks
-- Implement Register User API Integration
-- eslint-plugin-react-hooks
-- Review — Register User API Integration
+- MockWSEndpoint
+- @commitlint/config-conventional
+- Component Catalog
 - api/auth.ts
-- ADR Review Manifest
+- Tasks — Register User API Integration (Frontend)
 - useRegisterForm.ts
 - RTK (Rust Token Killer) - Token-Optimized Commands
 - RegisterForm.tsx
 - RegisterPage.tsx
 - Tech Selection — Linear App Clone (Frontend)
-- MockWebSocket
+- Comment
 - Implement Register User API Integration
 - Review — Register User API Integration
 - ADR Review Manifest
-- IssueAssigneeSelector.tsx
+- realtime/ui/index.ts
+- List Projects — Frontend Design
+- Tasks — List Projects API (Frontend)
+- Projects: List Projects
+- Tech Selection — Linear App Clone (Frontend)
+- List Projects API
+- Review — List Projects API (Frontend)
+- ADR Review Manifest
+- MockWSEndpoint
+- MockWSEndpoint
+- projects.ts
+- ProjectsPage.test.tsx
 
 ## God Nodes (most connected - your core abstractions)
 1. `ApiError` - 24 edges
@@ -531,65 +543,65 @@
 ## Import Cycles
 - None detected.
 
-## Communities (517 total, 54 thin omitted)
+## Communities (528 total, 57 thin omitted)
 
-### Community 0 - "Behaviour"
+### Community 0 - "errors/index.ts"
 Cohesion: 0.07
 Nodes (36): ApiClient, ApiClientConfig, RequestInterceptor, RequestMethod, RequestOptions, ResponseInterceptor, dispatchTable, dispatchToHandler() (+28 more)
 
-### Community 1 - "Behaviour"
+### Community 1 - "dependencies"
 Cohesion: 0.09
 Nodes (23): class-variance-authority, clsx, @hookform/resolvers, dependencies, class-variance-authority, clsx, @hookform/resolvers, lucide-react (+15 more)
 
-### Community 2 - "Component Catalog"
+### Community 2 - "shared/ui/index.ts"
 Cohesion: 0.06
 Nodes (32): Button, ButtonProps, ButtonSize, ButtonVariant, sizeStyles, variantStyles, Card(), CardProps (+24 more)
 
-### Community 3 - "Flow Inventory"
+### Community 3 - "Requirement: ErrorTaxonomy"
 Cohesion: 0.05
 Nodes (40): Accessibility, API Client — Frontend Specification, ApiClient, ApiError (base), Behaviour, Components, Error Handling Flow, ErrorHandler (+32 more)
 
-### Community 4 - "Layout Module — Frontend Specification"
+### Community 4 - "Behaviour"
 Cohesion: 0.05
 Nodes (40): Accessibility, Behaviour, Components, Header, Layout Module — Frontend Specification, PageLayout, Requirement: PageLayoutStructure, Requirement: ResponsiveBreakpoints (+32 more)
 
-### Community 5 - "Layout Module — Frontend Specification"
+### Community 5 - "Requirement: ErrorTaxonomy"
 Cohesion: 0.05
 Nodes (40): Accessibility, API Client — Frontend Specification, ApiClient, ApiError (base), Behaviour, Components, Error Handling Flow, ErrorHandler (+32 more)
 
-### Community 6 - "Layout Module — Frontend Design"
+### Community 6 - "Behaviour"
 Cohesion: 0.05
 Nodes (38): Accessibility, Behaviour, Components, NotFoundPage, Requirement: BrowserHistory, Requirement: ProgrammaticNavigation, Requirement: QueryParameters, Requirement: RouteGuards (+30 more)
 
-### Community 7 - "Tasks — Layout Module Page Structure & Theme (Frontend)"
+### Community 7 - "Behaviour"
 Cohesion: 0.05
 Nodes (38): Accessibility, Behaviour, Components, NotFoundPage, Requirement: BrowserHistory, Requirement: ProgrammaticNavigation, Requirement: QueryParameters, Requirement: RouteGuards (+30 more)
 
-### Community 8 - "Review — Layout Module Page Structure & Theme"
+### Community 8 - "Module Contracts & Interactions"
 Cohesion: 0.06
 Nodes (33): 10. Module Dependency Matrix, 1. Communication Overview, 2.1 Request Format, 2.2 Response Format, 2. API Contract, 3.1 Login Request/Response, 3.2 Token Refresh Contract, 3.3 Authenticated Request (+25 more)
 
-### Community 9 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 9 - "Flow Inventory"
 Cohesion: 0.06
 Nodes (31): Actors, Flow Inventory, Navigation Graph, Navigation Graph, Navigation Graph, Navigation Graph, Navigation Graph, Navigation Graph (+23 more)
 
-### Community 10 - "Layout Module — Page Structure & Theme"
+### Community 10 - "Flow Inventory"
 Cohesion: 0.06
 Nodes (31): Actors, Auth: Login Flow, Flow Inventory, Issues: Browse & Filter, Issues: Create / Update, Navigation Graph, Navigation Graph, Navigation Graph (+23 more)
 
-### Community 11 - "Requirement: ResponsiveBreakpoints"
+### Community 11 - "Auth Module — Frontend Specification"
 Cohesion: 0.07
 Nodes (26): Accessibility, Auth Module — Frontend Specification, AuthGuard, Behaviour, Components, LoginForm, Requirement: LoginFlow, Requirement: Logout (+18 more)
 
-### Community 12 - "ADR Review Manifest"
+### Community 12 - "Auth Module — Frontend Specification"
 Cohesion: 0.07
 Nodes (26): Accessibility, Auth Module — Frontend Specification, AuthGuard, Behaviour, Components, LoginForm, Requirement: LoginFlow, Requirement: Logout (+18 more)
 
-### Community 13 - "Requirement: StickyHeader"
+### Community 13 - "MSW Handlers — Frontend Specification"
 Cohesion: 0.08
 Nodes (25): Accessibility, Behaviour, `browser.ts`, Components, `handlers.ts`, MSW Handlers — Frontend Specification, Requirement: AuthHandlers, Requirement: BrowserRuntime (+17 more)
 
-### Community 14 - "Requirement: StickyHeader"
+### Community 14 - "MSW Handlers — Frontend Specification"
 Cohesion: 0.08
 Nodes (25): Accessibility, Behaviour, `browser.ts`, Components, `handlers.ts`, MSW Handlers — Frontend Specification, Requirement: AuthHandlers, Requirement: BrowserRuntime (+17 more)
 
@@ -653,7 +665,7 @@ Nodes (19): Actors, Flow Inventory, Navigation Graph, Navigation Graph, Navigati
 Cohesion: 0.10
 Nodes (19): Accessibility, Behaviour, Cache Layer — Frontend Specification, CacheProvider, Components, Requirement: CacheInvalidation, Requirement: CacheSize, Requirement: CacheWrites (+11 more)
 
-### Community 30 - "Issues Store — Frontend Specification"
+### Community 30 - "Requirement: IssuesStore"
 Cohesion: 0.25
 Nodes (8): Requirement: IssuesStore, Scenario: A new issue is created, Scenario: An existing issue is updated, Scenario: An issue is deleted, Scenario: Deselect issue, Scenario: Load issues, Scenario: Select an issue, Scenario: Store initialises with empty state
 
@@ -701,11 +713,11 @@ Nodes (15): Actors, API Client: Error Handling Flow, API Client: Rate Limit Trac
 Cohesion: 0.12
 Nodes (15): Button, Card, Checkbox, Color Semantics, Component Catalog, Design System — Linear App Clone (Frontend), EmptyState, Input (+7 more)
 
-### Community 42 - "Component Catalog"
+### Community 42 - "Behaviour"
 Cohesion: 0.05
 Nodes (40): Accessibility, Behaviour, Components, Header, Layout Module — Frontend Specification, PageLayout, Requirement: PageLayoutStructure, Requirement: ResponsiveBreakpoints (+32 more)
 
-### Community 43 - "Flow Inventory"
+### Community 43 - "Component Catalog"
 Cohesion: 0.12
 Nodes (15): Backdrop, Component Catalog, Design System — Linear App Clone (Frontend), HamburgerButton, Header, Layout Tokens, NavLink, NotificationBadge (+7 more)
 
@@ -713,7 +725,7 @@ Nodes (15): Backdrop, Component Catalog, Design System — Linear App Clone (Fro
 Cohesion: 0.12
 Nodes (15): Authentication & Session, Available Features, Build, Client API, Docker, Form Validation, Infrastructure, Linear App Clone — Frontend (+7 more)
 
-### Community 45 - "selectors/index.ts"
+### Community 45 - "stores/selectors/index.ts"
 Cohesion: 0.16
 Nodes (14): ActiveFilters, Cycle, ProjectProgress, selectActiveCycle, selectFilteredIssues, selectIssuesByStatus, selectProjectProgress, selectUnreadCount (+6 more)
 
@@ -733,7 +745,7 @@ Nodes (14): Accessibility, Behaviour, Components, Requirement: ConnectionState, 
 Cohesion: 0.14
 Nodes (13): ADR-0008: API Error Taxonomy via Class Hierarchy, Callback object (ErrorHandler), Class hierarchy (ApiError base + typed subclasses), Confirmation, Consequences, Considered Options, Context and Problem Statement, Decision Drivers (+5 more)
 
-### Community 50 - "Architecture — Linear App Clone (Frontend)"
+### Community 50 - "Frontend Architecture — Linear App Clone"
 Cohesion: 0.12
 Nodes (16): Component Design, Current Decisions, Data Flow, Files Affected by WebSocket Alignment, Frontend, Frontend Architecture — Linear App Clone, Frontend — Component Architecture, Overview (+8 more)
 
@@ -753,7 +765,7 @@ Nodes (13): Architecture, Backend, Backend — {hexagonal / clean} architecture,
 Cohesion: 0.14
 Nodes (13): Accessibility, Auth Store — Frontend Specification, AuthStore, Behaviour, Components, Requirement: AuthState, Routing, Scenario: Authenticated state after login (+5 more)
 
-### Community 55 - "Header.tsx"
+### Community 55 - "Header/index.ts"
 Cohesion: 0.23
 Nodes (9): Header(), HeaderProps, NotificationBell(), NotificationBellProps, SearchTrigger(), SearchTriggerProps, themeConfig, themeCycle (+1 more)
 
@@ -829,7 +841,7 @@ Nodes (10): Architecture, Backend, Backup & Recovery, CI/CD, Deployment, Fronten
 Cohesion: 0.18
 Nodes (11): Button, Card, Checkbox, Components, EmptyState, Input, LoadingIndicator, Modal (+3 more)
 
-### Community 74 - "Deployment — Linear App Clone (Frontend)"
+### Community 74 - "Deployment — Linear App Clone Frontend"
 Cohesion: 0.17
 Nodes (11): Architecture, Build Optimization, CI/CD, Deployment — Linear App Clone Frontend, Environment Configuration, Frontend, Infrastructure, Local Development (+3 more)
 
@@ -853,11 +865,11 @@ Nodes (9): Build Stage (Dockerfile), Dockerignore, Documentation, Nginx Configur
 Cohesion: 0.20
 Nodes (9): Accessibility, API Client & Error Handling — Frontend Design, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Routing, State Management (+1 more)
 
-### Community 80 - "Layout Module — Frontend Design"
+### Community 80 - "Flow Inventory"
 Cohesion: 0.12
 Nodes (15): Actors, Flow Inventory, Layout: Application Shell, Layout: Sidebar Navigation, Layout: Theme Switching, Navigation Graph, Navigation Graph, Navigation Graph (+7 more)
 
-### Community 81 - "Tasks — Layout Module Page Structure & Theme (Frontend)"
+### Community 81 - "ADR-0001: Zustand Issues Store Following Entity-Store Pattern"
 Cohesion: 0.04
 Nodes (48): ADR-0001: Zustand Issues Store Following Entity-Store Pattern, ADR-0002: Separate API Layer Decoupled from Store, ADR-0003: Pessimistic Updates for Issue CRUD, ADR-0004: react-hook-form with Zod for Issue Form Validation, ADR Review Manifest, API calls inline in store actions, Confirmation, Confirmation (+40 more)
 
@@ -885,7 +897,7 @@ Nodes (9): 1.1 Auth State, 1.2 Login Flow, 1.3 Logout Flow, 1.4 Token Refresh, 1
 Cohesion: 0.22
 Nodes (9): 8.1 Shortcut Registry, 8.2 Shortcut Execution, 8.3 Context Management, 8.4 Shortcut Help, 8.5 Shortcut Customization, 8. Keyboard Module, Atomic Parts, Purpose (+1 more)
 
-### Community 88 - "Stack — Linear App Clone (Frontend)"
+### Community 88 - "Frontend Stack — Linear App Clone"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Frontend Stack — Linear App Clone, Generated Files, Interactive Review Log, Next Steps
 
@@ -949,7 +961,7 @@ Nodes (7): Architecture Decisions, Build & Run Flow, Containerization — Fronte
 Cohesion: 0.25
 Nodes (7): Added, Container Image Details, Decision Summary, Deployment Architecture, Stack Changes, Tech Selection — Add Dockerfile for Containerization, Unchanged
 
-### Community 104 - "Review — Layout Module Page Structure & Theme"
+### Community 104 - "Layout Module — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Layout Module — Frontend Design, Routing, State Management (+1 more)
 
@@ -997,7 +1009,7 @@ Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 116 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 116 - "Tasks — Layout Module Page Structure & Theme (Frontend)"
 Cohesion: 0.20
 Nodes (9): Accessibility, Components, Responsive Layout, Review, Routing, State & Data, Tasks — Layout Module Page Structure & Theme (Frontend), Testing (+1 more)
 
@@ -1013,7 +1025,7 @@ Nodes (6): Backend, Dev & Build, Frontend, Shared, Stack, Testing
 Cohesion: 0.29
 Nodes (6): Elements, Layout, Navigation Flow, Screen: {ScreenName}, States, Wireframes — {Domain}
 
-### Community 120 - "issue/model/store.ts"
+### Community 120 - "issue/api/index.ts"
 Cohesion: 0.14
 Nodes (4): FetchIssuesParams, CreateIssueData, PaginationCursor, UpdateIssueData
 
@@ -1093,7 +1105,7 @@ Nodes (5): Checklist, Edge Cases, Leakage Check, Review — UI Generic Component
 Cohesion: 0.33
 Nodes (5): Accessibility, Routing, UI Module — Frontend Specification, User Flow, Validation Rules
 
-### Community 140 - "Layout Module — Page Structure & Theme"
+### Community 140 - "Review — Layout Module Page Structure & Theme"
 Cohesion: 0.25
 Nodes (7): Artifact Coherence, Checklist, Edge Cases, Gaps, Leakage Check, Review — Layout Module Page Structure & Theme, Spec Compliance
 
@@ -1161,7 +1173,7 @@ Nodes (5): Requirement: Button Variants, Scenario: Danger variant conveys destru
 Cohesion: 0.40
 Nodes (5): Requirement: Modal with Stack Management, Scenario: Modal closes on backdrop click, Scenario: Modal closes on Esc, Scenario: Modal opens on trigger, Scenario: Nested modals stack correctly
 
-### Community 157 - "ADR Review Manifest"
+### Community 157 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
@@ -1245,43 +1257,43 @@ Nodes (3): Requirement: Select Dropdown, Scenario: Select shows placeholder when
 Cohesion: 0.67
 Nodes (3): Requirement: Textarea, Scenario: Textarea shows character count, Scenario: User types into textarea
 
-### Community 187 - "@commitlint/cli"
+### Community 187 - "Issue Labels — Frontend Specification"
 Cohesion: 0.08
 Nodes (24): Accessibility, Behaviour, Components, Issue Labels — Frontend Specification, LabelBadge, LabelList, LabelPicker, Requirement: AttachLabelToIssue (+16 more)
 
-### Community 192 - "eslint-plugin-boundaries"
+### Community 192 - "Issue Labels — Frontend Specification"
 Cohesion: 0.08
 Nodes (24): Accessibility, Behaviour, Components, Issue Labels — Frontend Specification, LabelBadge, LabelList, LabelPicker, Requirement: AttachLabelToIssue (+16 more)
 
-### Community 194 - "eslint-plugin-react-hooks"
+### Community 194 - "form/ui/index.ts"
 Cohesion: 0.08
 Nodes (27): useDebounce(), useFormFormik(), UseFormFormikOptions, UseFormFormikReturn, AsyncFormData, asyncValidationSchema, AsyncValidationTestForm(), DoubleSubmitTestForm() (+19 more)
 
-### Community 195 - "husky"
+### Community 195 - "Behaviour"
 Cohesion: 0.11
 Nodes (18): Behaviour, Field Wrapper Components — Frontend Specification, Requirement: CheckboxField Wrapper, Requirement: Field Wrapper Accessibility, Requirement: SelectField Wrapper, Requirement: TextareaField Wrapper, Requirement: TextField Wrapper, Scenario: CheckboxField Shows Error State (+10 more)
 
-### Community 198 - "msw"
+### Community 198 - "Flow Inventory"
 Cohesion: 0.10
 Nodes (19): Actors, Flow Inventory, Issues: Attach Label, Issues: Detach Label, Issues: Manage Labels in Issue Form, Issues: View Issue Labels, Navigation Graph, Navigation Graph (+11 more)
 
-### Community 199 - "playwright"
+### Community 199 - "Behaviour"
 Cohesion: 0.11
 Nodes (18): Behaviour, Field Wrapper Components — Frontend Specification, Requirement: CheckboxField Wrapper, Requirement: Field Wrapper Accessibility, Requirement: SelectField Wrapper, Requirement: TextareaField Wrapper, Requirement: TextField Wrapper, Scenario: CheckboxField Shows Error State (+10 more)
 
-### Community 201 - "@tailwindcss/vite"
+### Community 201 - "Component Catalog"
 Cohesion: 0.13
 Nodes (14): Button (existing — extended for labels), Color Semantics, Component Catalog, Design System — Linear App Clone, ErrorBanner (existing), LabelBadge, LabelList, LabelPicker (+6 more)
 
-### Community 203 - "@testing-library/react"
+### Community 203 - "Flow Inventory"
 Cohesion: 0.12
 Nodes (15): Actors, Flow Inventory, Form: Async Validation Flow, Form: Double Submission Prevention, Form: Standard Form Submission, Navigation Graph, Navigation Graph, Navigation Graph (+7 more)
 
-### Community 205 - "@types/node"
+### Community 205 - "Label Management — Frontend Design"
 Cohesion: 0.15
 Nodes (12): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, File Map, Label Data Model, Label Management — Frontend Design (+4 more)
 
-### Community 206 - "@types/react-dom"
+### Community 206 - "form/model/index.ts"
 Cohesion: 0.22
 Nodes (8): CreateIssueFormData, createIssueSchema, EditIssueFormData, editIssueSchema, ProfileFormData, profileSchema, ProjectSettingsFormData, projectSettingsSchema
 
@@ -1289,7 +1301,7 @@ Nodes (8): CreateIssueFormData, createIssueSchema, EditIssueFormData, editIssueS
 Cohesion: 0.08
 Nodes (22): getCurrentSequence(), handleKeyInSequence(), isInSequence(), resetSequence(), SequenceState, state, Shortcut, ShortcutContext (+14 more)
 
-### Community 209 - "vite"
+### Community 209 - "Comment Deletion — Frontend Specification"
 Cohesion: 0.10
 Nodes (19): Accessibility, Behaviour, Comment Deletion — Frontend Specification, CommentCard (modified), CommentList (modified), Components, DeleteConfirmOverlay (new — inline within CommentCard), Requirement: DeleteButton (+11 more)
 
@@ -1297,7 +1309,7 @@ Nodes (19): Accessibility, Behaviour, Comment Deletion — Frontend Specificatio
 Cohesion: 0.06
 Nodes (34): Accessibility, API Endpoints (Keyboard Module), Architecture Decisions, ARIA, Asset Map, Bundle Size Considerations, Component Tree, Data Fetching (+26 more)
 
-### Community 211 - "vitest"
+### Community 211 - "Edit Comment — Frontend Specification"
 Cohesion: 0.11
 Nodes (18): Accessibility, Behaviour, CommentCard, CommentList, Components, Edit Comment — Frontend Specification, Requirement: EditButtonVisibility, Requirement: EditCommentInline (+10 more)
 
@@ -1341,7 +1353,7 @@ Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review
 Cohesion: 0.33
 Nodes (5): Impact, Motivation, Problem Statement, Scope, Work Module: Issues Store & UI Components
 
-### Community 248 - "IssueForm.tsx"
+### Community 248 - "Authentication — Frontend Specification"
 Cohesion: 0.07
 Nodes (28): Accessibility, Authentication — Frontend Specification, Behaviour, Components, RegisterForm, RegisterPage, Requirement: Client-Side Validation, Requirement: Loading State (+20 more)
 
@@ -1349,47 +1361,47 @@ Nodes (28): Accessibility, Authentication — Frontend Specification, Behaviour,
 Cohesion: 0.15
 Nodes (12): Confirmation, Consequences, Considered Options, Context and Problem Statement, Decision Drivers, Decision Outcome, Dedicated endpoint, Dedicated Status Transition Endpoint for Issue Workflow (+4 more)
 
-### Community 251 - "Issue"
+### Community 251 - "IssueDetail.tsx"
 Cohesion: 0.18
 Nodes (9): CommentList(), IssueDetailProps, priorityLabels, IssueStatusBadge(), IssueStatusBadgeProps, STATUS_OPTIONS, statusColorMap, SkeletonLoader() (+1 more)
 
-### Community 252 - "IssueList.tsx"
+### Community 252 - "Issues — Frontend Specification"
 Cohesion: 0.14
 Nodes (13): Accessibility, Behaviour, Components, Issues — Frontend Specification, Requirement: LoadIssuesUsesApiClient, Requirement: LoadNextPageUsesApiClient, Routing, Scenario: Cache-before-fetch is preserved (+5 more)
 
-### Community 254 - "Issue Status Transition — Frontend Design"
+### Community 254 - "Issue Status — Frontend Specification"
 Cohesion: 0.11
 Nodes (18): Accessibility, Behaviour, Components, Issue Status — Frontend Specification, IssueStatusBadge, Purpose, Requirement: ChangeStatusFromDropdown, Requirement: StatusDropdownStates (+10 more)
 
-### Community 255 - "Component Catalog"
+### Community 255 - "Issue Status — Frontend Specification"
 Cohesion: 0.11
 Nodes (17): Accessibility, Behaviour, Components, Issue Status — Frontend Specification, IssueStatusBadge, Requirement: ChangeStatusFromDropdown, Requirement: StatusDropdownStates, Routing (+9 more)
 
-### Community 256 - "Tasks — Implement Issue Status Transitions (Frontend)"
+### Community 256 - "Issue Assign/Unassign — Frontend Design"
 Cohesion: 0.07
 Nodes (27): 1. Dedicated `assignIssue` Store Action (over generic `updateIssue`), 2. Optimistic Update with Rollback (over pessimistic), 3. Cache Invalidation via `useCacheStore.invalidateByPrefix('issues:list')`, 4. Business Rule Error Handling (422) via Toast, 5. No New UI Components, Accessibility, API Layer — `src/entities/issue/api/index.ts`, Architecture Decisions (+19 more)
 
-### Community 257 - "package.json"
+### Community 257 - "Edit Comment — Frontend Specification"
 Cohesion: 0.11
 Nodes (18): Accessibility, Behaviour, CommentCard, CommentList, Components, Edit Comment — Frontend Specification, Requirement: EditButtonVisibility, Requirement: EditCommentInline (+10 more)
 
-### Community 258 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 258 - "Issue Status Transition — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Issue Status Transition — Frontend Design, Routing, State Management (+1 more)
 
-### Community 259 - "Implement Issue Status Transitions"
+### Community 259 - "Component Catalog"
 Cohesion: 0.20
 Nodes (9): Color Semantics, Component Catalog, Design System — Linear App Clone, IssueStatusBadge, Layout Tokens, Select (existing — integration note), Spinner (existing — integration note), Toast (existing — integration note) (+1 more)
 
-### Community 260 - "Review — Implement Issue Status Transitions"
+### Community 260 - "Tasks — Implement Issue Status Transitions (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — Implement Issue Status Transitions (Frontend), Validation
 
-### Community 261 - "ADR Review Manifest"
+### Community 261 - "Issue Detail: Change Issue Status"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Issue Detail: Change Issue Status, Navigation Graph, Screen List, State Transitions, User Flows — Implement Issue Status Transitions
 
-### Community 262 - "Issue Assign/Unassign — Frontend Design"
+### Community 262 - "Issue Assign — Frontend Specification"
 Cohesion: 0.10
 Nodes (20): Accessibility, Behaviour, Components, Issue Assign — Frontend Specification, IssueDetailPage (modified), Purpose, Requirement: AssignIssueApiFunction, Requirement: AssignIssueStoreAction (+12 more)
 
@@ -1457,35 +1469,35 @@ Nodes (12): ADR-0012: Watcher Feature Slice — New FSD Entity and Feature for I
 Cohesion: 0.24
 Nodes (4): Watcher, WatcherItem(), WatcherItemProps, WatcherListProps
 
-### Community 279 - "ApiClient"
+### Community 279 - "Label"
 Cohesion: 0.13
 Nodes (12): IssueLabelsState, LabelDefinitionsState, useIssueLabelsStore, useLabelDefinitionsStore, Label, LabelBadge(), LabelBadgeProps, LabelListProps (+4 more)
 
-### Community 280 - "Issue Watchers — Frontend Design"
+### Community 280 - "Issue Watchers — Frontend Specification"
 Cohesion: 0.10
 Nodes (19): Accessibility, Behaviour, Components, Issue Watchers — Frontend Specification, Requirement: ToggleWatch, Requirement: ViewWatchers, Routing, Scenario: Business rule violation on action (+11 more)
 
-### Community 281 - "Tasks — Issue Watchers (Frontend)"
+### Community 281 - "Issue Watchers — Frontend Design"
 Cohesion: 0.17
 Nodes (11): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Data Flow, Issue Watchers — Frontend Design, Routing (+3 more)
 
-### Community 282 - "Design System — Linear App Clone"
+### Community 282 - "Tasks — Issue Watchers (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — Issue Watchers (Frontend), Validation
 
-### Community 283 - "Issue Detail: Watch/Unwatch Issue"
+### Community 283 - "Design System — Linear App Clone"
 Cohesion: 0.25
 Nodes (7): Color Semantics, Component Catalog, Design System — Linear App Clone, Layout Tokens, Typography, WatchButton, WatcherList
 
-### Community 284 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 284 - "Issue Detail: Watch/Unwatch Issue"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Issue Detail: Watch/Unwatch Issue, Navigation Graph, Screen List, State Transitions, User Flows — Issue Watchers
 
-### Community 285 - "Issue Watchers"
+### Community 285 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 286 - "Review — Issue Watchers"
+### Community 286 - "Issue Watchers"
 Cohesion: 0.33
 Nodes (5): Impact, Issue Watchers, Motivation, Problem Statement, Scope
 
@@ -1493,7 +1505,7 @@ Nodes (5): Impact, Issue Watchers, Motivation, Problem Statement, Scope
 Cohesion: 0.40
 Nodes (3): WatchButton(), WatchButtonProps, WatcherSectionProps
 
-### Community 288 - "ADR Review Manifest"
+### Community 288 - "Review — Issue Watchers"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Issue Watchers, Spec Compliance
 
@@ -1505,55 +1517,55 @@ Nodes (3): initialWatchersState, useWatchersStore, WatchersState
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 291 - "Issue Labels — Frontend Specification"
+### Community 291 - "Tasks — Label Management Endpoints for Issues (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — Label Management Endpoints for Issues (Frontend), Validation
 
-### Community 292 - "Flow Inventory"
+### Community 292 - "Comment Deletion — Frontend Specification"
 Cohesion: 0.10
 Nodes (19): Accessibility, Behaviour, Comment Deletion — Frontend Specification, CommentCard (modified), CommentList (modified), Components, DeleteConfirmOverlay (new — inline within CommentCard), Requirement: DeleteButton (+11 more)
 
-### Community 293 - "Component Catalog"
+### Community 293 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 294 - "Label Management — Frontend Design"
+### Community 294 - "Label Management Endpoints for Issues"
 Cohesion: 0.33
 Nodes (5): Impact, Label Management Endpoints for Issues, Motivation, Problem Statement, Scope
 
-### Community 295 - "Tasks — Label Management Endpoints for Issues (Frontend)"
+### Community 295 - "Review — Label Management Endpoints for Issues"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Label Management Endpoints for Issues, Spec Compliance
 
-### Community 296 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 296 - "ADR Review Manifest"
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 297 - "Comments: Edit Own Comment"
+### Community 297 - "Edit Comment — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Edit Comment — Frontend Design, Routing, State Management (+1 more)
 
-### Community 298 - "Review — Label Management Endpoints for Issues"
+### Community 298 - "Component Catalog"
 Cohesion: 0.18
 Nodes (10): Button, Color Semantics, CommentCard (entity-level — modified), CommentList (entity-level — modified), Component Catalog, Design System — Linear App Clone (Frontend), Inline Confirmation Pattern (CommentCard), Layout Tokens (+2 more)
 
-### Community 299 - "Comment"
+### Community 299 - "Authentication — Frontend Specification"
 Cohesion: 0.07
 Nodes (28): Accessibility, Authentication — Frontend Specification, Behaviour, Components, RegisterForm, RegisterPage, Requirement: Client-Side Validation, Requirement: Loading State (+20 more)
 
-### Community 301 - "Edit Comment — Frontend Specification"
+### Community 301 - "Tasks — Edit Comment (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — Edit Comment (Frontend), Validation
 
-### Community 302 - "Edit Comment — Frontend Design"
+### Community 302 - "Comments: Edit Own Comment"
 Cohesion: 0.25
 Nodes (7): Actors, Comments: Edit Own Comment, Flow Inventory, Navigation Graph, Screen List, State Transitions, User Flows — Edit Comment
 
-### Community 303 - "Tasks — Edit Comment (Frontend)"
+### Community 303 - "Comment Deletion — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Comment Deletion — Frontend Design, Component Tree, Data Fetching, Routing, State Management (+1 more)
 
-### Community 304 - "Comments: Edit Own Comment"
+### Community 304 - "Tasks — Delete Comment (Frontend)"
 Cohesion: 0.25
 Nodes (7): Components, Integration, Review, Routing, State & Data, Tasks — Delete Comment (Frontend), Validation
 
@@ -1561,19 +1573,19 @@ Nodes (7): Components, Integration, Review, Routing, State & Data, Tasks — Del
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 306 - "Component Catalog"
+### Community 306 - "Issue Comments: Delete Comment"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Issue Comments: Delete Comment, Navigation Graph, Screen List, State Transitions, User Flows — Delete Comment on Issue
 
-### Community 307 - "issue/model/selectors/index.ts"
+### Community 307 - "Frontend Design — Register User API Integration"
 Cohesion: 0.17
 Nodes (11): Accessibility, Architecture Decisions, Asset Map, Auth Store Extension, Component Tree, Data Fetching, Files to Create/Modify, Frontend Design — Register User API Integration (+3 more)
 
-### Community 308 - "Review — Edit Comment"
+### Community 308 - "Component Catalog"
 Cohesion: 0.33
 Nodes (5): Button (existing — referenced here for completeness), CommentCard (augmented), Component Catalog, Design System — Edit Comment, Textarea (editor)
 
-### Community 309 - "ADR Review Manifest"
+### Community 309 - "Edit Comment"
 Cohesion: 0.33
 Nodes (5): Edit Comment, Impact, Motivation, Problem Statement, Scope
 
@@ -1581,11 +1593,11 @@ Nodes (5): Edit Comment, Impact, Motivation, Problem Statement, Scope
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Edit Comment, Spec Compliance
 
-### Community 311 - "Delete Comment on Issue"
+### Community 311 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 312 - "Review — Delete Comment"
+### Community 312 - "Delete Comment on Issue"
 Cohesion: 0.33
 Nodes (5): Delete Comment on Issue, Impact, Motivation, Problem Statement, Scope
 
@@ -1593,35 +1605,35 @@ Nodes (5): Delete Comment on Issue, Impact, Motivation, Problem Statement, Scope
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 314 - "ADR Review Manifest"
+### Community 314 - "Review — Delete Comment"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Delete Comment, Spec Compliance
 
-### Community 315 - "Issues Filtering — Frontend Specification"
+### Community 315 - "Issues Module — Pagination Response Shape — Frontend Specification"
 Cohesion: 0.12
 Nodes (16): Accessibility, Behaviour, Components, FetchIssuesResponse, Issues Module — Pagination Response Shape — Frontend Specification, IssuesStore, Requirement: FetchIssuesResponseShape, Requirement: PaginationCursorType (+8 more)
 
-### Community 316 - "eslint-plugin-boundaries"
+### Community 316 - "Issues — Frontend Design"
 Cohesion: 0.18
 Nodes (10): Accessibility, Architecture Decisions, Change Map, Component Tree, Data Fetching, Data Flow (After Fix), Issues — Frontend Design, `src/entities/issue/api/index.ts` (+2 more)
 
-### Community 317 - "msw"
+### Community 317 - "Behaviour"
 Cohesion: 0.20
 Nodes (10): Behaviour, Requirement: IssueCard, Requirement: IssuesPagination, Requirement: LoadIssuesUsesApiClient, Scenario: Cache-before-fetch is preserved, Scenario: Initial load uses apiClient, Scenario: IssueCard is clickable, Scenario: IssueCard shows issue summary (+2 more)
 
-### Community 318 - "@tailwindcss/vite"
+### Community 318 - "Issues: Browse and Paginate Issues"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Issues: Browse and Paginate Issues, Navigation Graph, Screen List, State Transitions, User Flows — Fix: API Client Inconsistency
 
-### Community 319 - "Issues Filtering — Frontend Design"
+### Community 319 - "Issues Module — Pagination Response Shape — Frontend Specification"
 Cohesion: 0.12
 Nodes (16): Accessibility, Behaviour, Components, FetchIssuesResponse, Issues Module — Pagination Response Shape — Frontend Specification, IssuesStore, Requirement: FetchIssuesResponseShape, Requirement: PaginationCursorType (+8 more)
 
-### Community 320 - "vite"
+### Community 320 - "Components"
 Cohesion: 0.29
 Nodes (7): Components, IssueCard, IssueDetail, IssueFilters, IssueForm, IssueList, IssuesStore
 
-### Community 321 - "vitest"
+### Community 321 - "Requirement: IssuesFilters"
 Cohesion: 0.29
 Nodes (7): Requirement: IssuesFilters, Scenario: Clear all filters, Scenario: Filter by assignee, Scenario: Filter by cycle, Scenario: Filter by labels, Scenario: Filter by project, Scenario: Filter by status
 
@@ -1629,39 +1641,39 @@ Nodes (7): Requirement: IssuesFilters, Scenario: Clear all filters, Scenario: Fi
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 323 - "Issues — Frontend Specification"
+### Community 323 - "Fix: API Client Inconsistency — Store Uses Raw Fetch Instead of apiClient"
 Cohesion: 0.33
 Nodes (5): Fix: API Client Inconsistency — Store Uses Raw Fetch Instead of apiClient, Impact, Motivation, Problem Statement, Scope
 
-### Community 324 - "Issues — Frontend Design"
+### Community 324 - "Review — Fix: API Client Inconsistency"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Fix: API Client Inconsistency, Spec Compliance
 
-### Community 325 - "Issues: Browse and Paginate Issues"
+### Community 325 - "Issues Module — Frontend Specification"
 Cohesion: 0.33
 Nodes (5): Accessibility, Issues Module — Frontend Specification, Routing, User Flow, Validation Rules
 
-### Community 326 - "Fix: API Client Inconsistency — Store Uses Raw Fetch Instead of apiClient"
+### Community 326 - "ADR Review Manifest"
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 327 - "Review — Fix: API Client Inconsistency"
+### Community 327 - "Tasks — Fix: API Client Inconsistency (Frontend)"
 Cohesion: 0.40
 Nodes (4): Review, State & Data, Tasks — Fix: API Client Inconsistency (Frontend), Validation
 
-### Community 328 - "ADR Review Manifest"
+### Community 328 - "Requirement: IssueForm"
 Cohesion: 0.40
 Nodes (5): Requirement: IssueForm, Scenario: Create issue form validation, Scenario: Create issue with valid data, Scenario: Edit issue pre-fills form, Scenario: Edit issue saves changes
 
-### Community 329 - "ApiClient"
+### Community 329 - "Issue Model — Frontend Specification"
 Cohesion: 0.13
 Nodes (14): Accessibility, Behaviour, Components, Issue Model — Frontend Specification, IssueType, Requirement: IssueTypeIncludesAllApiFields, Requirement: StatusFieldUsesStatusId, Routing (+6 more)
 
-### Community 330 - "Tech Selection — Fix: API Client Inconsistency"
+### Community 330 - "Requirement: IssueDetail"
 Cohesion: 0.50
 Nodes (4): Requirement: IssueDetail, Scenario: IssueDetail shows comments, Scenario: IssueDetail shows full issue information, Scenario: IssueDetail shows labels
 
-### Community 331 - "fix-api-client-inconsistency/design-system.md"
+### Community 331 - "Requirement: IssueList"
 Cohesion: 0.50
 Nodes (4): Requirement: IssueList, Scenario: IssueList renders fetched issues, Scenario: IssueList shows empty state, Scenario: IssueList shows loading state
 
@@ -1669,59 +1681,59 @@ Nodes (4): Requirement: IssueList, Scenario: IssueList renders fetched issues, S
 Cohesion: 0.67
 Nodes (3): Requirement: LoadNextPageUsesApiClient, Scenario: Early return guards are preserved, Scenario: Pagination uses apiClient
 
-### Community 335 - "Tasks — Fix Query Parameter Mismatch (Frontend)"
+### Community 335 - "Issues: Browse Paginated List"
 Cohesion: 0.22
 Nodes (8): Actors, Data Flow (Pagination), Flow Inventory, Issues: Browse Paginated List, Navigation Graph, Screen List, State Transitions, User Flows — Fix Pagination Response Shape
 
-### Community 336 - "Issues: Filter Issues List"
+### Community 336 - "Issues Module — Frontend Design (Pagination Shape Fix)"
 Cohesion: 0.29
 Nodes (6): Affected Files, Architecture Decisions, Component Tree, Data Fetching, Issues Module — Frontend Design (Pagination Shape Fix), State Management
 
-### Community 337 - "Fix: Query Parameter Mismatch — status vs statusId, extra search/priority"
+### Community 337 - "Fix: Pagination response shape mismatch — meta vs pagination"
 Cohesion: 0.33
 Nodes (5): Fix: Pagination response shape mismatch — meta vs pagination, Impact, Motivation, Problem Statement, Scope
 
-### Community 338 - "Review — Fix Query Parameter Mismatch"
+### Community 338 - "Review — Fix Pagination Response Shape"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Fix Pagination Response Shape, Spec Compliance
 
-### Community 339 - "ADR Review Manifest"
+### Community 339 - "Tasks — Fix Pagination Response Shape (Frontend)"
 Cohesion: 0.33
 Nodes (5): API Layer, Store, Tasks — Fix Pagination Response Shape (Frontend), Types, Validation
 
-### Community 340 - "Tech Selection — Fix Query Parameter Mismatch"
+### Community 340 - "ADR Review Manifest"
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 341 - "@commitlint/cli"
+### Community 341 - "Tech Selection — Fix Pagination Response Shape"
 Cohesion: 0.50
 Nodes (3): Decision Summary, Generated Files, Tech Selection — Fix Pagination Response Shape
 
-### Community 342 - "eslint-plugin-boundaries"
+### Community 342 - "Issue API — Frontend Specification"
 Cohesion: 0.17
 Nodes (11): Accessibility, Behaviour, Components, deleteIssue API Function, Issue API — Frontend Specification, Requirement: DeleteIssueReturnType, Routing, Scenario: DeleteIssueReturnsVoid (+3 more)
 
-### Community 343 - "fix-query-param-mismatch/design-system.md"
+### Community 343 - "Issue API — Frontend Specification"
 Cohesion: 0.17
 Nodes (11): Accessibility, Behaviour, Components, deleteIssue API Function, Issue API — Frontend Specification, Requirement: DeleteIssueReturnType, Routing, Scenario: DeleteIssueReturnsVoid (+3 more)
 
-### Community 344 - "2026-07-23-fix-query-param-mismatch/design-system.md"
+### Community 344 - "Issue API — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Issue API — Frontend Design, Routing, State Management (+1 more)
 
-### Community 345 - "@tailwindcss/vite"
+### Community 345 - "Tasks — Fix Delete Issue Response Type (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — Fix Delete Issue Response Type (Frontend), Validation
 
-### Community 346 - "@types/node"
+### Community 346 - "Issue Management: Delete Issue"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Issue Management: Delete Issue, Navigation Graph, Screen List, State Transitions, User Flows — Fix Delete Issue Response Type
 
-### Community 347 - "vite"
+### Community 347 - "Requirement: Validation Types"
 Cohesion: 0.14
 Nodes (13): Behaviour, Requirement: Validation Timing, Requirement: Validation Types, Scenario: Async Validation, Scenario: Custom Validation, Scenario: MaxLength Validation, Scenario: MinLength Validation, Scenario: On Blur Validation (+5 more)
 
-### Community 348 - "vitest"
+### Community 348 - "Tech Selection — Fix Delete Issue Response Type"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Fix Delete Issue Response Type
 
@@ -1765,35 +1777,35 @@ Nodes (4): ADR References, Decision Summary, Existing Stack Reference, Tech Sele
 Cohesion: 0.12
 Nodes (15): Accessibility, Behaviour, Components, Issue Creation — Frontend Specification, IssueFormModal, IssuesPage, Purpose, Requirement: CreateIssueIncludesTeamId (+7 more)
 
-### Community 361 - "Issue Creation — Frontend Design"
+### Community 361 - "Issue Creation — Frontend Specification"
 Cohesion: 0.13
 Nodes (14): Accessibility, Behaviour, Components, Issue Creation — Frontend Specification, IssueFormModal, IssuesPage, Requirement: CreateIssueIncludesTeamId, Requirement: SelectedTeamIsShared (+6 more)
 
-### Community 362 - "Design System — Linear App Clone"
+### Community 362 - "Issue Creation — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Issue Creation — Frontend Design, State Management, TeamStore (+1 more)
 
-### Community 363 - "Issue Creation: Create Issue with Team Context"
+### Community 363 - "Design System — Linear App Clone"
 Cohesion: 0.20
 Nodes (9): Accessibility Contract, Color Semantics, Component Catalog, Design System — Linear App Clone, IssueFormModal, IssuesPage, Layout Tokens, TeamSelector (existing) (+1 more)
 
-### Community 364 - "Tasks — Fix: Create Issue Missing Required teamId Field (Frontend)"
+### Community 364 - "Issue Creation: Create Issue with Team Context"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Issue Creation: Create Issue with Team Context, Navigation Graph, Screen List, State Transitions, User Flows — Fix: Create Issue Missing Required teamId Field
 
-### Community 365 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 365 - "Tasks — Fix: Create Issue Missing Required teamId Field (Frontend)"
 Cohesion: 0.29
 Nodes (6): Components, Integration, Review, State & Data, Tasks — Fix: Create Issue Missing Required teamId Field (Frontend), Validation
 
-### Community 366 - "Fix: Create Issue Missing Required teamId Field"
+### Community 366 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 367 - "Review — Fix: Create Issue Missing Required teamId Field"
+### Community 367 - "Fix: Create Issue Missing Required teamId Field"
 Cohesion: 0.33
 Nodes (5): Fix: Create Issue Missing Required teamId Field, Impact, Motivation, Problem Statement, Scope
 
-### Community 368 - "ADR Review Manifest"
+### Community 368 - "Review — Fix: Create Issue Missing Required teamId Field"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Fix: Create Issue Missing Required teamId Field, Spec Compliance
 
@@ -1801,67 +1813,67 @@ Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Fix: Create Issue Mi
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 371 - "Issue API — Frontend Specification"
+### Community 371 - "Design System — Fix Delete Issue Response Type"
 Cohesion: 0.33
 Nodes (5): Color Semantics, Component Catalog, Design System — Fix Delete Issue Response Type, Layout Tokens, Typography
 
-### Community 372 - "Issue API — Frontend Design"
+### Community 372 - "Fix: Delete Issue Response Type Mismatch"
 Cohesion: 0.33
 Nodes (5): Fix: Delete Issue Response Type Mismatch, Impact, Motivation, Problem Statement, Scope
 
-### Community 373 - "Tasks — Fix Delete Issue Response Type (Frontend)"
+### Community 373 - "Review — Fix Delete Issue Response Type"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Fix Delete Issue Response Type, Spec Compliance
 
-### Community 374 - "Issue Management: Delete Issue"
+### Community 374 - "ADR Review Manifest"
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 375 - "Tech Selection — Fix Delete Issue Response Type"
+### Community 375 - "Issue Model — Frontend Specification"
 Cohesion: 0.13
 Nodes (14): Accessibility, Behaviour, Components, Issue Model — Frontend Specification, IssueType, Requirement: IssueTypeIncludesAllApiFields, Requirement: StatusFieldUsesStatusId, Routing (+6 more)
 
-### Community 377 - "Fix: Delete Issue Response Type Mismatch"
+### Community 377 - "Issue Model Alignment — Frontend Design"
 Cohesion: 0.20
 Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, Issue Model Alignment — Frontend Design, Routing, State Management (+1 more)
 
-### Community 378 - "Review — Fix Delete Issue Response Type"
+### Community 378 - "Issue Model: Type Alignment"
 Cohesion: 0.25
 Nodes (7): Actors, Flow Inventory, Issue Model: Type Alignment, Navigation Graph, Screen List, State Transitions, User Flows — Fix: Issue Model Missing 7 Fields from API Spec
 
-### Community 379 - "Tech Selection — Fix: Issue Model Missing Fields (Frontend)"
+### Community 379 - "Tasks — Fix: Issue Model Missing 7 Fields from API Spec (Frontend)"
 Cohesion: 0.29
 Nodes (6): Component Updates, Page Updates, State & Data Updates, Tasks — Fix: Issue Model Missing 7 Fields from API Spec (Frontend), Type Definition Update, Validation
 
-### Community 380 - "Design System — Fix: Issue Model Missing Fields"
+### Community 380 - "Tech Selection — Fix: Issue Model Missing Fields (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Fix: Issue Model Missing Fields (Frontend)
 
-### Community 381 - "Fix: Issue Model Missing 7 Fields from API Spec"
+### Community 381 - "Design System — Fix: Issue Model Missing Fields"
 Cohesion: 0.33
 Nodes (5): Color Semantics, Component Catalog, Design System — Fix: Issue Model Missing Fields, Layout Tokens, Typography
 
-### Community 382 - "Review — Fix: Issue Model Missing 7 Fields from API Spec"
+### Community 382 - "Fix: Issue Model Missing 7 Fields from API Spec"
 Cohesion: 0.33
 Nodes (5): Fix: Issue Model Missing 7 Fields from API Spec, Impact, Motivation, Problem Statement, Scope
 
-### Community 383 - "ADR Review Manifest"
+### Community 383 - "Review — Fix: Issue Model Missing 7 Fields from API Spec"
 Cohesion: 0.33
 Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Fix: Issue Model Missing 7 Fields from API Spec, Spec Compliance
 
-### Community 384 - "@commitlint/cli"
+### Community 384 - "Requirement: Validation Types"
 Cohesion: 0.14
 Nodes (13): Behaviour, Requirement: Validation Timing, Requirement: Validation Types, Scenario: Async Validation, Scenario: Custom Validation, Scenario: MaxLength Validation, Scenario: MinLength Validation, Scenario: On Blur Validation (+5 more)
 
-### Community 385 - "eslint-plugin-boundaries"
+### Community 385 - "Behaviour"
 Cohesion: 0.17
 Nodes (11): Behaviour, Form State Management — Frontend Specification, Requirement: Form Validity Computation, Requirement: FormState Structure, Requirement: Touched State Tracking, Scenario: Field Marked as Touched on Blur, Scenario: Form Invalid When Any Error Exists, Scenario: Form Valid When No Errors (+3 more)
 
-### Community 388 - "@types/node"
+### Community 388 - "Behaviour"
 Cohesion: 0.17
 Nodes (11): Behaviour, Form Submission — Frontend Specification, Requirement: Double Submission Prevention, Requirement: Form Disabled During Submission, Requirement: Submission Flow, Scenario: Form Fields Disabled While Submitting, Scenario: Rapid Double Click Prevention, Scenario: Submission Failure (+3 more)
 
-### Community 389 - "vite"
+### Community 389 - "Behaviour"
 Cohesion: 0.17
 Nodes (11): Behaviour, Form State Management — Frontend Specification, Requirement: Form Validity Computation, Requirement: FormState Structure, Requirement: Touched State Tracking, Scenario: Field Marked as Touched on Blur, Scenario: Form Invalid When Any Error Exists, Scenario: Form Valid When No Errors (+3 more)
 
@@ -1869,19 +1881,19 @@ Nodes (11): Behaviour, Form State Management — Frontend Specification, Require
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 392 - "Tasks — Form Module: Validation & Submission (Frontend)"
+### Community 392 - "Behaviour"
 Cohesion: 0.17
 Nodes (11): Behaviour, Form Submission — Frontend Specification, Requirement: Double Submission Prevention, Requirement: Form Disabled During Submission, Requirement: Submission Flow, Scenario: Form Fields Disabled While Submitting, Scenario: Rapid Double Click Prevention, Scenario: Submission Failure (+3 more)
 
-### Community 393 - "Review — Form Module: Validation & Submission"
+### Community 393 - "Form Module — Frontend Design"
 Cohesion: 0.18
 Nodes (10): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Flow (Form Submission), Form Module — Frontend Design, Routing, State Management (+2 more)
 
-### Community 394 - "Form Module — Validation & Submission"
+### Community 394 - "Component Catalog"
 Cohesion: 0.18
 Nodes (10): CheckboxField, Color Semantics, Component Catalog, Design System — Form Module, Layout Tokens, SelectField, SubmitButton, TextareaField (+2 more)
 
-### Community 395 - "ADR Review Manifest"
+### Community 395 - "Tech Selection — Form Module (Validation & Submission)"
 Cohesion: 0.18
 Nodes (10): ADR References, Decision Summary, Field Wrapper Pattern, Form Module Technology Stack, Generated Files, Interactive Review Log, Next Steps, react-hook-form (+2 more)
 
@@ -1913,39 +1925,39 @@ Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created
 Cohesion: 0.07
 Nodes (29): Accessibility, Behaviour, Components, EventProcessor, EventRouter, Realtime Module — Event Subscription & Processing, Requirement: Event Ordering, Requirement: Event Processing Pipeline (+21 more)
 
-### Community 406 - "Flow Inventory"
+### Community 406 - "Realtime Module — Event Subscription & Processing"
 Cohesion: 0.07
 Nodes (29): Accessibility, Behaviour, Components, EventProcessor, EventRouter, Realtime Module — Event Subscription & Processing, Requirement: Event Ordering, Requirement: Event Processing Pipeline (+21 more)
 
-### Community 407 - "Authentication — Frontend Specification"
+### Community 407 - "IssueForm.tsx"
 Cohesion: 0.31
 Nodes (7): issueFormFieldLabels, IssueFormSchema, IssueForm(), IssueFormProps, priorityOptions, statusOptions, IssueFormModalProps
 
-### Community 408 - "Behaviour"
+### Community 408 - "Flow Inventory"
 Cohesion: 0.07
 Nodes (27): Actors, Connection: WebSocket Lifecycle Management, Events: Notification Delivery, Events: Real-time Event Subscription, Flow Inventory, Navigation Graph, Navigation Graph, Navigation Graph (+19 more)
 
-### Community 409 - "Realtime Module — WebSocket Connection Management"
+### Community 409 - "Behaviour"
 Cohesion: 0.07
 Nodes (26): Accessibility, Behaviour, Components, OptimisticUpdateManager, OptimisticUpdateProvider, Realtime Module — Optimistic Updates, Requirement: Duplicate Action Prevention, Requirement: Failure Revert (+18 more)
 
-### Community 410 - "event-processor.ts"
+### Community 410 - "Behaviour"
 Cohesion: 0.05
 Nodes (38): Accessibility, Behaviour, CommentEvent handler, Components, CycleEvent handler, IssueEvent handler, NotificationEvent handler, ProjectEvent handler (+30 more)
 
-### Community 411 - "optimistic-manager.ts"
+### Community 411 - "realtime/lib/index.ts"
 Cohesion: 0.17
 Nodes (18): CyclesState, useCyclesStore, Cycle, Project, OptimisticUpdate, applyOptimistic(), ApplyOptimisticOptions, checkStaleUpdates() (+10 more)
 
-### Community 412 - "Realtime Module — Frontend Design"
+### Community 412 - "Realtime Module — WebSocket Connection Management"
 Cohesion: 0.07
 Nodes (26): Accessibility, Behaviour, Components, ConnectionStatusIndicator, Realtime Module — WebSocket Connection Management, Requirement: Automatic Reconnection, Requirement: Connection Establishment, Requirement: Connection States (+18 more)
 
-### Community 413 - "Frontend Design — Register User API Integration"
+### Community 413 - "Session Summary: Test Suite Optimization — Phase 4 Complete"
 Cohesion: 0.18
 Nodes (10): Active, Blocked, Commits (this session), Completed, Important Details, Next Move, Objective, Relevant Files (+2 more)
 
-### Community 414 - "Component Catalog"
+### Community 414 - "Behaviour"
 Cohesion: 0.07
 Nodes (26): Accessibility, Behaviour, Components, OptimisticUpdateManager, OptimisticUpdateProvider, Realtime Module — Optimistic Updates, Requirement: Duplicate Action Prevention, Requirement: Failure Revert (+18 more)
 
@@ -1953,39 +1965,39 @@ Nodes (26): Accessibility, Behaviour, Components, OptimisticUpdateManager, Optim
 Cohesion: 0.09
 Nodes (25): CommentEventPayload, CommentEventType, CycleEventPayload, CycleEventType, IssueEventPayload, IssueEventType, isValidEventType(), LabelEventPayload (+17 more)
 
-### Community 416 - "Architecture — Realtime Module (Frontend)"
+### Community 416 - "Realtime Module — WebSocket Connection Management"
 Cohesion: 0.07
 Nodes (26): Accessibility, Behaviour, Components, ConnectionStatusIndicator, Realtime Module — WebSocket Connection Management, Requirement: Automatic Reconnection, Requirement: Connection Establishment, Requirement: Connection States (+18 more)
 
-### Community 417 - "Deployment — Realtime Module (Frontend)"
+### Community 417 - "Realtime Module — Frontend Design"
 Cohesion: 0.10
 Nodes (19): Accessibility, API Client, Architecture Decisions, ARIA, Asset Map, Component Tree, Data Fetching, Error Handling (+11 more)
 
-### Community 418 - "Review — Realtime WebSocket Events"
+### Community 418 - "Component Catalog"
 Cohesion: 0.11
 Nodes (17): Color Semantics, Component Catalog, ConnectionErrorModal, ConnectionStatusIndicator, Design System — Realtime WebSocket & Events, IssueAssigneeSelector, IssueCard, Layout Tokens (+9 more)
 
-### Community 419 - "Realtime Module — WebSocket & Events"
+### Community 419 - "Architecture — Realtime Module (Frontend)"
 Cohesion: 0.17
 Nodes (11): Architecture — Realtime Module (Frontend), Component Design, Current Decisions, Data Flow, EventProcessor (singleton), OptimisticUpdateManager, Overview, Project Structure (+3 more)
 
-### Community 420 - "ADR Review Manifest — Realtime WebSocket Events"
+### Community 420 - "Deployment — Realtime Module (Frontend)"
 Cohesion: 0.17
 Nodes (11): Architecture, CI/CD, Deployment — Realtime Module (Frontend), Environment Variables, Frontend Deployment, Infrastructure, Monitoring, Notes (+3 more)
 
-### Community 421 - "Tasks — Realtime WebSocket Events (Frontend)"
+### Community 421 - "Review — Realtime WebSocket Events"
 Cohesion: 0.17
 Nodes (11): Artifact Completeness, Checklist, Edge Cases, event-subscription.md, Gaps Identified, Leakage Check, optimistic-updates.md, Recommendation (+3 more)
 
-### Community 422 - "Project Summary — Realtime WebSocket Events"
+### Community 422 - "Realtime Module — WebSocket & Events"
 Cohesion: 0.18
 Nodes (10): Affected modules, Impact, In scope, Motivation, Out of scope, Problem Statement, Realtime Module — WebSocket & Events, Risk considerations (+2 more)
 
-### Community 423 - "Stack — Realtime Module (Frontend)"
+### Community 423 - "ADR Review Manifest — Realtime WebSocket Events"
 Cohesion: 0.20
 Nodes (9): ADR-001: Use Native WebSocket API for Real-Time Transport, ADR-002: Use Zustand for All State Management, ADR-003: Custom Optimistic Update Manager with 30s Staleness, ADR Review Manifest — Realtime WebSocket Events, In-Force ADRs Reviewed, More Information, New Durable ADRs Created, Operational Decisions (Not Standalone ADRs) (+1 more)
 
-### Community 424 - "Tech Selection — Realtime Module (Frontend)"
+### Community 424 - "Tasks — Realtime WebSocket Events (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — Realtime WebSocket Events (Frontend), Validation
 
@@ -2009,31 +2021,31 @@ Nodes (6): Dev & Build, Frontend, Stack — Realtime Module (Frontend), State Ar
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Realtime Module (Frontend)
 
-### Community 430 - "Flow Inventory"
+### Community 430 - "Behaviour"
 Cohesion: 0.06
 Nodes (34): Accessibility, Behaviour, Components, Keyboard Module — Frontend Specification, KeyboardProvider, Requirement: Context Management, Requirement: Shortcut Customization, Requirement: Shortcut Execution (+26 more)
 
-### Community 431 - "ADR-001: Context-Specificity for Keyboard Shortcut Conflict Resolution"
+### Community 431 - "Flow Inventory"
 Cohesion: 0.07
 Nodes (27): Actors, Flow Inventory, Keyboard: Context Switching, Keyboard: Global Navigation, Keyboard: Issue Actions, Keyboard: List Navigation, Keyboard: Shortcut Customization, Keyboard: Shortcut Help (+19 more)
 
-### Community 432 - "Review — Keyboard Module (LAG-29)"
+### Community 432 - "ADR-001: Context-Specificity for Keyboard Shortcut Conflict Resolution"
 Cohesion: 0.11
 Nodes (17): ADR-001: Context-Specificity for Keyboard Shortcut Conflict Resolution, ADR Review Manifest, Confirmation, Consequences, Considered Options, Context and Problem Statement, Context-specificity hierarchy (detail > list > global), Decision Drivers (+9 more)
 
-### Community 433 - "ADR-002: Zustand + localStorage for Offline-First Shortcut Customizations"
+### Community 433 - "Review — Keyboard Module (LAG-29)"
 Cohesion: 0.13
 Nodes (14): Boundary Conditions, Checklist, Consistency, Design Artifacts, Edge Cases, Error Handling Gaps, Gaps Requiring Action Before Implementation, Leakage Check (+6 more)
 
-### Community 434 - "ADR-003: Server-Sent Events over WebSocket for Real-Time Updates"
+### Community 434 - "ADR-002: Zustand + localStorage for Offline-First Shortcut Customizations"
 Cohesion: 0.14
 Nodes (13): ADR-002: Zustand + localStorage for Offline-First Shortcut Customizations, Confirmation, Consequences, Considered Options, Context and Problem Statement, Decision Drivers, Decision Outcome, IndexedDB with sync (+5 more)
 
-### Community 435 - "Component Catalog"
+### Community 435 - "ADR-003: Server-Sent Events over WebSocket for Real-Time Updates"
 Cohesion: 0.14
 Nodes (13): ADR-003: Server-Sent Events over WebSocket for Real-Time Updates, Confirmation, Consequences, Considered Options, Context and Problem Statement, Decision Drivers, Decision Outcome, More Information (+5 more)
 
-### Community 436 - "Tasks — Keyboard Module (Frontend)"
+### Community 436 - "event-processor.ts"
 Cohesion: 0.12
 Nodes (22): cleanupEntityDedupStore(), cleanupSeenEvents(), clearDedupStore(), clearEntityDedupStore(), clearEventHandlers(), eventHandlers, getEntityKey(), isDuplicateEntityEvent() (+14 more)
 
@@ -2041,11 +2053,11 @@ Nodes (22): cleanupEntityDedupStore(), cleanupSeenEvents(), clearDedupStore(), c
 Cohesion: 0.32
 Nodes (6): getRouteContext(), isInputElement(), KeyboardContext, KeyboardContextValue, KeyboardProvider(), KeyboardProviderProps
 
-### Community 438 - "Comment"
+### Community 438 - "Issue"
 Cohesion: 0.29
 Nodes (7): FetchIssuesResponse, Issue, IssueCard(), IssueCardProps, priorityLabels, statusColors, IssueListProps
 
-### Community 439 - "eslint-plugin-boundaries"
+### Community 439 - "Component Catalog"
 Cohesion: 0.17
 Nodes (11): Color Semantics, Component Catalog, Design System — Keyboard Module, Kbd (Keyboard Key Label), Layout Tokens, List Item, Modal, Settings Row (+3 more)
 
@@ -2053,19 +2065,19 @@ Nodes (11): Color Semantics, Component Catalog, Design System — Keyboard Modul
 Cohesion: 0.50
 Nodes (3): SHORTCUT_TOAST_MESSAGES, ToastContainer(), ToastContainerProps
 
-### Community 445 - "@commitlint/cli"
+### Community 445 - "Tasks — Keyboard Module (Frontend)"
 Cohesion: 0.17
 Nodes (11): Components, E2E Tests, Integration, Integration Tests, Review, Routing, Scaffold, State & Data (+3 more)
 
-### Community 446 - "eslint-plugin-boundaries"
+### Community 446 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 447 - "eslint-plugin-react-hooks"
+### Community 447 - "Ticket 10: Keyboard Module — Shortcuts & Context"
 Cohesion: 0.33
 Nodes (5): Impact, Motivation, Problem Statement, Scope, Ticket 10: Keyboard Module — Shortcuts & Context
 
-### Community 448 - "husky"
+### Community 448 - "Component Catalog"
 Cohesion: 0.17
 Nodes (11): Alert, Button, Card, Color Semantics, Component Catalog, Design System — Linear App Clone, FormField, Input (+3 more)
 
@@ -2121,7 +2133,7 @@ Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created
 Cohesion: 0.24
 Nodes (7): initialFilters, initialIssuesState, IssuesState, useIssuesStore, IssueFilters, IssueFiltersProps, statusOptions
 
-### Community 463 - "MockWSEndpoint"
+### Community 463 - "event-router.ts"
 Cohesion: 0.14
 Nodes (20): WSEventType, createWSClient(), WSClientConfig, handleCommentEvent(), handleCycleEvent(), handleIssueEvent(), handleLabelEvent(), handleNotificationEvent() (+12 more)
 
@@ -2137,11 +2149,11 @@ Nodes (4): initialNotificationsState, NotificationItem, NotificationsState, useN
 Cohesion: 0.17
 Nodes (11): Actors, Flow Inventory, Layout Module: Dashboard View, Layout Module: Mobile-First Experience, Navigation Graph, Navigation Graph, Screen List, Screen List (+3 more)
 
-### Community 468 - "Tasks — Register User API Integration (Frontend)"
+### Community 468 - "Authentication: Login"
 Cohesion: 0.17
 Nodes (11): Actors, Authentication: Login, Authentication: User Registration, Flow Inventory, Navigation Graph, Navigation Graph, Screen List, Screen List (+3 more)
 
-### Community 469 - "scripts"
+### Community 469 - "useIssueBoard.ts"
 Cohesion: 0.24
 Nodes (6): WSEvent, TODO: Send API request to persist the change, UseIssueBoardOptions, UseIssueBoardReturn, BoardColumnProps, BoardIssue
 
@@ -2173,13 +2185,17 @@ Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review
 Cohesion: 0.33
 Nodes (5): Impact, Layout Module — Responsive & Theme Finalization, Motivation, Problem Statement, Scope
 
-### Community 478 - "@testing-library/react"
+### Community 478 - "realtime/ui/ToastContainer.tsx"
 Cohesion: 0.29
 Nodes (4): POSITION_STYLES, Toast, TOAST_STYLES, ToastContainerProps
 
-### Community 479 - "husky"
+### Community 479 - "NotificationItem.tsx"
 Cohesion: 0.40
 Nodes (3): NotificationItemData, NotificationItemProps, TYPE_ICONS
+
+### Community 486 - "List Projects — Frontend Specification"
+Cohesion: 0.09
+Nodes (22): Accessibility, Behaviour, Components, List Projects — Frontend Specification, ProjectCard, ProjectList, Requirement: Fetch projects on mount, Requirement: Filter projects by status (+14 more)
 
 ### Community 488 - "Behaviour"
 Cohesion: 0.05
@@ -2201,39 +2217,43 @@ Nodes (24): Accessibility, Architecture Decisions, ARIA, Asset Map, Client → S
 Cohesion: 0.08
 Nodes (23): Actors, Flow Inventory, Navigation Graph, Navigation Graph, Navigation Graph, Navigation Graph, Navigation Graph, Screen List (+15 more)
 
-### Community 494 - "Component Catalog"
+### Community 494 - "package.json"
 Cohesion: 0.17
 Nodes (12): commitlint, extends, lint-staged, *.{json,md,css}, *.{ts,tsx}, name, private, type (+4 more)
 
-### Community 495 - "Review — WebSocket Frontend Alignment"
+### Community 495 - "scripts"
 Cohesion: 0.15
 Nodes (13): scripts, build, dev, format, format:check, lint, lint:fix, prepare (+5 more)
 
-### Community 496 - "Tasks — WebSocket Frontend Alignment (Frontend)"
+### Community 496 - "Component Catalog"
 Cohesion: 0.17
 Nodes (11): Color Semantics, Component Catalog, ConnectionErrorModal, ConnectionStatusIndicator, Design System — Linear App Clone, Layout Tokens, ReconnectionToast, RevertToast (+3 more)
 
-### Community 497 - "Tech Selection — Linear App Clone (Frontend)"
+### Community 497 - "Review — WebSocket Frontend Alignment"
 Cohesion: 0.20
 Nodes (9): Blockers, Checklist, Deviations from Design, Edge Cases, Gaps Identified, Leakage Check, Review — WebSocket Frontend Alignment, Spec Compliance (+1 more)
 
-### Community 498 - "WebSocket Frontend: Align Client with AsyncAPI Specification"
+### Community 498 - "Tasks — WebSocket Frontend Alignment (Frontend)"
 Cohesion: 0.22
 Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — WebSocket Frontend Alignment (Frontend), Validation
 
-### Community 499 - "eslint-plugin-boundaries"
+### Community 499 - "Tech Selection — Linear App Clone (Frontend)"
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 500 - "eslint-plugin-react-hooks"
+### Community 500 - "WebSocket Frontend: Align Client with AsyncAPI Specification"
 Cohesion: 0.33
 Nodes (5): Impact, Motivation, Problem Statement, Scope, WebSocket Frontend: Align Client with AsyncAPI Specification
+
+### Community 503 - "Component Catalog"
+Cohesion: 0.17
+Nodes (11): Color Semantics, Component Catalog, Design System — Linear App Clone Frontend, EmptyState, ErrorMessage, Layout Tokens, LoadingSpinner, ProjectCard (+3 more)
 
 ### Community 504 - "api/auth.ts"
 Cohesion: 0.33
 Nodes (3): RegisterError, RegisterPayload, RegisterResponse
 
-### Community 505 - "ADR Review Manifest"
+### Community 505 - "Tasks — Register User API Integration (Frontend)"
 Cohesion: 0.29
 Nodes (6): Components, Review, Routing, Scaffold, Tasks — Register User API Integration (Frontend), Validation
 
@@ -2249,7 +2269,7 @@ Nodes (3): Key Commands, RTK (Rust Token Killer) - Token-Optimized Commands, Rul
 Cohesion: 0.29
 Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
 
-### Community 511 - "MockWebSocket"
+### Community 511 - "Comment"
 Cohesion: 0.46
 Nodes (6): Comment, CommentCard(), CommentCardProps, formatTimestamp(), initials(), CommentListProps
 
@@ -2265,29 +2285,57 @@ Nodes (5): Checklist, Edge Cases, Leakage Check, Review — Register User API In
 Cohesion: 0.40
 Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
 
-### Community 516 - "IssueAssigneeSelector.tsx"
+### Community 516 - "realtime/ui/index.ts"
 Cohesion: 0.09
 Nodes (24): AutoUpdateToggle(), ConnectionErrorModal(), ConnectionErrorModalProps, ConnectionStatusIndicator(), ConnectionStatusIndicatorProps, STATUS_CONFIG, IssueAssigneeSelector(), IssueAssigneeSelectorProps (+16 more)
 
+### Community 517 - "List Projects — Frontend Design"
+Cohesion: 0.20
+Nodes (9): Accessibility, Architecture Decisions, Asset Map, Component Tree, Data Fetching, List Projects — Frontend Design, Routing, State Management (+1 more)
+
+### Community 518 - "Tasks — List Projects API (Frontend)"
+Cohesion: 0.22
+Nodes (8): Components, Integration, Review, Routing, Scaffold, State & Data, Tasks — List Projects API (Frontend), Validation
+
+### Community 519 - "Projects: List Projects"
+Cohesion: 0.25
+Nodes (7): Actors, Flow Inventory, Navigation Graph, Projects: List Projects, Screen List, State Transitions, User Flows — List Projects API
+
+### Community 520 - "Tech Selection — Linear App Clone (Frontend)"
+Cohesion: 0.29
+Nodes (6): ADR References, Decision Summary, Generated Files, Interactive Review Log, Next Steps, Tech Selection — Linear App Clone (Frontend)
+
+### Community 521 - "List Projects API"
+Cohesion: 0.33
+Nodes (5): Impact, List Projects API, Motivation, Problem Statement, Scope
+
+### Community 522 - "Review — List Projects API (Frontend)"
+Cohesion: 0.33
+Nodes (5): Checklist, Edge Cases, Leakage Check, Review — List Projects API (Frontend), Spec Compliance
+
+### Community 523 - "ADR Review Manifest"
+Cohesion: 0.40
+Nodes (4): ADR Review Manifest, In-Force ADRs Reviewed, New Durable ADRs Created, Review Summary
+
 ## Knowledge Gaps
-- **3571 isolated node(s):** `1. CodeGraph + Graphify (Code Intelligence)`, `2. Memory (Persistent Knowledge)`, `3. RTK - Optimized Commands (Token Savings)`, `Git (59-80% savings)`, `Files & Search (60-75% savings)` (+3566 more)
+- **3634 isolated node(s):** `ProjectsState`, `STATUS_OPTIONS`, `mockProjects`, `ProjectListParams`, `PaginatedResponse` (+3629 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **54 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `dependencies` connect `Behaviour` to `Component Catalog`?**
+- **Why does `MockWebSocket` connect `MockWebSocket` to `event-router.ts`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **Why does `IssueCard()` connect `IssueAssigneeSelector.tsx` to `optimistic-manager.ts`, `Tasks — Keyboard Module (Frontend)`, `scripts`?**
+- **Why does `MockWSEndpoint` connect `MockWSEndpoint` to `event-processor.ts`?**
   _High betweenness centrality (0.000) - this node is a cross-community bridge._
-- **What connects `1. CodeGraph + Graphify (Code Intelligence)`, `2. Memory (Persistent Knowledge)`, `3. RTK - Optimized Commands (Token Savings)` to the rest of the system?**
-  _3571 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `Behaviour` be split into smaller, more focused modules?**
+- **Why does `devDependencies` connect `devDependencies` to `eslint-plugin-react`, `msw`, `@tailwindcss/vite`, `jsdom`, `lint-staged`, `vitest`, `@playwright/test`, `@testing-library/jest-dom`, `@testing-library/user-event`, `package.json`, `typescript-eslint`, `@commitlint/config-conventional`, `eslint`, `eslint-config-prettier`, `eslint-import-resolver-typescript`, `@eslint/js`?**
+  _High betweenness centrality (0.000) - this node is a cross-community bridge._
+- **What connects `ProjectsState`, `STATUS_OPTIONS`, `mockProjects` to the rest of the system?**
+  _3634 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Should `errors/index.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.0694579681921454 - nodes in this community are weakly interconnected._
-- **Should `Behaviour` be split into smaller, more focused modules?**
+- **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.08695652173913043 - nodes in this community are weakly interconnected._
-- **Should `Component Catalog` be split into smaller, more focused modules?**
+- **Should `shared/ui/index.ts` be split into smaller, more focused modules?**
   _Cohesion score 0.060129509713228495 - nodes in this community are weakly interconnected._
-- **Should `Flow Inventory` be split into smaller, more focused modules?**
-  _Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected._
