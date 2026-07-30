@@ -1,0 +1,265 @@
+# Wireframe: ProjectsPage + CreateProjectDialog
+
+## Changelog
+
+- 1.0.1 — Upgrade loading state from bare Spinner to skeleton card grid (PATCH).
+- 1.0.0 — Initial wireframe for create project change.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>...▼]` | Dropdown |
+| `_______` | Text input / editable field | `[X]` | Close / dismiss |
+| `⚠` | Warning / due date | `💬N` | N comments |
+| `👤` | User / mention | `📎` | Attachment |
+
+---
+
+## Screen Inventory
+
+| Screen | States | Wireframe Section |
+|--------|--------|-------------------|
+| ProjectsPage | populated, loading, empty, error | Section 1 |
+| CreateProjectDialog | open (idle), open (submitting), open (error) | Section 2 |
+
+---
+
+## Section 1 — ProjectsPage
+
+### Purpose & Flow Context
+
+Lists projects for the selected team with status filtering and pagination. Entry point for the create project flow via the "New Project" button. User arrives from nav sidebar; exits to ProjectDetailPage on card click or to CreateProjectDialog on "New Project".
+
+### Layout Regions
+
+**Grid**: 12-column. Spacing cadence: 8px.
+
+**App-shell**: Shared header + sidebar + main container. Inherits from system shell.
+
+**Content hierarchy**:
+1. Page title + actions (h1 "Projects", status filter, "New Project" button)
+2. Error banner (conditional)
+3. Project card grid
+4. Pagination sentinel / scroll trigger
+
+```
++------------------------------------------------------------------+
+|  [Header — shared app-shell]                                     |
++------------------------------------------------------------------+
+|  +--------------------------------------------------------------+|
+|  |  # Projects                    [>Status ▼]  [+ New Project]  ||
+|  +--------------------------------------------------------------+|
+|                                                                |
+|  +--------------------------------------------------------------+|
+|  |  [ErrorBanner] if error           [Retry]                    ||
+|  +--------------------------------------------------------------+|
+|                                                                |
+|  +-- ProjectCard ---+  +-- ProjectCard ---+  +-- ProjectCard -+|
+|  |  [icon] [name]   |  |  [icon] [name]   |  |  [icon] [name] ||
+|  |  Status badge    |  |  Status badge    |  |  Status badge   ||
+|  |  Progress bar    |  |  Progress bar    |  |  Progress bar   ||
+|  +------------------+  +------------------+  +------------------+|
+|                                                                |
+|  +-- ProjectCard ---+  +-- ProjectCard ---+                     |
+|  |  [icon] [name]   |  |  [icon] [name]   |                     |
+|  |  Status badge    |  |  Status badge    |                     |
+|  |  Progress bar    |  |  Progress bar    |                     |
+|  +------------------+  +------------------+                     |
+|                                                                |
+|              [Spinner — loading more...]                        |
+|         "No more projects to show" (when hasMore=false)         |
++------------------------------------------------------------------+
+```
+
+### Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| "New Project" button | Button (primary, md) | Opens CreateProjectDialog | Disabled when no team selected |
+| Status filter | Select | Filters projects by status | "All" option clears filter |
+| Project card | ProjectCard | Navigate to `/projects/{id}` on click | Truncation on long names |
+| Error state | ErrorBanner + Button(retry) | Shows error + retry action | Inline, not blocking |
+| Loading (initial) | SkeletonCard (placeholder) | Skeleton card grid mirroring populated layout | Shows only when projects empty |
+| Loading (more) | Spinner (md) | At bottom of list | Shown during pagination |
+| Empty state | EmptyState | Icon + title + description | Distinguishes filter-empty vs first-run |
+| Scroll sentinel | `<div>` (invisible) | Triggers `fetchMore` via IntersectionObserver | Hidden when hasMore=false |
+
+### Data Display
+
+**Card grid** (3 cols lg, 2 cols sm, 1 col mobile). Each card shows: icon, name, status badge, progress bar. Click navigates to detail.
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Projects" | Page title | h1 |
+| "New Project" | Primary CTA button | Consistent terminology across screens |
+| Filter by status | Filter dropdown placeholder | — |
+| "Create your first project to get started" | First-run empty state | CTA leads to create dialog |
+| "No projects match this filter" | Filtered-empty state | Guides to clear filter |
+
+### States
+
+#### Populated (Default)
+
+Card grid with project cards, filter dropdown, "New Project" button visible.
+
+#### Loading (Initial)
+
+Skeleton card grid mirroring the populated layout — 3 placeholder cards per row on desktop, 2 on tablet, 1 on mobile. Each skeleton card shows: gray rounded rect for icon, 2 skeleton text lines for name + description, skeleton bar for progress. Title area and filter dropdown visible but disabled skeuomorphs.
+
+```
++------------------------------------------------------------------+
+|  # Projects                    [>Status ▼]  [+ New Project]      |
++------------------------------------------------------------------+
+|                                                                    |
+|  +-- SkeletonCard -+  +-- SkeletonCard -+  +-- SkeletonCard ---+ |
+|  |  [====icon===]  |  |  [====icon===]  |  |  [====icon===]    | |
+|  |  [===name====]  |  |  [===name====]  |  |  [===name====]    | |
+|  |  [==descrip==]  |  |  [==descrip==]  |  |  [==descrip==]    | |
+|  |  [===prog===]   |  |  [===prog===]   |  |  [===prog===]     | |
+|  +------------------+  +------------------+  +-------------------+ |
++------------------------------------------------------------------+
+```
+
+#### Loading (More)
+
+Card grid visible. Spinner below cards. Scroll sentinel observed.
+
+#### Empty (First Run)
+
+EmptyState with icon, "No projects yet", "Create your first project to get started".
+
+#### Empty (Filtered)
+
+EmptyState with search icon, "No projects match this filter", "Try a different status filter."
+
+#### Error
+
+Inline ErrorBanner above card area with message + Retry button.
+
+#### Success (Post-Creation)
+
+New project appears at top of card grid (handled via store update). Success toast shown.
+
+---
+
+## Section 2 — CreateProjectDialog
+
+### Purpose & Flow Context
+
+Modal dialog for creating a new project. Opened from ProjectsPage "New Project" button. Closed on cancel, success, or Escape. On success, project is prepended to the list and a success toast appears.
+
+### Content hierarchy
+1. Modal title "Create Project"
+2. Form fields (teamId hidden, name required, description optional, startDate/targetDate optional)
+3. Actions: Cancel (secondary) + Create Project (primary)
+4. Server error (conditional, form-level)
+
+```
++------------------------------------------------------------------+
+|  (backdrop bg-black/50 covering entire viewport)                 |
+|                                                                |
+|  +-- Modal max-w-lg ------------------------------------------+ |
+|  |  +-- header ---------------------------------------------+ | |
+|  |  |  # Create Project                           [X] close | | |
+|  |  +--------------------------------------------------------+ | |
+|  |                                                             | |
+|  |  +-- form body -------------------------------------------+ | |
+|  |  |                                                         | | |
+|  |  |  Name *                                                 | | |
+|  |  |  ___________________________________________________  | | |
+|  |  |                                                         | | |
+|  |  |  Description                                            | | |
+|  |  |  ___________________________________________________  | | |
+|  |  |  ___________________________________________________  | | |
+|  |  |                                                         | | |
+|  |  |  Start Date                                             | | |
+|  |  |  ___________________________________________________  | | |
+|  |  |                                                         | | |
+|  |  |  Target Date                                            | | |
+|  |  |  ___________________________________________________  | | |
+|  |  |                                                         | | |
+|  |  |  [ErrorBanner] — form-level server error (conditional)  | | |
+|  |  |                                                         | | |
+|  |  |  [Cancel]                [Create Project]               | | |
+|  |  +--------------------------------------------------------+ | |
+|  +-------------------------------------------------------------+ |
++------------------------------------------------------------------+
+```
+
+### Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Modal wrapper | Modal | Opens with animation, focus trap, Escape closes | Backdrop clicks close |
+| Name input | TextInput with label | Required, 1-255 chars, inline error | Show error on blur + submit |
+| Description | Textarea | Optional, max 1000 chars, char counter | — |
+| Start Date | TextInput (type="date") | Optional ISO date | Browser native date picker |
+| Target Date | TextInput (type="date") | Optional ISO date | Browser native date picker |
+| Error display | ErrorBanner | Form-level server error (400/422) | Inline below fields |
+| Cancel button | Button (secondary, md) | Closes modal, no creation | — |
+| Submit button | Button (primary, md, loading) | Submits form, shows Spinner during loading | Disabled when submitting |
+| Toast (success) | Toast (success) | "Project created" after success | Auto-dismiss 5s |
+
+### Data Display
+
+Standard form layout. No data display — this is a creation form.
+
+### Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| "Create Project" | Modal title + submit button | Consistent label |
+| "Name *" | Required field label | Asterisk indicates required |
+| "Description" | Optional field label | — |
+| "Start Date" | Optional date field label | — |
+| "Target Date" | Optional date field label | — |
+| "Cancel" | Secondary action | Dismiss without saving |
+| "Project created" | Success toast | Brief, positive |
+
+### States
+
+#### Open (Idle)
+
+Empty form with all fields ready. Submit button enabled. Cancel button visible.
+
+#### Open (Submitting)
+
+Submit button shows loading spinner (Spinner inside Button). Fields disabled. Cancel still enabled but ideally disabled.
+
+#### Open (Error — Field Validation)
+
+Inline validation errors below each field. Name required, max length, date format errors. Submit button re-enabled after user edits.
+
+#### Open (Error — Server Error)
+
+Form-level ErrorBanner with server message (400 validation, 422 business rule). Fields remain editable. Submit button re-enabled.
+
+#### Success
+
+Modal closes. New project appears at top of ProjectsPage list. Toast "Project created" appears.
+
+### Responsive
+
+Same as system Modal — max-w-lg centered, full-width on mobile with padding.
+
+### Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | Modal is in `main` region of parent page |
+| Heading order | "Create Project" is h2 (under page h1) |
+| Focus order | Tab: Name → Description → Start Date → Target Date → Cancel → Create Project |
+| Focus trap | Modal traps focus when open; restored on close |
+| Escape | Closes modal |
+| Accessible names | Close button `aria-label="Close"`, submit button labeled |
+| Keyboard operability | Tab between fields, Enter submits, Escape closes |
+| Target size | All interactive targets ≥24×24 CSS px |
+
+## Assumptions / Open Questions
+
+1. Team ID is currently hardcoded (`default-team-id`). The create project flow assumes a team context is available.
