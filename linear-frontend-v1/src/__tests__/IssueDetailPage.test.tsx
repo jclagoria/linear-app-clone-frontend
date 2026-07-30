@@ -28,9 +28,12 @@ vi.mock('@/entities/label/api', () => ({
 }))
 
 describe('IssueDetailPage integration', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     resetStores()
     useIssuesStore.setState({ issues: [mockIssue] })
+    // Flush microtask/macrotask queues so in-flight async effects from the
+    // previous test (e.g. fetchComments) settle before this test starts.
+    await new Promise((r) => setTimeout(r, 0))
   })
 
   it('loads issue and shows status', async () => {

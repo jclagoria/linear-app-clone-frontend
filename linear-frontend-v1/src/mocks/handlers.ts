@@ -158,6 +158,39 @@ export const handlers = [
     return HttpResponse.json({ data: newIssue }, { status: 201 })
   }),
 
+  // ── Teams ───────────────────────────────────────────────────────────
+
+  http.get(`${API_BASE}/me/teams`, async ({ request }) => {
+    const authHeader = request.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return HttpResponse.json(
+        { error: { code: 'UNAUTHORIZED', message: 'Unauthorized' } },
+        { status: 401 },
+      )
+    }
+
+    return HttpResponse.json({
+      data: {
+        teams: [
+          {
+            id: 'team-1',
+            name: 'Engineering',
+            key: 'ENG',
+            orgId: 'org-1',
+            orgName: 'Acme Corp',
+          },
+          {
+            id: 'team-2',
+            name: 'Design',
+            key: 'DSN',
+            orgId: 'org-1',
+            orgName: 'Acme Corp',
+          },
+        ],
+      },
+    })
+  }),
+
   // ── Error Simulation Endpoints ──────────────────────────────────────
 
   // ── Comments ────────────────────────────────────────────────────────

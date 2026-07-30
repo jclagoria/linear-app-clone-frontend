@@ -1,7 +1,6 @@
 import { useState, useCallback, useRef } from 'react'
 import { Outlet } from 'react-router-dom'
-import { Sidebar } from '@/widgets/Sidebar/ui/Sidebar'
-import { MobileSidebarOverlay } from '@/widgets/Sidebar/ui/MobileSidebarOverlay'
+import { OrgSidebar } from '@/widgets/OrgSidebar'
 import { Header } from '@/widgets/Header/ui/Header'
 import { useUIStore } from '@/shared/stores/uiStore'
 import { useWebSocketStore } from '@/shared/stores/websocketStore'
@@ -45,10 +44,11 @@ export function AppLayout() {
       <KeyboardToastContainer>
         <div className="flex min-h-screen bg-[var(--bg-primary)]">
           {/* Desktop sidebar */}
-          <Sidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
+          <OrgSidebar collapsed={sidebarCollapsed} onToggle={toggleSidebar} />
 
           {/* Mobile sidebar overlay */}
-          <MobileSidebarOverlay
+          <OrgSidebar
+            mobile
             isOpen={isMobileSidebarOpen}
             onClose={handleMobileSidebarClose}
           />
