@@ -35,7 +35,7 @@ describe('Layout Integration', () => {
   it('renders sidebar, header, and outlet content', () => {
     renderWithRouter(<LayoutWithRoutes />, { initialEntries: ['/'] })
 
-    const navElements = screen.getAllByLabelText('Main navigation')
+    const navElements = screen.getAllByLabelText('Organization navigation')
     expect(navElements.length).toBeGreaterThanOrEqual(1)
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('main')).toBeInTheDocument()

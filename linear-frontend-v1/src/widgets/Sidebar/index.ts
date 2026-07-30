@@ -1,6 +1,3 @@
-export { Sidebar } from './ui/Sidebar'
 export { NavLink } from './ui/NavLink'
-export { TeamSelector } from './ui/TeamSelector'
 export { HamburgerButton } from './ui/HamburgerButton'
-export { MobileSidebarOverlay } from './ui/MobileSidebarOverlay'
 export { useActiveRoute } from './model/useActiveRoute'

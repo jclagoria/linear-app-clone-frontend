@@ -1,0 +1,188 @@
+# Wireframe: App Shell — Org Sidebar Region
+
+## Purpose & Flow Context
+
+User views and navigates their teams grouped by organization after authentication. Entry: auth success → app shell mounts. Exit: team click → navigated; 401 → login redirect.
+
+---
+
+## Notation Legend
+
+| Symbol | Meaning | Symbol | Meaning |
+|--------|---------|--------|---------|
+| `[...]` | Button / interactive element | `[>▼]` | Collapsible header |
+| `_______` | Text / editable field | `[X]` | Close / dismiss |
+| `[ Retry ]` | Action button | `(K)` | Team key badge |
+| `[>▼] Org` | Collapsible org, expanded state | `[>▶] Org` | Collapsible org, collapsed state |
+| `▌ Item` | Active item indicator | `...` | Truncated text |
+
+## Accessibility — Shared Conventions
+
+| Concern | Convention |
+|---------|------------|
+| Landmarks | `aside` for sidebar, `main` for content |
+| Heading order | h1 in main area; h2 for org section headers |
+| Accessible names | Icon-only controls get `aria-label` |
+| Keyboard | Tab between sidebar and main, Arrow keys within tree |
+| Target size | ≥24×24 CSS px reservation |
+
+---
+
+## Layout Regions
+
+**Grid**: Main content 1fr, sidebar 280px fixed. Spacing cadence: 8px.
+
+**App-shell**: Shared header + sidebar + main container. Sidebar regions:
+
+| Region | Content | Notes |
+|--------|---------|-------|
+| Header | Logo, global nav, user menu | Shared across all authenticated screens |
+| Sidebar | Org sections / skeleton / empty / error | Fixed left panel, scrollable independently |
+| Main | Active team/entity content | Right of sidebar |
+
+**Content hierarchy** (by visual priority):
+1. Active team highlight — user's current context
+2. Org section headers — navigational grouping
+3. Team items — individual team access
+
+```
++------------------------------------------------------------------+
+|  Header: Logo / [Search] / [Notifications] / [UserMenu]         |
++------------------------------------------------------------------+
+|                    |                                                |
+|  +--------------+  |                                                |
+|  | SIDEBAR      |  |  MAIN CONTENT AREA                            |
+|  | 280px fixed  |  |                                                |
+|  |              |  |                                                |
+|  | [>▼] Org 1   |  |                                                |
+|  |   ▌ Team A   |  |                                                |
+|  |     Team B   |  |                                                |
+|  |              |  |                                                |
+|  | [>▶] Org 2   |  |                                                |
+|  |              |  |                                                |
+|  +--------------+  |                                                |
+|                    |                                                |
++------------------------------------------------------------------+
+```
+
+*Legend: [{Button}] [Input] [#Heading] [>Dropdown] [Avatar]*
+
+## Components & Affordances
+
+| Element | DS Component | Behavior | Edge Cases |
+|---------|-------------|----------|------------|
+| Org section header | OrgSection | Click toggles collapse; chevron rotates | Single-section: collapsed by default |
+| Team item | TeamItem | Click → navigate to team view; highlight as active | Long name: truncate with ellipsis |
+| Team key badge | TeamItem (badge part) | Shows uppercase team key | 3+ char keys: shorten to fit 40px |
+| Active indicator | TeamItem (active variant) | Left accent bar + highlighted bg | None |
+| [ Retry ] | Button (secondary variant) | Re-fetches `/me/teams` | Double-click: debounce |
+| Skeleton blocks | SkeletonLoader | Animated shimmer mimicking org/team rows | None; non-interactive |
+| Empty message | EmptyState | "You are not a member of any team" + Button CTA | None; no filter empty |
+
+## Data Display
+
+List layout under each org section header. Each org section maps to a `<ul>`, each team to an `<li>` with name + key badge. No pagination needed (teams count is bounded). No sort — order from API is preserved.
+
+## Content & Microcopy Intent
+
+| Slot | Intent | Notes |
+|------|--------|-------|
+| Org section header | Organization name, displayed as section label | Raw orgName from API; no mapping needed |
+| Team name | Human-readable team identifier | Full name, not key |
+| Team key badge | Short code badge for quick recognition | Uppercase, mono-style |
+| Loading skeleton | Visual placeholder — "Loading your teams…" after 2s | No icon needed |
+| Error message | "Could not load teams." — plain language, no codes | Identical for 5xx and timeout |
+| [ Retry ] | Recover action — re-fetch the team list | |
+| Empty title | "You are not a member of any team" — no blame | |
+| Empty CTA | "Create a team" — guides to next action | Stub for out-of-scope flow |
+
+## States
+
+### Populated (Default)
+
+Sidebar shows one or more org sections. Each org header is an OrgSection component with chevron and org name. Team items are indented under each section. Active team has left accent bar and highlighted background. If single org: section collapsed by default. If multi-org: all expanded on first load.
+
+```
++-------------------------------+
+| [>▼] Lagoria Org              |
+|   ▌ Linear App   (DEV)        |
+|     Backend API  (API)        |
+|     Web Client   (WEB)        |
+|                               |
+| [>▶] Personal Projects        |
+|                               |
++-------------------------------+
+```
+
+### Empty
+
+User has zero team memberships. Centered EmptyState in the sidebar.
+
+```
++-------------------------------+
+|                               |
+|       [Illustration]          |
+|                               |
+|  You are not a member         |
+|  of any team                  |
+|                               |
+|  [ Create a team ]            |
+|                               |
++-------------------------------+
+```
+
+### Loading
+
+SkeletonLoader fills sidebar with 3-4 pulsing placeholder lines mimicking org/team row shapes. After 2s, "Loading your teams…" appears below the skeleton. Non-interactive.
+
+```
++-------------------------------+
+|  ████████████████████         |
+|    ██████████████             |
+|    ██████████████             |
+|                               |
+|  ████████████████████         |
+|    ██████████████             |
+|    ██████████████             |
+|                               |
+|    Loading your teams…        |
++-------------------------------+
+```
+
+### Error
+
+Inline ErrorBanner replaces the previous content. Message: "Could not load teams." Retry button re-fetches. Auto-focused onto retry. Same treatment for 5xx and timeout.
+
+```
++-------------------------------+
+|  ⚠ Could not load teams.      |
+|  [ Retry ]                    |
++-------------------------------+
+```
+
+### 401 / Expired Token
+
+No inline UI. Router intercepts 401 response → redirect to `/login`. Sidebar unmounts.
+
+## Responsive
+
+| Breakpoint | Changes |
+|------------|---------|
+| Desktop (>1024px) | Full layout: sidebar visible, 280px fixed |
+
+Mobile and tablet responsiveness is out of scope for this change.
+
+## Accessibility — Screen Composition
+
+| Concern | Implementation |
+|---------|----------------|
+| Landmarks | `<header>` for top nav, `<aside>` with `aria-label="Organization navigation"` for sidebar, `<main>` for content |
+| Heading order | h1 in main content; org sections use `<h2>` within aside |
+| Reading / Focus order | Tab: header → sidebar (first item) → main content. Arrow Up/Down within sidebar tree. Conditional reveal: error banner → retry button receives focus on appear |
+| Accessible names | Skeleton: `aria-label="Loading teams"`; sidebar: `aria-label="Organization navigation"` |
+| Keyboard operability | Tab between landmarks. In sidebar: Arrow keys navigate tree items. Enter/Space selects team. Escape collapses org section (if focused on header). |
+| Target size | ≥24×24 CSS px on all team items, buttons, toggle headers |
+| Focus not obscured | Sticky header doesn't overlap focused sidebar item |
+| Non-color intent | Active team has left accent bar + background change + `aria-current="page"`; error banner has icon + text |
+
+*Defer to design-system: pixel contrast, focus-appearance, per-component target-size/keyboard.*

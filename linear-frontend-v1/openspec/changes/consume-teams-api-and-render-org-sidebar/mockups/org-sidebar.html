@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Org Sidebar — Mockup</title>
+  <style>
+    :root {
+      --color-primary: #2563EB;
+      --color-surface: #F8FAFC;
+      --color-surface-elevated: #FFFFFF;
+      --color-border: #E2E8F0;
+      --color-text-primary: #0F172A;
+      --color-text-secondary: #64748B;
+      --sidebar-bg: #F1F5F9;
+      --sidebar-hover: #E2E8F0;
+      --sidebar-active-bg: #DBEAFE;
+      --sidebar-active-text: #1E40AF;
+      --badge-bg: #E2E8F0;
+      --badge-text: #475569;
+      --font-family: Inter, system-ui, -apple-system, sans-serif;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --radius-md: 6px;
+      --radius-sm: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-family); background: var(--color-surface); color: var(--color-text-primary); }
+
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .app-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 48px;
+      background: var(--color-surface-elevated);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-4);
+      z-index: 10;
+    }
+    .app-header .logo { font-weight: 700; font-size: 16px; color: var(--color-text-primary); margin-right: auto; }
+    .app-header .header-actions { display: flex; gap: var(--space-3); }
+    .app-header .header-actions span { color: var(--color-text-secondary); cursor: default; font-size: 14px; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      min-width: 280px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--color-border);
+      margin-top: 48px;
+      padding: var(--space-2);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      margin-top: 48px;
+      padding: var(--space-4);
+      background: var(--color-surface);
+    }
+
+    /* Org section */
+    .org-section { margin-bottom: var(--space-1); }
+    .org-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      padding: var(--space-2) var(--space-3);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .org-header:hover { background: var(--sidebar-hover); }
+    .org-header .chevron {
+      font-size: 10px;
+      transition: transform 0.15s;
+      width: 12px;
+      display: inline-block;
+    }
+    .org-header .chevron.expanded { transform: rotate(90deg); }
+    .org-team-list { display: flex; flex-direction: column; }
+
+    /* Team item */
+    .team-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3) var(--space-2) var(--space-4);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid transparent;
+      font-size: 14px;
+    }
+    .team-item:hover { background: var(--sidebar-hover); }
+    .team-item.active {
+      background: var(--sidebar-active-bg);
+      border-left-color: var(--color-primary);
+      color: var(--sidebar-active-text);
+      font-weight: 500;
+    }
+    .team-item .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .team-item .badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      padding: 1px 6px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.3px;
+    }
+
+    /* States */
+    .sidebar-state {
+      display: none;
+      height: 100%;
+    }
+    .sidebar-state.active { display: flex; flex-direction: column; gap: var(--space-1); }
+
+    /* Skeleton */
+    .skeleton-line {
+      height: 14px;
+      background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: var(--radius-sm);
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .loading-text {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      text-align: center;
+      margin-top: var(--space-4);
+    }
+
+    /* Error banner */
+    .error-banner {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: #991B1B;
+    }
+    .error-banner .retry-btn {
+      margin-left: auto;
+      padding: var(--space-1) var(--space-3);
+      background: var(--color-surface-elevated);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .error-banner .retry-btn:hover { background: var(--sidebar-hover); }
+
+    /* Empty state */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: var(--space-4);
+    }
+    .empty-state .icon { font-size: 40px; margin-bottom: var(--space-3); opacity: 0.4; }
+    .empty-state h3 { font-size: 15px; font-weight: 600; margin-bottom: var(--space-2); }
+    .empty-state p { font-size: 13px; color: var(--color-text-secondary); margin-bottom: var(--space-4); }
+    .empty-state .cta-btn {
+      padding: var(--space-2) var(--space-4);
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .empty-state .cta-btn:hover { opacity: 0.9; }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 0;
+      left: 0; right: 0;
+      background: var(--color-surface-elevated);
+      border-top: 1px solid var(--color-border);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+      z-index: 20;
+    }
+    .controls button {
+      padding: var(--space-1) var(--space-3);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-elevated);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .controls button:hover { background: var(--sidebar-hover); }
+    .controls button.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+    .controls label { font-size: 13px; color: var(--color-text-secondary); margin-right: var(--space-1); }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="app-shell">
+    <!-- Header -->
+    <header class="app-header">
+      <span class="logo">Linear Clone</span>
+      <div class="header-actions">
+        <span>🔍</span>
+        <span>🔔</span>
+        <span>👤</span>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Organization navigation">
+      <!-- Populated state -->
+      <div id="state-populated" class="sidebar-state active">
+        <div class="org-section">
+          <button class="org-header" onclick="toggleOrg(this)">
+            <span class="chevron expanded">▶</span>
+            Lagoria Org
+          </button>
+          <div class="org-team-list">
+            <button class="team-item active" onclick="selectTeam(this)">
+              <span class="name">Linear App Clone</span>
+              <span class="badge">DEV</span>
+            </button>
+            <button class="team-item" onclick="selectTeam(this)">
+              <span class="name">Backend API</span>
+              <span class="badge">API</span>
+            </button>
+            <button class="team-item" onclick="selectTeam(this)">
+              <span class="name">Web Client</span>
+              <span class="badge">WEB</span>
+            </button>
+          </div>
+        </div>
+        <div class="org-section">
+          <button class="org-header" onclick="toggleOrg(this)">
+            <span class="chevron">▶</span>
+            Personal Projects
+          </button>
+          <div class="org-team-list hidden">
+            <button class="team-item" onclick="selectTeam(this)">
+              <span class="name">Side Projects</span>
+              <span class="badge">SP</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading state -->
+      <div id="state-loading" class="sidebar-state">
+        <div style="padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-3);">
+          <div class="skeleton-line" style="width: 80%;"></div>
+          <div class="skeleton-line" style="width: 60%; margin-left: var(--space-4);"></div>
+          <div class="skeleton-line" style="width: 70%; margin-left: var(--space-4);"></div>
+          <div style="height: var(--space-2);"></div>
+          <div class="skeleton-line" style="width: 75%;"></div>
+          <div class="skeleton-line" style="width: 55%; margin-left: var(--space-4);"></div>
+          <div class="skeleton-line" style="width: 65%; margin-left: var(--space-4);"></div>
+          <div class="loading-text" id="loading-text" style="display: none;">Loading your teams…</div>
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div id="state-error" class="sidebar-state">
+        <div class="error-banner">
+          <span>⚠️</span>
+          <span>Could not load teams.</span>
+          <button class="retry-btn" onclick="simulateRetry()">Retry</button>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="state-empty" class="sidebar-state">
+        <div class="empty-state">
+          <div class="icon">📂</div>
+          <h3>You are not a member of any team</h3>
+          <p>Teams let you organize your work and collaborate.</p>
+          <button class="cta-btn">Create a team</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <p style="color: var(--color-text-secondary); font-size: 14px;">
+        Select a team from the sidebar to navigate.
+      </p>
+    </main>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <label>State:</label>
+    <button class="active" onclick="setState('populated')">Populated</button>
+    <button onclick="setState('loading')">Loading</button>
+    <button onclick="setState('error')">Error</button>
+    <button onclick="setState('empty')">Empty</button>
+    <span style="flex:1;"></span>
+    <a href="index.html" style="font-size:13px;color:var(--color-text-secondary);">← Back</a>
+  </div>
+
+  <script>
+    let loadingTimer;
+
+    function setState(state) {
+      document.querySelectorAll('.sidebar-state').forEach(el => el.classList.remove('active'));
+      document.getElementById('state-' + state).classList.add('active');
+      document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (state === 'loading') {
+        const text = document.getElementById('loading-text');
+        text.style.display = 'none';
+        clearTimeout(loadingTimer);
+        loadingTimer = setTimeout(() => { text.style.display = 'block'; }, 2000);
+      } else {
+        clearTimeout(loadingTimer);
+      }
+    }
+
+    function toggleOrg(header) {
+      const list = header.nextElementSibling;
+      list.classList.toggle('hidden');
+      header.querySelector('.chevron').classList.toggle('expanded');
+    }
+
+    function selectTeam(item) {
+      document.querySelectorAll('.team-item').forEach(el => el.classList.remove('active'));
+      item.classList.add('active');
+    }
+
+    function simulateRetry() {
+      const btn = event.target;
+      btn.textContent = 'Retrying…';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = 'Retry';
+        btn.disabled = false;
+        setState('populated');
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

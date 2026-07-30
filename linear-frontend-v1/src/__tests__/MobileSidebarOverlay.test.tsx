@@ -2,17 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import { MobileSidebarOverlay } from '@/widgets/Sidebar/ui/MobileSidebarOverlay'
+import { OrgSidebar } from '@/widgets/OrgSidebar'
 
 function renderOverlay(isOpen = false, onClose = vi.fn()) {
   return render(
     <MemoryRouter initialEntries={['/']}>
-      <MobileSidebarOverlay isOpen={isOpen} onClose={onClose} />
+      <OrgSidebar mobile isOpen={isOpen} onClose={onClose} />
     </MemoryRouter>,
   )
 }
 
-describe('MobileSidebarOverlay', () => {
+describe('OrgSidebar mobile', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
   })
@@ -42,7 +42,6 @@ describe('MobileSidebarOverlay', () => {
     const onClose = vi.fn()
     renderOverlay(true, onClose)
 
-    // Click the backdrop using its class/role
     const backdrop = document.querySelector('[aria-hidden="true"]')
     expect(backdrop).toBeInTheDocument()
 
@@ -64,7 +63,6 @@ describe('MobileSidebarOverlay', () => {
     const onClose = vi.fn()
     renderOverlay(true, onClose)
 
-    // Multiple elements might have "Close menu" label; click the first button
     const closeElements = screen.getAllByLabelText('Close menu')
     expect(closeElements.length).toBeGreaterThanOrEqual(1)
 
