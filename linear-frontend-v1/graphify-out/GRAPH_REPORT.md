@@ -1,13 +1,17 @@
-# Graph Report - src  (2026-07-30)
+# Graph Report - .  (2026-07-30)
 
 ## Corpus Check
-- 0 files · ~0 words
-- Verdict: corpus is large enough that graph structure adds value.
+- cluster-only mode — file stats not available
 
 ## Summary
 - 927 nodes · 1456 edges · 102 communities (68 shown, 34 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 20 edges (avg confidence: 0.67)
 - Token cost: 0 input · 0 output
+
+## Graph Freshness
+- Built from commit: `4f4985ab`
+- Run `git rev-parse HEAD` and compare to check if the graph is stale.
+- Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - Real-Time UI Components
